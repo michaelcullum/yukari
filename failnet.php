@@ -101,7 +101,7 @@ echo '- Removing termination indicator file' . failnet::NL; if(file_exists('data
 // Load in the configuration data file
 echo '- Loading configuration file for specified IRC server' . failnet::NL; $failnet->load($argv[1]);
 
-echo '- Loading ignored users list' . failnet::NL; $failnet->loadignore($failnet->nick);
+echo '- Loading ignored users list' . failnet::NL; $failnet->ignore = explode(', ', file_get_contents('data/ignore_users'));
 
 // In case of restart/reload, to prevent 'Nick already in use' (which asplodes everything)
 echo 'Preparing to connect...' . failnet::NL; sleep(2);
@@ -527,9 +527,13 @@ class failnet
 	// Wrapper for the IRC quit command
 	public function quit($msg = false, $restart = true)
 	{
+		foreach($this->chans as $chan)
+		{
+			$this->privmsg($msg, $chan);
+		}
 		if(!$this->debug) echo '-!- Quitting from server "' . $this->server . '"' . self::NL;
 		$this->log('--- Quitting from server "' . $this->server . '" ---');
-		$this->send_server('QUIT' . ($msg) ? ':' . $msg : '');
+		$this->send_server('QUIT');
 		$this->terminate($restart);
 	}
 	
