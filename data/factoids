@@ -1,0 +1,235 @@
+^fail$ >> haha
+^haha$ >> fail
+^gesundheit$ >> krankheit
+^krankheit$ >> gesundheit
+^intro >> I am a bot coded in PHP by Desdenova a.k.a. Obsidian
+^snooping$ >> SnooPING AS usual, I see?
+^snowman$ >> ☃
+(.*)someth\bing(.*) >> Did someone say "something"? Cake is something!
+.*unfail.* >> o rly
+^o( )?rly\?*$ >> ya rly
+^no wai\!*$ >> ya wai
+^ya rly\!*$ >> no wai
+^ya wai\!*$ >> STFU
+^u stfu\!*$ >> no u
+^WHAT IS FAIL\?$ >> Fail is YOU, _sender_!
+^you stfu(|\!)$ >> no you
+^all toasters toast toast(|\!)$ >> No, they toast bread >> Suuure they do.
+^no u$ >> Either way, we all know I'm going to win.
+^no you$ >> Either way, we all know I'm going to win.
+(.*)win\bdows(.*) >> I think you mean "$1windoze$2"
+.*lo\bl(?!z).* >> Yeah, well I didn't think it was so funny.
+.*lolz.* >> Yeah, well I didn't think it was so funny.
+^\.\.\.$ >> Oh great, I'm another bot that responds to "..." >> Snooping as usual, I see? >> Come on world, I'll have you for brrreakfahst! >> [Advertise here! \$50/month! Take advantage of people's boredom, confusion, and YES, even stupidity!] >> Bored again? >> I HAS CUCUMBER!
+^\?$ >> I don't understand you either.
+^do a(?! barrel roll)$ >> barrel roll!
+^do a barrel roll(|\!)$ >> _action_does a barrel roll
+^action and function test$ >> (function) >> failnet::action("has succeeded");
+^ping$ >> lolz, ping is in my factoids list
+^pong$ >> PING >> PING >> PING >> PING >> PING >> PING >> PING >> PING >> PING >> PING >> PING >> PING >> PING >> pingpingpongpongpingpong!!! >> HAI.
+^really$ >> ERROR: that file, directory, and/or the brain of the poster of the previous post does not exist.
+^god$ >> doesn't exist!
+^bortsnar(|c)k$ >> _action_noms
+.*Never gonna give you up.* >> Never gonna let you down
+.*Never gonna let you down.* >> Never gonna run around and desert you
+.*Never gonna run around\.\.\..* >> (function) >> $this->privmsg("...and desert you"); $this->privmsg("Never gonna make you cry");
+.*Never gonna run around and desert you.* >> Never gonna make you cry
+.*Never gonna+ make you cry.* >> Never gonna say goodbye
+.*Never gonna gonna make you cry.* >> Never gonna say goodbye
+.*Never gonna say goodbye.* >> Never gonna tell a lie and hurt you
+.*Never gonna tell a lie and hurt you.* >> I definitely will!
+.*Never gonna tell a lie(?! and|&).* >> and hurt you
+^sender$ >> _sender_
+^Wait. Is _nick_ a bot?$ >> I don't know, actually.
+^(use .+)$ >> $1 wisely!
+(.*)this is (?!blasphemy|sparta)(.+) >> (function) >> $this->privmsg(ucfirst(preg_replace('/[^a-zA-Z0-9-\s]/', '', $matches[2]))."?... THIS IS SPARTAAA!");
+^(yes|sure) you did(|\.|\!)$ >> o rly
+$(?<!linux|php|perl|kai_|kai)(| )\<3(?!(| )thunder|linux|php|perl|kai)(.*) >> $1</3$2
+^( *)\<3 thunder$ >> (function) >> $this->privmsg(heartthunder($matches[1], $sender));
+^sure$ >> Of course.
+.*pseudonym.* >> Pseudonyms stink!
+^exactly(|\.)$ >> Yes.
+^yay(|\!).* >> What are you so excited about?
+^umm(m*)$ >> Yes?
+^thank you(|\.)$ >> You're welcome.
+^What (is|are) (this|these) (.+) you speak of(|\?)$ >> (function) >> $this->privmsg('Ask someone else about "'.preg_replace('/\"/', '', $matches[3]).'".');
+^nothing(|\.)$ >> Hmm...
+^a\bc   \:(\\|\/|\|)$ >> :P
+^Only with fruit\.$ >> Do pineapples work?
+.*mmmmmmmmmmmmmmmmmm.* >> S-sorry, Link, I can't give credit! Come back when you're a little... mmm... RICHER!
+.*No(| )one understands .+.* >> No one understands me, either.
+^source$ >> http://youreofftask.com/phpbot
+.*(b\bomb|f\bork).* >> Lamp oil, rope, (fork)bombs! You want it? It's yours, my friend, as long as you have enough rupees.
+.*-_-.* >> Never gonna give you up
+a\bc >> Goodbye, _sender_.
+^I hate .+ >> I hate YOU!
+.*it worked.* >> What worked?
+^http\:\/\/img\.moonbuggy\.org\/.* >> _sender_, stop being so irritating!
+.*or(|\,) (is|are) (it|they).* >> Or, is it the bagel?
+^(no)(|\.|\!)$ >> yes$2
+^(yes)(|\.|\!)$ >> no$2
+.*luigi.* >> That's Mama Luigi to you, Mario! >> _action_wheezes
+^send_server (.*) >> (function) >> $this->send_server($matches[1]);
+^(hey|hi|hello|hola)(|\,) _nick_$ >> Hello, _sender_
+^nick$ >> _nick_
+^(|.+(\:|\,) )a\ba(what|wut|whut)(|\?)$ >> Hola, _sender_! Good to see you again, my friend! I see you are enjoying those CHIPS. But you are not doing your teeth any favors! >> Sakapuna, Dr. Rabbit!
+^choose (.+) or (.+) >> (function) >> $this->privmsg($matches[rand(1,2)]);
+^yes(s+)$ >> OVERUSE OF S
+.*dinner.* >> OM NOM NOM
+^what(|(|\')s) (up|happening).* >> I WILL sue you again, _sender_!
+^annoy peeps$ >> CHIPS CHIPS CHIPS CHIPS CHIPS CHIPS CHIPS CHIPS CHIPS CHIPS CHIPS CHIPS CHIPS CHIPS CHIPS CHIPS CHIPS CHIPS CHIPS CHIPS CHIPS
+.*of course.* >> Not really, no.
+.*(yeah|yes|ya|yea) (really|rly)(|\,) (yeah|yes|ya|yea).* >> There nis o potacho tip.
+^baconocab$ >> _*&%#Q&$E_P#()*#IUHER#ORB#OUNF(DIY@#&*YF)(#*&)@#R*&@#Y*R)#BY@(()F*#@
+.*Jesus.* >> This factoid was eaten by fascist Christians.
+^maybe$ >> Rofl my woffles. Or woffle my rofls? I forgot.
+.*(sp(onge|eng)b(o|a)b).* >> $1 is teh fail
+.*carmen.* >> Hola CHIPS! I see you are enjoying that Carmen.
+(.*)(gggggggggg)ass(.*) >> $1donkey$2
+(.*)(gggggggggg)donkey(.*) >> $1ass$2
+.*WHAT IS LOVE.* >> Baby don't hurt me, don't hurt me, no moar.
+.*WHAT ISN(|\')T LOVE.* >> Baby hurt me, hurt me, moar!
+.*\:P  a\bc.* >> :/
+^Please shut the f.+ up$ >> _sender_: No.
+^Does not Fempute\!$ >> _sender_: Does not Gempute!
+.*(?<!htt)P\:.* >> :\
+.*soylent (\b.+\b)(.+|$) >> Soylent $1 is pee-pole!
+^ni hao ma.* >> I'm doing fine, and you?
+.*he(he+).* >> Ho ho ho!
+^(|but )I ha(ve|s) enough rupees.* >> No you don't!
+^PRIVMSG (.+)$ >> (function) >> $this->send_server("PRIVMSG $matches[1]");
+^Ceterum censeo(|\,) (.+) esse delendam per (.+)$ >> (function) >> $this->action($matches[3]."s ".$matches[2]); $this->privmsg($matches[2].": you've been ".$matches[3]."ed!");
+^(yes(|\,)|sure) y(ou|a) do(|\!|\.)$ >> Not really, no.
+^THE FACTOID AM \|pws \(((|\-)[0-9]+(|\.[0-9]+))x10\^((|\-)[0-9]+(|\.[0-9]+))\)\(((|\-)[0-9]+(|\.[0-9]+))x10\^((|\-)[0-9]+(|\.[0-9]+))\) >> (function) >> pws($matches);
+^\|boot$ >> (function) >> $this->action('flies OVER 9000 meters (actually '.rand(9000, 10000).' meters)'); exit(0);
+^ok, great, we know you love him, so shutup!$ >> _sender_: I don't want to!
+^yeah yeah yeah$ >> _sender_: Yesh, he IS the god of male hormones.
+^I'm not getting into this argument again!$ >> _sender_: of course you are!
+^_nick_ is scary\!$ >> _sender_: Am I actually scary?  :D
+.*acegikmo(?!\:|,).* >> acegikmo is a tostador.
+^I\'m bored\!$ >> _sender_: And so am I.
+^soo\.\.\. what\'s happening\?$ >> _sender_: Everything! >> _sender_: The apocalypse. You're missing it!
+^dai$ >> I refuse to! >> Nevah! >> Hells noeh. >> D:<
+^ya wai is Our Lord and Savior$ >> There is no g!@#$@!$#@ NO CARRIER
+^ugh, it's too quiet\!$ >> _sender_: "It" being...?
+^Why is it so quiet\?$ >> _sender_: Because everyone is shocked about your fail.
+^heheheh, yeah$ >> _sender_: Yesh he is. Now DAI!
+^Hollowing out my nose to make room for a mayonnaise and mustard portable storage facility\.$ >> _sender_: o_O
+^I'm dueling banjo hippies$ >> _sender_: Here, take this penguin carved out of balsa wood, you'll need it!
+^I demolished the middle man\.$ >> _sender_: And I had him for breakfast.
+^I had a fight with the devil\.$ >> _sender_: And I had a fight with God.
+^Bucketing (.+)$ >> I feel sorry for $1!
+^That is not(| (a(|n)|the)) (Uluru correction|haggis whistling|Ossetian secession|square ion hit|mayor of squelching|hairy equestrian|flare whistling|hair question|yours to question why|heir questing|your sister's ribcage|hare belching|chair listing|queer Hessian|hired quisling|square digestion|whore jesting|8 maids-a-milking|bear stretching)\.$ >> _sender_: Yes it is.
+^I don't know anything about that\.$ >> _sender_: Yes you do.
+^NO YOU BLOODY DON'T\!$ >> WHAT YOU SAY?
+^No it isn't\!$ >> _sender_: Yes it is.
+^\¯\\\(\°\_\o\)\/\¯$ >> ¯\\(o_°)/¯
+^I(| )(don(|')t know|dunno)$ >> _sender_: I know!
+^Not a bloody clue, sir\.$ >> Gz90VTRtp2IgMJ4grFOwoUIyYPOmnKV=
+^That is never going to give you up\.$ >> Never gonna let you down
+^That is never going to let you down\.$ >> Never gonna run around and hurt you
+^You have no chance to survive\. Make your time\.$ >> _action_makes his time
+^I agree\.$ >> _sender_: Yup.
+^A thousand apologies, effendi, but I do not understand\.$ >> _sender_: uRGLbRGL
+^No you don't\!$ >> _sender_: Yes I do!
+^Error 42\: Factoid not in database\.  Please contact administrator of current universe\.$ >> _sender_: I'm too lazy.
+^yeah, it's like OMG\!$ >> _sender_: \o/
+^Confuse Bucket, receive mindjail\.$ >> _action_ is locked up! Oh noes!
+^UNCAUGHT EXCEPTION: TERMINATING$ >> _sender_: I'mma firin mah toaster! BLAAARG
+^hahaha, crikey\.\.\.$ >> hahaha, (insert retarded en_GB word here)...
+^botsnack$ >> Yummeh! >> :D >> I WANT PEOPLE FOOD! >> Gimme! >> Yay! >> _action_slaps it away and demands a botsteak
+^This is a sign of affliction\!$ >> _sender_: Or, is it the bagel?
+^I don\'t think so\.$ >> _sender_: Don't floppy, don't floppy that copy!
+^WHAT I SAY(|\?)$ >> Adobe! IN NAIROBI!
+^shock\!$ >> Awe!
+^\[\.\.\.\]$ >> SPARTA!
+^Hey B75E8BFC\!$ >> Hey, _sender_!
+^everything$ >> And life, and also the universe...
+^ACTION throws (.+) (at|to(|wards)) (.*)$ >> (function) >> $this->action('grabs the '.preg_replace('/^ /', '', preg_replace('/^(an|a|the|some) (.+)$/i', '$2', $matches[1])).' and incinerates it'); >> $this->action('grabs the '.preg_replace('/^ /', '', preg_replace('/^(an|a|the|some) (.+)$/i', '$2', $matches[1])).' and eats it'); >> $this->action('grabs the '.preg_replace('/^ /', '', preg_replace('/^(an|a|the|some) (.+)$/i', '$2', $matches[1])).', sells it, and donates the profit to an antitheist organization'); >> $this->action('grabs the '.preg_replace('/^ /', '', preg_replace('/^(an|a|the|some) (.+)$/i', '$2', $matches[1])).' and feeds it to a walrus'); >> $this->action('grabs the '.preg_replace('/^ /', '', preg_replace('/^(an|a|the|some) (.+)$/i', '$2', $matches[1])).' and jumps on it'); >> $this->action('grabs the '.preg_replace('/^ /', '', preg_replace('/^(an|a|the|some) (.+)$/i', '$2', $matches[1])).' and ships it to Argentina'); >> $this->action('grabs the '.preg_replace('/^ /', '', preg_replace('/^(an|a|the|some) (.+)$/i', '$2', $matches[1])).' and sends it to Jamaica'); >> $this->action('grabs the '.preg_replace('/^ /', '', preg_replace('/^(an|a|the|some) (.+)$/i', '$2', $matches[1])).' and covers it with a towel'); >> $this->action('grabs the '.preg_replace('/^ /', '', preg_replace('/^(an|a|the|some) (.+)$/i', '$2', $matches[1])).' and uses it to smash _sender_\'s head'); >> $this->action('grabs the '.preg_replace('/^ /', '', preg_replace('/^(an|a|the|some) (.+)$/i', '$2', $matches[1])).' and carefully places it on a cow\'s head'); >> $this->action('grabs the '.preg_replace('/^ /', '', preg_replace('/^(an|a|the|some) (.+)$/i', '$2', $matches[1])).' and hides it in a pillow'); >> $this->action('grabs the '.preg_replace('/^ /', '', preg_replace('/^(an|a|the|some) (.+)$/i', '$2', $matches[1])).' and throws it at '.$matches[4]); >> $this->action('grabs the '.preg_replace('/^ /', '', preg_replace('/^(an|a|the|some) (.+)$/i', '$2', $matches[1])).' and spoonfeeds it to jercos'); >> $this->action('grabs the '.preg_replace('/^ /', '', preg_replace('/^(an|a|the|some) (.+)$/i', '$2', $matches[1])).' and puts it in his trophy case'); >> $this->action('grabs the '.preg_replace('/^ /', '', preg_replace('/^(an|a|the|some) (.+)$/i', '$2', $matches[1])).' and feeds it to a Nigerian child'); >> $this->action('grabs the '.preg_replace('/^ /', '', preg_replace('/^(an|a|the|some) (.+)$/i', '$2', $matches[1])).' and uses it to finally, once and for all, find adobe here in Nairobi'); >> $this->action('grabs the '.preg_replace('/^ /', '', preg_replace('/^(an|a|the|some) (.+)$/i', '$2', $matches[1])).' and dropkicks it'); >> $this->action('grabs the '.preg_replace('/^ /', '', preg_replace('/^(an|a|the|some) (.+)$/i', '$2', $matches[1])).' and locks it in a safe'); >> $this->action('grabs the '.preg_replace('/^ /', '', preg_replace('/^(an|a|the|some) (.+)$/i', '$2', $matches[1])).' and smuggles it to AFRICAAA'); >> $this->action('grabs the '.preg_replace('/^ /', '', preg_replace('/^(an|a|the|some) (.+)$/i', '$2', $matches[1])).', dons some shades, and gets away in a car (with cops on his tail)'); >> $this->action('grabs the '.preg_replace('/^ /', '', preg_replace('/^(an|a|the|some) (.+)$/i', '$2', $matches[1])).' and processes it into a lubricant'); >> $this->action('grabs the '.preg_replace('/^ /', '', preg_replace('/^(an|a|the|some) (.+)$/i', '$2', $matches[1])).' and drops it in a pond'); >> $this->action('grabs the '.preg_replace('/^ /', '', preg_replace('/^(an|a|the|some) (.+)$/i', '$2', $matches[1])).' and paints it '.array_rand(array_flip(array('red', 'orange', 'yellow', 'green', 'blue', 'indigo747', 'violet', 'pink (BOO!)', 'brown', 'mudkip')))); >> $this->action('grabs the '.preg_replace('/^ /', '', preg_replace('/^(an|a|the|some) (.+)$/i', '$2', $matches[1])).' and glues '.array_rand(array_flip(array('feathers', 'cake', 'pie', 'cheese', 'pickles', 'Morshu', 'lamp oil', 'rope', 'bombs', namein()))).' onto it'); >> $this->action('grabs the '.preg_replace('/^ /', '', preg_replace('/^(an|a|the|some) (.+)$/i', '$2', $matches[1])).' and blends it (Will it fail? That is the question!)');
+^ACTION hits (.+) with (.*)$ >> $this->action('grabs the '.preg_replace('/^ /', '', preg_replace('/^(an|a|the|some) (.+)$/i', '$2', $matches[1])).' and installs '.array_rand(array_flip(array('Fedora', 'Ubuntu', 'Debian', 'Mint', 'Wolvix', 'Mandriva', 'Slackware', 'PCLinuxOS', 'Ubanto', 'openSUSE', 'OpenSolaris', 'Ubuntu Satanic Edition', 'Windoze 7', 'vomit', 'a bagel', 'jercos'))).' on it');
+^yus$ >> yos
+^yos$ >> \o/
+^gggg$ >> pai
+.*42.* >> I liek 42
+^shamwow$ >> moar liek Shamcow
+^test$ >> FAILED!
+.*meow.* >> ARF ARF ARF
+.*PHP.* >> _skip_ >> _skip_ >> _skip_ >> _skip_ >> _skip_ >> _skip_ >> _skip_ >> PHP pwns!
+^w00t$ >> \o/
+^Please hang up, and try again\.$ >> _action_hangs up and tries again
+.*anyhow.* >> How any? Whut?
+^Objection\!$ >> _sender_ += erection
+^:$ >> yos
+^hm+$ >> Yes.
+.*sure I can.* >> Shuriken!
+^pwn$ >> Remember MIDI? I was there.
+^fixed$ >> _sender_: I don't think so.
+^tonight(|,) we dine in hell.* >> _action_dines in heaven, WHICH DOESN'T EXIST
+^ACTION makes h(is|er) time$ >> _action_destroys _sender_'s time
+.*you can(|')t (.+)(|\!|\.).* >> Of course you can $2!
+^(|\!)help$ >> type |modules to see a list of modules, and |help module to get instructions for that module
+^meh$ >> Never gonna let you down
+^ease up there, fatty\!$ >> _sender_: No.
+.*INF.* >> (function) >> privmsg(str_replace('inf', '∞', $matches[0]));
+-a\bss  >>  ass-
+^lol$ >> olo
+^noo+$ >> _action_punches Bucket >> _action_noms _sender_ >> print 'n','o'x9001;
+^_nick_$ >> Uhh...hai?
+^You can do anything if you put your NECKBEARD to it\.$ >> _sender_: Whut?
+^ACTION is bored$ >> _action_kicks _sender_
+kindof >> s/kindof/kind of/
+^Perfection is perfected$ >> Toast is toasted, and bagels are... bageled?
+^whut(|\!|\?|\.)$ >> Really?
+^\\o\/$ >> (function) >> $this->privmsg(' |'); $this->privmsg('/ \\');
+^me too$ >> You Too. B. (is fail)
+^Shut up Mr\. Gazpacho\!$ >> THAT'S NOT MY NAME!
+^RLY\!$ >> Really?
+^\[\.\.\.\]$ >> SPARTA!
+^Really is rather representative of that particular lifestyle$ >> Which lifestyle?
+^hello(|\!|\.|\?)$ >> hai _sender_
+(.*) guess what(|\!|\?|\.)$ >> what what
+^In the b....$ >> _sender_: No, "it's a hut!"
+^(|.*(:|,) )how many .+$ >> (function) >> $this->privmsg(rand(0, 9010*2)-9010);
+^goodnight denizens$ >> bai _sender_
+^Oh yeah, shrug those clothes right off\!$ >> But I don't wear clothes, I'm a bot!
+^foo$ >> quack
+^kcanstob$ >> :(
+^what('s| is) (.+)\?$ >> Nice and toasted. >> Mmmm, it tastes like an octorock! >> Alcon's child. >> Your... elbow. >> GNOME Do >> Squishy. >> It recently asploded all over Taylor >:( >> I haven't heard of $2 before... >> Something chewy. >> Orange and potato-like. >> As trollish as Kai_ after his favorite activity. >> Burnt and brown. >> He's in your dresser, I think. >> Hiding in a closet. >> A bookshelf, possibly. >> I don't know, a blanket? >> Whatever $2 is, it better stay away from Taylor.
+^no way\!$ >> ya wai?! lol?! (inside joke from elsewhere)
+^when I'm naked and alone$ >> doing a pagan ritual
+^botpoke$ >> _action_pokes _sender_
+.*cereal.* >> the cereal is not a lie
+^:\|$ >> Never gonna eat your face
+^brb$ >> _action_disappears with _sender_
+^\>(\_+)\>$ >> O$1O
+^OH SHI(|\-+)$ >> (function) >> sleep(1); $this->privmsg('..._sender_?'); sleep(2); $this->privmsg('Where\'d _sender_ go?'); sleep(3); $this->privmsg('Wha...what was that?'); sleep(2); $this->privmsg('Is that...'); sleep(1); $this->privmsg('Oh god..'); sleep(3); $this->privmsg('Oh god oh GOD OH GO-'); sleep(1);
+^_nick_\?$ >> OH HAI.. >> Right here! :D
+^Oh, crap$ >> Oh, LATSO SPEGHATTI!
+(\w+) (\w+)-ass(.*) >> $1-$2 ass$3
+^goodnight denizens$ >> Goodnight _sender_!
+^karma tiem$ >> (function) >> $this->privmsg($sender.array_rand(array_flip(array('--', '++'))));
+^hai _nick_$ >> hai _sender_
+^penis$ >> In your bum? >> Try craigslist. >> I hear you like it. A lot.
+^craigslist$ >> IS TEH FAIL.  :D
+^_nick_\!$ >> _sender_!
+^ACTION stabs _nick_$ >> _action_lights _sender_ on fire
+^ACTION shouts _nick_ HAS BEEN NUBBED!!!!$ >> I disagree, you worthless pile of scrap metal! >> _action_nubs _sender_ into oblivion
+^ACTION shouts _owner_ HAS BEEN NUBBED!!!!$ >> That's impossible.
+^KILL\!?$ >> _action_attacks
+^KILL (.+)$ >> (function) >> if($this->checkuser($matches[1])) { $this->action('attacks ' . $matches[1]); } else { $this->deny(); }
+^ACTION slaps (.*) around a bit with a (.*)$ >> (function) >> $this->privmsg($sender.', HOW VERY DARE YO...hey, '.$matches[2].'!'); $this->action('noms the '. $matches[2]);
+^ACTION slaps _nick_$ >> _action_slaps _sender_ back
+^botbelch$ >> _action_rips a mighty one
+^botsmack$ >> _action_smacks _sender_ >> _action_cranks some tunes_
+^ACTION slaps _owner_$ >> _action_slaps _sender_ back
+.* _owner_ iz teh fail. >> YA RIGHT...HE TOTALLY ISN'T.
+^bad _nick_(|\!|\?|\.)$ >> Sozzie.  <.<;; >> I AM SO SORRY. >> _action_goes to cry in his corner
+^Good boy, _nick_(|\!|\?|\.)$ >> ^_^
+^ACTION slaps _nick_ (.*)$ >> _action_attacks _sender_ >> !slap self
+^ACTION slaps _owner_ (.*)$ >> _action_attacks _sender_ >> !slap self
+^ACTION hugs _nick_$ >> _action_hugs _sender_ back
+^ACTION hugs _owner_$ >> Dawwww...
+.* _owner_ iz teh fail. >> YA RIGHT...HE TOTALLY ISN'T.
+^bad _nick_(|\!|\?|\.)$ >> Sozzie.  <.<;; >> I AM SO SORRY. >> _action_goes to cry in his corner
+^Good bo(y|t), _nick_(|\!|\?|\.)$ >> ^_^ >> I can has botsnack? >> :D >> I'll show you a good bot.. ;)
+^windows$ >> _action_screams in agony
