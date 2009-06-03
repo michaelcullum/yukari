@@ -74,13 +74,13 @@ class failnet_logs extends failnet_common
 	// Directly add an entry to the logs.  Useful for if we want to write to the error logs. ;)
 	public function write($type, $time, $msg)
 	{
-		return file_put_contents('logs/' . $type . '_log_' . @date('m-d-Y', $time) . '.log', $msg, FILE_APPEND);
+		return file_put_contents('logs/' . $type . '_log_' . date('m-d-Y', $time) . '.log', $msg, FILE_APPEND);
 	}
 	
 	// Nuke the log file!
 	public function wipe($type, $time)
 	{
-		return unlink('logs/' . $type . '_log_' . @date('m-d-Y', $time) . '.log');
+		return unlink('logs/' . $type . '_log_' . date('m-d-Y', $time) . '.log');
 	}
 }
 

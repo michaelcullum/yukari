@@ -51,7 +51,7 @@ class failnet_error extends failnet_common
 	/**
 	 * Error handler function for Failnet.  Modified from the phpBB 3.0.x msg_handler() function.
 	 */
-	public function fail_handler($errno, $msg_text, $errfile, $errline)
+	public function fail($errno, $msg_text, $errfile, $errline)
 	{
 		global $msg_long_text;
 	
@@ -76,7 +76,7 @@ class failnet_error extends failnet_common
 			case E_USER_NOTICE:
 			default:
 				$error = '[Debug] PHP Notice: in file ' . $errfile . ' on line ' . $errline . ': ' . $msg_text . self::NL; 
-				$this->failnet->log->write(self::ERROR_LOG, time(), @date('D m/d/Y - h:i:s A') . ' - ' . $error);
+				$this->failnet->log->write(self::ERROR_LOG, time(), date('D m/d/Y - h:i:s A') . ' - ' . $error);
 				$this->failnet->display($error);
 				return;
 				break;
@@ -85,7 +85,7 @@ class failnet_error extends failnet_common
 			case E_PARSE:
 			case E_ERROR:
 				$error = '[ERROR] PHP Error: in file ' . $errfile . ' on line ' . $errline . ': ' . $msg_text . self::NL;
-				$this->failnet->log->write(self::ERROR_LOG, time(), @date('D m/d/Y - h:i:s A') . ' - ' . $error);
+				$this->failnet->log->write(self::ERROR_LOG, time(), date('D m/d/Y - h:i:s A') . ' - ' . $error);
 				$this->failnet->display($error);
 				// Fatal error, so DAI.
 				$this->failnet->terminate(false);
