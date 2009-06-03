@@ -7,7 +7,7 @@
  *  Failnet -- PHP-based IRC Bot
  *-------------------------------------------------------------------
  *	Script info:
- * Version:		1.0.0
+ * Version:		2.0.0
  * SVN ID:		$Id$
  * Copyright:	(c) 2009 - Obsidian
  * License:		http://opensource.org/licenses/gpl-2.0.php  |  GNU Public License v2

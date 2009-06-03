@@ -5,22 +5,40 @@
 
 	Script info:
 -------------------------------------------------------------------
- Version:		1.0.0
+ Version:		2.0.0
  SVN ID:		$Id: failnet.php 48 2009-05-31 00:46:40Z Obsidian $
- Copyright:	(c) 2009 - Obsidian
+ Copyright:		(c) 2009 - Obsidian
  License:		http://opensource.org/licenses/gpl-2.0.php  |  GNU Public License v2
 
 ===================================================================
 
 
- Failnet is based off of and built upon the following work:
+ Failnet is based off of and built upon the following works:
+===================================================================
 
   PHPBot -- PHP-Based IRC Bot
 -------------------------------------------------------------------
  Version:		0.2.5
- Copyright:	(c) 2009 - Kai Tamkun
+ Copyright:		(c) 2009 - Kai Tamkun
  License:		http://license.youreofftask.com/software.php  |  Kai License (Compatible with GPLv2)
  Source:		Available at http://youreofftask.com/phpbot/
+
+===================================================================
+
+  pib -- PHP IRC Bot
+-------------------------------------------------------------------
+ Version:		0.4.0 Beta
+ Copyright:		(c) 2008 - zachera
+ Source:		Available at http://code.assembla.com/pib/subversion/nodes
+
+===================================================================
+
+  Phergie -- IRC Bot written in PHP 5 code with OO API.
+-------------------------------------------------------------------
+ Version:		1.0.3
+ Copyright:		(c) 2009 - Kai Tamkun
+ License:		http://www.gnu.org/licenses/lgpl.html  |  GNU Lesser General Public License version 3.0
+ Source:		Available at http://www.assembla.com/spaces/files/phergie
 
 ===================================================================
 
