@@ -48,6 +48,13 @@ if(!defined('IN_FAILNET')) return;
 class failnet_factoids extends failnet_common
 {
 	
+	/**
+	 * @NOTE: Factoid engine should write PHP files, using the var_export() function 
+	 * {@link: http://php.net/manual/en/function.var-export.php}
+	 * 
+	 * @todo: Use a giant array for the data, and subarrays for each entry.  
+	 * 			Special settings in one entry, a subarray of responses in another...etc...
+	 */
 }
 
 ?>
