@@ -93,9 +93,7 @@ $load = array(
 	'warfare',
 	'slashdot',
 	'xkcd',
-	'reload',
 /*
-	'dict',
 	'alchemy',
 	'notes',
 */
