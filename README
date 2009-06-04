@@ -6,7 +6,6 @@
 	Script info:
 -------------------------------------------------------------------
  Version:		2.0.0
- SVN ID:		$Id: failnet.php 48 2009-05-31 00:46:40Z Obsidian $
  Copyright:		(c) 2009 - Obsidian
  License:		http://opensource.org/licenses/gpl-2.0.php  |  GNU Public License v2
 
@@ -62,4 +61,14 @@ What is Failnet?
 -------------------------------------------------------------------
 
 Failnet is an IRC bot built in PHP, coded by Obsidian for something 
-to do.
+to do.  He's coded in PHP5 Object Oriented Programming, and mainly 
+designed for infobot use along with channel moderation.
+
+===================================================================
+
+How do I use Failnet?
+-------------------------------------------------------------------
+
+For complete and up-to-date instructions, please refer to Failnet's
+wiki at http://www.assembla.com/wiki/show/failnet/ and read through
+the "Setup Failnet" page, and subpages.
