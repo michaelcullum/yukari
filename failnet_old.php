@@ -247,15 +247,15 @@ class failnet
 			// Fun stuff!
 			if ($this->joined)
 			{
-				if (ereg('KICK ' . $str[1][0][0] . ' ' . $this->nick . ' :', $srvmsg))
+				if ($str[1][2] != $this->nick && preg_match('/^(.*)KICK ' . preg_quote($str[1][2]) . ' ' . preg_quote($this->nick) . '(.*)$/i', $srvmsg))
 				{
 					$kicked = $this->cycle;
-					echo '-!- Kicked from ' . $str[1][0][0] . '!' . self::NL;
-					$this->log('--- Kicked from channel "' . $str[1][0][0] . '" ---');
+					if(!$this->debug) echo '-!- Kicked from ' . $str[1][2] . ' by ' . $str[1][0][0] . '!' . self::NL;
+					$this->log('--- Kicked from channel "' . $str[1][2] . '" by ' . $str[1][0][0] . ' ---');
 					
 					// Remove this channel from the joined channels list!
 					$chans_ = array_flip($this->chans);
-					unset($this->chans[$chans_[$str[1][0][0]]]);
+					unset($this->chans[$chans_[$str[1][2]]]);
 				}
 				if (file_get_contents('data/eternalrampage')=='yesh') rampage(0); // Because I feel evil.
 				if (!empty($this->pass)) $this->privmsg('IDENTIFY ' . $this->pass, 'NickServ'); unset($this->pass);
@@ -839,14 +839,14 @@ class failnet
 		}
 	}
 	
-	// Unignore a user.
+	// 	// Unignore a user.
 	public function unignore($sender, $victim)
 	{
 		if ($this->authlevel($sender) > 9)
 		{
 			foreach($this->ignore as $id => &$user)
 			{
-				if($user == $matches[1]) unset($this->ignore[$id]);
+				if($user == $victim) unset($this->ignore[$id]);
 			}
 			file_put_contents('data/ignore_users', implode(', ', $this->ignore));
 			$this->privmsg('User "' . $victim . '" is no longer ignored.');
