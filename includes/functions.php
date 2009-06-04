@@ -42,11 +42,13 @@ function display($msg)
 	{
 		foreach($msg => $line)
 		{
+			$msg = (preg_match('/' . self::NL . '(| )$/i', $msg)) ? substr($msg, 0, strlen($msg) - 1) : $msg;
 			echo $msg . failnet::NL;			
 		}
 	}
 	else
 	{
+		$msg = (preg_match('/' . self::NL . '(| )$/i', $msg)) ? substr($msg, 0, strlen($msg) - 1) : $msg;
 		echo $msg . failnet::NL;
 	}
 }
