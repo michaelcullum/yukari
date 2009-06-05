@@ -96,9 +96,9 @@ class failnet_ignore extends failnet_common
 	}
 	
 	// Gets the ignore file (re)loads the ignore list.
-	public function loadignored($sender)
+	public function load($sender = false)
 	{
-		if ($this->failnet->auth->authlevel($sender) > 9)
+		if ($sender && $this->failnet->auth->authlevel($sender) > 9)
 		{
 			$this->ignore = explode(', ', file_get_contents('data/ignore_users')); 
 			$this->host_ignore = explode(', ', file_get_contents('data/ignore_hosts'));
