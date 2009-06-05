@@ -55,11 +55,11 @@ class failnet_logs extends failnet_common
 		if(preg_match('/^IDENTIFY (.*)/i', $log)) $log = 'IDENTIFY ***removed***';
 		$log = (preg_match('/' . self::NL . '(| )$/i', $log)) ? substr($log, 0, strlen($log) - 1) : $log;
 		$log = preg_replace('/^' . self::X01 . 'ACTION (.+)' . self::X01 . '$/', '*'. $who . ' $1' . '*', $log);
-		$this->add(self::USER_LOG, time(), @date('D m/d/Y - h:i:s A') . ' - <' . $who . (($where) ? '/' . $where : false) . '> ' . $log);
+		$this->add(time(), @date('D m/d/Y - h:i:s A') . ' - <' . $who . (($where) ? '/' . $where : false) . '> ' . $log);
 	}
 	
 	// Add an entry to the queue of user logs...
-	public function add($type, $time, $msg)
+	public function add($time, $msg, $dump = false)
 	{
 		$this->log[] = $msg;
 		if($dump == true || sizeof($this->log) > 10)
@@ -67,7 +67,7 @@ class failnet_logs extends failnet_common
 			$log_msg = '';
 			$log_msg = self::NL . implode(self::NL, $this->log);
 			$this->log = array();
-			$this->write($type, $time, $log_msg);
+			$this->write(self::USER_LOG, $time, $log_msg);
 		}
 	}
 	

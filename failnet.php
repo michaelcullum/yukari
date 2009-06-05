@@ -56,11 +56,6 @@ if (strtolower(PHP_SAPI) != 'cli')
 if (!ini_get('date.timezone')) date_default_timezone_set(date_default_timezone_get());
 set_time_limit(0);
 
-// STOPPED REWRITE HERE...
-// @note: Includes!
-
-$failnet = new failnet();
-
 // Begin printing info to the terminal window with some general information about Failnet.
 display(array(
 	failnet::HR,
@@ -71,6 +66,8 @@ display(array(
 	'Failnet is starting up. Go get yourself a coffee.',
 ));
 
+require(FAILNET_ROOT . 'includes/bootstrap.' . PHP_EXT);
+
 // Set error handler
 display('- Loading error handler'); @set_error_handler('fail_handler');
 
@@ -79,9 +76,6 @@ $actions = array_flip(file('data/actions'));
 
 // Load dictionary file - This fails on Windows systems.
 display('- Loading dictionary (if file is present on OS)'); $dict = (@file_exists('/etc/dictionaries-common/words')) ? file('/etc/dictionaries-common/words') : array();
-
-// Load user DB
-display('- Loading user database'); $failnet->loaduserdb();
 
 // Adding the core to the modules list and loading help file
 $failnet->modules[] = 'core';
@@ -106,9 +100,10 @@ foreach($load as $item)
 
 // This is a hack to allow us to restart Failnet if we're running the script through a batch file.
 display('- Removing termination indicator file'); if(file_exists('data/restart')) unlink('data/restart');
+display('- Loading user database'); $failnet->loaduserdb();
 display('- Loading configuration file for specified IRC server'); $failnet->load($argv[1]);
-display('- Loading ignored users list'); $failnet->ignore = explode(', ', file_get_contents('data/ignore_users'));
-display('Preparing to connect...'); sleep(2); // In case of restart/reload, to prevent 'Nick already in use' (which asplodes everything)
+display('- Loading ignored users list'); $failnet->ignore->load(); // explode(', ', file_get_contents('data/ignore_users'));
+display('Preparing to connect...'); sleep(1); // In case of restart/reload, to prevent 'Nick already in use' (which asplodes everything)
 display(array('Failnet loaded and ready!', 'Connecting to server...'));
 
 $failnet->run();

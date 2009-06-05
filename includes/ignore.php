@@ -47,7 +47,113 @@ if(!defined('IN_FAILNET')) return;
  */
 class failnet_ignore extends failnet_common
 {
+	public $ignore = array();
+	public $host_ignore = array();
 	
+	// Ignore a user.
+	public function ignore($sender, $victim)
+	{
+		if ($this->failnet->auth->authlevel($sender) > 9)
+		{
+			if($victim == $this->failnet->owner)
+			{
+				$this->failnet->deny();
+				return;
+			}
+			if(!in_array($victim, $this->ignore))
+			{
+				$this->ignore[] = $victim; 
+				file_put_contents('data/ignore_users', implode(', ', $this->ignore));
+				$this->failnet->irc->privmsg('User "' . $victim . '" is now ignored.'); 
+			}
+			else
+			{
+					$this->failnet->irc->privmsg('User "' . $victim . '" is already ignored.');
+			}
+		}
+		else
+		{
+			$this->failnet->deny();
+		}
+	}
+	
+	// 	// Unignore a user.
+	public function unignore($sender, $victim)
+	{
+		if ($this->failnet->auth->authlevel($sender) > 9)
+		{
+			foreach($this->ignore as $id => &$user)
+			{
+				if($user == $victim) unset($this->ignore[$id]);
+			}
+			file_put_contents('data/ignore_users', implode(', ', $this->ignore));
+			$this->failnet->irc->privmsg('User "' . $victim . '" is no longer ignored.');
+		}
+		else
+		{
+			$this->failnet->deny();
+		}
+	}
+	
+	// Gets the ignore file (re)loads the ignore list.
+	public function loadignored($sender)
+	{
+		if ($this->failnet->auth->authlevel($sender) > 9)
+		{
+			$this->ignore = explode(', ', file_get_contents('data/ignore_users')); 
+			$this->host_ignore = explode(', ', file_get_contents('data/ignore_hosts'));
+			$this->failnet->irc->privmsg('Reloaded ignore list.');
+		}
+		else
+		{
+			$this->failnet->deny();
+		}
+	}
+	
+	// Ignore a hostmask.
+	public function ignore_host($sender, $victim)
+	{
+		if ($this->failnet->auth->authlevel($sender) > 9)
+		{
+			if($victim == $this->failnet->owner)
+			{
+				$this->failnet->deny();
+				return;
+			}
+			if(!in_array($victim, $this->ignore))
+			{
+				$this->host_ignore[] = $victim; 
+				file_put_contents('data/ignore_hosts', implode(', ', $this->host_ignore));
+				$this->failnet->irc->privmsg('Host "' . $victim . '" is now ignored.'); 
+			}
+			else
+			{
+					$this->failnet->irc->privmsg('Host "' . $victim . '" is already ignored.');
+			}
+		}
+		else
+		{
+			$this->failnet->deny();
+		}
+	}
+	
+	// 	// Unignore a hostmask.
+	public function unignore_host($sender, $victim)
+	{
+		if ($this->failnet->auth->authlevel($sender) > 9)
+		{
+			foreach($this->host_ignore as $id => &$user)
+			{
+				if($user == $victim) unset($this->host_ignore[$id]);
+			}
+			file_put_contents('data/ignore_hosts', implode(', ', $this->host_ignore));
+			$this->failnet->irc->privmsg('User "' . $victim . '" is no longer ignored.');
+		}
+		else
+		{
+			$this->failnet->deny();
+		}
+	}
 }
 
 ?>
