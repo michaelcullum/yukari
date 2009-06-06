@@ -45,7 +45,8 @@ set_include_path(get_include_path() . PATH_SEPARATOR . FAILNET_ROOT);
  */
 if (strtolower(PHP_SAPI) != 'cli')
 {
-	if(file_exists(FAILNET_ROOT . 'data/restart')) unlink(FAILNET_ROOT . 'data/restart');
+	if(file_exists(FAILNET_ROOT . 'data/restart')) 
+		unlink(FAILNET_ROOT . 'data/restart');
 	display('Failnet must be run in the CLI SAPI');
     exit(1);
 }
@@ -53,7 +54,8 @@ if (strtolower(PHP_SAPI) != 'cli')
 /**
  * Check to see if date.timezone is empty in the PHP.ini, if so, set the default timezone to prevent strict errors.
  */
-if (!ini_get('date.timezone')) date_default_timezone_set(date_default_timezone_get());
+if (!ini_get('date.timezone')) 
+	date_default_timezone_set(date_default_timezone_get());
 set_time_limit(0);
 
 // Begin printing info to the terminal window with some general information about Failnet.
@@ -75,7 +77,10 @@ display('- Loading error handler'); @set_error_handler('fail_handler');
 $actions = array_flip(file('data/actions'));
 
 // Load dictionary file - This fails on Windows systems.
-display('- Loading dictionary (if file is present on OS)'); $dict = (@file_exists('/etc/dictionaries-common/words')) ? file('/etc/dictionaries-common/words') : array();
+display('- Loading dictionary (if file is present on OS)'); 
+	$dict = (@file_exists('/etc/dictionaries-common/words')) ? file('/etc/dictionaries-common/words') : array();
+
+display('- Loading Failnet core information');
 
 // Adding the core to the modules list and loading help file
 $failnet->modules[] = 'core';
@@ -99,10 +104,19 @@ foreach($load as $item)
 }
 
 // This is a hack to allow us to restart Failnet if we're running the script through a batch file.
-display('- Removing termination indicator file'); if(file_exists('data/restart')) unlink('data/restart');
-display('- Loading user database'); $failnet->loaduserdb();
+display('- Removing termination indicator file'); 
+if(file_exists('data/restart'))
+	unlink('data/restart');
+
 display('- Loading configuration file for specified IRC server'); $failnet->load($_SERVER['argv'][1]);
-display('- Loading ignored users list'); $failnet->ignore->load(); // explode(', ', file_get_contents('data/ignore_users'));
+	
+display('- Loading user database'); 
+	$failnet->loaduserdb();
+
+//@TODO: Move the ingore users list and user DB loading to the main load function.
+display('- Loading ignored users/hostmasks list');
+	$failnet->ignore->load();
+
 display('Preparing to connect...'); sleep(1); // In case of restart/reload, to prevent 'Nick already in use' (which asplodes everything)
 display(array('Failnet loaded and ready!', 'Connecting to server...'));
 

@@ -61,7 +61,7 @@ class failnet_auth extends failnet_common
 	 * 
 	 * @author Phergie Development Team {@link http://code.assembla.com/phergie/subversion/nodes}
 	 */
-	public function parseHostmask($hostmask, &$nick, &$user, &$host)
+	public function parse_hostmask($hostmask, &$nick, &$user, &$host)
 	{
 		if (preg_match('/^([^!@]+)!([^@]+)@(.*)$/', $hostmask, $match) > 0)
 		{
@@ -82,7 +82,7 @@ class failnet_auth extends failnet_common
 	 * 
 	 * @author Phergie Development Team {@link http://code.assembla.com/phergie/subversion/nodes}
 	 */
-	public function hostmasksToRegex($list)
+	public function hostmasks_to_regex($list)
 	{
 		$patterns = array();
 

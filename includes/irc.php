@@ -47,7 +47,10 @@ if(!defined('IN_FAILNET')) return;
  */
 class failnet_irc extends failnet_common
 {
-	
+	/**
+	 * Some methods here (actually, quite a few) borrowed from Phergie.
+	 * See /README for details.
+	 */
 }
 
 ?>

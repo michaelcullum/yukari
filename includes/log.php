@@ -55,7 +55,7 @@ class failnet_logs extends failnet_common
 		if(preg_match('/^IDENTIFY (.*)/i', $log)) $log = 'IDENTIFY ***removed***';
 		$log = (preg_match('/' . PHP_EOL . '(| )$/i', $log)) ? substr($log, 0, strlen($log) - 1) : $log;
 		$log = preg_replace('/^' . self::X01 . 'ACTION (.+)' . self::X01 . '$/', '*'. $who . ' $1' . '*', $log);
-		$this->add(time(), @date('D m/d/Y - h:i:s A') . ' - <' . $who . (($where) ? '/' . $where : false) . '> ' . $log);
+		$this->add(time(), date('D m/d/Y - h:i:s A') . ' - <' . $who . (($where) ? '/' . $where : false) . '> ' . $log);
 	}
 	
 	// Add an entry to the queue of user logs...
@@ -74,7 +74,7 @@ class failnet_logs extends failnet_common
 	// Directly add an entry to the logs.  Useful for if we want to write to the error logs. ;)
 	public function write($type, $time, $msg)
 	{
-		return file_put_contents('logs/' . $type . '_log_' . date('m-d-Y', $time) . '.log', $msg, FILE_APPEND);
+		return file_put_contents('logs/' . $type . '_log_' . date('m-d-Y', $time) . '.log', $msg, FILE_APPEND | LOCK_EX);
 	}
 	
 	// Nuke the log file!
