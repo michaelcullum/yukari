@@ -34,8 +34,7 @@
 
   Phergie -- IRC Bot written in PHP 5 code with OO API.
 -------------------------------------------------------------------
- Version:		1.0.3
- Copyright:		(c) 2009 - Kai Tamkun
+ Copyright:		(c) 2009 - tobias382
  License:		http://www.gnu.org/licenses/lgpl.html  |  GNU Lesser General Public License version 3.0
  Source:		Available at http://www.assembla.com/spaces/files/phergie
 
