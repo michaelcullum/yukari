@@ -52,7 +52,6 @@ class failnet_common
 	/**
 	 * Constants for Failnet.
 	 */
-	const NL = "\n";
 	const TAB = "\t";
 	const X01 = "\x01";
 	const X02 = "\x02";

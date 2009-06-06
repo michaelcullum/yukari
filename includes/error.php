@@ -75,7 +75,7 @@ class failnet_error extends failnet_common
 			case E_USER_WARNING:
 			case E_USER_NOTICE:
 			default:
-				$error = '[Debug] PHP Notice: in file ' . $errfile . ' on line ' . $errline . ': ' . $msg_text . self::NL; 
+				$error = '[Debug] PHP Notice: in file ' . $errfile . ' on line ' . $errline . ': ' . $msg_text . PHP_EOL; 
 				$this->failnet->log->write(self::ERROR_LOG, time(), date('D m/d/Y - h:i:s A') . ' - ' . $error);
 				$this->failnet->display($error);
 				return;
@@ -84,7 +84,7 @@ class failnet_error extends failnet_common
 			case E_USER_ERROR:
 			case E_PARSE:
 			case E_ERROR:
-				$error = '[ERROR] PHP Error: in file ' . $errfile . ' on line ' . $errline . ': ' . $msg_text . self::NL;
+				$error = '[ERROR] PHP Error: in file ' . $errfile . ' on line ' . $errline . ': ' . $msg_text . PHP_EOL;
 				$this->failnet->log->write(self::ERROR_LOG, time(), date('D m/d/Y - h:i:s A') . ' - ' . $error);
 				$this->failnet->display($error);
 				// Fatal error, so DAI.

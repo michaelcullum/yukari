@@ -51,25 +51,25 @@ define('FAILNET_VERSION', '1.0.0');
 $failnet = new failnet();
 
 // Begin printing info to the terminal window with some general information about Failnet.
-echo failnet::HR . failnet::NL;
-echo 'Failnet -- PHP-based IRC Bot version ' . FAILNET_VERSION . ' - $Revision$' . failnet::NL;
-echo 'Copyright: (c) 2009 - Obsidian' . failnet::NL;
-echo 'License: http://opensource.org/licenses/gpl-2.0.php' . failnet::NL;
-echo 'Failnet uses code from PHPBot [ Copyright (c) 2009 Kai Tamkun ]' . failnet::NL;
-echo failnet::HR . failnet::NL;
-echo 'Failnet is starting up. Go get yourself a coffee.' . failnet::NL;
+echo failnet::HR . PHP_EOL;
+echo 'Failnet -- PHP-based IRC Bot version ' . FAILNET_VERSION . ' - $Revision$' . PHP_EOL;
+echo 'Copyright: (c) 2009 - Obsidian' . PHP_EOL;
+echo 'License: http://opensource.org/licenses/gpl-2.0.php' . PHP_EOL;
+echo 'Failnet uses code from PHPBot [ Copyright (c) 2009 Kai Tamkun ]' . PHP_EOL;
+echo failnet::HR . PHP_EOL;
+echo 'Failnet is starting up. Go get yourself a coffee.' . PHP_EOL;
 
 // Set error handler
-echo '- Loading error handler' . failnet::NL; @set_error_handler('fail_handler');
+echo '- Loading error handler' . PHP_EOL; @set_error_handler('fail_handler');
 
 // Loading DBs, initializing some vars
 $actions = array_flip(file('data/actions'));
 
 // Load dictionary file - This fails on Windows systems.
-echo '- Loading dictionary (if file is present on OS)' . failnet::NL; $dict = (@file_exists('/etc/dictionaries-common/words')) ? file('/etc/dictionaries-common/words') : array();
+echo '- Loading dictionary (if file is present on OS)' . PHP_EOL; $dict = (@file_exists('/etc/dictionaries-common/words')) ? file('/etc/dictionaries-common/words') : array();
 
 // Load user DB
-echo '- Loading user database' . failnet::NL; $failnet->loaduserdb();
+echo '- Loading user database' . PHP_EOL; $failnet->loaduserdb();
 
 // Adding the core to the modules list and loading help file
 $failnet->modules[] = 'core';
@@ -89,26 +89,26 @@ $load = array(
 	'markov',
 */
 );
-echo '- Loading modules' . failnet::NL;
+echo '- Loading modules' . PHP_EOL;
 foreach($load as $item)
 {
-	if(include 'modules/' . $item . '.php') echo '=-= Loaded "' . $item . '" module' . failnet::NL;
+	if(include 'modules/' . $item . '.php') echo '=-= Loaded "' . $item . '" module' . PHP_EOL;
 }
 
 // This is a hack to allow us to restart Failnet if we're running the script through a batch file.
-echo '- Removing termination indicator file' . failnet::NL; if(file_exists('data/restart')) unlink('data/restart');
+echo '- Removing termination indicator file' . PHP_EOL; if(file_exists('data/restart')) unlink('data/restart');
 
 // Load in the configuration data file
-echo '- Loading configuration file for specified IRC server' . failnet::NL; $failnet->load($argv[1]);
+echo '- Loading configuration file for specified IRC server' . PHP_EOL; $failnet->load($argv[1]);
 
-echo '- Loading ignored users list' . failnet::NL; $failnet->ignore = explode(', ', file_get_contents('data/ignore_users'));
+echo '- Loading ignored users list' . PHP_EOL; $failnet->ignore = explode(', ', file_get_contents('data/ignore_users'));
 
 // In case of restart/reload, to prevent 'Nick already in use' (which asplodes everything)
-echo 'Preparing to connect...' . failnet::NL; sleep(2);
+echo 'Preparing to connect...' . PHP_EOL; sleep(2);
 
 // Initiate the beast!  Run, Failnet, RUN!
-echo 'Failnet loaded and ready!' . failnet::NL;
-echo 'Connecting to server...' . failnet::NL;
+echo 'Failnet loaded and ready!' . PHP_EOL;
+echo 'Connecting to server...' . PHP_EOL;
 $failnet->run();
 
 class failnet
@@ -174,11 +174,11 @@ class failnet
 		$this->sock = fsockopen($this->server, $this->port);
 		while (!feof($this->sock))
 		{
-			$srvmsg = rtrim(fgets($this->sock), self::NL);
+			$srvmsg = rtrim(fgets($this->sock), PHP_EOL);
 				
 			if (!preg_match('/PRIVMSG|\|auth|\|adduser|\|ident/i', $srvmsg))  // Don't display passwords and stuff. ;)
 			{
-				if($this->debug) echo $this->cycle . '       ' . $srvmsg . self::NL;
+				if($this->debug) echo $this->cycle . '       ' . $srvmsg . PHP_EOL;
 			}
 			
 			
@@ -189,13 +189,13 @@ class failnet
 				{
 					if (ereg('(Throttled: Reconnecting too fast)', $srvmsg))
 					{
-						echo 'Couldn\'t connect, let\'s try again.' . self::NL;
+						echo 'Couldn\'t connect, let\'s try again.' . PHP_EOL;
 						$failnet->terminate(true);
 					}
 					else
 					{
-						echo 'Connected to ' . $this->server . ' on port ' . $this->port . self::NL;
-						$this->send_server('USER ' . $this->user . ' null null :' . $this->name . self::NL . 'NICK ' . $this->nick);
+						echo 'Connected to ' . $this->server . ' on port ' . $this->port . PHP_EOL;
+						$this->send_server('USER ' . $this->user . ' null null :' . $this->name . PHP_EOL . 'NICK ' . $this->nick);
 					}
 				}
 				if (preg_match('/^\:.+' . preg_quote($this->server, '/') . ' (.+) ' . $this->nick . ' (.+)/', $srvmsg, $matches))
@@ -250,7 +250,7 @@ class failnet
 				if ($str[1][2] != $this->nick && preg_match('/^(.*)KICK ' . preg_quote($str[1][2]) . ' ' . preg_quote($this->nick) . '(.*)$/i', $srvmsg))
 				{
 					$kicked = $this->cycle;
-					if(!$this->debug) echo '-!- Kicked from ' . $str[1][2] . ' by ' . $str[1][0][0] . '!' . self::NL;
+					if(!$this->debug) echo '-!- Kicked from ' . $str[1][2] . ' by ' . $str[1][0][0] . '!' . PHP_EOL;
 					$this->log('--- Kicked from channel "' . $str[1][2] . '" by ' . $str[1][0][0] . ' ---');
 					
 					// Remove this channel from the joined channels list!
@@ -265,7 +265,7 @@ class failnet
 					foreach ($this->chans as $chan_)
 					{
 						$this->log('--- Joining channel "' . $chan_ . '" ---');
-						if(!$this->debug) echo '-!- Joining ' . $chan_ . self::NL;
+						if(!$this->debug) echo '-!- Joining ' . $chan_ . PHP_EOL;
 						$this->privmsg('Let there be faiiiillll!', $chan_);
 					}
 					$introduced = true;
@@ -273,7 +273,7 @@ class failnet
 				if (($servermsg == 'PRIVMSG') && ($str[1][0][0] != $this->nick))
 				{
 					$this->chan = ($str[1][2] == $this->nick) ? $str[1][0][0] : $str[1][2];
-					//echo $str[1][0][0] . self::NL . $str[1][2] . self::NL;
+					//echo $str[1][0][0] . PHP_EOL . $str[1][2] . PHP_EOL;
 					if (isset($str[3]))
 					{
 						$str[3] = rtrim($str[3]);
@@ -294,7 +294,7 @@ class failnet
 					$command = (preg_match('/^\|/', $str[2])) ? true : false;
 					if (!preg_match('/\|adduser|\|auth|\|ident/i', $str[2]))
 					{
-						echo '<' . $str[1][0][0] . '/' . $this->chan . '> ' . $str[2] . self::NL; // Removes mask, etc.
+						echo '<' . $str[1][0][0] . '/' . $this->chan . '> ' . $str[2] . PHP_EOL; // Removes mask, etc.
 						$this->add_log($str[2], $str[1][0][0], $this->chan);
 					}
 					if(!in_array($str[1][0][0], $this->ignore)) // Ignore select users. :D
@@ -340,7 +340,7 @@ class failnet
 		{
 			$error = '[ERROR] Failed loading configuration file for server "' . $srv . '"';
 			log_error($error);
-			echo($error) . self::NL;
+			echo($error) . PHP_EOL;
 			$failnet->terminate(false);
 		}
 		$config = file('data/config_' . $srv);
@@ -351,7 +351,7 @@ class failnet
 			if(property_exists(__CLASS__, $key)) $this->$key = $item[1];
 		}
 		
-		echo '- Loading channel autojoin list' . self::NL;	$this->chans = explode(' ', file_get_contents('data/chans_' . $srv));
+		echo '- Loading channel autojoin list' . PHP_EOL;	$this->chans = explode(' ', file_get_contents('data/chans_' . $srv));
 	}
 	
 	/**
@@ -361,8 +361,8 @@ class failnet
 	// Send a raw message to the IRC server
 	public function send_server($msg, $usenl = true)
 	{
-		if($this->debug) echo $msg . self::NL;
-		fwrite($this->sock, ($usenl) ? $msg . self::NL : $msg);
+		if($this->debug) echo $msg . PHP_EOL;
+		fwrite($this->sock, ($usenl) ? $msg . PHP_EOL : $msg);
 	}
 
 	// Send a message.
@@ -372,22 +372,22 @@ class failnet
 		if (!empty($msg))
 		{
 			$where = ($spec) ? $spec : $this->chan;
-			$msg = str_replace('\n', self::NL, $msg);
-			if (ereg(self::NL, $msg))
+			$msg = str_replace('\n', PHP_EOL, $msg);
+			if (ereg(PHP_EOL, $msg))
 			{
 				$msgs = split('/\r?[\r\n]/', $msg);
 				foreach ($msgs as $msg2)
 				{
 					$this->add_log($msg2, $this->nick, $where);
 					$this->send_server('PRIVMSG ' . $where . ' :' . $msg2);
-					if(!$this->debug) echo '<' . $this->nick . '/' . $where . '> ' . $msg2 . self::NL;
+					if(!$this->debug) echo '<' . $this->nick . '/' . $where . '> ' . $msg2 . PHP_EOL;
 				}
 			}
 			else
 			{
 				$this->add_log($msg, $this->nick, $where);
 				$this->send_server('PRIVMSG ' . $where . ' :' . $msg); // \x0301,08
-				if(!$this->debug) echo '<' . $this->nick . '/' . $where . '> ' . $msg . self::NL;
+				if(!$this->debug) echo '<' . $this->nick . '/' . $where . '> ' . $msg . PHP_EOL;
 			}
 		}
 	}
@@ -398,8 +398,8 @@ class failnet
 		if(!$this->joined) return;
 		$msg = self::X01 . 'ACTION ' . rtrim($msg) . ' '. self::X01;
 		$this->add_log($msg, $this->nick, (($spec) ? $spec : $this->chan));
-		$this->send_server('PRIVMSG ' . (($spec) ? $spec : $this->chan) . ' :' . $msg . self::NL);
-		if(!$this->debug) echo '<' . $this->nick . '/' . $spec . '> ' . $msg . self::NL;
+		$this->send_server('PRIVMSG ' . (($spec) ? $spec : $this->chan) . ' :' . $msg . PHP_EOL);
+		if(!$this->debug) echo '<' . $this->nick . '/' . $spec . '> ' . $msg . PHP_EOL;
 	}
 	
 	// Change Failnet's IRC nick.
@@ -412,7 +412,7 @@ class failnet
 				$this->nick = $newnick;
 				$this->log('--- Changing nick to "' . $newnick . '" ---');
 				$this->send_server('NICK ' . $newnick);
-				if(!$this->debug) echo '-!- Changing nick to "' . $newnick . '"' . self::NL;
+				if(!$this->debug) echo '-!- Changing nick to "' . $newnick . '"' . PHP_EOL;
 			}
 		}
 		else
@@ -431,7 +431,7 @@ class failnet
 			$this->send_server('JOIN ' . $newchan);
 			// Write to our log.  ;)
 			$this->log('--- Joining channel "' . $newchan . '" ---');
-			if(!$this->debug) echo '-!- Joining "' . $newchan . '"' . self::NL;
+			if(!$this->debug) echo '-!- Joining "' . $newchan . '"' . PHP_EOL;
 			$this->privmsg('Let there be faiiiillll!', $newchan);
 		}
 		else
@@ -452,7 +452,7 @@ class failnet
 			$this->privmsg('Bai baiii!', $toleave);
 			// Write to our log.  ;)
 			$this->log('--- Leaving channel "' . $toleave . '" ---');
-			if(!$this->debug) echo '-!- Leaving channel "' . $toleave . '"' . self::NL;
+			if(!$this->debug) echo '-!- Leaving channel "' . $toleave . '"' . PHP_EOL;
 			$this->send_server('PART ' . $toleave . (($msg) ? ' :' . $msg : ''));
 		}
 		else
@@ -479,7 +479,7 @@ class failnet
 			$where = ($where) ? $where : $this->chan;
 			sleep(1);
 			$this->log('--- Kicking user ' . $victim . ' on channel "' . $where . '" ---');
-			if(!$this->debug) echo '-!- Kicking ' . $victim . 'from channel "' . $where . '"' . self::NL;
+			if(!$this->debug) echo '-!- Kicking ' . $victim . 'from channel "' . $where . '"' . PHP_EOL;
 			$this->send_server('KICK ' . $where . ' ' . $victim . (($msg) ? ' :' . $msg : ''));
 		}
 		else
@@ -531,7 +531,7 @@ class failnet
 		{
 			$this->privmsg($msg, $chan);
 		}
-		if(!$this->debug) echo '-!- Quitting from server "' . $this->server . '"' . self::NL;
+		if(!$this->debug) echo '-!- Quitting from server "' . $this->server . '"' . PHP_EOL;
 		$this->log('--- Quitting from server "' . $this->server . '" ---');
 		$this->send_server('QUIT');
 		$this->terminate($restart);
@@ -548,7 +548,7 @@ class failnet
 			file_put_contents('data/restart', 'yesh');
 			// Dump the log cache to the file.
 			$this->log('--- Restarting Failnet ---', true);
-			if(!$this->debug) echo '-!- Restarting Failnet' . self::NL;
+			if(!$this->debug) echo '-!- Restarting Failnet' . PHP_EOL;
 			exit(0);
 		}
 		else
@@ -557,20 +557,20 @@ class failnet
 			if(file_exists('data/restart')) unlink('data/restart');
 			// Dump the log cache to the file.
 			$this->log('--- Terminating Failnet ---', true);
-			if(!$this->debug) echo '-!- Terminating Failnet' . self::NL;
+			if(!$this->debug) echo '-!- Terminating Failnet' . PHP_EOL;
 			exit(1);
 		}
 	}
 	
 	public function ctcp($msg, $person = false)
 	{
-		$this->send_server('PRIVMSG ' . (($person) ? $person : $this->chan) . ' :' . self::X01 . rtrim($msg) . self::X01 . self::NL);
+		$this->send_server('PRIVMSG ' . (($person) ? $person : $this->chan) . ' :' . self::X01 . rtrim($msg) . self::X01 . PHP_EOL);
 	}
 	
 	// This does...something...
 	public function parse($type, $str)
 	{
-		//echo 'Parsing (' . $type . ') --> ' . $str . self::NL;
+		//echo 'Parsing (' . $type . ') --> ' . $str . PHP_EOL;
 		if ($type == '353')
 		{
 			preg_match('/^ \= (.+) \:(.+)$/', $str, $m);
@@ -814,7 +814,7 @@ class failnet
 		{
 			if ($user[0] == $nick) return;
 		}
-		file_put_contents('data/users', self::NL . $nick . '::0::' . sha1($pw), FILE_APPEND);
+		file_put_contents('data/users', PHP_EOL . $nick . '::0::' . sha1($pw), FILE_APPEND);
 	}
 	
 	// Ignore a user.
@@ -939,7 +939,7 @@ class failnet
 	// Debug function.  O_o
 	public function debug($txt)
 	{
-		echo self::HR . self::NL . self::TAB . $txt . self::NL . self::HR . self::NL;
+		echo self::HR . PHP_EOL . self::TAB . $txt . PHP_EOL . self::HR . PHP_EOL;
 	}
 
 	// Heartthunder function.  XD
@@ -970,7 +970,7 @@ class failnet
 	public function add_log($log, $sender, $where = false)
 	{
 		if(preg_match('/^IDENTIFY (.*)/i', $log)) $log = 'IDENTIFY ***removed***';
-		$log = (preg_match('/' . self::NL . '(| )$/i', $log)) ? substr($log, 0, strlen($log) - 1) : $log;
+		$log = (preg_match('/' . PHP_EOL . '(| )$/i', $log)) ? substr($log, 0, strlen($log) - 1) : $log;
 		$this->log(@date('D m/d/Y - h:i:s A') . ' <' . $sender . (($where) ? '/' . $where : false) . '> ' . preg_replace('/^' . self::X01 . 'ACTION (.+)' . self::X01 . '$/', '*'. $sender . ' $1' . '*', $log));
 	}
 	
@@ -981,7 +981,7 @@ class failnet
 		if($dump == true || sizeof($this->log) > 10)
 		{
 			$log_msg = '';
-			$log_msg = self::NL . implode(self::NL, $this->log);
+			$log_msg = PHP_EOL . implode(PHP_EOL, $this->log);
 			$this->log = array();
 			file_put_contents('log', $log_msg, FILE_APPEND);
 		}
@@ -1015,18 +1015,18 @@ function fail_handler($errno, $msg_text, $errfile, $errline)
 		case E_USER_WARNING:
 		case E_USER_NOTICE:
 		default:
-			$error = '[Debug] PHP Notice: in file ' . $errfile . ' on line ' . $errline . ': ' . $msg_text . failnet::NL;
+			$error = '[Debug] PHP Notice: in file ' . $errfile . ' on line ' . $errline . ': ' . $msg_text . PHP_EOL;
 			if($failnet->joined && $failnet->debug) $failnet->privmsg(@date('D m/d/Y - h:i:s A') . ' ' . $error, $failnet->owner); 
-			log_error(@date('D m/d/Y - h:i:s A') . ' ' . $error); echo $error . failnet::NL;
+			log_error(@date('D m/d/Y - h:i:s A') . ' ' . $error); echo $error . PHP_EOL;
 			return;
 			break;
 
 		case E_USER_ERROR:
 		case E_PARSE:
 		case E_ERROR:
-			$error = '[ERROR] PHP Fatal Error: in file ' . $errfile . ' on line ' . $errline . ': ' . $msg_text . failnet::NL;
+			$error = '[ERROR] PHP Fatal Error: in file ' . $errfile . ' on line ' . $errline . ': ' . $msg_text . PHP_EOL;
 			if($failnet->joined && $failnet->debug) $failnet->privmsg(@date('D m/d/Y - h:i:s A') . ' ' . $error, $failnet->owner);
-			log_error(@date('D m/d/Y - h:i:s A') . ' ' . $error); echo $error . failnet::NL;
+			log_error(@date('D m/d/Y - h:i:s A') . ' ' . $error); echo $error . PHP_EOL;
 			// Fatal error, so DAI.
 			$failnet->terminate(false);
 			break;

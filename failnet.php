@@ -101,7 +101,7 @@ foreach($load as $item)
 // This is a hack to allow us to restart Failnet if we're running the script through a batch file.
 display('- Removing termination indicator file'); if(file_exists('data/restart')) unlink('data/restart');
 display('- Loading user database'); $failnet->loaduserdb();
-display('- Loading configuration file for specified IRC server'); $failnet->load($argv[1]);
+display('- Loading configuration file for specified IRC server'); $failnet->load($_SERVER['argv'][1]);
 display('- Loading ignored users list'); $failnet->ignore->load(); // explode(', ', file_get_contents('data/ignore_users'));
 display('Preparing to connect...'); sleep(1); // In case of restart/reload, to prevent 'Nick already in use' (which asplodes everything)
 display(array('Failnet loaded and ready!', 'Connecting to server...'));
