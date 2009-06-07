@@ -60,4 +60,23 @@ function fail_handler($errno, $msg_text, $errfile, $errline)
 	return $failnet->error->fail($errno, $msg_text, $errfile, $errline);
 }
 
+/**
+* Return formatted string for filesizes
+* 
+* @author (c) 2007 phpBB Group 
+*/
+function get_formatted_filesize($bytes)
+{
+	if ($bytes >= pow(2, 30))
+		return round($bytes / 1024 / 1024 / 1024, 2) . ' GiB';
+
+	if ($bytes >= pow(2, 20))
+		return round($bytes / 1024 / 1024, 2) . ' MiB';
+
+	if ($bytes >= pow(2, 10))
+		return round($bytes / 1024, 2) . ' KiB';
+
+	return $bytes . ' B';
+}
+
 ?>

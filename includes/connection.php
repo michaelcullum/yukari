@@ -47,6 +47,11 @@ if(!defined('IN_FAILNET')) return;
  */
 class failnet_connect extends failnet_common
 {
+	/**
+	 * Some methods here (actually, quite a few) borrowed from Phergie.
+	 * See /README for details.
+	 */
+	
 	private $delay = 50000;
 	private $socket;
 
@@ -182,15 +187,15 @@ class failnet_connect extends failnet_common
 		else
 		{
 			$event = new failnet_event_request;
-			$event->setType($cmd);
-			$event->setArguments($args);
+			$event->type = $cmd;
+			$event->arguments = $args;
 			if (isset($user))
 			{
-				$event->setHost($host);
-				$event->setUsername($user);
-				$event->setNick($nick);
+				$event->host = $host;
+				$event->username = $user;
+				$event->nick = $nick;
 			}
-			$event->setRawBuffer($buffer);
+			$event->buffer = $buffer;
 		}
 		return $event;
 	}
