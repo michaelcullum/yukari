@@ -54,18 +54,35 @@ class failnet_socket extends failnet_common
 	
 	private $delay = 50000;
 	private $socket;
-
+	
+	public function init() { }
+	
 	/**
-	 * Supporting method to parse event argument strings where the last 
-	 * argument may contain a colon.
+	 * Initiates a connection with the server.
 	 *
-	 * @param string $args Argument string to parse
-	 * @param int $count Optional maximum number of arguments
-	 * @return array Array of argument values
+	 * @return void
 	 */
-	private function args($args, $count = -1)
+	public function connect()
 	{
-		return preg_split('/ :?/S', $args, $count);
+		// Listen for input indefinitely
+		set_time_limit(0);
+
+		// Establish and configure the socket connection
+		$remote = 'tcp://' . $this->failnet->server . ':' . $this->failnet->port;
+		$this->socket = @stream_socket_client($remote, $errno, $errstr);
+		if (!$this->socket)
+			$this->failnet->error->error('Unable to connect to server: socket error ' . $errno . ' : ' . $errstr, true);
+		
+		@stream_set_timeout($this->socket, $this->delay);
+
+		// Send the password if one is specified
+		if (!empty($this->server_password))
+			$this->send('PASS', $this->server_password);
+
+		// Send user information
+		$this->send('USER', array($this->user, $this->server, $this->server, $this->name));
+
+		$this->send('NICK', $this->nick); 
 	}
 	
 	/**
@@ -201,34 +218,6 @@ class failnet_socket extends failnet_common
 	}
 	
 	/**
-	 * Initiates a connection with the server.
-	 *
-	 * @return void
-	 */
-	public function connect()
-	{
-		// Listen for input indefinitely
-		set_time_limit(0);
-
-		// Establish and configure the socket connection
-		$remote = 'tcp://' . $this->failnet->server . ':' . $this->failnet->port;
-		$this->socket = @stream_socket_client($remote, $errno, $errstr);
-		if (!$this->socket)
-			$this->failnet->error->error('Unable to connect to server: socket error ' . $errno . ' : ' . $errstr, true);
-		
-		@stream_set_timeout($this->socket, $this->delay);
-
-		// Send the password if one is specified
-		if (!empty($this->server_password))
-			$this->send('PASS', $this->server_password);
-
-		// Send user information
-		$this->send('USER', array($this->user, $this->server, $this->server, $this->name));
-
-		$this->send('NICK', $this->nick); 
-	}
-	
-	/**
 	 * Handles construction of command strings and their transmission to the 
 	 * server.
 	 *
@@ -282,6 +271,19 @@ class failnet_socket extends failnet_common
 		// Terminate the socket connection
 		fclose($this->socket);
 		$this->socket = NULL;
+	}
+	
+	/**
+	 * Supporting method to parse event argument strings where the last 
+	 * argument may contain a colon.
+	 *
+	 * @param string $args Argument string to parse
+	 * @param int $count Optional maximum number of arguments
+	 * @return array Array of argument values
+	 */
+	private function args($args, $count = -1)
+	{
+		return preg_split('/ :?/S', $args, $count);
 	}
 }
 

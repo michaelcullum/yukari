@@ -49,6 +49,8 @@ class failnet_logs extends failnet_common
 {
 	private $log = array();
 	
+	public function init() { }
+	
 	// Build a log message...
 	public function log($log, $who, $where = false)
 	{

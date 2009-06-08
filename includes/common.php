@@ -44,10 +44,9 @@ if(!defined('IN_FAILNET')) return;
  * @copyright (c) 2009 - Obsidian
  * @license http://opensource.org/licenses/gpl-2.0.php | GNU Public License v2
  */
-class failnet_common
+abstract class failnet_common
 {
 	private $failnet;
-	private $errors = array();
 	
 	/**
 	 * Constants for Failnet.
@@ -59,10 +58,13 @@ class failnet_common
 	const ERROR_LOG = 'error';
 	const USER_LOG = 'user';
 	
-	public function __construct(failnet $failnet)
+	public function __construct(failnet_core $failnet)
 	{
 		$this->failnet = &$failnet;
+		$this->init();
 	}
+	
+	abstract public function init();
 	
 	public function __call($funct, $params)
 	{

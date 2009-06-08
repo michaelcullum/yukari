@@ -12,7 +12,9 @@
  * License:		http://opensource.org/licenses/gpl-2.0.php  |  GNU Public License v2
  *
  *===================================================================
- *
+ * 
+ * @TODO: Rewrite for new IRC protocol handler.
+ *  
  */
 
 /**
@@ -49,6 +51,27 @@ class failnet_ignore extends failnet_common
 {
 	public $ignore = array();
 	public $host_ignore = array();
+	
+	public function init()
+	{
+		display('=---= Loading ignored users/hostmasks list');
+			$this->load();
+	}
+	
+	// Gets the ignore file (re)loads the ignore list.
+	public function load($sender = false)
+	{
+		if ($sender && $this->failnet->auth->authlevel($sender) > 9)
+		{
+			$this->ignore = explode(', ', file_get_contents('data/ignore_users')); 
+			$this->host_ignore = explode(', ', file_get_contents('data/ignore_hosts'));
+			$this->failnet->irc->privmsg('Reloaded ignore list.');
+		}
+		else
+		{
+			$this->failnet->deny();
+		}
+	}
 	
 	// Ignore a user.
 	public function ignore($sender, $victim)
@@ -88,21 +111,6 @@ class failnet_ignore extends failnet_common
 			}
 			file_put_contents('data/ignore_users', implode(', ', $this->ignore));
 			$this->failnet->irc->privmsg('User "' . $victim . '" is no longer ignored.');
-		}
-		else
-		{
-			$this->failnet->deny();
-		}
-	}
-	
-	// Gets the ignore file (re)loads the ignore list.
-	public function load($sender = false)
-	{
-		if ($sender && $this->failnet->auth->authlevel($sender) > 9)
-		{
-			$this->ignore = explode(', ', file_get_contents('data/ignore_users')); 
-			$this->host_ignore = explode(', ', file_get_contents('data/ignore_hosts'));
-			$this->failnet->irc->privmsg('Reloaded ignore list.');
 		}
 		else
 		{

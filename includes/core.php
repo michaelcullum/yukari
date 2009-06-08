@@ -46,11 +46,130 @@ class failnet_core extends failnet_common
 	public $irc;
 	public $ignore;
 	public $log;
+	public $socket;
 	
+	public $debug = false;
+	public $speak = true;
+
+	// Server connection and config vars.
+	public $server = '';
+	public $port = 6667;
+
+	// Configs for Failnet's authorization and stuff.
+	public $owner = '';
+	public $nick = '';
+	public $pass = '';
+	public $user = 'Failnet';
+	public $name = 'Failnet';
+	
+	// DO NOT SET.
+	public $original = '';
+
+	// Currently loaded/joined channels, occupants for each channel, etc.
+	public $chans = array();
+	public $names = array();
+	public $log = array();
+
+	// Currently ignored users.
+	public $ignore = array();  // explode(', ', file_get_contents('data/ignore_users'));
+
+	// Authed users.
+	public $users = array();
+
+	// Modules list.
+	public $modules = array();
 	
 	public function __construct()
 	{
-		// ...
+		/**
+		 * Check to make sure the CLI SAPI is being used...
+		 */
+		if (strtolower(PHP_SAPI) != 'cli')
+		{
+			if(file_exists(FAILNET_ROOT . 'data/restart')) 
+				unlink(FAILNET_ROOT . 'data/restart');
+			display('Failnet must be run in the CLI SAPI');
+		    exit(1);
+		}
+		
+		/**
+		 * Check to see if date.timezone is empty in the PHP.ini, if so, set the default timezone to prevent strict errors.
+		 */
+		if (!ini_get('date.timezone')) 
+			date_default_timezone_set(date_default_timezone_get());
+		
+		// Set time limit!
+		set_time_limit(0);
+		
+		// Begin printing info to the terminal window with some general information about Failnet.
+		display(array(
+			failnet_common::HR,
+			'Failnet -- PHP-based IRC Bot version ' . FAILNET_VERSION . ' - $Revision$',
+			'Copyright: (c) 2009 - Obsidian',
+			'License: http://opensource.org/licenses/gpl-2.0.php',
+			failnet_common::HR,
+			'Failnet is starting up. Go get yourself a coffee.',
+		));
+		
+		display('- Loading dictionary (if file is present on OS)'); 
+			$dict = (@file_exists('/etc/dictionaries-common/words')) ? file('/etc/dictionaries-common/words') : array();
+		display('- Loading Failnet core information');
+			$this->modules[] = 'core';
+			$this->help['core'] = 'For help with the core system, please reference this site: http://www.assembla.com/wiki/show/failnet/';
+		
+		$classes = array(
+			'socket'	=> 'connection interface handler',
+			'irc'		=> 'IRC protocol handler',
+			'log'		=> 'event logging handler',
+			'error'		=> 'error handler',
+			'auth'		=> 'user authorization handler',
+			'ignore'	=> 'user/hostmask ignore handler',
+			'factoids'	=> 'factoid handler',
+		);
+		display('- Loading Failnet required classes');
+		foreach($classes as $class => $msg)
+		{
+			if(property_exists($class)
+			{
+				$this->$class = new $class();
+				display('=-= Loaded ' . $msg . ' class');
+			}
+		}
+		
+		// Load modules
+		$load = array(
+			'simple_html_dom',
+			'warfare',
+			'slashdot',
+			'xkcd',
+		/*
+			'alchemy',
+			'notes',
+		*/
+		);
+		display('- Loading modules');
+		foreach($load as $item)
+		{
+			if(include FAILNET_ROOT . 'modules' . DIRECTORY_SEPARATOR . $item . '.' . PHP_EXT)
+				display('=-= Loaded "' . $item . '" module');
+		}
+		
+		// This is a hack to allow us to restart Failnet if we're running the script through a batch file.
+		display('- Removing termination indicator file'); 
+		if(file_exists('data/restart'))
+			unlink('data/restart');
+		
+		display('- Loading configuration file for specified IRC server');
+			$this->load($_SERVER['argc'] > 1 ? $_SERVER['argv'][1] : 'config.' . PHP_EXT);
+		
+		display('Preparing to connect...'); sleep(1); // In case of restart/reload, to prevent 'Nick already in use' (which asplodes everything)
+		display(array('Failnet loaded and ready!', failnet_common::HR));
+	}
+	
+	public function load($file)
+	{
+		$settings = require $file;
+		
 	}
 }
 

@@ -87,6 +87,12 @@ class failnet_factoids extends failnet_common
 	protected $done = 0;
 	protected $return = false;
 	
+	public function init()
+	{
+		display('=---= Loading factoids database')
+		$this->load();
+	}
+	
 	// Method to (re)load the factoids DB.
 	public function load()
 	{

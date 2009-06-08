@@ -52,6 +52,8 @@ class failnet_irc extends failnet_common
 	 * See /README for details.
 	 */
 	
+	public function init() { }
+	
 	/**
 	 * Joins a channel.
 	 *

@@ -50,6 +50,12 @@ class failnet_auth extends failnet_common
 	public $hmask_find = array('\\',   '^',   '$',   '.',   '[',   ']',   '|',   '(',   ')',   '?',   '+',   '{',   '}');
 	public $hmask_repl = array('\\\\', '\\^', '\\$', '\\.', '\\[', '\\]', '\\|', '\\(', '\\)', '\\?', '\\+', '\\{', '\\}');
 	
+	public function init()
+	{
+		display('=---= Loading user database'); 
+			$this->load();
+	}
+	
 	/**
 	 * Parses a IRC hostmask and sets nick, user and host bits.
 	 *
