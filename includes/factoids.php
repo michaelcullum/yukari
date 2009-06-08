@@ -54,13 +54,17 @@ class failnet_factoids extends failnet_common
 	 * $factoids = array(
 	 * 		array(
 	 * 			'pattern'	=> '^fail$',
-	 * 			'function'	=> false,
+	 * 			'authlevel'	=> NULL,
+	 * 			'selfcheck'	=> false,
+	 * 			'function'	=> true,
 	 * 			'factoids'	=> array(
 	 * 				'haha',
 	 * 			),
 	 * 		),
 	 * 		array(
 	 * 			'pattern'	=> '^\\o\/$',
+	 * 			'authlevel'	=> NULL,
+	 * 			'selfcheck'	=> false,
 	 * 			'function'	=> true,
 	 * 			'factoids'	=> array(
 	 * 				'$this->privmsg(' |'); $this->privmsg('/ \\');'
@@ -110,13 +114,14 @@ class failnet_factoids extends failnet_common
 	public function merge($filename)
 	{
 		include FAILNET_ROOT . 'data/' . $filename . '.' .  PHP_EXT;
-		include FAILNET_ROOT . 'data/new_' . $filename . '.' . PHP_EXT;
+		$new_factoids = $this->parse_new_factoids($filename)
 		
 		foreach($factoids as $fact)
 		{
 			foreach($new_factoids as $fact_)
 			{
-				if($fact['pattern'] === $fact_['pattern'])
+				// If the factoid already exists, we won't overwrite the settings, just merge in the entries.
+				if($fact['pattern'] === $fact_['pattern']) 
 					$fact['factoids'] = array_merge($fact['factoids'], $fact_['factoids']);
 			}
 			$facts = $fact[];
@@ -128,7 +133,135 @@ class failnet_factoids extends failnet_common
 		$file .= PHP_EOL . PHP_EOL . '// Here be dragons.' . PHP_EOL;
 		$file .= '$factoids = ' . var_export($facts) . ';' . PHP_EOL . PHP_EOL . '?' . '>';
 		file_put_contents(FAILNET_ROOT . 'data/' . $filename . '.' . PHP_EXT, $file, LOCK_EX);
-		unlink(FAILNET_ROOT . 'data/new_' . $filename . '.' . PHP_EXT);
+		unlink(FAILNET_ROOT . 'data/new_' . $filename);
+	}
+	
+	/**
+	 * Parses the new factoids file and returns what the new factoids are.
+	 */
+	public function parse_new_factoids($filename)
+	{
+		$data = file(FAILNET_ROOT . 'data/new_' . $filename);
+		for ($i = 0; $i < sizeof($data); $i++)
+		{
+			$fact_ = explode('::', $data[$i]);
+			$return[$i]['pattern'] = (string) array_shift($fact_);
+			$authlevel = array_shift($fact_);
+			$return[$i]['authlevel'] = ($authlevel != 'null') ? (int) $authlevel : NULL;
+			$return[$i]['selfcheck'] = (bool) array_shift($fact_);
+			$return[$i]['function'] = (bool) array_shift($fact_);;
+			$return[$i]['factoids'] = (array) $fact_;
+		}
+		return $return;
+	}
+	
+	/**
+	 * Adds a factoid to the new factoids file. :D
+	 */
+	public function add_factoid($type, $pattern, array $factoids, $authlevel = false, $selfcheck = false, $function = false)
+	{
+		$data = file(FAILNET_ROOT . 'data/new_' . $type);
+		$found = false;
+		foreach ($data as $key => $fact)
+		{
+			$fact_ = explode('::', $fact);
+			if($fact_[0] === $pattern)
+			{
+				// Just add factoids, ignore the settings.
+				$fact_ = array_merge($fact_, $factoids);
+				$data[$key] = implode('::', $fact_)
+				$found = true;
+				break;
+			}
+		}
+		if(!$found)
+		{
+			$authlevel = ($authlevel != false) ? $authlevel : 'null';
+			$data[] = $pattern . '::' . $authlevel . '::' . (($selfcheck) ? 1 : 0) . '::' . (($function) ? 1 : 0) . '::' implode('::', $factoids);
+		}
+		
+		$this->add_live_factoid($type, $pattern, $factoids, $authlevel, $selfcheck, $function);
+		return file_put_contents(FAILNET_ROOT . 'data/new_' . $type, $data, LOCK_EX);
+	}
+	
+	/**
+	 * Add factoids on the fly.
+	 */
+	public function add_live_factoid($type, $pattern, array $factoids, $authlevel = false, $selfcheck = false, $function = false)
+	{
+		$f_found = $c_found = $my_found = false;
+		switch ($type)
+		{
+			case 'factoids':
+				foreach($this->factoids as $key => $fact)
+				{
+					if($fact['pattern'] !== $pattern)
+					{
+						continue;
+					}
+					$this->factoids[$key]['factoids'] = array_merge($this->factoids[$key]['factoids'], $factoids);
+					$f_found = true;
+				}
+				foreach($this->commands as $key => $fact)
+				{
+					if($fact['pattern'] !== $pattern)
+					{
+						continue;
+					}
+					$this->commands[$key]['factoids'] = array_merge($this->commands[$key]['factoids'], $factoids);
+					$c_found = true;
+				}
+				foreach($this->my_factoids as $key => $fact)
+				{
+					if($fact['pattern'] !== $pattern)
+					{
+						continue;
+					}
+					$this->my_factoids[$key]['factoids'] = array_merge($this->my_factoids[$key]['factoids'], $factoids);
+					$my_found = true;
+				}
+			break;
+			case 'commands':
+				foreach($this->commands as $key => $fact)
+				{
+					if($fact['pattern'] !== $pattern)
+					{
+						continue;
+					}
+					$this->commands[$key]['factoids'] = array_merge($this->commands[$key]['factoids'], $factoids);
+					$c_found = true;
+				}
+			break;
+			case 'my_factoids':
+				foreach($this->my_factoids as $key => $fact)
+				{
+					if($fact['pattern'] !== $pattern)
+					{
+						continue;
+					}
+					$this->my_factoids[$key]['factoids'] = array_merge($this->my_factoids[$key]['factoids'], $factoids);
+					$my_found = true;
+				}
+			break;
+		}
+		if(!$f_found || !$c_found || !$my_found)
+		{
+			// Okay, didn't find one matching, so let's make one.
+			$fact_array = array(
+				'pattern'	=> (string) $pattern,
+				'authlevel'	=> ($authlevel) ? (int) $authlevel : NULL,
+				'selfcheck'	=> (bool) $selfcheck,
+				'function'	=> (bool) $function,
+				'factoids'	=> (array) $factoids,
+			);
+			// Okay, didn't find one matching, so let's make one.
+			if(!$f_found && $type == 'factoids')
+				$this->factoids[] = $fact_array;
+			if(!$c_found && ($type == 'factoids' || $type == 'commands'))
+				$this->commands[] = $fact_array;
+			if(!$my_found && ($type == 'factoids' || $type == 'my_factoids'))
+				$this->my_factoids[] = $fact_array;
+		}
 	}
 	
 	/**
