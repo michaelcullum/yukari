@@ -38,8 +38,9 @@ define('IN_FAILNET', true);
 define('FAILNET_VERSION', '2.0.0'); 
 define('FAILNET_ROOT', realpath('.') . DIRECTORY_SEPARATOR);
 define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
-set_include_path(get_include_path() . PATH_SEPARATOR . FAILNET_ROOT);
 
+
+//@TODO MOVE THIS SHIZ TO THE CORE
 /**
  * Check to make sure the CLI SAPI is being used...
  */
@@ -56,7 +57,20 @@ if (strtolower(PHP_SAPI) != 'cli')
  */
 if (!ini_get('date.timezone')) 
 	date_default_timezone_set(date_default_timezone_get());
+
+// Load autoloader and set everything up with it...
+require(FAILNET_ROOT . 'autoload.' . PHP_EXT);
+require(FAILNET_ROOT . 'includes/functions.' . PHP_EXT);
+failnet_autoload::register();
+
+
+// Set time limit!
 set_time_limit(0);
+
+// Load the core!
+$failnet = new failnet_core();
+
+//@TODO MOVE THIS SHIZ TO THE CORE
 
 // Begin printing info to the terminal window with some general information about Failnet.
 display(array(
@@ -68,21 +82,10 @@ display(array(
 	'Failnet is starting up. Go get yourself a coffee.',
 ));
 
-require(FAILNET_ROOT . 'includes/bootstrap.' . PHP_EXT);
-
-// Set error handler
 display('- Loading error handler'); @set_error_handler('fail_handler');
-
-// Loading some DBs now, initializing some vars
-$actions = array_flip(file('data/actions'));
-
-// Load dictionary file - This fails on Windows systems.
 display('- Loading dictionary (if file is present on OS)'); 
 	$dict = (@file_exists('/etc/dictionaries-common/words')) ? file('/etc/dictionaries-common/words') : array();
-
 display('- Loading Failnet core information');
-
-// Adding the core to the modules list and loading help file
 $failnet->modules[] = 'core';
 $help['core'] = 'For help with the core system, please reference this site: http://www.assembla.com/wiki/show/failnet/';
 
@@ -108,12 +111,13 @@ display('- Removing termination indicator file');
 if(file_exists('data/restart'))
 	unlink('data/restart');
 
-display('- Loading configuration file for specified IRC server'); $failnet->load($_SERVER['argv'][1]);
+display('- Loading configuration file for specified IRC server');
+	$failnet->load($_SERVER['argc'] > 1 ? $_SERVER['argv'][1] : 'config.php');
 	
 display('- Loading user database'); 
 	$failnet->loaduserdb();
 
-//@TODO: Move the ingore users list and user DB loading to the main load function.
+// @TODO: Move the ingore users list and user DB loading to the main load function.
 display('- Loading ignored users/hostmasks list');
 	$failnet->ignore->load();
 
@@ -121,5 +125,4 @@ display('Preparing to connect...'); sleep(1); // In case of restart/reload, to p
 display(array('Failnet loaded and ready!', 'Connecting to server...'));
 
 $failnet->run();
-
 ?>

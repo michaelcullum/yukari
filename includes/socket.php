@@ -45,7 +45,7 @@ if(!defined('IN_FAILNET')) return;
  * @copyright (c) 2009 - Obsidian
  * @license http://opensource.org/licenses/gpl-2.0.php | GNU Public License v2
  */
-class failnet_connect extends failnet_common
+class failnet_socket extends failnet_common
 {
 	/**
 	 * Some methods here (actually, quite a few) borrowed from Phergie.
@@ -180,9 +180,9 @@ class failnet_connect extends failnet_common
 		if (ctype_digit($cmd))
 		{
 			$event = new failnet_event_response;
-			$event->setCode($cmd);
-			$event->setDescription($args);
-			$event->setRawBuffer($buffer);
+			$event->code = strtolower($cmd);
+			$event->description = $args;
+			$event->buffer = $buffer;
 		}
 		else
 		{

@@ -35,23 +35,48 @@
  */
 if(!defined('IN_FAILNET')) return;
 
-class failnet_core extends failnet_common
+
+/**
+ * Failnet - Class autoloader
+ * 
+ * 
+ * @author Obsidian
+ * @copyright (c) 2009 - Obsidian
+ * @license http://opensource.org/licenses/gpl-2.0.php | GNU Public License v2
+ */
+class failnet_autoload
 {
 	/**
-	 * Object vars for Failnet's use
+	 * Constructor to add the base path to the include_path.
 	 */
-	public $auth;
-	public $error;
-	public $factoids;
-	public $irc;
-	public $ignore;
-	public $log;
-	
-	
 	public function __construct()
 	{
-		// ...
+		$path = dirname(__FILE__);
+		$includePath = get_include_path();
+		$includePathList = explode(PATH_SEPARATOR, $includePath); 
+		if (!in_array($path, $includePathList))
+			set_include_path($includePath . PATH_SEPARATOR . $path);
+	}
+
+	/**
+	 * Autoload callback for loading class files.
+	 *
+	 * @param string $class Class to load
+	 * @return void
+	 */
+	public function load($class)
+	{
+		$class = substr(strstr($class, '_'), 1));
+		include 'includes' . DIRECTORY_SEPARATOR . str_replace('_', DIRECTORY_SEPARATOR, $class) . '.' . PHP_EXT;
+	}
+
+	/**
+	 * Registers an instance of this class as an autoloader.
+	 *
+	 * @return void
+	 */
+	public static function register()
+	{
+		spl_autoload_register(array(new self, 'load'));
 	}
 }
-
-?>

@@ -35,7 +35,7 @@
  */
 if(!defined('IN_FAILNET')) return;
 
-// Display a message...this is here to shrink the code and allow the right NL to always be used.
+// Display a message...this is here to shrink the code.
 function display($msg)
 {
 	if(is_array($msg))

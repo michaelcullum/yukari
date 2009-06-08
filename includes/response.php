@@ -875,86 +875,20 @@ class failnet_event_response extends failnet_common
 	 *
 	 * @var string
 	 */
-	protected $_code;
+	public $code;
 
 	/**
 	 * Reply code description sent by the server.
 	 *
 	 * @var string
 	 */
-	protected $_description;
+	public $description;
 
 	/**
 	 * The raw buffer that was sent by the server
 	 *
 	 * @var string
 	 */
-	protected $_rawBuffer;
-
-	/**
-	 * Sets the reply code sent by the server.
-	 *
-	 * @param string $code
-	 * @return Phergie_Event_Response Provides a fluent interface
-	 */
-	public function setCode($code)
-	{
-		$this->_code = $code;
-		return $this;
-	}
-
-	/**
-	 * Returns the reply code sent by the server.
-	 *
-	 * @return string
-	 */
-	public function getCode()
-	{
-		return $this->_code;
-	}
-
-	/**
-	 * Sets the reply code description sent by the server.
-	 *
-	 * @param string $description
-	 * @return Phergie_Event_Response Provides a fluent interface
-	 */
-	public function setDescription($description)
-	{
-		$this->_description = $description;
-		return $this;
-	}
-
-	/**
-	 * Returns the reply code description sent by the server.
-	 *
-	 * @return string
-	 */
-	public function getDescription()
-	{
-		return $this->_description;
-	}
-
-	/**
-	 * Sets the raw buffer for the given event
-	 *
-	 * @param string $buffer
-	 * @return Phergie_Event_Response Provides a fluent interface
-	 */
-	public function setRawBuffer($buffer)
-	{
-		$this->_rawBuffer = $buffer;
-		return $this;
-	}
-
-	/**
-	 * Returns the raw buffer that was sent from the server for that event
-	 *
-	 * @return string
-	 */
-	public function getRawBuffer()
-	{
-		return $this->_rawBuffer;
-	}
+	public $buffer;
 }
 ?>

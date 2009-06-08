@@ -43,6 +43,8 @@ if(!defined('IN_FAILNET')) return;
  * @author Obsidian
  * @copyright (c) 2009 - Obsidian
  * @license http://opensource.org/licenses/gpl-2.0.php | GNU Public License v2
+ * 
+ * @see http://www.irchelp.org/irchelp/rfc/chapter4.html
  */
 class failnet_event_request extends failnet_common implements ArrayAccess
 {
@@ -169,6 +171,16 @@ class failnet_event_request extends failnet_common implements ArrayAccess
 	 * @var string
 	 */
 	public $buffer;
+	
+	/**
+	 * Returns the hostmask for the originating server or user.
+	 *
+	 * @return string
+	 */
+	public function getHostmask()
+	{
+		return $this->nick . '!' . $this->username . '@' . $this->host;
+	}
 
 	/**
 	 * Returns the channel name or user nick representing the source of the
