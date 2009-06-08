@@ -12,7 +12,11 @@
  * License:		http://opensource.org/licenses/gpl-2.0.php  |  GNU Public License v2
  *
  *===================================================================
- *
+ * 
+ * @TODO: Removing factoids...
+ * @TODO: Removing factoid entries...
+ * @TODO: Changing factoid settings...
+ * 
  */
 
 /**
@@ -51,6 +55,7 @@ class failnet_factoids extends failnet_common
 	/**
 	 * Factoid array structure...
 	 * 
+	 * <code>
 	 * $factoids = array(
 	 * 		array(
 	 * 			'pattern'	=> '^fail$',
@@ -71,16 +76,10 @@ class failnet_factoids extends failnet_common
 	 * 			),
 	 * 		),
 	 * );
-	 * 
-	 * @NOTE: Factoids MUST NOT be added through IRC with the function setting on, this should be modified within the file itself. 
-	 * 
-	 */
-	
-	/**
-	 * @todo: Use a giant array for the data, and subarrays for each entry.  
-	 * 			Special settings in one entry, a subarray of responses in another...etc...
+	 * </code>
 	 * 
 	 */
+
 	public $factoids = array();
 	public $commands = array();
 	public $my_factoids = array();
@@ -122,7 +121,12 @@ class failnet_factoids extends failnet_common
 			{
 				// If the factoid already exists, we won't overwrite the settings, just merge in the entries.
 				if($fact['pattern'] === $fact_['pattern']) 
-					$fact['factoids'] = array_merge($fact['factoids'], $fact_['factoids']);
+				{
+					$fact['authlevel'] = $fact_['authlevel'];
+					$fact['selfcheck'] = (bool) $fact_['selfcheck'];
+					$fact['function'] = (bool) $fact_['function']; 
+					$fact['factoids'] = (array) array_merge($fact['factoids'], $fact_['factoids']);
+				}
 			}
 			$facts = $fact[];
 		}
@@ -272,6 +276,17 @@ class failnet_factoids extends failnet_common
 		$this->done = 0;
 		$this->return = false;
 		$tocheck = rtrim($tocheck);
+		if (preg_match('/^' . $this->failnet->nick . '/i', $tocheck))
+		{
+			$forme = true;
+			$command = false;
+			$tocheck = preg_replace('/^' . $this->failnet->nick . '(|:|,) /i', '', $tocheck);
+		}
+		else
+		{
+			$forme = false;
+			$command = (preg_match('/^\|/', $tocheck)) ? true : false;
+		}
 		
 		// Which factoid set will we use?
 		if ($forme)
@@ -289,7 +304,7 @@ class failnet_factoids extends failnet_common
 		
 		// Prep the search/replace stuffs.
 		$search = array('_nick_', '_owner_');
-		$replace = array($this->nick, $this->owner);
+		$replace = array($this->failnet->nick, $this->failnet->owner);
 		if ($sender != '[unknown]')
 		{
 			$search[] = '_sender_'; $replace[] = $sender;
