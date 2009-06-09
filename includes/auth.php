@@ -47,6 +47,8 @@ if(!defined('IN_FAILNET')) return;
  */
 class failnet_auth extends failnet_common
 {
+	// Authed users.
+	public $users = array();
 	public $hmask_find = array('\\',   '^',   '$',   '.',   '[',   ']',   '|',   '(',   ')',   '?',   '+',   '{',   '}');
 	public $hmask_repl = array('\\\\', '\\^', '\\$', '\\.', '\\[', '\\]', '\\|', '\\(', '\\)', '\\?', '\\+', '\\{', '\\}');
 	

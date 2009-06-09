@@ -48,6 +48,7 @@ if(!defined('IN_FAILNET')) return;
  */
 class failnet_event_request extends failnet_common implements ArrayAccess
 {
+	public function init() { }
 
 	/**
 	 * Event types

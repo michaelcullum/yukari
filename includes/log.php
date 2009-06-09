@@ -56,7 +56,7 @@ class failnet_logs extends failnet_common
 	{
 		if(preg_match('/^IDENTIFY (.*)/i', $log)) $log = 'IDENTIFY ***removed***';
 		$log = (preg_match('/' . PHP_EOL . '(| )$/i', $log)) ? substr($log, 0, strlen($log) - 1) : $log;
-		$log = preg_replace('/^' . self::X01 . 'ACTION (.+)' . self::X01 . '$/', '*'. $who . ' $1' . '*', $log);
+		$log = preg_replace('/^' . chr(1) . 'ACTION (.+)' . chr(1) . '$/', '*'. $who . ' $1' . '*', $log);
 		$this->add(time(), date('D m/d/Y - h:i:s A') . ' - <' . $who . (($where) ? '/' . $where : false) . '> ' . $log);
 	}
 	
@@ -64,7 +64,7 @@ class failnet_logs extends failnet_common
 	public function add($time, $msg, $dump = false)
 	{
 		$this->log[] = $msg;
-		if($dump == true || sizeof($this->log) > 10)
+		if($dump === true || sizeof($this->log) > 10)
 		{
 			$log_msg = '';
 			$log_msg = PHP_EOL . implode(PHP_EOL, $this->log);
@@ -76,13 +76,13 @@ class failnet_logs extends failnet_common
 	// Directly add an entry to the logs.  Useful for if we want to write to the error logs. ;)
 	public function write($type, $time, $msg)
 	{
-		return file_put_contents('logs/' . $type . '_log_' . date('m-d-Y', $time) . '.log', $msg, FILE_APPEND | LOCK_EX);
+		return file_put_contents(FAILNET_ROOT . 'logs/' . $type . '_log_' . date('m-d-Y', $time) . '.log', $msg, FILE_APPEND | LOCK_EX);
 	}
 	
 	// Nuke the log file!
 	public function wipe($type, $time)
 	{
-		return unlink('logs/' . $type . '_log_' . date('m-d-Y', $time) . '.log');
+		return unlink(FAILNET_ROOT . 'logs/' . $type . '_log_' . date('m-d-Y', $time) . '.log');
 	}
 }
 

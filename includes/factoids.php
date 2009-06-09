@@ -139,7 +139,7 @@ class failnet_factoids extends failnet_common
 		
 		$file = '';
 		$file .= '<' . '?php' . PHP_EOL;
-		$file .= '/**' . PHP_EOL . ' * Failnet - Factoid Database File' . PHP_EOL . ' * Last modified: ' . date('D m/d/Y - h:i:s A') . PHP_EOL;
+		$file .= '/**' . PHP_EOL . ' * Failnet - Factoid Database File' . PHP_EOL . ' * Last modified: ' . date('D m/d/Y - h:i:s A') . PHP_EOL . ' */' . PHP_EOL;
 		$file .= PHP_EOL . PHP_EOL . '// Here be dragons.' . PHP_EOL;
 		$file .= '$factoids = ' . var_export($facts) . ';' . PHP_EOL . PHP_EOL . '?' . '>';
 		file_put_contents(FAILNET_ROOT . 'data/' . $filename . '.' . PHP_EXT, $file, LOCK_EX);

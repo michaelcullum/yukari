@@ -48,7 +48,9 @@ class failnet_core extends failnet_common
 	public $log;
 	public $socket;
 	
+	// Failnet settings and stuff.
 	public $debug = false;
+	public $warlord = false;
 	public $speak = true;
 
 	// Server connection and config vars.
@@ -62,24 +64,17 @@ class failnet_core extends failnet_common
 	public $user = 'Failnet';
 	public $name = 'Failnet';
 	
-	// DO NOT SET.
+	// DO NOT CHANGE.
 	public $original = '';
-
-	// Currently loaded/joined channels, occupants for each channel, etc.
-	public $chans = array();
-	public $names = array();
-	public $log = array();
-
-	// Currently ignored users.
-	public $ignore = array();  // explode(', ', file_get_contents('data/ignore_users'));
-
-	// Authed users.
-	public $users = array();
+	
+	// What channels are we moderating?
+	public $war_chans = array(); 
 
 	// Modules list.
 	public $modules = array();
+	public $help = array();
 	
-	public function __construct()
+	public function init()
 	{
 		/**
 		 * Check to make sure the CLI SAPI is being used...
@@ -168,7 +163,7 @@ class failnet_core extends failnet_common
 	
 	public function load($file)
 	{
-		$settings = require $file;
+		$settings = require 'data' . DIRECTORY_SEPERATOR . $file;
 		
 	}
 }
