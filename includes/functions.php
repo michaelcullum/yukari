@@ -58,7 +58,6 @@ function display($msg)
 	}
 }
 
-// This is a shell for the error handler class built into Failnet.
 /**
  * Shell for Failnet's built-in error handler class.
  * 
