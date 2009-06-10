@@ -226,7 +226,7 @@ class failnet_event_request extends failnet_common implements ArrayAccess
 	 *
 	 * @param mixed $argument Integer position (starting from 0) or the
 	 *        equivalent string name of the argument from self::$_map
-	 * @return int|null Integer position of the argument or NULL if no 
+	 * @return int|NULL Integer position of the argument or NULL if no 
 	 *         corresponding argument was found
 	 */
 	private function resolve_arg($argument)

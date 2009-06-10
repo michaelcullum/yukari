@@ -88,18 +88,18 @@ class failnet_socket extends failnet_common
 	/**
 	 * Listens for an event on the current connection.
 	 *
-	 * @return failnet_event_(response|request)|null - Event instance if an event was 
+	 * @return failnet_event_(response|request)|NULL - Event instance if an event was 
 	 *         received, NULL otherwise
 	 */
 	public function get()
 	{
 		// Check for a new event on the current connection
-		$buffer = fgets($this->_socket, 512);
+		$buffer = fgets($this->socket, 512);
 
 		// If no new event was found, return NULL
 		if (empty($buffer))
 		{
-			return null;
+			return NULL;
 		}
 
 		// Strip the trailing newline from the buffer
@@ -113,16 +113,16 @@ class failnet_socket extends failnet_common
 		if (substr($buffer, 0, 1) == ':')
 		{
 			// Parse the user hostmask, command, and arguments
-			list($prefix, $cmd, $args) = array_pad(explode(' ', ltrim($buffer, ':'), 3), 3, null);
+			list($prefix, $cmd, $args) = array_pad(explode(' ', ltrim($buffer, ':'), 3), 3, NULL);
 			preg_match('/^([^!@]+)!(?:[ni]=)?([^@]+)@([^ ]+)/', $prefix, $match);
-			list(, $nick, $user, $host) = array_pad($match, 4, null);
+			list(, $nick, $user, $host) = array_pad($match, 4, NULL);
 
 		
 		}
 		else // If the event is from the server...
 		{
 			// Parse the command and arguments
-			list($cmd, $args) = array_pad(explode(' ', $buffer, 2), 2, null);
+			list($cmd, $args) = array_pad(explode(' ', $buffer, 2), 2, NULL);
 		}
 
 		// Parse the event arguments depending on the event type
@@ -143,7 +143,7 @@ class failnet_socket extends failnet_common
 				if (substr($ctcp, 0, 1) === chr(1) && substr($ctcp, -1) === chr(1)) {
 					$ctcp = substr($ctcp, 1, -1);
 					$reply = ($cmd == 'notice');
-					list($cmd, $args) = array_pad(explode(' ', $ctcp, 2), 2, null);
+					list($cmd, $args) = array_pad(explode(' ', $ctcp, 2), 2, NULL);
 					$cmd = strtolower($cmd);
 					switch ($cmd) {
 						case 'version':

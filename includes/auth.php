@@ -73,7 +73,7 @@ class failnet_auth extends failnet_common
 	{
 		if (preg_match('/^([^!@]+)!([^@]+)@(.*)$/', $hostmask, $match) > 0)
 		{
-			list(, $nick, $user, $host) = array_pad($match, 4, null);
+			list(, $nick, $user, $host) = array_pad($match, 4, NULL);
 		}
 		else
 		{

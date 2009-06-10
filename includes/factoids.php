@@ -157,7 +157,7 @@ class failnet_factoids extends failnet_common
 			$fact_ = explode('::', $data[$i]);
 			$return[$i]['pattern'] = (string) array_shift($fact_);
 			$authlevel = array_shift($fact_);
-			$return[$i]['authlevel'] = ($authlevel != 'null') ? (int) $authlevel : NULL;
+			$return[$i]['authlevel'] = ($authlevel != 'NULL') ? (int) $authlevel : NULL;
 			$return[$i]['selfcheck'] = (bool) array_shift($fact_);
 			$return[$i]['function'] = (bool) array_shift($fact_);;
 			$return[$i]['factoids'] = (array) $fact_;
@@ -186,7 +186,7 @@ class failnet_factoids extends failnet_common
 		}
 		if(!$found)
 		{
-			$authlevel = ($authlevel != false) ? $authlevel : 'null';
+			$authlevel = ($authlevel != false) ? $authlevel : 'NULL';
 			$data[] = $pattern . '::' . $authlevel . '::' . (($selfcheck) ? 1 : 0) . '::' . (($function) ? 1 : 0) . '::' implode('::', $factoids);
 		}
 		
