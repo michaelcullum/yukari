@@ -151,11 +151,11 @@ class failnet_core extends failnet_common
 		
 		// This is a hack to allow us to restart Failnet if we're running the script through a batch file.
 		display('- Removing termination indicator file'); 
-		if(file_exists('data/restart'))
-			unlink('data/restart');
+		if(file_exists(FAILNET_ROOT . 'data/restart')) 
+			unlink(FAILNET_ROOT . 'data/restart');
 		
 		display('- Loading configuration file for specified IRC server');
-			$this->load($_SERVER['argc'] > 1 ? $_SERVER['argv'][1] : 'config.' . PHP_EXT);
+			$this->load($_SERVER['argc'] > 1 ? $_SERVER['argv'][1] : 'config');
 		
 		display('Preparing to connect...'); sleep(1); // In case of restart/reload, to prevent 'Nick already in use' (which asplodes everything)
 		display(array('Failnet loaded and ready!', failnet_common::HR));
@@ -163,8 +163,40 @@ class failnet_core extends failnet_common
 	
 	public function load($file)
 	{
-		$settings = require 'data' . DIRECTORY_SEPERATOR . $file;
-		
+		if(!file_exists(FAILNET_ROOT . $file . '.' . PHP_EXT) || !is_readable(FAILNET_ROOT . $file . '.' . PHP_EXT))
+			$this->error->error('Required Failnet configuration file [' . $file . '.' . PHP_EXT . '] not found', true);
+		$settings = require FAILNET_ROOT . $file . '.' . PHP_EXT;
+	}
+	
+	public function run()
+	{
+		// @todo: WRITE THIS BEAST.
+	}
+	
+	// Terminates Failnet, and restarts if ordered to.
+	public function terminate($restart = true)
+	{
+		if($this->socket->socket !== NULL)
+			$this->socket->quit('Failnet PHP IRC Bot');
+		if($restart)
+		{
+			// Just a hack to get it to restart through batch, and not terminate.
+			file_put_contents('data/restart', 'yesh');
+			// Dump the log cache to the file.
+			$this->log->add('--- Restarting Failnet ---', true);
+			display('-!- Restarting Failnet');
+			exit(0);
+		}
+		else
+		{
+			// Just a hack to get it to truly terminate through batch, and not restart.
+			if(file_exists(FAILNET_ROOT . 'data/restart')) 
+				unlink(FAILNET_ROOT . 'data/restart');
+			// Dump the log cache to the file.
+			$this->log->add('--- Terminating Failnet ---', true);
+			display('-!- Terminating Failnet');
+			exit(1);
+		}
 	}
 }
 

@@ -53,7 +53,7 @@ class failnet_socket extends failnet_common
 	 */
 	
 	private $delay = 50000;
-	private $socket;
+	private $socket = NULL;
 	
 	public function init() { }
 	
@@ -267,6 +267,8 @@ class failnet_socket extends failnet_common
 	{
 		// Send a QUIT command to the server
 		$this->send('QUIT', $reason);
+		display('-!- Quitting from server "' . $this->failnet->server . '"');
+		$this->log->add('--- Quitting from server "' . $this->failnet->server . '" ---');
 
 		// Terminate the socket connection
 		fclose($this->socket);

@@ -49,7 +49,7 @@ class failnet_error extends failnet_common
 {
 	public function init()
 	{
-		display('=---= Setting main error handler');
+		display('=== Setting main error handler');
 			@set_error_handler('fail_handler');
 	}
 

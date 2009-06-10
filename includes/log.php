@@ -67,7 +67,7 @@ class failnet_logs extends failnet_common
 		if($dump === true || sizeof($this->log) > 10)
 		{
 			$log_msg = '';
-			$log_msg = PHP_EOL . implode(PHP_EOL, $this->log);
+			$log_msg = implode(PHP_EOL, $this->log). PHP_EOL;
 			$this->log = array();
 			$this->write(self::USER_LOG, $time, $log_msg);
 		}

@@ -89,7 +89,7 @@ class failnet_factoids extends failnet_common
 	
 	public function init()
 	{
-		display('=---= Loading factoids database')
+		display('=== Loading factoids database')
 		$this->load();
 	}
 	

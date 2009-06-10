@@ -35,15 +35,20 @@
  */
 if(!defined('IN_FAILNET')) return;
 
-// Display a message...this is here to shrink the code.
+/**
+ * Echos a message, and cleans out any extra NL's after the message.
+ * Also will echo an array of messages properly as well.
+ * 
+ * @param mixed $msg - The message or messages we want to echo to the terminal. 
+ */
 function display($msg)
 {
 	if(is_array($msg))
 	{
 		foreach($msg => $line)
 		{
-			$msg = (preg_match('/' . PHP_EOL . '(| )$/i', $msg)) ? substr($msg, 0, strlen($msg) - 1) : $msg;
-			echo $msg . PHP_EOL;			
+			$line = (preg_match('/' . PHP_EOL . '(| )$/i', $line)) ? substr($line, 0, strlen($line) - 1) : $line;
+			echo $line . PHP_EOL;		
 		}
 	}
 	else
@@ -53,7 +58,15 @@ function display($msg)
 	}
 }
 
-// This is a shell for the error handler class built into Failnet. 
+// This is a shell for the error handler class built into Failnet.
+/**
+ * Shell for Failnet's built-in error handler class.
+ * 
+ * @param $errno
+ * @param $msg_text
+ * @param $errfile
+ * @param $errline
+ */
 function fail_handler($errno, $msg_text, $errfile, $errline)
 {
 	global $failnet;
@@ -64,6 +77,10 @@ function fail_handler($errno, $msg_text, $errfile, $errline)
 * Return formatted string for filesizes
 * 
 * @author (c) 2007 phpBB Group 
+* 
+* @param integer $bytes - The number of bytes to convert.
+* 
+* @return string - The filesize converted into KiB, MiB, or GiB.
 */
 function get_formatted_filesize($bytes)
 {

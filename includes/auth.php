@@ -54,7 +54,7 @@ class failnet_auth extends failnet_common
 	
 	public function init()
 	{
-		display('=---= Loading user database'); 
+		display('=== Loading user database'); 
 			$this->load();
 	}
 	

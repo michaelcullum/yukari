@@ -54,7 +54,7 @@ class failnet_ignore extends failnet_common
 	
 	public function init()
 	{
-		display('=---= Loading ignored users/hostmasks list');
+		display('=== Loading ignored users/hostmasks list');
 			$this->load();
 	}
 	

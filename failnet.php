@@ -40,8 +40,8 @@ define('FAILNET_ROOT', realpath('.') . DIRECTORY_SEPARATOR);
 define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
 
 // Load autoloader and set everything up with it...
-require(FAILNET_ROOT . 'autoload.' . PHP_EXT);
-require(FAILNET_ROOT . 'includes/functions.' . PHP_EXT);
+require FAILNET_ROOT . 'autoload.' . PHP_EXT;
+require FAILNET_ROOT . 'includes/functions.' . PHP_EXT;
 failnet_autoload::register();
 
 // Load the core!
