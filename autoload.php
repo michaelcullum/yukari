@@ -47,16 +47,9 @@ if(!defined('IN_FAILNET')) return;
 class failnet_autoload
 {
 	/**
-	 * Constructor to add the base path to the include_path.
+	 * Constructor
 	 */
-	public function __construct()
-	{
-		$path = dirname(__FILE__);
-		$includePath = get_include_path();
-		$includePathList = explode(PATH_SEPARATOR, $includePath); 
-		if (!in_array($path, $includePathList))
-			set_include_path($includePath . PATH_SEPARATOR . $path);
-	}
+	public function __construct() { }
 
 	/**
 	 * Autoload callback for loading class files.
@@ -67,7 +60,7 @@ class failnet_autoload
 	public function load($class)
 	{
 		$class = substr(strstr($class, '_'), 1));
-		include 'includes' . DIRECTORY_SEPARATOR . str_replace('_', DIRECTORY_SEPARATOR, $class) . '.' . PHP_EXT;
+		include FAILNET_ROOT . 'includes' . DIRECTORY_SEPARATOR . str_replace('_', DIRECTORY_SEPARATOR, $class) . '.' . PHP_EXT;
 	}
 
 	/**
@@ -80,3 +73,5 @@ class failnet_autoload
 		spl_autoload_register(array(new self, 'load'));
 	}
 }
+
+?>
