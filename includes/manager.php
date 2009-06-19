@@ -53,7 +53,8 @@ class failnet_manager extends failnet_common
 		if(!in_array($plugin, $plugins_loaded))
 		{
 			$plugins_loaded[] = $plugin;
-			$this->failnet->plugins[] = new $plugin();
+			$plugin = 'failnet_plugin_' . $plugin;
+			$this->failnet->plugins[$plugin] = new $plugin($this->failnet);
 			return true;
 		}
 		return false; // No double-loading of plugins.

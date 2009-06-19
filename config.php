@@ -37,22 +37,52 @@ if(!defined('IN_FAILNET')) return;
 
 /**
  * Failnet Configuration File
+ * 
+ * Here be dragons!
  */
 
-// Here be dragons!
 return array(
+
+// Server settings
 	'server'		=> 'irc.freenode.net',
 	'port'			=> 6667,
 	'nick'			=> 'Failnet',
 	'user'			=> 'Failnet',
-	'user'			=> 'Failnet',
+	'name'			=> 'Failnet',
+
+// Plugins to automatically load on startup. 
+	'plugin_list'	=> array(
+		'nickserv',
+		'',
+		'',
+		'',
+	),
 
 // Nickserv identify password. ;)
 	'pass'			=> 'somepasswordhere',
+
+// Server password, if necessary.
 	'server_pass'	=> '',
+
+// The nick of the Bot's owner.
 	'owner'			=> 'Desdenova',
+
+// Should we be in debug mode?
 	'debug'			=> false,
 
+// Should the bot say anything or stay silent?
+	'speak'			=> true,
+
+// What is the nickname server bot? If there isn't, leave this as an empty string.
+	'nickbot'		=> 'nickserv',
+
+// Should the bot join a channel on invite?
+	'joininvite'	=> false, 
+
+// Should the bot autorejoin a channel on kick?
+	'autorejoin'	=> false,
+
+// List of alternate IRC nicknames to use
 	'altnicks'		=> array(
 		'Failnet_',
 		'Failnet__',
@@ -60,7 +90,7 @@ return array(
 		'Failnet--',
 		'Failnet-_',
 	),
-	
+
 // Standard messages for Failnet.
 	'intro_msg'			=> 'Let there be faiiiillll!',
 	'restart_msg'		=> 'ZOMG, BRB!',

@@ -13,8 +13,6 @@
  *
  *===================================================================
  * 
- * @todo: Plugin loader class, and integration for it.
- * 
  */
 
 /**
@@ -45,9 +43,8 @@ class failnet_core extends failnet_common
 	public $error;
 	public $irc;
 	public $log;
-	public $plugins;
 	public $manager;
-	public $loader;
+	public $plugins;
 	public $socket;
 	
 	// Failnet settings and stuff.
@@ -61,19 +58,21 @@ class failnet_core extends failnet_common
 	// Configs for Failnet's authorization and stuff.
 	public $owner = '';
 	public $nick = '';
-	public $altnicks = array();
 	public $pass = '';
-	public $server_pass = '';
-	public $user = '';
-	public $name = '';
-	
-	public $intro_msg = '';
-	public $restart_msg = '';
-	public $dai_msg = '';
-	public $quit_msg = '';
-	
-	
-	
+
+	public $settings = array();
+
+		/*  Moved to $this->settings
+		 * 
+			public $altnicks = array();
+			public $server_pass = '';
+			public $user = '';
+			public $name = '';
+			public $intro_msg = '';
+			public $restart_msg = '';
+			public $dai_msg = '';
+			public $quit_msg = '';
+		*/
 	
 		// @todo: MOVE THIS SHIZ TO PLUGINS!
 		public $auth; // Move to plugin
@@ -108,7 +107,9 @@ class failnet_core extends failnet_common
 		if (!ini_get('date.timezone')) 
 			date_default_timezone_set(date_default_timezone_get());
 		
-		// Begin printing info to the terminal window with some general information about Failnet.
+		/**
+		 *  Begin printing info to the terminal window with some general information about Failnet.
+		 */
 		display(array(
 			failnet_common::HR,
 			'Failnet -- PHP-based IRC Bot version ' . FAILNET_VERSION . ' - $Revision$',
@@ -118,11 +119,14 @@ class failnet_core extends failnet_common
 			'Failnet is starting up. Go get yourself a coffee.',
 		));
 		
+		display('- Loading configuration file for specified IRC server');
+		$this->load($_SERVER['argc'] > 1 ? $_SERVER['argv'][1] : 'config');
+		
 		display('- Loading dictionary (if file is present on OS)'); 
 		$dict = (@file_exists('/etc/dictionaries-common/words')) ? file('/etc/dictionaries-common/words') : array();
-		display('- Loading Failnet core information');
-		$this->modules[] = 'core';
-		$this->help['core'] = 'For help with the core system, please reference this site: http://www.assembla.com/wiki/show/failnet/';
+			display('- Loading Failnet core information');
+			$this->modules[] = 'core';
+			$this->help['core'] = 'For help with the core system, please reference this site: http://www.assembla.com/wiki/show/failnet/';
 		
 		$classes = array(
 			'socket'	=> 'connection interface handler',
@@ -135,17 +139,23 @@ class failnet_core extends failnet_common
 			'factoids'	=> 'factoid handler',
 		);
 		
-		// @todo: FINISH THIS.
-		//display('Loading Failnet plugins');
-		
 		display('- Loading Failnet required classes');
 		foreach($classes as $class => $msg)
 		{
 			if(property_exists($class)
 			{
-				$this->$class = new $class();
+				$this->$class = new $class($this);
 				display('=-= Loaded ' . $msg . ' class');
 			}
+		}
+		
+		// @todo: FINISH THIS.
+		display('Loading Failnet plugins');
+		$plugins = $this->get('plugin_list');
+		foreach($plugins as $plugin)
+		{
+			$this->manager->load($plugin);
+			display('=-= Loaded ' . $plugin . ' plugin');
 		}
 		
 			// @todo: MAKE THIS SHIZ PLUGINS.
@@ -172,9 +182,6 @@ class failnet_core extends failnet_common
 		if(file_exists(FAILNET_ROOT . 'data/restart')) 
 			unlink(FAILNET_ROOT . 'data/restart');
 		
-		display('- Loading configuration file for specified IRC server');
-		$this->load($_SERVER['argc'] > 1 ? $_SERVER['argv'][1] : 'config');
-		
 		display('Preparing to connect...'); sleep(1); // In case of restart/reload, to prevent 'Nick already in use' (which asplodes everything)
 		display(array('Failnet loaded and ready!', failnet_common::HR));
 	}
@@ -191,9 +198,25 @@ class failnet_core extends failnet_common
 		foreach($settings as $setting => $value)
 		{
 			if(property_exists($this, $setting))
+			{
 				$this->$setting = $value;
+			}
+			else
+			{
+				$this->settings[$setting] = $value;
+			}
 		}
 		// ...Is this it?  O_o
+	}
+	
+	/**
+	 * Get a setting from Failnet's configuration settings
+	 */
+	public function get($setting)
+	{
+		if(property_exists($this, $setting))
+			return $this->$setting;
+		return $this->settings[$setting];
 	}
 
 	/**
@@ -205,7 +228,7 @@ class failnet_core extends failnet_common
 		set_time_limit(0);
 
 		$this->socket->connect();
-		foreach ($this->plugins as $plugin)
+		foreach ($this->plugins as $name => $plugin)
 		{
 			$plugin->connect();
 		}
@@ -214,7 +237,7 @@ class failnet_core extends failnet_common
 		while(true)
 		{
 			$events = array();
-			foreach ($this->plugins as $plugin)
+			foreach ($this->plugins as $name => $plugin)
 			{
 				$plugin->tick();
 			}
@@ -233,7 +256,7 @@ class failnet_core extends failnet_common
 			}
 			
 			// For each plugin... 
-			foreach ($this->plugins as $plugin)
+			foreach ($this->plugins as $name => $plugin)
 			{
 				if ($event)
 				{
@@ -242,7 +265,7 @@ class failnet_core extends failnet_common
 					$plugin->$eventtype();
 					$plugin->post_event();
 					if($this->debug) 
-						display($eventype . ': ' . $plugin->name. ' ' . count($plugin->events);
+						display($eventype . ': ' . $name. ' ' . count($plugin->events);
 				}
 
 				$events = array_merge($events, $plugin->events;
@@ -253,11 +276,11 @@ class failnet_core extends failnet_common
 				continue;
 
 			//Execute pre-dispatch callback for plugin events 
-			foreach ($this->plugins as $plugin)
+			foreach ($this->plugins as $name => $plugin)
 			{
 				$plugin->preDispatch($events);
 				if($this->debug)
-					display('pre-dispatch: ' . $plugin->name. ' ' . count($events));
+					display('pre-dispatch: ' . $name. ' ' . count($events));
 			}
 			
 			$quit = NULL;
@@ -275,20 +298,20 @@ class failnet_core extends failnet_common
 				}
 			}
 
-			foreach ($this->plugins as $plugin)
+			foreach ($this->plugins as $name => $plugin)
 			{
 				if($this->debug)
-					display('post-dispatch: ' . $plugin->name);
+					display('post-dispatch: ' . $name);
 				$plugin->post_dispatch($events);
 			}
 
 			if ($quit)
 			{
 				call_user_func_array(array($this->socket, 'quit'), $quit->arguments());
-				foreach ($this->plugins as $plugin)
+				foreach ($this->plugins as $name => $plugin)
 				{
 					if($this->debug)
-						display('disconnect: ' . $plugin->name);
+						display('disconnect: ' . $name);
 					$plugin->disconnect();
 				}
 				break;
@@ -301,7 +324,7 @@ class failnet_core extends failnet_common
 	public function terminate($restart = true)
 	{
 		if($this->socket->socket !== NULL)
-			$this->socket->quit($this->quit_msg);
+			$this->socket->quit($this->get('quit_msg'));
 		if($restart)
 		{
 			// Just a hack to get it to restart through batch, and not terminate.
