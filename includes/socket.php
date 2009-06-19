@@ -76,8 +76,8 @@ class failnet_socket extends failnet_common
 		@stream_set_timeout($this->socket, $this->delay);
 
 		// Send the password if one is specified
-		if (!empty($this->server_password))
-			$this->send('PASS', $this->server_password);
+		if (!empty($this->failnet->server_pass))
+			$this->send('PASS', $this->failnet->server_pass);
 
 		// Send user information
 		$this->send('USER', array($this->user, $this->server, $this->server, $this->name));
@@ -152,7 +152,7 @@ class failnet_socket extends failnet_common
 								$args = $ctcp;
 						case 'ping':
 							if ($reply)
-								$cmd .= 'Reply';
+								$cmd .= 'reply';
 						case 'action':
 							$args = array($nick, $args);
 						break;
@@ -160,7 +160,7 @@ class failnet_socket extends failnet_common
 						default:
 							$cmd = 'ctcp';
 							if ($reply)
-								$cmd .= 'Reply';
+								$cmd .= 'reply';
 							$args = array($nick, $ctcp);
 						break;
 					}
@@ -230,7 +230,7 @@ class failnet_socket extends failnet_common
 	{
 		// Require an open socket connection to continue
 		if (empty($this->socket))
-			$this->failnet->error->error('failnet_connection::connect() must be called first', true);
+			$this->failnet->error->error('failnet_socket::connect() must be called first', true);
 
 		$buffer = strtoupper($command);
 		// Add arguments

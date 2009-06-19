@@ -17,6 +17,8 @@
  * @TODO: Removing factoid entries...
  * @TODO: Changing factoid settings...
  * 
+ * @TODO: Write a plugin for this?  Either convert to a plugin or use a plugin as a shell.
+ * 
  */
 
 /**

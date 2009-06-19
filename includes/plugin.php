@@ -1,4 +1,3 @@
-#!/usr/bin/php
 <?php
 /**
  *
@@ -31,31 +30,42 @@
  * along with this program.  If not, see <http://opensource.org/licenses/gpl-2.0.php>.
  */
 
+ /**
+  * @ignore
+  */
+if(!defined('IN_FAILNET')) return;
+
 /**
- * @ignore
+ * Failnet - Plugin base class,
+ * 		Used as the common base class for all of Failnet's plugin class files 
+ * 
+ * 
+ * @author Obsidian
+ * @copyright (c) 2009 - Obsidian
+ * @license http://opensource.org/licenses/gpl-2.0.php | GNU Public License v2
  */
-define('IN_FAILNET', true);
-define('FAILNET_VERSION', '2.0.0'); 
-define('FAILNET_ROOT', realpath('.') . DIRECTORY_SEPARATOR);
-define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
-
-require FAILNET_ROOT . 'includes/functions.' . PHP_EXT;
-
-if(version_compare('5.2', PHP_VERSION, '>'))
+class failnet_manager extends failnet_common
 {
-	if(file_exists(FAILNET_ROOT . 'data/restart')) 
-		unlink(FAILNET_ROOT . 'data/restart');
-	display('Failnet requires PHP version 5.2.x or better.  Currently installed PHP version: ' . PHP_VERSION);
-	sleep(3);
-    exit(1);
+	public $plugins_loaded = array();
+ 	
+ 	public function load($plugin)
+	{
+		if(!in_array($plugin, $plugins_loaded))
+		{
+			$plugins_loaded[] = $plugin;
+			$this->failnet->plugins[] = new $plugin();
+			return true;
+		}
+		return false; // No double-loading of plugins.
+	}
+ 	
+	public function multiload(array $plugins)
+	{
+		foreach ($plugins as $plugin)
+		{
+			$this->load($plugin);
+		}
+	}
 }
-
-// Load autoloader and set everything up with it...
-require FAILNET_ROOT . 'autoload.' . PHP_EXT;
-failnet_autoload::register();
-
-// Load the core!
-$failnet = new failnet_core();
-
-$failnet->run();
-?>
+ 
+ ?>

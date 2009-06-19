@@ -1,4 +1,3 @@
-#!/usr/bin/php
 <?php
 /**
  *
@@ -34,28 +33,25 @@
 /**
  * @ignore
  */
-define('IN_FAILNET', true);
-define('FAILNET_VERSION', '2.0.0'); 
-define('FAILNET_ROOT', realpath('.') . DIRECTORY_SEPARATOR);
-define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
+if(!defined('IN_FAILNET')) return;
 
-require FAILNET_ROOT . 'includes/functions.' . PHP_EXT;
-
-if(version_compare('5.2', PHP_VERSION, '>'))
+/**
+ * Failnet - Plugin command handler class,
+ * 		Used to handle commands originating with Failnet's plugins 
+ * 
+ * 
+ * @author Obsidian
+ * @copyright (c) 2009 - Obsidian
+ * @license http://opensource.org/licenses/gpl-2.0.php | GNU Public License v2
+ */
+class failnet_event_command extends failnet_event_request
 {
-	if(file_exists(FAILNET_ROOT . 'data/restart')) 
-		unlink(FAILNET_ROOT . 'data/restart');
-	display('Failnet requires PHP version 5.2.x or better.  Currently installed PHP version: ' . PHP_VERSION);
-	sleep(3);
-    exit(1);
+	/**
+	* Reference to the plugin instance that created the event
+	*
+	* @var failnet_plugin_common
+	*/
+	public $plugin;
 }
 
-// Load autoloader and set everything up with it...
-require FAILNET_ROOT . 'autoload.' . PHP_EXT;
-failnet_autoload::register();
-
-// Load the core!
-$failnet = new failnet_core();
-
-$failnet->run();
 ?>

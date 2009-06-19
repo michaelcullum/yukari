@@ -13,7 +13,7 @@
  *
  *===================================================================
  * 
- * @TODO: Rewrite for new IRC protocol handler.
+ * @TODO: Rewrite as a plugin.
  *  
  */
 

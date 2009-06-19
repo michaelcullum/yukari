@@ -178,7 +178,7 @@ class failnet_event_request extends failnet_common implements ArrayAccess
 	 *
 	 * @return string
 	 */
-	public function getHostmask()
+	public function gethostmask()
 	{
 		return $this->nick . '!' . $this->username . '@' . $this->host;
 	}
