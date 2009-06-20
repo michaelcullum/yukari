@@ -63,8 +63,8 @@ class failnet_ignore extends failnet_common
 	{
 		if ($sender && $this->failnet->auth->authlevel($sender) > 9)
 		{
-			$this->ignore = explode(', ', file_get_contents('data/ignore_users')); 
-			$this->host_ignore = explode(', ', file_get_contents('data/ignore_hosts'));
+			$this->ignore = explode(PHP_EOL, file_get_contents('data/ignore_users')); 
+			$this->host_ignore = explode(PHP_EOL, file_get_contents('data/ignore_hosts'));
 			$this->failnet->irc->privmsg('Reloaded ignore list.');
 		}
 		else
@@ -86,7 +86,7 @@ class failnet_ignore extends failnet_common
 			if(!in_array($victim, $this->ignore))
 			{
 				$this->ignore[] = $victim; 
-				file_put_contents('data/ignore_users', implode(', ', $this->ignore));
+				file_put_contents('data/ignore_users', implode(PHP_EOL, $this->ignore));
 				$this->failnet->irc->privmsg('User "' . $victim . '" is now ignored.'); 
 			}
 			else
@@ -109,7 +109,7 @@ class failnet_ignore extends failnet_common
 			{
 				if($user == $victim) unset($this->ignore[$id]);
 			}
-			file_put_contents('data/ignore_users', implode(', ', $this->ignore));
+			file_put_contents('data/ignore_users', implode(PHP_EOL, $this->ignore));
 			$this->failnet->irc->privmsg('User "' . $victim . '" is no longer ignored.');
 		}
 		else
@@ -131,7 +131,7 @@ class failnet_ignore extends failnet_common
 			if(!in_array($victim, $this->ignore))
 			{
 				$this->host_ignore[] = $victim; 
-				file_put_contents('data/ignore_hosts', implode(', ', $this->host_ignore));
+				file_put_contents('data/ignore_hosts', implode(PHP_EOL, $this->host_ignore));
 				$this->failnet->irc->privmsg('Host "' . $victim . '" is now ignored.'); 
 			}
 			else
@@ -154,7 +154,7 @@ class failnet_ignore extends failnet_common
 			{
 				if($user == $victim) unset($this->host_ignore[$id]);
 			}
-			file_put_contents('data/ignore_hosts', implode(', ', $this->host_ignore));
+			file_put_contents('data/ignore_hosts', implode(PHP_EOL, $this->host_ignore));
 			$this->failnet->irc->privmsg('User "' . $victim . '" is no longer ignored.');
 		}
 		else
