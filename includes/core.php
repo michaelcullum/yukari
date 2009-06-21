@@ -236,7 +236,7 @@ class failnet_core extends failnet_common
 		// Begin zer loopage!
 		while(true)
 		{
-			$events = array();
+			$queue = array();
 			foreach ($this->plugins as $name => $plugin)
 			{
 				$plugin->tick();
@@ -262,13 +262,13 @@ class failnet_core extends failnet_common
 				{
 					$plugin->event = $event;
 					$plugin->pre_event();
-					$plugin->$eventtype();
+					$plugin->{'cmd_' . $eventtype}();
 					$plugin->post_event();
 					if($this->debug) 
 						display($eventype . ': ' . $name. ' ' . count($plugin->events);
 				}
 
-				$events = array_merge($events, $plugin->events;
+				$queue = array_merge($queue, $plugin->events;
 				$plugin->events = array();
 			}
 
@@ -278,31 +278,31 @@ class failnet_core extends failnet_common
 			//Execute pre-dispatch callback for plugin events 
 			foreach ($this->plugins as $name => $plugin)
 			{
-				$plugin->preDispatch($events);
 				if($this->debug)
-					display('pre-dispatch: ' . $name. ' ' . count($events));
+					display('pre-dispatch: ' . $name . ' ' . count($queue));
+				$plugin->pre_dispatch($queue);
 			}
 			
 			$quit = NULL;
-			foreach ($events as $event)
+			foreach ($queue as $item)
 			{
 				if($this->debug)
-					display($event->type);
-				if (strcasecmp($event->type(), 'quit') != 0)
+					display($item->type);
+				if (strcasecmp($item->type(), 'quit') != 0)
 				{
-					call_user_func_array(array($this->irc, $event->type), $event->arguments());
+					call_user_func_array(array($this->irc, $item->type), $item->arguments());
 				}
 				elseif (empty($quit))
 				{
-					$quit = $event;
+					$quit = $item;
 				}
 			}
 
 			foreach ($this->plugins as $name => $plugin)
 			{
 				if($this->debug)
-					display('post-dispatch: ' . $name);
-				$plugin->post_dispatch($events);
+					display('post-dispatch: ' . $name . ' ' . count($queue));
+				$plugin->post_dispatch($queue);
 			}
 
 			if ($quit)

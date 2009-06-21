@@ -191,7 +191,7 @@ class failnet_event_request extends failnet_common implements ArrayAccess
 	 */
 	public function source()
 	{
-		if (substr($this->arguments[0], 0, 1) == '#')
+		if ($this->fromchannel())
 			return $this->arguments[0];
 		return $this->nick;
 	}
@@ -203,7 +203,7 @@ class failnet_event_request extends failnet_common implements ArrayAccess
 	 */
 	public function fromchannel()
 	{
-		return (substr($this->getSource(), 0, 1) == '#');
+		return (substr($this->arguments[0], 0, 1) == '#');
 	}
 	
 	/**

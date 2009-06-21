@@ -151,98 +151,98 @@ abstract class failnet_plugin_common
 	*
 	* @return void
 	*/
-	public function connect() { }
+	public function cmd_connect() { }
 
 	/**
 	* Handler for when the bot disconnects from the current server.
 	*
 	* @return void
 	*/
-	public function disconnect() { }
+	public function cmd_disconnect() { }
 
 	/**
 	* Handler for when the client session is about to be terminated.
 	*
 	* @return void
 	*/
-	public function quit() { }
+	public function cmd_quit() { }
 
 	/**
 	* Handler for when a user joins a channel.
 	*
 	* @return void
 	*/
-	public function join() { }
+	public function cmd_join() { }
 
 	/**
 	* Handler for when a user leaves a channel.
 	*
 	* @return void
 	*/
-	public function part() { }
+	public function cmd_part() { }
 
 	/**
 	* Handler for when a user sends an invite request.
 	*
 	* @return void
 	*/
-	public function invite() { }
+	public function cmd_invite() { }
 
 	/**
 	* Handler for when a user obtains operator privileges.
 	*
 	* @return void
 	*/
-	public function oper() { }
+	public function cmd_oper() { }
 
 	/**
 	* Handler for when a channel topic is viewed or changed.
 	*
 	* @return void
 	*/
-	public function topic() { }
+	public function cmd_topic() { }
 
 	/**
 	* Handler for when a user or channel mode is changed.
 	*
 	* @return void
 	*/
-	public function mode() { }
+	public function cmd_mode() { }
 
 	/**
 	* Handler for when the server prompts the client for a nick.
 	*
 	* @return void
 	*/
-	public function nick() { }
+	public function cmd_nick() { }
 
 	/**
 	* Handler for when a message is received from a channel or user.
 	*
 	* @return void
 	*/
-	public function privmsg() { }
+	public function cmd_privmsg() { }
 
 	/**
 	* Handler for when an action is received from a channel or user
 	*
 	* @return void
 	*/
-	public function action() { }
+	public function cmd_action() { }
 
 	/**
 	* Handler for when a notice is received.
 	*
 	* @return void
 	*/
-	public function notice() { }
+	public function cmd_notice() { }
 
 	/**
 	* Handler for when a user is kicked from a channel.
 	*
 	* @return void
 	*/
-	public function kick() { }
+	public function cmd_kick() { }
 
 	/**
 	* Handler for when the server or a user checks the client connection to
@@ -250,70 +250,70 @@ abstract class failnet_plugin_common
 	*
 	* @return void
 	*/
-	public function ping() { }
+	public function cmd_ping() { }
 
 	/**
 	* Handler for when the server sends a CTCP TIME request.
 	*
 	* @return void
 	*/
-	public function time() { }
+	public function cmd_time() { }
 
 	/**
 	* Handler for when the server sends a CTCP VERSION request.
 	*
 	* @return void
 	*/
-	public function version() { }
+	public function cmd_version() { }
 
 	/**
 	* Handler for the reply to a CTCP PING request.
 	*
 	* @return void
 	*/
-	public function pingreply() { }
+	public function cmd_pingreply() { }
 
 	/**
 	* Handler for the reply to a CTCP TIME request.
 	*
 	* @return void
 	*/
-	public function timereply() { }
+	public function cmd_timereply() { }
 
 	/**
 	* Handler for the reply to a CTCP VERSION request. 
 	*
 	* @return void
 	*/
-	public function versionreply() { }
+	public function cmd_versionreply() { }
 
 	/**
 	* Handler for unrecognized CTCP requests.
 	*
 	* @return void
 	*/
-	public function ctcp() { }
+	public function cmd_ctcp() { }
 
 	/**
 	* Handler for unrecognized CTCP responses.
 	*
 	* @return void
 	*/
-	public function ctcpreply() { }
+	public function cmd_ctcpreply() { }
 
 	/**
 	* Handler for raw requests from the server.
 	*
 	* @return void
 	*/
-	public function raw() { }
+	public function cmd_raw() { }
 
 	/**
 	* Handler for when the server sends a kill request.
 	*
 	* @return void
 	*/
-	public function kill() { }
+	public function cmd_kill() { }
 
 	/**
 	* Handler for when a server response is received to a client-issued
@@ -321,10 +321,10 @@ abstract class failnet_plugin_common
 	*
 	* @return void
 	*/
-	public function response() { }
+	public function cmd_response() { }
 	
 	/**
-	* Provides cmd* methods
+	* Provides cmd_* methods
 	*
 	* @param string $name Name of the method called
 	* @param array $args Arguments passed in the call
@@ -332,9 +332,9 @@ abstract class failnet_plugin_common
 	*/
 	public function __call($name, array $args)
 	{
-		if (substr($name, 0, 3) == 'cmd')
+		if (substr($name, 0, 4) == 'call_')
 		{
-			$type = substr($name, 3);
+			$type = substr($name, 4);
 			if (defined('failnet_event_command::TYPE_' . strtoupper($type)))
 			{
 				$request = new failnet_event_command();
