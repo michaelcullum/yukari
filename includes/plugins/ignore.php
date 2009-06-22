@@ -45,7 +45,7 @@ if(!defined('IN_FAILNET')) return;
  * @copyright (c) 2009 - Obsidian
  * @license http://opensource.org/licenses/gpl-2.0.php | GNU Public License v2
  */
-class failnet_plugin_ignore extends failnet_common
+class failnet_plugin_ignore extends failnet_plugin_common
 {
 	public $ignore = array();
 	public $host_ignore = array();
