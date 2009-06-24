@@ -367,11 +367,6 @@ class failnet_core extends failnet_common
 			break;
 		}
 	}
-	
-	public function join()
-	{
-		
-	}
 }
 
 ?>
