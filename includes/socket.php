@@ -33,7 +33,7 @@
 /**
  * @ignore
  */
-if(!defined('IN_FAILNET')) return;
+if(!defined('IN_FAILNET')) exit;
 
 
 /**
@@ -98,9 +98,7 @@ class failnet_socket extends failnet_common
 
 		// If no new event was found, return NULL
 		if (empty($buffer))
-		{
 			return NULL;
-		}
 
 		// Strip the trailing newline from the buffer
 		$buffer = rtrim($buffer);
@@ -197,7 +195,7 @@ class failnet_socket extends failnet_common
 		if (ctype_digit($cmd))
 		{
 			$event = new failnet_event_response;
-			$event->code = strtolower($cmd);
+			$event->code = $cmd;
 			$event->description = $args;
 			$event->buffer = $buffer;
 		}

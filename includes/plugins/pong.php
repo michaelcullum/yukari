@@ -33,7 +33,7 @@
 /**
  * @ignore
  */
-if(!defined('IN_FAILNET')) return;
+if(!defined('IN_FAILNET')) exit;
 
 
 /**

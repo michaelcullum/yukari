@@ -33,11 +33,8 @@
 /**
  * @ignore
  */
-if(!defined('IN_FAILNET')) return;
+if(!defined('IN_FAILNET')) exit;
 
-/**Uses a 
-* 
-*/
 /**
  * Failnet - Connection status detection plugin,
  * 		Used to ping the server periodically to ensure that the client connection has not been dropped. 
@@ -105,13 +102,12 @@ class failnet_plugin_ping extends failnet_plugin_common
 	{
 		$time = time();
 		
-		if (!empty($this->_lastPing) && $time - $this->last_ping > $this->failnet->get('ping_timeout'))
+		if(!empty($this->last_ping) && $time - $this->last_ping > $this->failnet->get('ping_timeout'))
 		{
 			$this->failnet->log->add('--- Ping timeout, restarting Failnet ---');
 			$this->failnet->terminate(true);
 		}
-		elseif
-		($time - $this->last_event > $this->failnet->get('ping_wait'))
+		elseif($time - $this->last_event > $this->failnet->get('ping_wait'))
 		{
 			$this->last_ping = time();
 			$this->call_ping($this->failnet->get('nick')';

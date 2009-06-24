@@ -33,7 +33,7 @@
 /**
  * @ignore
  */
-if(!defined('IN_FAILNET')) return;
+if(!defined('IN_FAILNET')) exit;
 
 /**
  * Echos a message, and cleans out any extra NL's after the message.

@@ -33,7 +33,7 @@
 /**
  * @ignore
  */
-if(!defined('IN_FAILNET')) return;
+if(!defined('IN_FAILNET')) exit;
 
 class failnet_core extends failnet_common
 {
@@ -50,6 +50,7 @@ class failnet_core extends failnet_common
 	// Failnet settings and stuff.
 	public $debug = false;
 	public $speak = true;
+	public $chans = array();
 
 	// Server connection and config vars.
 	public $server = '';
@@ -61,18 +62,6 @@ class failnet_core extends failnet_common
 	public $pass = '';
 
 	public $settings = array();
-
-		/*  Moved to $this->settings
-		 * 
-			public $altnicks = array();
-			public $server_pass = '';
-			public $user = '';
-			public $name = '';
-			public $intro_msg = '';
-			public $restart_msg = '';
-			public $dai_msg = '';
-			public $quit_msg = '';
-		*/
 	
 		// @todo: MOVE THIS SHIZ TO PLUGINS!
 		public $auth; // Move to plugin
@@ -216,7 +205,9 @@ class failnet_core extends failnet_common
 	{
 		if(property_exists($this, $setting))
 			return $this->$setting;
-		return $this->settings[$setting];
+		if(isset($this->settings[$setting]))
+			return $this->settings[$setting];
+		return false;
 	}
 
 	/**
@@ -344,6 +335,42 @@ class failnet_core extends failnet_common
 			display('-!- Terminating Failnet');
 			exit(1);
 		}
+	}
+	
+	/**
+	 * Deny function...
+	 */
+	public function deny()
+	{
+		$rand = rand(0, 9);
+		switch ($rand)
+		{
+			case 0:
+			case 1:
+				return 'No.';
+			break;
+			case 2:
+			case 3:
+				return 'Uhm, no.';
+			break;
+			case 4:
+			case 5:
+				return 'Hells no!';
+				break;
+			case 6:
+			case 7:
+			case 8:
+				return 'HELL NOEHS!';
+			break;
+			case 9:
+				return 'The number you are dialing is not available at this time.';
+			break;
+		}
+	}
+	
+	public function join()
+	{
+		
 	}
 }
 

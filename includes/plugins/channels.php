@@ -12,7 +12,7 @@
  * License:		http://opensource.org/licenses/gpl-2.0.php  |  GNU Public License v2
  *
  *===================================================================
- *
+ * 
  */
 
 /**
@@ -35,42 +35,30 @@
  */
 if(!defined('IN_FAILNET')) exit;
 
-
 /**
- * Failnet - Class autoloader
+ * Failnet - Channel residence tracking plugin,
+ * 		Used to track what channels Failnet is in. 
  * 
  * 
  * @author Obsidian
  * @copyright (c) 2009 - Obsidian
  * @license http://opensource.org/licenses/gpl-2.0.php | GNU Public License v2
  */
-class failnet_autoload
+class failnet_plugin_channels extends failnet_plugin_common
 {
-	/**
-	 * Constructor
-	 */
-	public function __construct() { }
-
-	/**
-	 * Autoload callback for loading class files.
-	 *
-	 * @param string $class Class to load
-	 * @return void
-	 */
-	public function load($class)
+	public function cmd_response()
 	{
-		$class = substr(strstr($class, '_'), 1));
-		include FAILNET_ROOT . 'includes' . DIRECTORY_SEPARATOR . str_replace('_', DIRECTORY_SEPARATOR, $class) . '.' . PHP_EXT;
-	}
-
-	/**
-	 * Registers an instance of this class as an autoloader.
-	 *
-	 * @return void
-	 */
-	public static function register()
-	{
-		spl_autoload_register(array(new self, 'load'));
+		switch($this->event->code)
+		{
+			case failnet_event_response::RPL_ENDOFNAMES:
+				// Joined a new channel, let's track it.
+				$args = explode(' ', $this->event->arguments);
+				$this->failnet->chans[] = $args[1];
+				if($this->failnet->speak) // Only do the intro message if we're allowed to speak. 
+					$this->call_privmsg($args[1], $this->failnet->get('intro_msg'));
+			break;
+			// @todo: Track our parts, kicks, etc.
+		}
 	}
 }
 

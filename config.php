@@ -33,7 +33,7 @@
  /**
   * @ignore
   */
-if(!defined('IN_FAILNET')) return;
+if(!defined('IN_FAILNET')) exit;
 
 /**
  * Failnet Configuration File
@@ -53,9 +53,9 @@ return array(
 // Plugins to automatically load on startup. 
 	'plugin_list'	=> array(
 		'nickserv',
-		'',
-		'',
-		'',
+		'ping',
+		'pong',
+		'ignore',
 	),
 
 // Nickserv identify password. ;)
@@ -81,6 +81,12 @@ return array(
 
 // Should the bot autorejoin a channel on kick?
 	'autorejoin'	=> false,
+	
+// How long should Failnet wait after the last recieved event to ping the server to check the connection?
+	'ping_wait'		=> 120,
+	
+// How long after a server ping is sent will we assume that the connection is lost?
+	'ping_timeout'	=> 5,
 
 // List of alternate IRC nicknames to use
 	'altnicks'		=> array(
@@ -93,6 +99,7 @@ return array(
 
 // Standard messages for Failnet.
 	'intro_msg'			=> 'Let there be faiiiillll!',
+	'part_msg'			=> 'Bai baiiii!',
 	'restart_msg'		=> 'ZOMG, BRB!',
 	'dai_msg'			=> 'OH SHI--',
 	'quit_msg'			=> 'Failnet PHP IRC Bot',
