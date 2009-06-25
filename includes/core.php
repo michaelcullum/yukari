@@ -33,7 +33,7 @@
 /**
  * @ignore
  */
-if(!defined('IN_FAILNET')) exit;
+if(!defined('IN_FAILNET')) exit(1);
 
 class failnet_core extends failnet_common
 {
