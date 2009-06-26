@@ -119,7 +119,6 @@ class failnet_auth extends failnet_common
 
 		return ('#^' . implode('|', $patterns) . '$#i');
 	}
-	
 }
 
 ?>
