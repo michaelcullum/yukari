@@ -67,7 +67,7 @@ abstract class failnet_common
 	
 	public function __call($funct, $params)
 	{
-		$this->failnet->error->throw('Bad function call "' . $funct . '" with params "' . implode(', ', $params) . '" to "' . get_class() . ' class.');
+		trigger_error('Bad function call "' . $funct . '" with params "' . implode(', ', $params) . '" to "' . get_class() . ' class.', E_USER_WARNING);
 	}
 }
 

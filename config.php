@@ -68,9 +68,6 @@ return array(
 // The nick of the Bot's owner.
 	'owner'			=> 'Desdenova',
 
-// Should we be in debug mode?
-	'debug'			=> false,
-
 // Should the bot say anything or stay silent?
 	'speak'			=> true,
 
@@ -82,12 +79,15 @@ return array(
 
 // Should the bot autorejoin a channel on kick?
 	'autorejoin'	=> false,
-	
+
 // How long should Failnet wait after the last recieved event to ping the server to check the connection?
 	'ping_wait'		=> 120,
-	
+
 // How long after a server ping is sent will we assume that the connection is lost?
 	'ping_timeout'	=> 5,
+
+// How many messages should be stored in the log queue before the queue is written to the file?
+	'log_queue'		=> 60,
 
 // List of alternate IRC nicknames to use
 	'altnicks'		=> array(
@@ -104,6 +104,9 @@ return array(
 	'restart_msg'		=> 'ZOMG, BRB!',
 	'dai_msg'			=> 'OH SHI--',
 	'quit_msg'			=> 'Failnet PHP IRC Bot',
+	
+// Should we be in debug mode?
+	'debug'			=> false,
 );
 
 ?>

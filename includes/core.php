@@ -40,17 +40,20 @@ class failnet_core extends failnet_common
 	/**
 	 * Object vars for Failnet's use
 	 */
+	public $auth;
 	public $error;
+	public $factoids;
 	public $irc;
 	public $log;
 	public $manager;
-	public $plugins;
 	public $socket;
 	
 	// Failnet settings and stuff.
 	public $debug = false;
 	public $speak = true;
 	public $chans = array();
+	public $settings = array();
+	public $plugins = array();
 
 	// Server connection and config vars.
 	public $server = '';
@@ -60,21 +63,6 @@ class failnet_core extends failnet_common
 	public $owner = '';
 	public $nick = '';
 	public $pass = '';
-
-	public $settings = array();
-	
-		// @todo: MOVE THIS SHIZ TO PLUGINS!
-		public $auth; // Move to plugin
-		public $factoids; // Move to plugin
-		public $ignore; // Move to plugin
-		// What channels are we moderating?
-		public $war_chans = array(); 
-		public $warlord = false;
-
-		// Modules list.
-		// Convert these to plugins.
-		public $modules = array();
-		public $help = array();
 	
 	public function init()
 	{
@@ -100,22 +88,16 @@ class failnet_core extends failnet_common
 		 *  Begin printing info to the terminal window with some general information about Failnet.
 		 */
 		display(array(
-			failnet_common::HR,
+			self::HR,
 			'Failnet -- PHP-based IRC Bot version ' . FAILNET_VERSION . ' - $Revision$',
 			'Copyright: (c) 2009 - Obsidian',
 			'License: http://opensource.org/licenses/gpl-2.0.php',
-			failnet_common::HR,
+			self::HR,
 			'Failnet is starting up. Go get yourself a coffee.',
 		));
 		
 		display('- Loading configuration file for specified IRC server');
 		$this->load($_SERVER['argc'] > 1 ? $_SERVER['argv'][1] : 'config');
-		
-		display('- Loading dictionary (if file is present on OS)'); 
-		$dict = (@file_exists('/etc/dictionaries-common/words')) ? file('/etc/dictionaries-common/words') : array();
-			display('- Loading Failnet core information');
-			$this->modules[] = 'core';
-			$this->help['core'] = 'For help with the core system, please reference this site: http://www.assembla.com/wiki/show/failnet/';
 		
 		$classes = array(
 			'socket'	=> 'connection interface handler',
@@ -124,7 +106,6 @@ class failnet_core extends failnet_common
 			'error'		=> 'error handler',
 			'manager'	=> 'plugin handler',
 			'auth'		=> 'user authorization handler',
-			'ignore'	=> 'user/hostmask ignore handler',
 			'factoids'	=> 'factoid handler',
 		);
 		
@@ -137,8 +118,7 @@ class failnet_core extends failnet_common
 				display('=-= Loaded ' . $msg . ' class');
 			}
 		}
-		
-		// @todo: FINISH THIS.
+
 		display('Loading Failnet plugins');
 		$plugins = $this->get('plugin_list');
 		foreach($plugins as $plugin)
@@ -146,25 +126,6 @@ class failnet_core extends failnet_common
 			$this->manager->load($plugin);
 			display('=-= Loaded ' . $plugin . ' plugin');
 		}
-		
-			// @todo: MAKE THIS SHIZ PLUGINS.
-			// Load modules
-			$load = array(
-				'simple_html_dom',
-				'warfare',
-				'slashdot',
-				'xkcd',
-			/*
-				'alchemy',
-				'notes',
-			*/
-			);
-			display('- Loading modules');
-			foreach($load as $item)
-			{
-				if(include FAILNET_ROOT . 'modules' . DIRECTORY_SEPARATOR . $item . '.' . PHP_EXT)
-					display('=-= Loaded "' . $item . '" module');
-			}
 		
 		// This is a hack to allow us to restart Failnet if we're running the script through a batch file.
 		display('- Removing termination indicator file'); 

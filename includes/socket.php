@@ -68,21 +68,21 @@ class failnet_socket extends failnet_common
 		set_time_limit(0);
 
 		// Establish and configure the socket connection
-		$remote = 'tcp://' . $this->failnet->server . ':' . $this->failnet->port;
+		$remote = 'tcp://' . $this->failnet->get('server') . ':' . $this->failnet->get('port');
 		$this->socket = @stream_socket_client($remote, $errno, $errstr);
 		if (!$this->socket)
-			$this->failnet->error->error('Unable to connect to server: socket error ' . $errno . ' : ' . $errstr, true);
+			trigger_error('Unable to connect to server: socket error ' . $errno . ' : ' . $errstr, E_USER_ERROR);
 		
 		@stream_set_timeout($this->socket, $this->delay);
 
 		// Send the password if one is specified
-		if (!empty($this->failnet->server_pass))
-			$this->send('PASS', $this->failnet->server_pass);
+		if (!empty($this->failnet->get('server_pass')))
+			$this->send('PASS', $this->failnet->get('server_pass'));
 
 		// Send user information
-		$this->send('USER', array($this->user, $this->server, $this->server, $this->name));
+		$this->send('USER', array($this->failnet->get('user'), $this->failnet->get('server'), $this->failnet->get('server'), $this->failnet->get('name')));
 
-		$this->send('NICK', $this->nick); 
+		$this->send('NICK', $this->failnet->get('nick')); 
 	}
 	
 	/**
@@ -228,7 +228,7 @@ class failnet_socket extends failnet_common
 	{
 		// Require an open socket connection to continue
 		if (empty($this->socket))
-			$this->failnet->error->error('failnet_socket::connect() must be called first', true);
+			trigger_error('Cannot send server message; failnet_socket::connect() must be called first', E_USER_ERROR);
 
 		$buffer = strtoupper($command);
 		// Add arguments
@@ -265,8 +265,8 @@ class failnet_socket extends failnet_common
 	{
 		// Send a QUIT command to the server
 		$this->send('QUIT', $reason);
-		display('-!- Quitting from server "' . $this->failnet->server . '"');
-		$this->log->add('--- Quitting from server "' . $this->failnet->server . '" ---');
+		display('-!- Quitting from server "' . $this->failnet->get('server') . '"');
+		$this->log->add('--- Quitting from server "' . $this->failnet->get('server') . '" ---');
 
 		// Terminate the socket connection
 		fclose($this->socket);

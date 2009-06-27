@@ -64,7 +64,7 @@ class failnet_logs extends failnet_common
 	public function add($time, $msg, $dump = false)
 	{
 		$this->log[] = $msg;
-		if($dump === true || sizeof($this->log) > 10)
+		if($dump === true || sizeof($this->log) > $this->failnet->get('log_queue'))
 		{
 			$log_msg = '';
 			$log_msg = implode(PHP_EOL, $this->log). PHP_EOL;
