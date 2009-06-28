@@ -1,6 +1,20 @@
 @ECHO OFF
 
 ::
+::===================================================================
+::
+::  Failnet -- PHP-based IRC Bot
+::-------------------------------------------------------------------
+::	Script info:
+:: Version:		2.0.0
+:: SVN ID:		$Id$
+:: Copyright:	(c) 2009 - Obsidian
+:: License:		http://opensource.org/licenses/gpl-2.0.php  |  GNU Public License v2
+::
+::===================================================================
+::
+
+::
 :: This program is free software; you can redistribute it and/or modify
 :: it under the terms of the GNU General Public License as published by
 :: the Free Software Foundation; either version 2 of the License,
@@ -25,7 +39,7 @@ SET PHP=
 SET BOT=
 
 :: This is what server configuration file you want Failnet to load.
-SET SERVER=freenode
+SET SERVER=config
 
 :: Ignore this.  It's just for the bot to find its termination indicator file. ;)
 SET CHECKFILE="%BOT%\data\restart"
@@ -42,4 +56,9 @@ IF NOT EXIST %CHECKFILE% GOTO EOF
 
 :: Time to go bye-bye.
 :EOF
+
+:: Uncomment this (remove the ::) to have the command prompt window pause after Failnet's termination.  
+:: Useful for trapping errors.
+::PAUSE
+
 EXIT
