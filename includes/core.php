@@ -218,7 +218,7 @@ class failnet_core extends failnet_common
 					$plugin->{'cmd_' . $eventtype}();
 					$plugin->post_event();
 					if($this->debug) 
-						display($eventype . ': ' . $name. ' ' . count($plugin->events));
+						display($eventtype . ': ' . $name. ' ' . count($plugin->events));
 				}
 
 				$queue = array_merge($queue, $plugin->events);
