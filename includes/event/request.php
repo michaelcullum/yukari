@@ -46,9 +46,16 @@ if(!defined('IN_FAILNET')) exit(1);
  * 
  * @see http://www.irchelp.org/irchelp/rfc/chapter4.html
  */
-class failnet_event_request extends failnet_common implements ArrayAccess
+class failnet_event_request implements ArrayAccess
 {
-	public function init() { }
+	/**
+	 * Constants for Failnet.
+	 */
+	const TAB = "\t";
+	const X02 = "\x02";
+	const HR = '---------------------------------------------------------------------';
+	const ERROR_LOG = 'error';
+	const USER_LOG = 'user';
 
 	/**
 	 * Event types
@@ -176,6 +183,28 @@ class failnet_event_request extends failnet_common implements ArrayAccess
 	 * @var string
 	 */
 	public $buffer;
+	
+	/**
+	 * Failnet's core object
+	 * 
+	 * @var unknown_type
+	 */
+	private $failnet;
+	
+	/**
+	 * Constructor
+	 * @param failnet_core $failnet - Failnet core object 
+	 * @return unknown_type
+	 */
+	public function __construct(failnet_core $failnet)
+	{
+		$this->failnet = &$failnet;
+	}
+	
+	public function __call($funct, $params)
+	{
+		trigger_error('Bad function call "' . $funct . '" with params "' . implode(', ', $params) . '" to "' . get_class() . ' class.', E_USER_WARNING);
+	}
 	
 	/**
 	 * Returns the hostmask for the originating server or user.
