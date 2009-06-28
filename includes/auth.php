@@ -14,7 +14,6 @@
  *===================================================================
  * 
  * @todo: Rewrite with plugin!
- * @todo: Port over PHP portable password hashing framework
  * 
  */
 

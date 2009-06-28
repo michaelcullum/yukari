@@ -142,7 +142,8 @@ class failnet_core extends failnet_common
 	public function load($file)
 	{
 		if(!file_exists(FAILNET_ROOT . $file . '.' . PHP_EXT) || !is_readable(FAILNET_ROOT . $file . '.' . PHP_EXT))
-			$this->error->error('Required Failnet configuration file [' . $file . '.' . PHP_EXT . '] not found', true);
+			trigger_error('Required Failnet configuration file [' . $file . '.' . PHP_EXT . '] not found', E_USER_ERROR);
+
 		$settings = require FAILNET_ROOT . $file . '.' . PHP_EXT;
 
 		foreach($settings as $setting => $value)

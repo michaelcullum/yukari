@@ -206,7 +206,7 @@ class failnet_irc extends failnet_common
 		$args = array($nick, $channel);
 
 		if (!empty($reason))
-			$args[] = $response;
+			$args[] = $reason;
 
 		$this->failnet->socket->send('KICK', $args);
 	}
@@ -264,7 +264,7 @@ class failnet_irc extends failnet_common
 	 */
 	public function ping($nick, $hash)
 	{
-		$this->ctcp_esponse($nick, 'PING', $hash);
+		$this->ctcp_response($nick, 'PING', $hash);
 	}
 
 	/**
@@ -275,7 +275,7 @@ class failnet_irc extends failnet_common
 	 */
 	public function version($nick, $version)
 	{
-		$this->ctcp_esponse($nick, 'VERSION', $version);
+		$this->ctcp_response($nick, 'VERSION', $version);
 	}
 
 	/**
