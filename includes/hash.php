@@ -96,10 +96,8 @@ class failnet_hash
 			$output = '';
 			for ($i = 0; $i < $count; $i += 16)
 			{
-				$this->random_state =
-				    md5(microtime() . $this->random_state);
-				$output .=
-				    pack('H*', md5($this->random_state));
+				$this->random_state = md5(microtime() . $this->random_state);
+				$output .= pack('H*', md5($this->random_state));
 			}
 			$output = substr($output, 0, $count);
 		}
