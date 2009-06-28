@@ -47,7 +47,7 @@ if(version_compare('5.2.3', PHP_VERSION, '>'))
 		unlink(FAILNET_ROOT . 'data/restart');
 	display('Failnet requires PHP version 5.2.3 or better.  Currently installed PHP version: ' . PHP_VERSION);
 	sleep(3);
-    exit(1);
+	exit(1);
 }
 
 // Load autoloader and set everything up with it...
