@@ -60,7 +60,10 @@ return array(
 		'ignore',
 	),
 
-// Nickserv identify password. ;)
+// What is the nickname service bot? If there isn't, leave this as an empty string.
+	'nickbot'		=> 'nickserv',
+	
+// Nickname service identify password. ;)
 	'pass'			=> 'somepasswordhere',
 
 // Server password, if necessary.
@@ -71,9 +74,6 @@ return array(
 
 // Should the bot say anything or stay silent?
 	'speak'			=> true,
-
-// What is the nickname server bot? If there isn't, leave this as an empty string.
-	'nickbot'		=> 'nickserv',
 
 // Should the bot join a channel on invite?
 	'joininvite'	=> false, 

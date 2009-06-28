@@ -332,9 +332,9 @@ abstract class failnet_plugin_common
 	*/
 	public function __call($name, array $args)
 	{
-		if (substr($name, 0, 4) == 'call_')
+		if (substr($name, 0, 5) == 'call_')
 		{
-			$type = substr($name, 4);
+			$type = substr($name, 5);
 			if (defined('failnet_event_command::TYPE_' . strtoupper($type)))
 			{
 				$request = new failnet_event_command();
