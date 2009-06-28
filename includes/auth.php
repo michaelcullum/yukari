@@ -63,7 +63,7 @@ class failnet_auth extends failnet_common
 	public function init()
 	{
 		display('=== Loading Failnet password hashing system');
-			$this->hash = new failnet_hash();
+			$this->hash = new failnet_hash(8, false);
 		display('=== Loading user database'); 
 			$this->load();
 	}
