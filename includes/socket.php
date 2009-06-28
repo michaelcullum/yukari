@@ -138,12 +138,14 @@ class failnet_socket extends failnet_common
 			case 'privmsg':
 			case 'notice':
 				$ctcp = substr(strstr($args, ':'), 1);
-				if (substr($ctcp, 0, 1) === chr(1) && substr($ctcp, -1) === chr(1)) {
+				if (substr($ctcp, 0, 1) === chr(1) && substr($ctcp, -1) === chr(1))
+				{
 					$ctcp = substr($ctcp, 1, -1);
 					$reply = ($cmd == 'notice');
 					list($cmd, $args) = array_pad(explode(' ', $ctcp, 2), 2, NULL);
 					$cmd = strtolower($cmd);
-					switch ($cmd) {
+					switch ($cmd)
+					{
 						case 'version':
 						case 'time':
 							if ($reply)

@@ -56,12 +56,12 @@ class failnet_logs extends failnet_common
 	{
 		if(preg_match('/^IDENTIFY (.*)/i', $log)) $log = 'IDENTIFY ***removed***';
 		$log = (preg_match('/' . PHP_EOL . '(| )$/i', $log)) ? substr($log, 0, strlen($log) - 1) : $log;
-		$log = preg_replace('/^' . chr(1) . 'ACTION (.+)' . chr(1) . '$/', '*'. $who . ' $1' . '*', $log);
-		$this->add(time(), date('D m/d/Y - h:i:s A') . ' - <' . $who . (($where) ? '/' . $where : false) . '> ' . $log);
+		$log = preg_replace('/^' . chr(1) . 'ACTION (.+)' . chr(1) . '$/', '***'. $who . ' $1' . '*', $log);
+		$this->add(date('D m/d/Y - h:i:s A') . ' - <' . $who . (($where) ? '/' . $where : false) . '> ' . $log);
 	}
 	
 	// Add an entry to the queue of user logs...
-	public function add($time, $msg, $dump = false)
+	public function add($msg, $dump = false)
 	{
 		$this->log[] = $msg;
 		if($dump === true || sizeof($this->log) > $this->failnet->get('log_queue'))
@@ -69,7 +69,7 @@ class failnet_logs extends failnet_common
 			$log_msg = '';
 			$log_msg = implode(PHP_EOL, $this->log). PHP_EOL;
 			$this->log = array();
-			$this->write(self::USER_LOG, $time, $log_msg);
+			$this->write(self::USER_LOG, time(), $log_msg);
 		}
 	}
 	

@@ -53,6 +53,7 @@ return array(
 // Plugins to automatically load on startup. 
 	'plugin_list'	=> array(
 		'channels',
+		'log',
 		'nickserv',
 		'ping',
 		'pong',

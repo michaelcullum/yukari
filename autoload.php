@@ -59,7 +59,7 @@ class failnet_autoload
 	 */
 	public function load($class)
 	{
-		$class = substr(strstr($class, '_'), 1));
+		$class = substr(strstr($class, '_'), 1);
 		include FAILNET_ROOT . 'includes' . DIRECTORY_SEPARATOR . str_replace('_', DIRECTORY_SEPARATOR, $class) . '.' . PHP_EXT;
 	}
 

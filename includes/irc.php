@@ -115,7 +115,7 @@ class failnet_irc extends failnet_common
 	 *                         to which the response should be restricted
 	 *                         (optional)
 	 */
-	public function list($channels = NULL)
+	public function channels($channels = NULL)
 	{
 		$this->failnet->socket->send('LIST', $channels);
 	}

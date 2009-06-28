@@ -48,16 +48,46 @@ class failnet_plugin_channels extends failnet_plugin_common
 {
 	public function cmd_response()
 	{
-		switch($this->event->code)
+		if($this->event instanceof failnet_event_response)
 		{
-			case failnet_event_response::RPL_ENDOFNAMES:
-				// Joined a new channel, let's track it.
-				$args = explode(' ', $this->event->arguments);
-				$this->failnet->chans[] = $args[1];
-				if($this->failnet->speak) // Only do the intro message if we're allowed to speak. 
-					$this->call_privmsg($args[1], $this->failnet->get('intro_msg'));
-			break;
-			// @todo: Track our parts, kicks, etc.
+			switch($this->event->code)
+			{
+				case failnet_event_response::RPL_ENDOFNAMES:
+					// Joined a new channel, let's track it.
+					$chanargs = explode(' ', $this->event->arguments);
+					$this->failnet->chans[] = $chanargs[1];
+					if($this->failnet->speak)  
+						$this->call_privmsg($chanargs[1], $this->failnet->get('intro_msg'));
+						// Only do the intro message if we're allowed to speak.
+				break;
+			}
+		}
+		else // If this isn't a response, it HAS to be a request.
+		{
+			switch($this->event->type)
+			{
+				case failnet_event_request::TYPE_PART:
+					if($this->event->nick != $this->failnet->get('nick'))
+						return;
+				break;
+
+				case failnet_event_request::TYPE_KICK:
+					if($this->event->get_arg('user') != $this->failnet->get('nick'))
+						return;
+				break;
+				
+				default:
+					return;
+				break;
+			}
+			foreach($this->failnet->chans as $key => $channel)
+			{
+				if($channel == $this->event->get_arg('channel'))
+				{
+					unset($this->failnet->chans[$key]);
+					return;
+				}
+			}
 		}
 	}
 }

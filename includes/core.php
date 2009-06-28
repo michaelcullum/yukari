@@ -112,7 +112,7 @@ class failnet_core extends failnet_common
 		display('- Loading Failnet required classes');
 		foreach($classes as $class => $msg)
 		{
-			if(property_exists($class)
+			if(property_exists($class))
 			{
 				$this->$class = new $class($this);
 				display('=-= Loaded ' . $msg . ' class');
@@ -217,10 +217,10 @@ class failnet_core extends failnet_common
 					$plugin->{'cmd_' . $eventtype}();
 					$plugin->post_event();
 					if($this->debug) 
-						display($eventype . ': ' . $name. ' ' . count($plugin->events);
+						display($eventype . ': ' . $name. ' ' . count($plugin->events));
 				}
 
-				$queue = array_merge($queue, $plugin->events;
+				$queue = array_merge($queue, $plugin->events);
 				$plugin->events = array();
 			}
 

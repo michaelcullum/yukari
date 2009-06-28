@@ -110,7 +110,7 @@ class failnet_plugin_ping extends failnet_plugin_common
 		elseif($time - $this->last_event > $this->failnet->get('ping_wait'))
 		{
 			$this->last_ping = time();
-			$this->call_ping($this->failnet->get('nick')';
+			$this->call_ping($this->failnet->get('nick'));
 		}
 	}
 }

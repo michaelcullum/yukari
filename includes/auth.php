@@ -55,8 +55,16 @@ class failnet_auth extends failnet_common
 	public $hmask_find = array('\\',   '^',   '$',   '.',   '[',   ']',   '|',   '(',   ')',   '?',   '+',   '{',   '}');
 	public $hmask_repl = array('\\\\', '\\^', '\\$', '\\.', '\\[', '\\]', '\\|', '\\(', '\\)', '\\?', '\\+', '\\{', '\\}');
 	
+	/**
+	 * phpass hashing handler
+	 * @var object
+	 */
+	public $hash;
+	
 	public function init()
 	{
+		display('=== Loading Failnet password hashing system');
+			$this->hash = new failnet_hash();
 		display('=== Loading user database'); 
 			$this->load();
 	}

@@ -45,7 +45,7 @@ function display($msg)
 {
 	if(is_array($msg))
 	{
-		foreach($msg => $line)
+		foreach($msg as $line)
 		{
 			$line = (preg_match('/' . PHP_EOL . '(| )$/i', $line)) ? substr($line, 0, strlen($line) - 1) : $line;
 			echo $line . PHP_EOL;		

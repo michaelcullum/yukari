@@ -77,6 +77,10 @@ class failnet_event_request extends failnet_common implements ArrayAccess
 	 */
 	protected static $map = array(
 
+		self::TYPE_NICK => array(
+			'nick' => 0
+		),
+
 		self::TYPE_QUIT => array(
 			'message' => 0
 		),
@@ -126,7 +130,7 @@ class failnet_event_request extends failnet_common implements ArrayAccess
 
 		self::TYPE_RAW => array(
 			'message' => 0
-		)
+		),
 
 	);
 	
@@ -210,7 +214,7 @@ class failnet_event_request extends failnet_common implements ArrayAccess
 	 * Returns a single specified argument for the request.
 	 *
 	 * @param mixed $argument Integer position (starting from 0) or the
-	 *        equivalent string name of the argument from self::$_map
+	 *        equivalent string name of the argument from self::$map
 	 * @return string
 	 */
 	public function get_arg($argument)

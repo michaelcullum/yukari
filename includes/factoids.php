@@ -91,7 +91,7 @@ class failnet_factoids extends failnet_common
 	
 	public function init()
 	{
-		display('=== Loading factoids database')
+		display('=== Loading factoids database');
 		$this->load();
 	}
 	
@@ -121,7 +121,7 @@ class failnet_factoids extends failnet_common
 	public function merge($filename)
 	{
 		include FAILNET_ROOT . 'data/' . $filename . '.' .  PHP_EXT;
-		$new_factoids = $this->parse_new_factoids($filename)
+		$new_factoids = $this->parse_new_factoids($filename);
 		
 		foreach($factoids as $fact)
 		{
@@ -181,7 +181,7 @@ class failnet_factoids extends failnet_common
 			{
 				// Just add factoids, ignore the settings.
 				$fact_ = array_merge($fact_, $factoids);
-				$data[$key] = implode('::', $fact_)
+				$data[$key] = implode('::', $fact_);
 				$found = true;
 				break;
 			}
@@ -189,7 +189,7 @@ class failnet_factoids extends failnet_common
 		if(!$found)
 		{
 			$authlevel = ($authlevel != false) ? $authlevel : 'NULL';
-			$data[] = $pattern . '::' . $authlevel . '::' . (($selfcheck) ? 1 : 0) . '::' . (($function) ? 1 : 0) . '::' implode('::', $factoids);
+			$data[] = $pattern . '::' . $authlevel . '::' . (($selfcheck) ? 1 : 0) . '::' . (($function) ? 1 : 0) . '::' . implode('::', $factoids);
 		}
 		
 		$this->add_live_factoid($type, $pattern, $factoids, $authlevel, $selfcheck, $function);
