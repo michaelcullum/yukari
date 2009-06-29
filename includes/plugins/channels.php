@@ -37,7 +37,7 @@ if(!defined('IN_FAILNET')) exit(1);
 
 /**
  * Failnet - Channel residence tracking plugin,
- * 		Used to track what channels Failnet is in. 
+ * 		Used to track what channels Failnet is in, and the users inhabiting them. 
  * 
  * 
  * @author Obsidian
@@ -46,40 +46,134 @@ if(!defined('IN_FAILNET')) exit(1);
  */
 class failnet_plugin_channels extends failnet_plugin_common
 {
+	const OP = 8;
+	const HALFOP = 4;
+	const VOICE = 2;
+	const REGULAR = 1;
+	
 	public function cmd_response()
 	{
-		if($this->event instanceof failnet_event_response)
+		switch($this->event->code)
 		{
-			switch($this->event->code)
+			case failnet_event_response::RPL_ENDOFNAMES:
+				// Joined a new channel, let's track it.
+				// @note: Now tracking the channels on join in failnet_plugin_users
+				$chanargs = explode(' ', $this->event->arguments);
+				//$this->failnet->chans[] = $chanargs[1];
+				if($this->failnet->speak)
+					// Only do the intro message if we're allowed to speak.  
+					$this->call_privmsg($chanargs[1], $this->failnet->get('intro_msg'));
+			break;
+			
+			case failnet_event_response::RPL_NAMREPLY:
+				$desc = preg_split('/[@*=]\s*/', $this->event->description, 2);
+				list($chan, $users) = array_pad(explode(' :', trim($desc[1])), 2, null);
+				$users = explode(' ', trim($users));
+				foreach($users as $user)
+				{
+					if (empty($user)) 
+						continue;
+		
+					$flag = self::REGULAR;
+					if (substr($user, 0, 1) === '@')
+					{
+						$user = substr($user, 1);
+						$flag |= self::OP;
+					}
+					if (substr($user, 0, 1) === '%')
+					{
+						$user = substr($user, 1);
+						$flag |= self::HALFOP;
+					}
+					if (substr($user, 0, 1) === '+')
+					{
+						$user = substr($user, 1);
+						$flag |= self::VOICE;
+					}
+		
+					$this->failnet->chans[trim(strtolower($chan))][trim(strtolower($user))] = $flag;
+				}
+			break;
+		}
+	}
+	
+	/**
+	 * Tracks mode changes.
+	 *
+	 * @return void
+	 */
+	public function cmd_mode()
+	{
+		$args = $this->event->arguments();
+		if (count($args) != 3)
+			return;
+		list($chan, $modes, $nicks) = array_pad($args, 3, null);
+		if (preg_match('/(?:\+|-)[hov+-]+/i', $modes))
+		{
+			$chan = trim(strtolower($chan));
+			$modes = str_split(trim(strtolower($modes)), 1);
+			$nicks = explode(' ', trim(strtolower($nicks)));
+			while ($char = array_shift($modes))
 			{
-				case failnet_event_response::RPL_ENDOFNAMES:
-					// Joined a new channel, let's track it.
-					$chanargs = explode(' ', $this->event->arguments);
-					$this->failnet->chans[] = $chanargs[1];
-					if($this->failnet->speak)  
-						$this->call_privmsg($chanargs[1], $this->failnet->get('intro_msg'));
-						// Only do the intro message if we're allowed to speak.
-				break;
+				switch ($char)
+				{
+					case '+':
+						$mode = '+';
+					break;
+
+					case '-':
+						$mode = '-';
+					break;
+
+					case 'o':
+						$nick = array_shift($nicks);
+						if ($mode == '+')
+						{
+							$this->failnet->chans[$chan][$nick] |= self::OP;
+						}
+						elseif ($mode == '-')
+						{
+							$this->failnet->chans[$chan][$nick] ^= self::OP;
+						}
+					break;
+
+					case 'h':
+						$nick = array_shift($nicks);
+						if ($mode == '+')
+						{
+							$this->failnet->chans[$chan][$nick] |= self::HALFOP;
+						}
+						elseif ($mode == '-')
+						{
+							$this->failnet->chans[$chan][$nick] ^= self::HALFOP;
+						}
+					break;
+
+					case 'v':
+						$nick = array_shift($nicks);
+						if ($mode == '+')
+						{
+							$this->failnet->chans[$chan][$nick] |= self::VOICE;
+						}
+						elseif ($mode == '-')
+						{
+							$this->failnet->chans[$chan][$nick] ^= self::VOICE;
+						}
+					break;
+				}
 			}
 		}
-		else // If this isn't a response, it HAS to be a request.
+	}
+	
+	public function cmd_kick()
+	{
+		if($this->event->nick != $this->failnet->get('nick'))
 		{
-			switch($this->event->type)
-			{
-				case failnet_event_request::TYPE_PART:
-					if($this->event->nick != $this->failnet->get('nick'))
-						return;
-				break;
-
-				case failnet_event_request::TYPE_KICK:
-					if($this->event->get_arg('user') != $this->failnet->get('nick'))
-						return;
-				break;
-				
-				default:
-					return;
-				break;
-			}
+			if (isset($this->failnet->chans[trim(strtolower($this->event->get_arg('channel')))][trim(strtolower($this->event->nick))]))
+				unset($this->failnet->chans[trim(strtolower($this->event->get_arg('channel')))][trim(strtolower($this->event->nick))]);
+		}
+		else
+		{
 			foreach($this->failnet->chans as $key => $channel)
 			{
 				if($channel == $this->event->get_arg('channel'))
@@ -88,6 +182,67 @@ class failnet_plugin_channels extends failnet_plugin_common
 					return;
 				}
 			}
+		}
+	}
+	
+	public function cmd_part()
+	{
+		if($this->event->get_arg('user') != $this->failnet->get('nick'))
+		{
+			if (isset($this->failnet->chans[trim(strtolower($this->event->get_arg('channel')))][trim(strtolower($this->event->nick))]))
+				unset($this->failnet->chans[trim(strtolower($this->event->get_arg('channel')))][trim(strtolower($this->event->nick))]);
+		}
+		else
+		{
+			foreach($this->failnet->chans as $key => $channel)
+			{
+				if($channel == $this->event->get_arg('channel'))
+				{
+					unset($this->failnet->chans[$key]);
+					return;
+				}
+			}
+		}
+	}
+
+	public function cmd_join()
+	{
+		$this->failnet->chans[trim(strtolower($this->event->get_arg('channel')))][trim(strtolower($this->event->nick))] = self::REGULAR;
+	}
+	
+	public function cmd_quit()
+	{
+		foreach($this->failnet->chans as $channame => $chan)
+		{
+			if (isset($chan[trim(strtolower($this->event->nick))]))
+				unset($this->failnet->chans[$channame][trim(strtolower($this->event->nick))]);
+		}
+	}
+	
+	/**
+	 * Does...stuff. 
+	 *
+	 * @return void
+	 */
+	public function cmd_privmsg()
+	{
+		$target = $this->event->get_arg('reciever');
+		$message = $this->event->get_arg('text');
+		if (preg_match('#^\|isop (\S+)$#i', $message, $m))
+		{
+			$this->call_privmsg($target, $this->failnet->is_op($m[1], $target) ? 'Yep, they\'re an op.' : 'Nope, they are not an op.');
+		}
+		elseif (preg_match('#^\|ishalfop (\S+)$#i', $message, $m))
+		{
+			$this->call_privmsg($target, $this->failnet->is_halfop($m[1], $target) ? 'Yep, they\'re a halfop.' : 'Nope, they are not a halfop.');
+		}
+		elseif (preg_match('#^\|isvoice (\S+)$#i', $message, $m))
+		{
+			$this->call_privmsg($target, $this->failnet->is_voice($m[1], $target) ? 'Yep, they have voice.' : 'Nope, they don\'t have voice.');
+		}
+		elseif (preg_match('#^\|isin (\S+)$#i', $message, $m))
+		{
+			$this->call_privmsg($target, $this->failnet->is_in($m[1], $target) ? 'Yep, they\'re in here.' : 'Nope, they aren\'t in here.');
 		}
 	}
 }

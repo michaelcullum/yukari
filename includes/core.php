@@ -51,6 +51,7 @@ class failnet_core extends failnet_common
 	// Failnet settings and stuff.
 	public $debug = false;
 	public $speak = true;
+	public $start = 0;
 	public $chans = array();
 	public $settings = array();
 	public $plugins = array();
@@ -83,6 +84,11 @@ class failnet_core extends failnet_common
 		 */
 		if (!ini_get('date.timezone')) 
 			date_default_timezone_set(date_default_timezone_get());
+		
+		/**
+		 * Set the time that Failnet was started.
+		 */
+		$this->start = time();
 		
 		/**
 		 *  Begin printing info to the terminal window with some general information about Failnet.
@@ -328,6 +334,86 @@ class failnet_core extends failnet_common
 				return 'The number you are dialing is not available at this time.';
 			break;
 		}
+	}
+	
+	/**
+	 * Checks whether or not a given user has op (@) status.
+	 *
+	 * @param string $nick User nick to check
+	 * @param string $chan Channel to check in
+	 * @return bool
+	 */
+	public function is_op($nick, $chan)
+	{
+		return isset($this->chans[trim(strtolower($chan))][trim(strtolower($nick))]) && ($this->chans[trim(strtolower($chan))][trim(strtolower($nick))] & self::OP) != 0;
+	}
+
+	/**
+	 * Checks whether or not a given user has halfop (%) status.
+	 *
+	 * @param string $nick User nick to check
+	 * @param string $chan Channel to check in
+	 * @return bool
+	 */
+	public function is_halfop($nick, $chan)
+	{
+		return isset($this->chans[trim(strtolower($chan))][trim(strtolower($nick))]) && ($this->chans[trim(strtolower($chan))][trim(strtolower($nick))] & self::HALFOP) != 0;
+	}
+
+	/**
+	 * Checks whether or not a given user has voice (+) status.
+	 *
+	 * @param string $nick User nick to check
+	 * @param string $chan Channel to check in
+	 * @return bool
+	 */
+	public function is_voice($nick, $chan)
+	{
+		return isset($this->chans[trim(strtolower($chan))][trim(strtolower($nick))]) && ($this->chans[trim(strtolower($chan))][trim(strtolower($nick))] & self::VOICE) != 0;
+	}
+
+	/**
+	 * Checks whether or not a particular user is in a particular channel.
+	 *
+	 * @param string $nick User nick to check
+	 * @param string $chan Channel to check in
+	 * @return bool
+	 */
+	public function is_in($nick, $chan)
+	{
+		return isset($this->chans[trim(strtolower($chan))][trim(strtolower($nick))]);
+	}
+
+	/**
+	 * Returns the entire user list for a channel or false if the bot is not
+	 * present in the channel.
+	 *
+	 * @param string $chan Channel name
+	 * @return array|bool
+	 */
+	public function get_users($chan)
+	{
+		if (isset($this->chans[trim(strtolower($chan))]))
+			return array_keys($this->chans[trim(strtolower($chan))]);
+		return false;
+	}
+
+	/**
+	 * Returns the nick of a random user present in a given channel or false
+	 * if the bot is not present in the channel.
+	 *
+	 * @param string $chan Channel name
+	 * @return string|bool
+	 */
+	public function random_user($chan)
+	{
+		$chan = trim(strtolower($chan));
+		if (isset($this->chans[$chan]))
+		{
+			while (array_search(($nick = array_rand($this->chans[$chan], 1)), array('chanserv', 'q', 'l', 's')) !== false) {}
+			return $nick;
+		}
+		return false;
 	}
 }
 
