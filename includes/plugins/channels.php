@@ -104,15 +104,18 @@ class failnet_plugin_channels extends failnet_plugin_common
 	 */
 	public function cmd_mode()
 	{
-		$args = $this->event->arguments();
-		if (count($args) != 3)
+		if (count($this->event->arguments) != 3)
 			return;
-		list($chan, $modes, $nicks) = array_pad($args, 3, null);
+		
+		$chan = $this->event->get_arg('target');
+		$modes = $this->event->get_arg('mode');
+		$nick = $this->event->get_arg(2);
+
 		if (preg_match('/(?:\+|-)[hov+-]+/i', $modes))
 		{
 			$chan = trim(strtolower($chan));
 			$modes = str_split(trim(strtolower($modes)), 1);
-			$nicks = explode(' ', trim(strtolower($nicks)));
+			$nick = trim(strtolower($nick));
 			while ($char = array_shift($modes))
 			{
 				switch ($char)
@@ -126,7 +129,6 @@ class failnet_plugin_channels extends failnet_plugin_common
 					break;
 
 					case 'o':
-						$nick = array_shift($nicks);
 						if ($mode == '+')
 						{
 							$this->failnet->chans[$chan][$nick] |= self::OP;
@@ -138,7 +140,6 @@ class failnet_plugin_channels extends failnet_plugin_common
 					break;
 
 					case 'h':
-						$nick = array_shift($nicks);
 						if ($mode == '+')
 						{
 							$this->failnet->chans[$chan][$nick] |= self::HALFOP;
@@ -150,7 +151,6 @@ class failnet_plugin_channels extends failnet_plugin_common
 					break;
 
 					case 'v':
-						$nick = array_shift($nicks);
 						if ($mode == '+')
 						{
 							$this->failnet->chans[$chan][$nick] |= self::VOICE;
