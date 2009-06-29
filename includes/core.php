@@ -35,7 +35,7 @@
  */
 if(!defined('IN_FAILNET')) exit(1);
 
-class failnet_core extends failnet_common
+class failnet_core
 {
 	/**
 	 * Object vars for Failnet's use
@@ -65,7 +65,17 @@ class failnet_core extends failnet_common
 	public $nick = '';
 	public $pass = '';
 	
-	public function init()
+	/**
+	 * Constants for Failnet.
+	 */
+	const TAB = "\t";
+	const X01 = "\x01";
+	const X02 = "\x02";
+	const HR = '---------------------------------------------------------------------';
+	const ERROR_LOG = 'error';
+	const USER_LOG = 'user';
+	
+	public function __construct()
 	{
 		/**
 		 * Check to make sure the CLI SAPI is being used...
@@ -414,6 +424,11 @@ class failnet_core extends failnet_common
 			return $nick;
 		}
 		return false;
+	}
+	
+	public function __call($funct, $params)
+	{
+		trigger_error('Bad function call "' . $funct . '" with params "' . implode(', ', $params) . '" to "' . get_class() . ' class.', E_USER_WARNING);
 	}
 }
 
