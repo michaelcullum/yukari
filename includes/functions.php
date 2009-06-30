@@ -101,7 +101,7 @@ function get_formatted_filesize($bytes)
  * @param int $time The time/integer to calulate the values from
  * @return string
  */
-function timespan($time)
+function timespan($time, $last_comma = false)
 {
 	$return = array();
 
@@ -126,10 +126,20 @@ function timespan($time)
 		$time %= 60;
 	}
 
-	if ($time > 0 || count($return) <= 0)
-		$return[] = ($time > 0 ? $time : '0') . (($time == 1) ? ' second' : ' seconds');
+	$return = (sizeof($return) ? implode(', ', $return) : '');
 
-	return implode(', ', $return);
+	if(!$last_comma)
+	{
+		if ($time > 0 || count($return) <= 0)
+			$return .= (sizeof($return) ? 'and ' : '') . ($time > 0 ? $time : '0') . (($time == 1) ? ' second' : ' seconds');
+	}
+	else
+	{
+		if ($time > 0 || count($return) <= 0)
+			$return .= (sizeof($return) ? ((sizeof($return) > 1) ? ', ' : '') . 'and ' : '') . ($time > 0 ? $time : '0') . (($time == 1) ? ' second' : ' seconds');
+	}
+
+	return $return;
 }
 
 ?>
