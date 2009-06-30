@@ -126,20 +126,20 @@ function timespan($time, $last_comma = false)
 		$time %= 60;
 	}
 
-	$return = (sizeof($return) ? implode(', ', $return) : '');
+	$uptime = (sizeof($return) ? implode(', ', $return) : '');
 
 	if(!$last_comma)
 	{
 		if ($time > 0 || count($return) <= 0)
-			$return .= (sizeof($return) ? 'and ' : '') . ($time > 0 ? $time : '0') . (($time == 1) ? ' second' : ' seconds');
+			$uptime .= (sizeof($return) ? ' and ' : '') . ($time > 0 ? $time : '0') . (($time == 1) ? ' second' : ' seconds');
 	}
 	else
 	{
 		if ($time > 0 || count($return) <= 0)
-			$return .= (sizeof($return) ? ((sizeof($return) > 1) ? ', ' : '') . 'and ' : '') . ($time > 0 ? $time : '0') . (($time == 1) ? ' second' : ' seconds');
+			$uptime .= (sizeof($return) ? ((sizeof($return) > 1) ? ',' : '') . ' and ' : '') . ($time > 0 ? $time : '0') . (($time == 1) ? ' second' : ' seconds');
 	}
 
-	return $return;
+	return $uptime;
 }
 
 ?>
