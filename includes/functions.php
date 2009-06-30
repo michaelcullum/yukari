@@ -105,24 +105,45 @@ function timespan($time, $last_comma = false)
 {
 	$return = array();
 
-	$days = floor($time / 86400);
-	if ($days > 0)
+	$count = floor($time / 29030400);
+	if ($count > 0)
 	{
-		$return[] = $days . (($days == 1) ? ' day ' : ' days');
+		$return[] = $count . (($count == 1) ? ' year' : ' years');
+		$time %= 29030400;
+	}
+
+	$count = floor($time / 2419200);
+	if ($count > 0)
+	{
+		$return[] = $count . (($count == 1) ? ' month' : ' months');
+		$time %= 2419200;
+	}
+
+	$count = floor($time / 604800);
+	if ($count > 0)
+	{
+		$return[] = $count . (($count == 1) ? ' week' : ' weeks');
+		$time %= 604800;
+	}
+
+	$count = floor($time / 86400);
+	if ($count > 0)
+	{
+		$return[] = $count . (($count == 1) ? ' day' : ' days');
 		$time %= 86400;
 	}
 
-	$hours = floor($time / 3600);
-	if ($hours > 0)
+	$count = floor($time / 3600);
+	if ($count > 0)
 	{
-		$return[] = $hours . (($hours == 1) ? ' hour' : ' hours');
+		$return[] = $count . (($count == 1) ? ' hour' : ' hours');
 		$time %= 3600;
 	}
 
-	$minutes = floor($time / 60);
-	if ($minutes > 0)
+	$count = floor($time / 60);
+	if ($count > 0)
 	{
-		$return[] = $minutes . (($minutes == 1) ? ' minute' : ' minutes');
+		$return[] = $count . (($count == 1) ? ' minute' : ' minutes');
 		$time %= 60;
 	}
 
