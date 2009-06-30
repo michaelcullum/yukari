@@ -108,28 +108,28 @@ function timespan($time)
 	$days = floor($time / 86400);
 	if ($days > 0)
 	{
-		$return[] = $days . 'd';
+		$return[] = $days . (($days == 1) ? ' day ' : ' days');
 		$time %= 86400;
 	}
 
 	$hours = floor($time / 3600);
 	if ($hours > 0)
 	{
-		$return[] = $hours . 'h';
+		$return[] = $hours . (($hours == 1) ? ' hour' : ' hours');
 		$time %= 3600;
 	}
 
 	$minutes = floor($time / 60);
 	if ($minutes > 0)
 	{
-		$return[] = $minutes . 'm';
+		$return[] = $minutes . (($minutes == 1) ? ' minute' : ' minutes');
 		$time %= 60;
 	}
 
 	if ($time > 0 || count($return) <= 0)
-		$return[] = ($time > 0 ? $time : '0') . 's';
+		$return[] = ($time > 0 ? $time : '0') . (($time == 1) ? ' second' : ' seconds');
 
-	return implode(' ', $return);
+	return implode(', ', $return);
 }
 
 ?>
