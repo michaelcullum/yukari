@@ -60,12 +60,108 @@ class failnet_auth extends failnet_common
 	 */
 	public $hash;
 	
+	/**
+	 * Specialized init function to allow class construction to be easier.
+	 * @see includes/failnet_common#init()
+	 * @return void
+	 */
 	public function init()
 	{
 		display('=== Loading Failnet password hashing system');
 			$this->hash = new failnet_hash(8, false);
 		display('=== Loading user database'); 
 			$this->load();
+	}
+	
+	/**
+	 * Method to (re)load the users database.
+	 * @return void
+	 */
+	public function load()
+	{
+		$this->users = file(FAILNET_ROOT . 'data/users');
+		foreach ($this->users as &$user)
+		{
+			$user = explode('::', rtrim($user));
+		}
+	}
+	
+	/**
+	 * Instant auth.
+	 * @param $user - Username to instantly authorize.
+	 * @return boolean - Was it successful?
+	 */
+	public function instauth($user)
+	{
+		foreach ($this->users as &$user_row)
+		{
+			if ($user_row[0] == $user)
+			{
+				$user_row[3] = 1;
+				file_put_contents('data/instantauth', 'nope');
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Attempt to authenticate a user..
+	 * @param $sender - The sender's nick.
+	 * @param $password - The password the sender specified.
+	 * @return mixed - True if password is correct, false if password is wrong, NULL if no such user.
+	 */
+	public function auth($sender, $password)
+	{
+		foreach ($this->users as &$user)
+		{
+			if ($user[0] == strtolower($sender))
+			{
+				if ($this->hash->check($pw, $user[2]))
+				{
+					$user[3] = true;
+					
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+		}
+		return NULL;
+	}
+	
+	/**
+	 * Looks up the authorization level for a certain user...
+	 * @param $person - The user to check for.
+	 * @return mixed - Always returns 100 if boolean false is used as the authlevel, or if no such user NULL is returned.
+	 */
+	public function authlevel($person)
+	{
+		if($person === false)
+			return 100;
+		foreach ($this->users as &$user)
+		{
+			if ($user[0] == $person) return (!empty($user[3])) ? $user[1] : false;
+		}
+		return NULL;
+	}
+	
+	/**
+	 * Add a user to the users database
+	 * @param $nick - Who should we set this for?
+	 * @param $password - The new password to use
+	 * @return boolean - False if user already exists, true if successful.
+	 */
+	public function adduser($nick, $password)
+	{
+		foreach ($this->users as &$user)
+		{
+			if ($user[0] == $nick) return false;
+		}
+		file_put_contents('data/users', PHP_EOL . $nick . '::0::' . $this->hash->hash($password), FILE_APPEND);
+		return true;
 	}
 	
 	/**

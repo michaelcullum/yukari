@@ -52,6 +52,7 @@ return array(
 
 // Plugins to automatically load on startup. 
 	'plugin_list'	=> array(
+		'admin',
 		'authorize',
 		'autojoin',
 		'channels',
@@ -73,7 +74,7 @@ return array(
 	'server_pass'	=> '',
 
 // The nick of the Bot's owner.
-	'owner'			=> 'Desdenova',
+	'owner'			=> 'Obsidian',
 
 // Should the bot say anything or stay silent?
 	'speak'			=> true,
@@ -81,14 +82,14 @@ return array(
 // Should the bot join a channel on invite?
 	'joininvite'	=> false, 
 
-// Should the bot autorejoin a channel on kick?
+// Should the bot attept to autorejoin a channel on kick?
 	'autorejoin'	=> false,
 
 // How long should Failnet wait after the last recieved event to ping the server to check the connection?
 	'ping_wait'		=> 120,
 
 // How long after a server ping is sent will we assume that the connection is lost?
-	'ping_timeout'	=> 5,
+	'ping_timeout'	=> 10,
 
 // How many messages should be stored in the log queue before the queue is written to the file?
 	'log_queue'		=> 60,
@@ -100,6 +101,11 @@ return array(
 		'Failnet-',
 		'Failnet--',
 		'Failnet-_',
+	),
+
+// List of IRC channels to automatically join if autojoin plugin is loaded.
+	'autojoins'		=> array(
+		'#failnet',
 	),
 
 // Standard messages for Failnet.

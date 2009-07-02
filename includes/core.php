@@ -317,6 +317,7 @@ class failnet_core
 	
 	/**
 	 * Deny function...
+	 * @return string - The deny message to use. :3
 	 */
 	public function deny()
 	{
@@ -393,6 +394,18 @@ class failnet_core
 	{
 		return isset($this->chans[trim(strtolower($chan))][trim(strtolower($nick))]);
 	}
+	
+	/**
+	 * Are we directing this at our owner or ourself?
+	 * This is best to avoid humilation if we're using an agressive factoid.  ;)
+	 * 
+	 * @param $user - The user to chech.
+	 * @return boolean - Are we targeting the owner or ourself?
+	 */
+	public function checkuser($user)
+	{
+		return (!preg_match('#' . preg_quote($this->owner, '#') . '#is', $user) && !preg_match('#' . preg_quote($this->nick, '#') . '#is', $user) && !preg_match('#self#i', $user)) ? true : false;
+	}
 
 	/**
 	 * Returns the entire user list for a channel or false if the bot is not
@@ -426,6 +439,11 @@ class failnet_core
 		return false;
 	}
 	
+	/**
+	 * Undefined function handler
+	 * @param $funct - Function name
+	 * @param $params - Function parameters
+	 */
 	public function __call($funct, $params)
 	{
 		trigger_error('Bad function call "' . $funct . '" with params "' . implode(', ', $params) . '" to "' . get_class() . ' class.', E_USER_WARNING);

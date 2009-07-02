@@ -34,28 +34,17 @@
 if(!defined('IN_FAILNET')) exit(1);
 
 /**
- * Failnet - Reminder plugin,
- * 		A plugin to have Failnet remind users about various events in X minutes or X hours Y minutes. 
+ * Failnet - Administration plugin,
+ * 		This allows the owner or authorized users to control Failnet. 
  * 
  * 
  * @author Obsidian
  * @copyright (c) 2009 - Obsidian
  * @license http://opensource.org/licenses/gpl-2.0.php | GNU Public License v2
  */
-class failnet_plugin_reminder extends failnet_plugin_common
+class failnet_plugin_admin extends failnet_plugin_common
 {
-	public $enable = true;
-	public $reminders = array();
 	
-	public function tick()
-	{
-		
-	}
-	
-	public function cmd_privmsg()
-	{
-		
-	}
 }
 
 ?>

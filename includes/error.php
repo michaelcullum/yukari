@@ -77,8 +77,11 @@ class failnet_error extends failnet_common
 		{
 			case E_NOTICE:
 			case E_WARNING:
+			case E_STRICT:
+			case E_DEPRECIATED:
 			case E_USER_WARNING:
 			case E_USER_NOTICE:
+			case E_USER_DEPRECIATED:
 			default:
 				$error = '[Debug] PHP Notice: in file ' . $errfile . ' on line ' . $errline . ': ' . $msg_text . PHP_EOL; 
 				$this->failnet->log->write(self::ERROR_LOG, time(), date('D m/d/Y - h:i:s A') . ' - ' . $error);

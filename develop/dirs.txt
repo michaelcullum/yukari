@@ -1,0 +1,58 @@
+===================================================================
+
+  File/directory layout : (What goes where)
+===================================================================
+
+	Script info:
+-------------------------------------------------------------------
+ Copyright:		(c) 2009 - Obsidian
+ License:		http://opensource.org/licenses/gpl-2.0.php  |  GNU Public License v2
+
+===================================================================
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License,
+or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, 
+see <http://opensource.org/licenses/gpl-2.0.php>.
+
+===================================================================
+
+/
+	data/ 								(Files that are used for data storage go here)
+		db/								(Database files will go here in Failnet 2.2)
+		factoids.php 					(Factoids file)
+	deprec/								(Depreciated files are kept here in SVN for reference)
+	develop/ 							(Developer files are kept here, but not included in packages)
+	includes/ 							(All PHP class and include files)
+		event/							(All event handler classes go here)
+		plugins/						(All plugin files go in here)
+			common.php					(Plugin base class, do not remove)
+			command.php					(Extension to plugin base class, do not remove)
+		auth.php						(Authorization class)
+		common.php						(Base class for Failnet, contains common elements for most classes)
+		core.php						(Failnet core class)
+		error.php						(Error handler)
+		factoids.php					(Factoids engine)
+		functions.php					(Commonly required functions for Failnet)
+		hash.php						(phpass hashing system)
+		irc.php							(IRC protocol handler)
+		log.php							(Conversation and event logging handler - required for error handler)
+		manager.php						(Plugin manager)
+		socket.php						(Socket communication manager)
+	logs/								(Log files are written and stored here)
+	autoload.php						(Class file autoloader)
+	config.php							(Failnet configuration file)
+	failnet.bat							(Batch file shell for Failnet)
+	failnet.php							(Failnet main file)
+	failnet.sh							(Bash file shell for Failnet)
+	LICENSE								(Copy of the GPL v2 license used for Failnet)
+	README								(Readme file for Failnet)

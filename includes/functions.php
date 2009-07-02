@@ -47,13 +47,13 @@ function display($msg)
 	{
 		foreach($msg as $line)
 		{
-			$line = (preg_match('/' . PHP_EOL . '(| )$/i', $line)) ? substr($line, 0, strlen($line) - 1) : $line;
+			$line = (strrpos($line, PHP_EOL . PHP_EOL) !== false) ? substr($line, 0, strlen($line) - 1) : $line;
 			echo $line . PHP_EOL;		
 		}
 	}
 	else
 	{
-		$msg = (preg_match('/' . PHP_EOL . '(| )$/i', $msg)) ? substr($msg, 0, strlen($msg) - 1) : $msg;
+		$msg = (strrpos($log, PHP_EOL . PHP_EOL) !== false) ? substr($msg, 0, strlen($msg) - 1) : $msg;
 		echo $msg . PHP_EOL;
 	}
 }
@@ -61,10 +61,10 @@ function display($msg)
 /**
  * Shell for Failnet's built-in error handler class.
  * 
- * @param $errno
- * @param $msg_text
- * @param $errfile
- * @param $errline
+ * @param $errno - Error number
+ * @param $msg_text - Error message text
+ * @param $errfile - Where was the error in?
+ * @param $errline - What line was the error?
  */
 function fail_handler($errno, $msg_text, $errfile, $errline)
 {
@@ -75,11 +75,10 @@ function fail_handler($errno, $msg_text, $errfile, $errline)
 /**
 * Return formatted string for filesizes
 * 
-* @author (c) 2007 phpBB Group 
-* 
 * @param integer $bytes - The number of bytes to convert.
-* 
 * @return string - The filesize converted into KiB, MiB, or GiB.
+* 
+* @author (c) 2007 phpBB Group 
 */
 function get_formatted_filesize($bytes)
 {
@@ -98,7 +97,8 @@ function get_formatted_filesize($bytes)
 /**
  * Converts a given integer/timestamp into days, minutes and seconds
  *
- * @param int $time The time/integer to calulate the values from
+ * @param integer $time - The time/integer to calulate the values from
+ * @param boolean $last_comma - Should we have a comma between the second to last item of the list and the last, if more than 3 items for time? 
  * @return string
  */
 function timespan($time, $last_comma = false)

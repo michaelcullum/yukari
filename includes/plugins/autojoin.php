@@ -44,7 +44,22 @@ if(!defined('IN_FAILNET')) exit(1);
  */
 class failnet_plugin_autojoin extends failnet_plugin_common
 {
-	
+	public function cmd_response()
+	{
+		switch ($this->_event->getCode())
+		{
+			case failnet_event_response::RPL_ENDOFMOTD:
+			case failnet_event_response::ERR_NOMOTD:
+				$channels = $this->failnet->get('autojoins');
+				if (!empty($channels))
+				{
+					foreach($channels as $channel)
+					{
+						$this->call_join($channel);
+					}
+				}
+		}
+	}
 }
 
 ?>
