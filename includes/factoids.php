@@ -13,11 +13,11 @@
  *
  *===================================================================
  * 
- * @TODO: Removing factoids...
- * @TODO: Removing factoid entries...
- * @TODO: Changing factoid settings...
+ * @todo: Removing factoids...
+ * @todo Removing factoid entries...
+ * @todo Changing factoid settings...
  * 
- * @TODO: Write a plugin for this?  Either convert to a plugin or use a plugin as a shell.
+ * @todo Write a plugin for this?  Either convert to a plugin or use a plugin as a shell.
  * 
  */
 
@@ -53,42 +53,90 @@ if(!defined('IN_FAILNET')) exit(1);
  */
 class failnet_factoids extends failnet_common
 {
+/**
+ * Properties
+ */
 	
 	/**
-	 * Factoid array structure...
-	 * 
-	 * <code>
-	 * $factoids = array(
-	 * 		array(
-	 * 			'pattern'	=> '^fail$',
-	 * 			'authlevel'	=> NULL,
-	 * 			'selfcheck'	=> false,
-	 * 			'function'	=> true,
-	 * 			'factoids'	=> array(
-	 * 				'haha',
-	 * 			),
-	 * 		),
-	 * 		array(
-	 * 			'pattern'	=> '^\\o\/$',
-	 * 			'authlevel'	=> NULL,
-	 * 			'selfcheck'	=> false,
-	 * 			'function'	=> true,
-	 * 			'factoids'	=> array(
-	 * 				'$this->privmsg(' |'); $this->privmsg('/ \\');'
-	 * 			),
-	 * 		),
-	 * );
-	 * </code>
-	 * 
+	 * List of factoids loaded
+	 * @var array
 	 */
-
 	public $factoids = array();
+	
+	/**
+	 * List of Failnet commands
+	 * @var array
+	 */
 	public $commands = array();
+	
+	/**
+	 * List of factoids to trigger only when Failnet is specifically being spoken to
+	 * @var array
+	 */
 	public $my_factoids = array();
 	
+	/**
+	 * How many factoids processed?
+	 * @var integer
+	 */
 	protected $done = 0;
+	
+	/**
+	 * Only one factoid at a time?
+	 * @var boolean
+	 */
 	protected $return = false;
 	
+/**
+ * Constants
+ */
+	
+	/**
+	 * Create new factoid indicator
+	 * @var constant
+	 */
+	const TYPE_NEW = 1;
+	
+	/**
+	 * Add factoid entry indicator
+	 * @var constant
+	 */
+	const TYPE_ADD = 2;
+	
+	/**
+	 * Edit factoid entry indicator
+	 * @var constant
+	 */
+	const TYPE_EDIT = 3;
+	
+	/**
+	 * Change factoid settings indicator
+	 * @var constant
+	 */
+	const TYPE_UPDATE = 4;
+	
+	/**
+	 * Delete factoid indicator
+	 * @var constant
+	 */
+	const TYPE_DELETE = 5;
+	
+	/**
+	 * Remove factoid entry indicator
+	 * @var constant
+	 */
+	const TYPE_REMOVE = 6;
+	
+/**
+ * Methods
+ */
+	
+	/**
+	 * Failnet class initiator
+	 * 
+	 * @see includes/failnet_common#init()
+	 * @return void
+	 */
 	public function init()
 	{
 		display('=== Loading factoids database');
@@ -98,11 +146,11 @@ class failnet_factoids extends failnet_common
 	// Method to (re)load the factoids DB.
 	public function load()
 	{
-		if(file_exists(FAILNET_ROOT . 'data/new_factoids.' . PHP_EXT)) 
+		if(file_exists(FAILNET_ROOT . 'data/update_factoids.' . PHP_EXT)) 
 			$this->merge('factoids');
-		if(file_exists(FAILNET_ROOT . 'data/new_commands.' . PHP_EXT)) 
+		if(file_exists(FAILNET_ROOT . 'data/update_commands.' . PHP_EXT)) 
 			$this->merge('commands');
-		if(file_exists(FAILNET_ROOT . 'data/new_my_factoids.' . PHP_EXT)) 
+		if(file_exists(FAILNET_ROOT . 'data/update_my_factoids.' . PHP_EXT)) 
 			$this->merge('my_factoids');
 		
 		include FAILNET_ROOT . 'data/factoids.' . PHP_EXT;
@@ -116,12 +164,16 @@ class failnet_factoids extends failnet_common
 	}
 	
 	/**
-	 *  Merges in the new factoids file. ;)
+	 * Merges in the factoids update file. We do this in case Failnet crashed unexpectedly...
+	 * 		normally on shutdown Failnet should write the current of factoids anyways and unlink the update file.
+	 * @param string $filename - The type of factoids we will merge in
+	 * @return void
+	 * 
 	 */
-	public function merge($filename)
+	public function merge($filename) // @todo Rewrite this shiz for new update system.
 	{
 		include FAILNET_ROOT . 'data/' . $filename . '.' .  PHP_EXT;
-		$new_factoids = $this->parse_new_factoids($filename);
+		$new_factoids = $this->parse_update($filename);
 		
 		foreach($factoids as $fact)
 		{
@@ -145,34 +197,81 @@ class failnet_factoids extends failnet_common
 		$file .= PHP_EOL . PHP_EOL . '// Here be dragons.' . PHP_EOL;
 		$file .= '$factoids = ' . var_export($facts) . ';' . PHP_EOL . PHP_EOL . '?' . '>';
 		file_put_contents(FAILNET_ROOT . 'data/' . $filename . '.' . PHP_EXT, $file, LOCK_EX);
-		unlink(FAILNET_ROOT . 'data/new_' . $filename);
+		unlink(FAILNET_ROOT . 'data/update_' . $filename);
 	}
 	
 	/**
-	 * Parses the new factoids file and returns what the new factoids are.
+	 * Parses the factoids update file and returns what updates should be carried out on the factoids database
 	 */
-	public function parse_new_factoids($filename)
+	public function parse_update($filename)
 	{
-		$data = file(FAILNET_ROOT . 'data/new_' . $filename);
+		$data = file(FAILNET_ROOT . 'data/update_' . $filename);
 		for ($i = 0; $i < sizeof($data); $i++)
 		{
-			$fact_ = explode('::', $data[$i]);
-			$return[$i]['pattern'] = (string) array_shift($fact_);
-			$authlevel = array_shift($fact_);
+			$fact = explode('::', $data[$i]);
+			$type = array_shift($fact);
+			switch($type)
+			{
+				case TYPE_NEW:
+					$return[$i]['type'] = $type;
+					$return[$i]['pattern'] = (string) array_shift($fact);
+					$authlevel = array_shift($fact);
+					$return[$i]['authlevel'] = ($authlevel != 'NULL') ? (int) $authlevel : NULL;
+					$return[$i]['selfcheck'] = (bool) array_shift($fact);
+					$return[$i]['function'] = (bool) array_shift($fact);
+					$return[$i]['factoids'] = (array) $fact;
+				break;
+				
+				case TYPE_ADD:
+					$return[$i]['type'] = $type;
+					$return[$i]['pattern'] = (string) array_shift($fact);
+					$return[$i]['factoids'] = (array) $fact;
+				break;
+					
+				case TYPE_EDIT:
+					$return[$i]['type'] = $type;
+					$return[$i]['pattern'] = (string) array_shift($fact);
+					$return[$i]['old'] = (string) array_shift($fact);
+					$return[$i]['new'] = (string) $fact;
+				break;
+				
+				case TYPE_UPDATE:
+					$return[$i]['pattern'] = (string) array_shift($fact);
+					$return[$i]['authlevel'] = ($authlevel != 'NULL') ? (int) $authlevel : NULL;
+					$return[$i]['selfcheck'] = (bool) array_shift($fact);
+					$return[$i]['function'] = (bool) array_shift($fact);
+				break;
+				
+				case TYPE_DELETE:
+					$return[$i]['pattern'] = (string) $fact;
+				break;
+					
+				case TYPE_REMOVE:
+					$return[$i]['pattern'] = (string) array_shift($fact);
+					$return[$i]['factoids'] = $fact;  
+					// @todo Check if this is an array of factoids we are removing, maybe force it as an array.
+				break;
+			}
+			
+			/**
+			$return[$i]['pattern'] = (string) array_shift($fact);
+			$authlevel = array_shift($fact);
 			$return[$i]['authlevel'] = ($authlevel != 'NULL') ? (int) $authlevel : NULL;
-			$return[$i]['selfcheck'] = (bool) array_shift($fact_);
-			$return[$i]['function'] = (bool) array_shift($fact_);;
-			$return[$i]['factoids'] = (array) $fact_;
+			$return[$i]['selfcheck'] = (bool) array_shift($fact);
+			$return[$i]['function'] = (bool) array_shift($fact);
+			$return[$i]['factoids'] = (array) $fact;
+			*/
 		}
 		return $return;
 	}
 	
 	/**
 	 * Adds a factoid to the new factoids file. :D
+	 * @todo Update so that this passes the right value for the update file
 	 */
 	public function add_factoid($type, $pattern, array $factoids, $authlevel = false, $selfcheck = false, $function = false)
 	{
-		$data = file(FAILNET_ROOT . 'data/new_' . $type);
+		$data = file(FAILNET_ROOT . 'data/update_' . $type);
 		$found = false;
 		foreach ($data as $key => $fact)
 		{
@@ -299,11 +398,11 @@ class failnet_factoids extends failnet_common
 		// Which factoid set will we use?
 		if ($forme)
 		{
-			$facts = $this->my_factoids;
+			$facts = array_merge($this->factoids, $this->my_factoids);
 		}
 		elseif ($command)
 		{
-			$facts = $this->commands;
+			$facts = array_merge($this->factoids, $this->commands);
 		}
 		else
 		{
@@ -334,7 +433,7 @@ class failnet_factoids extends failnet_common
 					if (sizeof($facts[$i]['factoids']) > 1)
 					{
 						$usefact = $facts[$i]['factoids'][rand(0, sizeof($facts[$i]['factoids']) - 1)];
-						if (!ereg('_skip_', $usefact))
+						if (strpos($usefact, '_skip_') !== false)
 						{
 							eval($usefact);
 							$this->done();
@@ -354,34 +453,28 @@ class failnet_factoids extends failnet_common
 					if (sizeof($facts[$i]['factoids']) > 1)
 					{
 						$usefact = $facts[$i]['factoids'][rand(0, sizeof($facts[$i]['factoids']) - 1)];
-						if (preg_match('/^\_action\_/i', $usefact))
+						if (strpos($usefact, '_action_') === 0)
 						{
 							$this->failnet->irc->action(preg_replace('/' . $facts[$i]['pattern'] . '/is', preg_replace('/^\_action\_/i', '', $usefact), $tocheck));
 							$this->done();
 						}
-						else
+						elseif (strpos($usefact, '_skip_') === false)
 						{
-							if (!ereg('_skip_', $usefact))
-							{
-								$this->failnet->irc->privmsg(preg_replace('/' . $facts[$i]['pattern'] . '/is', $usefact, $tocheck));
-								$this->done();
-							}
+							$this->failnet->irc->privmsg(preg_replace('/' . $facts[$i]['pattern'] . '/is', $usefact, $tocheck));
+							$this->done();
 						}
 					}
 					else
 					{
-						if (preg_match('/^\_action\_/i', $facts[$i]['factoids'][0]))
+						if (strpos($facts[$i][1], '_action_') === 0)
 						{
 							$this->failnet->irc->action(preg_replace('/' . $facts[$i]['pattern'] . '/is', preg_replace('/^\_action\_/i', '', $facts[$i]['factoids'][0]), $tocheck));
 							$this->done();
 						}
-						else
+						elseif (strpos($facts[$i][1], '_skip_') === false)
 						{
-							if (!ereg('_skip_', $facts[$i][1]))
-							{
-								$this->failnet->irc->privmsg(preg_replace('/' . $facts[$i]['pattern'] . '/is', $facts[$i]['factoids'][0], $tocheck));
-								$this->done();
-							}
+							$this->failnet->irc->privmsg(preg_replace('/' . $facts[$i]['pattern'] . '/is', $facts[$i]['factoids'][0], $tocheck));
+							$this->done();
 						}
 					}
 				}

@@ -13,8 +13,6 @@
  *
  *===================================================================
  * 
- * @todo: Add logging if not in debug mode for most of these commands.
- * 
  */
 
 /**

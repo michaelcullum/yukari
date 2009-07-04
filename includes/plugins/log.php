@@ -68,7 +68,7 @@ class failnet_plugin_log extends failnet_plugin_common
 				$this->failnet->log->add(date('D m/d/Y - h:i:s A') . ' - === ' . $this->event->nick . ' has changed the topic in ' . $this->event->get_arg('channel') . ' to ' . $this->event->get_arg('topic'));
 			break;
 
-			case failnet_event_request::TYPE_MODE:  // @todo: Finish this one.  This requires counting the args.
+			case failnet_event_request::TYPE_MODE:  // @todo Finish this one.  This requires counting the args.
 				
 			break;
 
@@ -85,7 +85,7 @@ class failnet_plugin_log extends failnet_plugin_common
 	
 	public function post_dispatch()
 	{
-		// @todo: In here, record what WE did.
+		// @todo In here, record what WE did.
 	}
 }
 
