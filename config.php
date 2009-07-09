@@ -44,14 +44,14 @@ if(!defined('IN_FAILNET')) exit(1);
 return array(
 
 // Server settings
-	'server'		=> 'irc.freenode.net',
-	'port'			=> 6667,
-	'nick'			=> 'Failnet',
-	'user'			=> 'Failnet',
-	'name'			=> 'Failnet',
+	'server'			=> 'irc.freenode.net',
+	'port'				=> 6667,
+	'nick'				=> 'Failnet',
+	'user'				=> 'Failnet',
+	'name'				=> 'Failnet',
 
 // Plugins to automatically load on startup. 
-	'plugin_list'	=> array(
+	'plugin_list'		=> array(
 		'admin',
 		'authorize',
 		'autojoin',
@@ -65,37 +65,40 @@ return array(
 	),
 
 // What is the nickname service bot? If there isn't, leave this as an empty string.
-	'nickbot'		=> 'nickserv',
+	'nickbot'			=> 'nickserv',
 	
 // Nickname service identify password. ;)
-	'pass'			=> 'somepasswordhere',
+	'pass'				=> 'somepasswordhere',
 
 // Server password, if necessary.
-	'server_pass'	=> '',
+	'server_pass'		=> '',
 
 // The nick of the Bot's owner.
-	'owner'			=> 'Obsidian',
+	'owner'				=> 'Obsidian',
 
 // Should the bot say anything or stay silent?
-	'speak'			=> true,
+	'speak'				=> true,
+
+// Should the bot stop running through factoids after the first factoid it finds?
+	'single_factoid'	=> false,
 
 // Should the bot join a channel on invite?
-	'joininvite'	=> false, 
+	'joininvite'		=> false, 
 
 // Should the bot attept to autorejoin a channel on kick?
-	'autorejoin'	=> false,
+	'autorejoin'		=> false,
 
 // How long should Failnet wait after the last recieved event to ping the server to check the connection?
-	'ping_wait'		=> 120,
+	'ping_wait'			=> 120,
 
 // How long after a server ping is sent will we assume that the connection is lost?
-	'ping_timeout'	=> 10,
+	'ping_timeout'		=> 10,
 
 // How many messages should be stored in the log queue before the queue is written to the file?
-	'log_queue'		=> 60,
+	'log_queue'			=> 60,
 
 // List of alternate IRC nicknames to use
-	'altnicks'		=> array(
+	'altnicks'			=> array(
 		'Failnet_',
 		'Failnet__',
 		'Failnet-',
@@ -104,7 +107,7 @@ return array(
 	),
 
 // List of IRC channels to automatically join if autojoin plugin is loaded.
-	'autojoins'		=> array(
+	'autojoins'			=> array(
 		'#failnet',
 	),
 
@@ -116,7 +119,7 @@ return array(
 	'quit_msg'			=> 'Failnet PHP IRC Bot',
 	
 // Should we be in debug mode?
-	'debug'			=> false,
+	'debug'				=> false,
 );
 
 ?>

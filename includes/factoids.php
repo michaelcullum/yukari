@@ -114,18 +114,24 @@ class failnet_factoids extends failnet_common
 	 * @var constant
 	 */
 	const TYPE_UPDATE = 4;
+
+	/**
+	 * Change the pattern for a factoid
+	 * @var constant
+	 */
+	const TYPE_RESET = 5;
 	
 	/**
 	 * Delete factoid indicator
 	 * @var constant
 	 */
-	const TYPE_DELETE = 5;
+	const TYPE_DELETE = 6;
 	
 	/**
 	 * Remove factoid entry indicator
 	 * @var constant
 	 */
-	const TYPE_REMOVE = 6;
+	const TYPE_REMOVE = 7;
 	
 /**
  * Methods
@@ -157,10 +163,10 @@ class failnet_factoids extends failnet_common
 		$this->factoids = $factoids;
 		
 		include FAILNET_ROOT . 'data/commands.' . PHP_EXT;
-		$this->commands = array_merge($commands, $this->factoids);
+		$this->commands = $commands;
 		
 		include FAILNET_ROOT . 'data/my_factoids.' . PHP_EXT;
-		$this->my_factoids = array_merge($my_factoids, $this->factoids);
+		$this->my_factoids = $my_factoids;
 	}
 	
 	/**
@@ -221,56 +227,50 @@ class failnet_factoids extends failnet_common
 					$return[$i]['function'] = (bool) array_shift($fact);
 					$return[$i]['factoids'] = (array) $fact;
 				break;
-				
+
 				case TYPE_ADD:
 					$return[$i]['type'] = $type;
 					$return[$i]['pattern'] = (string) array_shift($fact);
 					$return[$i]['factoids'] = (array) $fact;
 				break;
-					
+
 				case TYPE_EDIT:
 					$return[$i]['type'] = $type;
 					$return[$i]['pattern'] = (string) array_shift($fact);
 					$return[$i]['old'] = (string) array_shift($fact);
 					$return[$i]['new'] = (string) $fact;
 				break;
-				
+
 				case TYPE_UPDATE:
 					$return[$i]['pattern'] = (string) array_shift($fact);
 					$return[$i]['authlevel'] = ($authlevel != 'NULL') ? (int) $authlevel : NULL;
 					$return[$i]['selfcheck'] = (bool) array_shift($fact);
 					$return[$i]['function'] = (bool) array_shift($fact);
 				break;
-				
+
+				case TYPE_RESET:
+					$return[$i]['pattern'] = (string) array_shift($fact);
+					$return[$i]['new'] = (string) $fact;
+				break;
+
 				case TYPE_DELETE:
 					$return[$i]['pattern'] = (string) $fact;
 				break;
-					
+
 				case TYPE_REMOVE:
 					$return[$i]['pattern'] = (string) array_shift($fact);
-					$return[$i]['factoids'] = $fact;  
-					// @todo Check if this is an array of factoids we are removing, maybe force it as an array.
+					$return[$i]['factoids'] = (array) $fact;  
 				break;
 			}
-			
-			/**
-			$return[$i]['pattern'] = (string) array_shift($fact);
-			$authlevel = array_shift($fact);
-			$return[$i]['authlevel'] = ($authlevel != 'NULL') ? (int) $authlevel : NULL;
-			$return[$i]['selfcheck'] = (bool) array_shift($fact);
-			$return[$i]['function'] = (bool) array_shift($fact);
-			$return[$i]['factoids'] = (array) $fact;
-			*/
 		}
 		return $return;
 	}
 	
 	/**
 	 * Adds a factoid to the new factoids file. :D
-	 * @todo Update so that this passes the right value for the update file
 	 */
 	public function add_factoid($type, $pattern, array $factoids, $authlevel = false, $selfcheck = false, $function = false)
-	{
+	{ // @todo Update so that this passes the right value for the update file
 		$data = file(FAILNET_ROOT . 'data/update_' . $type);
 		$found = false;
 		foreach ($data as $key => $fact)
@@ -377,22 +377,25 @@ class failnet_factoids extends failnet_common
 	
 	/**
 	 * Check for matching factoids that apply to what our input is.
+	 * @param string $tocheck - The message to check for factoid matching.
+	 * @param string $sender - Who sent the message we are checking.
+	 * @return void
 	 */
-	public function check($tocheck, $forme = false, $command = false, $sender = '[unknown]')
-	{
+	public function check($tocheck, $sender = '[unknown]')
+	{	// @todo See if this should be moved to a plugin, as it will need to call the call_privmsg and call_action methods...
 		$this->done = 0;
 		$this->return = false;
-		$tocheck = rtrim($tocheck);
-		if (preg_match('/^' . $this->failnet->nick . '/i', $tocheck))
+		$tocheck = str_replace('#', '\#', rtrim($tocheck));
+		if (preg_match('#^' . $this->failnet->nick . '#i', $tocheck))
 		{
 			$forme = true;
 			$command = false;
-			$tocheck = preg_replace('/^' . $this->failnet->nick . '(|:|,) /i', '', $tocheck);
+			$tocheck = preg_replace('#^' . $this->failnet->get('nick') . '(|:|,) #is', '', $tocheck);
 		}
 		else
 		{
 			$forme = false;
-			$command = (preg_match('/^\|/', $tocheck)) ? true : false;
+			$command = (preg_match('#^\|#', $tocheck)) ? true : false;
 		}
 		
 		// Which factoid set will we use?
@@ -424,12 +427,14 @@ class failnet_factoids extends failnet_common
 			   
 			if ($facts[$i]['function'] == true)
 			{
-				if (preg_match('/' . $facts[$i]['pattern'] . '/is', $tocheck, $matches))
+				if (preg_match('#' . $facts[$i]['pattern'] . '#is', $tocheck, $matches))
 				{
+					/* WTH is this?
 					for ($j = 0; $j < sizeof($facts[$i]['factoids']); $j++)
 					{
-						$facts[$i]['factoids'][$j] = preg_replace('/\["/', '\"', $facts[$i]['factoids'][$j]);
+						$facts[$i]['factoids'][$j] = preg_replace('#\["#', '\"', $facts[$i]['factoids'][$j]);
 					}
+					*/
 					if (sizeof($facts[$i]['factoids']) > 1)
 					{
 						$usefact = $facts[$i]['factoids'][rand(0, sizeof($facts[$i]['factoids']) - 1)];
@@ -448,32 +453,32 @@ class failnet_factoids extends failnet_common
 			}
 			else
 			{
-				if (preg_match('/' . $facts[$i]['pattern'] . '/is', $tocheck))
+				if (preg_match('#' . $facts[$i]['pattern'] . '#is', $tocheck))
 				{
 					if (sizeof($facts[$i]['factoids']) > 1)
 					{
 						$usefact = $facts[$i]['factoids'][rand(0, sizeof($facts[$i]['factoids']) - 1)];
 						if (strpos($usefact, '_action_') === 0)
 						{
-							$this->failnet->irc->action(preg_replace('/' . $facts[$i]['pattern'] . '/is', preg_replace('/^\_action\_/i', '', $usefact), $tocheck));
+							$this->failnet->irc->action(preg_replace('#' . $facts[$i]['pattern'] . '#is', preg_replace('/^#_action\_#i', '', $usefact), $tocheck));
 							$this->done();
 						}
 						elseif (strpos($usefact, '_skip_') === false)
 						{
-							$this->failnet->irc->privmsg(preg_replace('/' . $facts[$i]['pattern'] . '/is', $usefact, $tocheck));
+							$this->failnet->irc->privmsg(preg_replace('#' . $facts[$i]['pattern'] . '#is', $usefact, $tocheck));
 							$this->done();
 						}
 					}
 					else
 					{
-						if (strpos($facts[$i][1], '_action_') === 0)
+						if (strpos($facts[$i]['factoids'][0], '_action_') === 0)
 						{
-							$this->failnet->irc->action(preg_replace('/' . $facts[$i]['pattern'] . '/is', preg_replace('/^\_action\_/i', '', $facts[$i]['factoids'][0]), $tocheck));
+							$this->failnet->irc->action(preg_replace('#' . $facts[$i]['pattern'] . '#is', preg_replace('#^\_action\_#i', '', $facts[$i]['factoids'][0]), $tocheck));
 							$this->done();
 						}
-						elseif (strpos($facts[$i][1], '_skip_') === false)
+						elseif (strpos($facts[$i]['factoids'][0], '_skip_') === false)
 						{
-							$this->failnet->irc->privmsg(preg_replace('/' . $facts[$i]['pattern'] . '/is', $facts[$i]['factoids'][0], $tocheck));
+							$this->failnet->irc->privmsg(preg_replace('#' . $facts[$i]['pattern'] . '#is', $facts[$i]['factoids'][0], $tocheck));
 							$this->done();
 						}
 					}
@@ -483,13 +488,16 @@ class failnet_factoids extends failnet_common
 				return;
 		}
 		if ($forme && $this->done == 0)
-			$this->failnet->irc->privmsg($this->failnet->no_factoid());
+			return $this->failnet->no_factoid();
 	}
 	
-	// Helper function for failnet_factoids::check()
+	/**
+	 * Helper function for failnet_factoids::check()
+	 * @return void
+	 */
 	public function done()
 	{
-		if($this->failnet->single_factoid == true)
+		if($this->failnet->get('single_factoid') == true)
 		{
 			$this->return = true;
 		}
