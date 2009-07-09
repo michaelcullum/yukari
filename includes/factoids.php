@@ -212,9 +212,9 @@ class failnet_factoids extends failnet_common
 	public function parse_update($filename)
 	{
 		$data = file(FAILNET_ROOT . 'data/update_' . $filename);
-		for ($i = 0; $i < sizeof($data); $i++)
+		foreach($data as $i => $item)
 		{
-			$fact = explode('::', $data[$i]);
+			$fact = explode('::', $item);
 			$type = array_shift($fact);
 			switch($type)
 			{
@@ -307,38 +307,18 @@ class failnet_factoids extends failnet_common
 				foreach($this->factoids as $key => $fact)
 				{
 					if($fact['pattern'] !== $pattern)
-					{
 						continue;
-					}
+
 					$this->factoids[$key]['factoids'] = array_merge($this->factoids[$key]['factoids'], $factoids);
 					$f_found = true;
-				}
-				foreach($this->commands as $key => $fact)
-				{
-					if($fact['pattern'] !== $pattern)
-					{
-						continue;
-					}
-					$this->commands[$key]['factoids'] = array_merge($this->commands[$key]['factoids'], $factoids);
-					$c_found = true;
-				}
-				foreach($this->my_factoids as $key => $fact)
-				{
-					if($fact['pattern'] !== $pattern)
-					{
-						continue;
-					}
-					$this->my_factoids[$key]['factoids'] = array_merge($this->my_factoids[$key]['factoids'], $factoids);
-					$my_found = true;
 				}
 			break;
 			case 'commands':
 				foreach($this->commands as $key => $fact)
 				{
 					if($fact['pattern'] !== $pattern)
-					{
 						continue;
-					}
+
 					$this->commands[$key]['factoids'] = array_merge($this->commands[$key]['factoids'], $factoids);
 					$c_found = true;
 				}
@@ -347,9 +327,8 @@ class failnet_factoids extends failnet_common
 				foreach($this->my_factoids as $key => $fact)
 				{
 					if($fact['pattern'] !== $pattern)
-					{
 						continue;
-					}
+
 					$this->my_factoids[$key]['factoids'] = array_merge($this->my_factoids[$key]['factoids'], $factoids);
 					$my_found = true;
 				}
@@ -368,9 +347,9 @@ class failnet_factoids extends failnet_common
 			// Okay, didn't find one matching, so let's make one.
 			if(!$f_found && $type == 'factoids')
 				$this->factoids[] = $fact_array;
-			if(!$c_found && ($type == 'factoids' || $type == 'commands'))
+			if(!$c_found && $type == 'commands')
 				$this->commands[] = $fact_array;
-			if(!$my_found && ($type == 'factoids' || $type == 'my_factoids'))
+			if(!$my_found && $type == 'my_factoids')
 				$this->my_factoids[] = $fact_array;
 		}
 	}
@@ -382,7 +361,7 @@ class failnet_factoids extends failnet_common
 	 * @return void
 	 */
 	public function check($tocheck, $sender = '[unknown]')
-	{	// @todo See if this should be moved to a plugin, as it will need to call the call_privmsg and call_action methods...
+	{	// @todo Move to the factoids shell plugin
 		$this->done = 0;
 		$this->return = false;
 		$tocheck = str_replace('#', '\#', rtrim($tocheck));
@@ -414,30 +393,29 @@ class failnet_factoids extends failnet_common
 		
 		// Prep the search/replace stuffs.
 		$search = array('_nick_', '_owner_');
-		$replace = array($this->failnet->nick, $this->failnet->owner);
+		$replace = array($this->failnet->get('nick'), $this->failnet->get('owner'));
 		if ($sender != '[unknown]')
-		{
 			$search[] = '_sender_'; $replace[] = $sender;
-		}
 		
 		// Scan for matching factoids!
-		for ($i = 0; $i < sizeof($facts); $i++)
+		foreach($facts as $i => $fact)
+		//for ($i = 0; $i < sizeof($facts); $i++)
 		{
-			$facts[$i]['pattern'] = str_replace($search, $replace, $facts[$i]['pattern']);
+			$fact['pattern'] = str_replace($search, $replace, $fact['pattern']);
 			   
-			if ($facts[$i]['function'] == true)
+			if ($fact['function'] == true)
 			{
-				if (preg_match('#' . $facts[$i]['pattern'] . '#is', $tocheck, $matches))
+				if (preg_match('#' . $fact['pattern'] . '#is', $tocheck, $matches))
 				{
 					/* WTH is this?
-					for ($j = 0; $j < sizeof($facts[$i]['factoids']); $j++)
+					for ($j = 0; $j < sizeof($fact['factoids']); $j++)
 					{
-						$facts[$i]['factoids'][$j] = preg_replace('#\["#', '\"', $facts[$i]['factoids'][$j]);
+						$fact['factoids'][$j] = preg_replace('#\["#', '\"', $fact['factoids'][$j]);
 					}
 					*/
-					if (sizeof($facts[$i]['factoids']) > 1)
+					if (sizeof($fact['factoids']) > 1)
 					{
-						$usefact = $facts[$i]['factoids'][rand(0, sizeof($facts[$i]['factoids']) - 1)];
+						$usefact = $fact['factoids'][rand(0, sizeof($fact['factoids']) - 1)];
 						if (strpos($usefact, '_skip_') !== false)
 						{
 							eval($usefact);
@@ -446,39 +424,39 @@ class failnet_factoids extends failnet_common
 					}
 					else
 					{
-						eval($facts[$i]['factoids'][0]);
+						eval($fact['factoids'][0]);
 						$this->done();
 					}
 				}
 			}
 			else
 			{
-				if (preg_match('#' . $facts[$i]['pattern'] . '#is', $tocheck))
+				if (preg_match('#' . $fact['pattern'] . '#is', $tocheck))
 				{
-					if (sizeof($facts[$i]['factoids']) > 1)
+					if (sizeof($fact['factoids']) > 1)
 					{
-						$usefact = $facts[$i]['factoids'][rand(0, sizeof($facts[$i]['factoids']) - 1)];
+						$usefact = $fact['factoids'][rand(0, sizeof($fact['factoids']) - 1)];
 						if (strpos($usefact, '_action_') === 0)
 						{
-							$this->failnet->irc->action(preg_replace('#' . $facts[$i]['pattern'] . '#is', preg_replace('/^#_action\_#i', '', $usefact), $tocheck));
+							$this->failnet->irc->action(preg_replace('#' . $fact['pattern'] . '#is', preg_replace('/^#_action\_#i', '', $usefact), $tocheck));
 							$this->done();
 						}
 						elseif (strpos($usefact, '_skip_') === false)
 						{
-							$this->failnet->irc->privmsg(preg_replace('#' . $facts[$i]['pattern'] . '#is', $usefact, $tocheck));
+							$this->failnet->irc->privmsg(preg_replace('#' . $fact['pattern'] . '#is', $usefact, $tocheck));
 							$this->done();
 						}
 					}
 					else
 					{
-						if (strpos($facts[$i]['factoids'][0], '_action_') === 0)
+						if (strpos($fact['factoids'][0], '_action_') === 0)
 						{
-							$this->failnet->irc->action(preg_replace('#' . $facts[$i]['pattern'] . '#is', preg_replace('#^\_action\_#i', '', $facts[$i]['factoids'][0]), $tocheck));
+							$this->failnet->irc->action(preg_replace('#' . $fact['pattern'] . '#is', preg_replace('#^\_action\_#i', '', $fact['factoids'][0]), $tocheck));
 							$this->done();
 						}
-						elseif (strpos($facts[$i]['factoids'][0], '_skip_') === false)
+						elseif (strpos($fact['factoids'][0], '_skip_') === false)
 						{
-							$this->failnet->irc->privmsg(preg_replace('#' . $facts[$i]['pattern'] . '#is', $facts[$i]['factoids'][0], $tocheck));
+							$this->failnet->irc->privmsg(preg_replace('#' . $fact['pattern'] . '#is', $fact['factoids'][0], $tocheck));
 							$this->done();
 						}
 					}
