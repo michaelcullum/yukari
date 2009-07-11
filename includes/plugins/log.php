@@ -44,43 +44,49 @@ if(!defined('IN_FAILNET')) exit(1);
  */
 class failnet_plugin_log extends failnet_plugin_common
 {	
-	public function cmd_response()
+	public function cmd_join()
 	{
-		switch($this->event->type)
-		{
-			case failnet_event_request::TYPE_KICK:
-				$this->failnet->log->add(date('D m/d/Y - h:i:s A') . ' - === ' . $this->event->nick . ' has kicked user ' . $this->event->get_arg('user') . ' from ' . $this->event->get_arg('channel') . (($this->event->get_arg('comment')) ? ' : ' . $this->event->get_arg('comment') : ''));
-			break;
-
-			case failnet_event_request::TYPE_JOIN:
-				$this->failnet->log->add(date('D m/d/Y - h:i:s A') . ' - === ' . $this->event->nick . ' has joined ' . $this->event->get_arg('channel'));
-			break;
-
-			case failnet_event_request::TYPE_PART:
-				$this->failnet->log->add(date('D m/d/Y - h:i:s A') . ' - === ' . $this->event->nick . ' has left ' . $this->event->get_arg('channel') . (($this->event->get_arg('message')) ? ' : ' . $this->event->get_arg('message') : ''));
-			break;
-
-			case failnet_event_request::TYPE_QUIT:
-				$this->failnet->log->add(date('D m/d/Y - h:i:s A') . ' - === ' . $this->event->nick . ' has quit' . (($this->event->get_arg('message')) ? ' : ' . $this->event->get_arg('message') : ''));
-			break;
-
-			case failnet_event_request::TYPE_TOPIC:
-				$this->failnet->log->add(date('D m/d/Y - h:i:s A') . ' - === ' . $this->event->nick . ' has changed the topic in ' . $this->event->get_arg('channel') . ' to ' . $this->event->get_arg('topic'));
-			break;
-
-			case failnet_event_request::TYPE_MODE:  // @todo Finish this one.  This requires counting the args.
-				
-			break;
-
-			case failnet_event_request::TYPE_NOTICE:
-				$this->failnet->log->add(date('D m/d/Y - h:i:s A') . ' - === Notice from ' . $this->event->nick . ' : ' . $this->event->get_arg('text'));
-			break;
-
-			case failnet_event_request::TYPE_PRIVMSG:
-			case failnet_event_request::TYPE_ACTION:
-				$this->failnet->log->log($this->event->get_arg((($this->event->type == failnet_event_request::TYPE_PRIVMSG) ? 'text' : 'action')), $this->event->nick, $this->event->get_arg((($this->event->type == failnet_event_request::TYPE_PRIVMSG) ? 'reciever' : 'target')));
-			break;
-		}
+		$this->failnet->log->add(date('D m/d/Y - h:i:s A') . ' - === ' . $this->event->nick . ' has joined ' . $this->event->get_arg('channel'));
+	}
+	
+	public function cmd_part()
+	{
+		$this->failnet->log->add(date('D m/d/Y - h:i:s A') . ' - === ' . $this->event->nick . ' has left ' . $this->event->get_arg('channel') . (($this->event->get_arg('message')) ? ' : ' . $this->event->get_arg('message') : ''));
+	}
+	
+	public function cmd_kick()
+	{
+		$this->failnet->log->add(date('D m/d/Y - h:i:s A') . ' - === ' . $this->event->nick . ' has kicked user ' . $this->event->get_arg('user') . ' from ' . $this->event->get_arg('channel') . (($this->event->get_arg('comment')) ? ' : ' . $this->event->get_arg('comment') : ''));
+	}
+	
+	public function cmd_quit()
+	{
+		$this->failnet->log->add(date('D m/d/Y - h:i:s A') . ' - === ' . $this->event->nick . ' has quit' . (($this->event->get_arg('message')) ? ' : ' . $this->event->get_arg('message') : ''));
+	}
+	
+	public function cmd_topic()
+	{
+		$this->failnet->log->add(date('D m/d/Y - h:i:s A') . ' - === ' . $this->event->nick . ' has changed the topic in ' . $this->event->get_arg('channel') . ' to ' . $this->event->get_arg('topic'));
+	}
+	
+	public function cmd_mode()
+	{
+		// @todo Finish this one.  This requires counting the args.
+	}
+	
+	public function cmd_notice()
+	{
+		$this->failnet->log->add(date('D m/d/Y - h:i:s A') . ' - === Notice from ' . $this->event->nick . ' : ' . $this->event->get_arg('text'));
+	}
+	
+	public function cmd_privmsg()
+	{
+		$this->failnet->log->log($this->event->get_arg('text'), $this->event->nick, $this->event->get_arg('reciever'));
+	}
+	
+	public function cmd_action()
+	{
+		$this->failnet->log->log($this->event->get_arg('action'), $this->event->nick, $this->event->get_arg('target'));
 	}
 	
 	public function post_dispatch()

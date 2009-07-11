@@ -51,8 +51,6 @@ class failnet_auth extends failnet_common
 {
 	// Authed users.
 	public $users = array();
-	public $hmask_find = array('\\',   '^',   '$',   '.',   '[',   ']',   '|',   '(',   ')',   '?',   '+',   '{',   '}');
-	public $hmask_repl = array('\\\\', '\\^', '\\$', '\\.', '\\[', '\\]', '\\|', '\\(', '\\)', '\\?', '\\+', '\\{', '\\}');
 	
 	/**
 	 * phpass hashing handler
@@ -88,7 +86,7 @@ class failnet_auth extends failnet_common
 	
 	/**
 	 * Instant auth.
-	 * @param $user - Username to instantly authorize.
+	 * @param string $user - Username to instantly authorize.
 	 * @return boolean - Was it successful?
 	 */
 	public function instauth($user)
@@ -107,8 +105,8 @@ class failnet_auth extends failnet_common
 	
 	/**
 	 * Attempt to authenticate a user..
-	 * @param $sender - The sender's nick.
-	 * @param $password - The password the sender specified.
+	 * @param string $sender - The sender's nick.
+	 * @param string $password - The password the sender specified.
 	 * @return mixed - True if password is correct, false if password is wrong, NULL if no such user.
 	 */
 	public function auth($sender, $password)
@@ -185,42 +183,6 @@ class failnet_auth extends failnet_common
 		{
 			$host = $hostmask;
 		}
-	}
-
-	/**
-	 * Converts a delimited string of hostmasks into a regular expression
-	 * that will match any hostmask in the original string.
-	 *
-	 * @param string $list Delimited string of hostmasks
-	 * @return string Regular expression
-	 * 
-	 * @author Phergie Development Team {@link http://code.assembla.com/phergie/subversion/nodes}
-	 */
-	public function hostmasks_to_regex($list)
-	{
-		$patterns = array();
-
-		foreach(preg_split('#[\s\r\n,]+#', $list) as $hostmask)
-		{
-			// Find out which chars are present in the config mask and exclude them from the regex match
-			$excluded = '';
-			if (strpos($hostmask, '!') !== false)
-			{
-				$excluded .= '!';
-			}
-			if (strpos($hostmask, '@') !== false)
-			{
-				$excluded .= '@';
-			}
-
-			// Escape regex meta characters
-			$hostmask = str_replace($this->hmask_find, $this->hmask_repl, $hostmask);
-
-			// Replace * so that they match correctly in a regex
-			$patterns[] = str_replace('*', ($excluded === '' ? '.*' : '[^' . $excluded . ']*'), $hostmask);
-		}
-
-		return ('#^' . implode('|', $patterns) . '$#i');
 	}
 }
 

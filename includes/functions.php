@@ -99,6 +99,7 @@ function get_formatted_filesize($bytes)
  *
  * @param integer $time - The time/integer to calulate the values from
  * @param boolean $last_comma - Should we have a comma between the second to last item of the list and the last, if more than 3 items for time? 
+ * 									This WAS actually something of debate, for grammar reasons. :P
  * @return string
  */
 function timespan($time, $last_comma = false)
@@ -161,6 +162,48 @@ function timespan($time, $last_comma = false)
 	}
 
 	return $uptime;
+}
+
+/**
+ * Converts a delimited string of hostmasks into a regular expression
+ * that will match any hostmask in the original string.
+ *
+ * @param string $list Array of hostmasks
+ * @return string Regular expression
+ * 
+ * @author Phergie Development Team {@link http://code.assembla.com/phergie/subversion/nodes}
+ */
+function hostmasks_to_regex($list)
+{
+	static $hmask_find, $hmask_repl;
+	if(empty($hmask_find))
+		$hmask_find = array('\\', '^', '$', '.', '[', ']', '|', '(', ')', '?', '+', '{', '}');
+	if(empty($hmask_repl))
+		$hmask_repl = array('\\\\', '\\^', '\\$', '\\.', '\\[', '\\]', '\\|', '\\(', '\\)', '\\?', '\\+', '\\{', '\\}');
+
+	$patterns = array();
+
+	foreach($list as $hostmask)
+	{
+		// Find out which chars are present in the config mask and exclude them from the regex match
+		$excluded = '';
+		if (strpos($hostmask, '!') !== false)
+		{
+			$excluded .= '!';
+		}
+		if (strpos($hostmask, '@') !== false)
+		{
+			$excluded .= '@';
+		}
+
+		// Escape regex meta characters
+		$hostmask = str_replace($hmask_find, $hmask_repl, $hostmask);
+
+		// Replace * so that they match correctly in a regex
+		$patterns[] = str_replace('*', ($excluded === '' ? '.*' : '[^' . $excluded . ']*'), $hostmask);
+	}
+
+	return ('#^' . implode('|', $patterns) . '$#is');
 }
 
 ?>

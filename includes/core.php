@@ -51,10 +51,11 @@ class failnet_core
 	public $socket;
 	
 	// Failnet settings and stuff.
+	public $start = 0;
 	public $debug = false;
 	public $speak = true;
-	public $start = 0;
 	public $chans = array();
+	public $ignore = array();
 	public $settings = array();
 	public $plugins = array();
 
@@ -79,9 +80,7 @@ class failnet_core
 	
 	public function __construct()
 	{
-		/**
-		 * Check to make sure the CLI SAPI is being used...
-		 */
+		// Check to make sure the CLI SAPI is being used...
 		if (strtolower(PHP_SAPI) != 'cli')
 		{
 			if(file_exists(FAILNET_ROOT . 'data/restart')) 
@@ -91,20 +90,14 @@ class failnet_core
 		    exit(1);
 		}
 		
-		/**
-		 * Check to see if date.timezone is empty in the PHP.ini, if so, set the default timezone to prevent strict errors.
-		 */
-		if (!ini_get('date.timezone')) 
+		// Check to see if date.timezone is empty in the PHP.ini, if so, set the default timezone to prevent strict errors.
+		if (!ini_get('date.timezone'))
 			date_default_timezone_set(date_default_timezone_get());
 		
-		/**
-		 * Set the time that Failnet was started.
-		 */
+		// Set the time that Failnet was started.
 		$this->start = time();
 		
-		/**
-		 *  Begin printing info to the terminal window with some general information about Failnet.
-		 */
+		// Begin printing info to the terminal window with some general information about Failnet.
 		display(array(
 			self::HR,
 			'Failnet -- PHP-based IRC Bot version ' . FAILNET_VERSION . ' - $Revision$',
@@ -115,7 +108,7 @@ class failnet_core
 		));
 		
 		display('- Loading configuration file for specified IRC server');
-		$this->load($_SERVER['argc'] > 1 ? $_SERVER['argv'][1] : 'config');
+		$this->load(($_SERVER['argc'] > 1) ? $_SERVER['argv'][1] : 'config');
 		
 		$classes = array(
 			'socket'	=> 'connection interface handler',
@@ -150,7 +143,8 @@ class failnet_core
 		if(file_exists(FAILNET_ROOT . 'data/restart')) 
 			unlink(FAILNET_ROOT . 'data/restart');
 		
-		display('Preparing to connect...'); sleep(1); // In case of restart/reload, to prevent 'Nick already in use' (which asplodes everything)
+		// In case of restart/reload, to prevent 'Nick already in use' (which asplodes everything)
+		display('Preparing to connect...'); usleep(500);
 		display(array('Failnet loaded and ready!', failnet_common::HR));
 	}
 	
@@ -180,6 +174,8 @@ class failnet_core
 	
 	/**
 	 * Get a setting from Failnet's configuration settings
+	 * @param string $setting - The config setting that we want to pull the value for.
+	 * @return mixed - The setting's value, or null if no such setting.
 	 */
 	public function get($setting)
 	{
@@ -187,11 +183,12 @@ class failnet_core
 			return $this->$setting;
 		if(isset($this->settings[$setting]))
 			return $this->settings[$setting];
-		return false;
+		return NULL;
 	}
 
 	/**
 	 * Run Failnet.
+	 * @return void
 	 */
 	public function run()
 	{
@@ -291,7 +288,11 @@ class failnet_core
 		$this->terminate(false);
 	}
 	
-	// Terminates Failnet, and restarts if ordered to.
+	/**
+	 * Terminates Failnet, and restarts if ordered to.
+	 * @param boolean $restart - Should Failnet try to restart?
+	 * @return void
+	 */
 	public function terminate($restart = true)
 	{
 		if($this->socket->socket !== NULL)
@@ -347,6 +348,18 @@ class failnet_core
 				return 'The number you are dialing is not available at this time.';
 			break;
 		}
+	}
+	
+	/**
+	 * Checks to see if a given hostmask is ignored by using a PCRE regex on the ignore list...
+	 * @param string $host - The hostmask to check
+	 * @return boolean - True if ignored, false if not ignored or if no ignore list (might be because ignore plugin is not loaded).
+	 */
+	public function ignored($host)
+	{
+		if(empty($this->ignore))
+			return false;
+		return preg_match(hostmasks_to_regex($this->ignore), $host);
 	}
 	
 	/**
@@ -445,6 +458,7 @@ class failnet_core
 	 * Undefined function handler
 	 * @param $funct - Function name
 	 * @param $params - Function parameters
+	 * @return void
 	 */
 	public function __call($funct, $params)
 	{

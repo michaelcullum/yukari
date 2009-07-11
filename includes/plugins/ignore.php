@@ -47,8 +47,6 @@ if(!defined('IN_FAILNET')) exit(1);
  */
 class failnet_plugin_ignore extends failnet_plugin_common
 {
-	public $ignore = array();
-	
 	public function cmd_connect()
 	{
 		$this->load();
