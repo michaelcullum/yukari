@@ -206,4 +206,27 @@ function hostmasks_to_regex($list)
 	return ('#^' . implode('|', $patterns) . '$#is');
 }
 
+/**
+ * Parses a IRC hostmask and sets nick, user and host bits.
+ *
+ * @param string $hostmask Hostmask to parse
+ * @param string $nick Container for the nick
+ * @param string $user Container for the username
+ * @param string $host Container for the hostname
+ * @return void
+ * 
+ * @author Phergie Development Team {@link http://code.assembla.com/phergie/subversion/nodes}
+ */
+function parse_hostmask($hostmask, &$nick, &$user, &$host)
+{
+	if (preg_match('/^([^!@]+)!([^@]+)@(.*)$/', $hostmask, $match) > 0)
+	{
+		list(, $nick, $user, $host) = array_pad($match, 4, NULL);
+	}
+	else
+	{
+		$host = $hostmask;
+	}
+}
+
 ?>

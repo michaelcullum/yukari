@@ -77,30 +77,17 @@ class failnet_auth extends failnet_common
 	 */
 	public function load()
 	{
-		$this->users = file(FAILNET_ROOT . 'data/users');
+		$this->users = file(FAILNET_ROOT . 'data/users', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 		foreach ($this->users as &$user)
 		{
-			$user = explode('::', rtrim($user));
+			$user_row = explode('::', rtrim($user));
+			$user['nick'] = array_shift($user_row);
+			$user['level'] = array_shift($user_row);
+			$user['hash'] = array_shift($user_row);
+			$user['authed'] = false;
+			$user['hosts'] = (!empty($user_row)) ? $user_row : array();
+			$user['regex'] = hostmasks_to_regex($user['hosts']);
 		}
-	}
-	
-	/**
-	 * Instant auth.
-	 * @param string $user - Username to instantly authorize.
-	 * @return boolean - Was it successful?
-	 */
-	public function instauth($user)
-	{
-		foreach ($this->users as &$user_row)
-		{
-			if ($user_row[0] == $user)
-			{
-				$user_row[3] = 1;
-				file_put_contents('data/instantauth', 'nope');
-				return true;
-			}
-		}
-		return false;
 	}
 	
 	/**
@@ -113,12 +100,53 @@ class failnet_auth extends failnet_common
 	{
 		foreach ($this->users as &$user)
 		{
-			if ($user[0] == strtolower($sender))
+			if ($user['nick'] == strtolower($sender))
 			{
-				if ($this->hash->check($pw, $user[2]))
+				if ($this->hash->check($password, $user['hash']))
 				{
-					$user[3] = true;
-					
+					$user['authed'] = true;
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+		}
+		return NULL;
+	}
+
+	/**
+	 * Adds a hostmask to 
+	 * @param $sender
+	 * @param $hostmask
+	 * @return mixed - Boolean true on success, false on invalid password, NULL on no such user. 
+	 */
+	public function add_access($sender, $hostmask, $password)
+	{
+		foreach ($this->users as &$user)
+		{
+			if ($user['nick'] == strtolower($sender))
+			{
+				// Check password first..
+				if ($this->hash->check($password, $user['hash']))
+				{
+					$user['hosts'][] = $hostmask; 
+					$user['regex'] = hostmasks_to_regex($user['hosts']);
+
+					// We need to push the new hostmask entry to the users DB file now...
+					$list = file(FAILNET_ROOT . 'data/users', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+					foreach($list as &$item)
+					{
+						$item = explode('::', rtrim($item));
+						if($item[0] == $sender)
+							$item[] = $hostmask;
+						$item = implode('::', rtrim($item));
+					}
+
+					// New that we've got it current...we need to write it back to the users DB file.  
+					// We want to OVERWRITE in this case, also.
+					file_put_contents(FAILNET_ROOT . 'data/users', implode(PHP_EOL, $list));
 					return true;
 				}
 				else
@@ -132,57 +160,51 @@ class failnet_auth extends failnet_common
 	
 	/**
 	 * Looks up the authorization level for a certain user...
-	 * @param $person - The user to check for.
+	 * @param string $nick - The user to check for.
+	 * @param string $hostmask - The hostmask for the user we're checking, if we want to use access lists for this.
 	 * @return mixed - Always returns 100 if boolean false is used as the authlevel, or if no such user NULL is returned.
 	 */
-	public function authlevel($person)
+	public function authlevel($nick, $hostmask = false)
 	{
-		if($person === false)
+		if($nick === false)
 			return 100;
+
+		if(!empty($hostmask))	
+			parse_hostmask($hostmask, $nick, $user, $host);
+
 		foreach ($this->users as &$user)
 		{
-			if ($user[0] == $person) return (!empty($user[3])) ? $user[1] : false;
+			if ($user['nick'] == $nick)
+			{
+				if(!empty($hostmask) && preg_match($user['regex'], $hostmask))
+				{
+					return $user['level'];
+				}
+				else
+				{
+					return (!empty($user['authed'])) ? $user['level'] : false;
+				}
+			}
 		}
 		return NULL;
 	}
 	
 	/**
 	 * Add a user to the users database
-	 * @param $nick - Who should we set this for?
-	 * @param $password - The new password to use
+	 * @param string $nick - Who should we set this for?
+	 * @param string $password - The new password to use (will be stored as a hash)
+	 * @param integer $authlevel -
 	 * @return boolean - False if user already exists, true if successful.
 	 */
-	public function adduser($nick, $password)
+	public function adduser($nick, $password, $authlevel = 0)
 	{
 		foreach ($this->users as &$user)
 		{
-			if ($user[0] == $nick) return false;
+			if ($user[0] == $nick)
+				return false;
 		}
-		file_put_contents('data/users', PHP_EOL . $nick . '::0::' . $this->hash->hash($password), FILE_APPEND);
+		file_put_contents(FAILNET_ROOT . 'data/users', PHP_EOL . strtolower($nick) . '::' . (int) $authlevel . '::' . $this->hash->hash($password), FILE_APPEND);
 		return true;
-	}
-	
-	/**
-	 * Parses a IRC hostmask and sets nick, user and host bits.
-	 *
-	 * @param string $hostmask Hostmask to parse
-	 * @param string $nick Container for the nick
-	 * @param string $user Container for the username
-	 * @param string $host Container for the hostname
-	 * @return void
-	 * 
-	 * @author Phergie Development Team {@link http://code.assembla.com/phergie/subversion/nodes}
-	 */
-	public function parse_hostmask($hostmask, &$nick, &$user, &$host)
-	{
-		if (preg_match('/^([^!@]+)!([^@]+)@(.*)$/', $hostmask, $match) > 0)
-		{
-			list(, $nick, $user, $host) = array_pad($match, 4, NULL);
-		}
-		else
-		{
-			$host = $hostmask;
-		}
 	}
 }
 

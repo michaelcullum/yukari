@@ -94,6 +94,9 @@ class failnet_core
 		if (!ini_get('date.timezone'))
 			date_default_timezone_set(date_default_timezone_get());
 		
+		// For the windows boxes...with SQlite later, we need a temp dir.
+			//putenv('TMP=' . dirname(__FILE__) . 'data\\db\\temp\\');
+		
 		// Set the time that Failnet was started.
 		$this->start = time();
 		

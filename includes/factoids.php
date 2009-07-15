@@ -211,7 +211,7 @@ class failnet_factoids extends failnet_common
 	 */
 	public function parse_update($filename)
 	{
-		$data = file(FAILNET_ROOT . 'data/update_' . $filename);
+		$data = file(FAILNET_ROOT . 'data/update_' . $filename, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 		foreach($data as $i => $item)
 		{
 			$fact = explode('::', $item);
@@ -271,7 +271,7 @@ class failnet_factoids extends failnet_common
 	 */
 	public function add_factoid($type, $pattern, array $factoids, $authlevel = false, $selfcheck = false, $function = false)
 	{ // @todo Update so that this passes the right value for the update file
-		$data = file(FAILNET_ROOT . 'data/update_' . $type);
+		$data = file(FAILNET_ROOT . 'data/update_' . $type, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 		$found = false;
 		foreach ($data as $key => $fact)
 		{
