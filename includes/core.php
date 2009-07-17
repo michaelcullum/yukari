@@ -204,6 +204,7 @@ class failnet_core
 			exit(1);
 		}
 
+		// Load required classes and systems
 		$classes = array(
 			'socket'	=> 'connection interface handler',
 			'irc'		=> 'IRC protocol handler',
@@ -224,21 +225,22 @@ class failnet_core
 			}
 		}
 
-		try
+		// If Failnet was just installed, we need to do something now that the auth class is loaded
+		if (!$failnet_installed)
 		{
-			// Add the owner to the DB if Failnet wasn't installed when we started up.  ;)
-			if (!$failnet_installed)
+			try
 			{
+				// Add the owner to the DB if Failnet wasn't installed when we started up.  ;)
 				$this->sql('users', 'create')->execute(array(':nick' => $this->get('owner'), ':authlevel' => 100, ':hash' => $this->auth->hash->hash($this->get('name'))));
 			}
-		}
-		catch (PDOException $e)
-		{
-			if(file_exists(FAILNET_ROOT . 'data/restart')) 
-				unlink(FAILNET_ROOT . 'data/restart');
-			display($error);
-			sleep(3);
-			exit(1);
+			catch (PDOException $e)
+			{
+				if(file_exists(FAILNET_ROOT . 'data/restart')) 
+					unlink(FAILNET_ROOT . 'data/restart');
+				display($error);
+				sleep(3);
+				exit(1);
+			}
 		}
 
 		display('Loading Failnet plugins');
