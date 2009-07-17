@@ -43,6 +43,7 @@ class failnet_core
 	 * Object vars for Failnet's use
 	 */
 	public $auth;
+	public $db;
 	public $error;
 	public $factoids;
 	public $irc;
@@ -53,11 +54,14 @@ class failnet_core
 	// Failnet settings and stuff.
 	public $start = 0;
 	public $debug = false;
+	public $settings = array();
+	public $plugins = array();
+	
+	// Some info is stored here and not in plugins for easy accessibility.
 	public $speak = true;
 	public $chans = array();
 	public $ignore = array();
-	public $settings = array();
-	public $plugins = array();
+	public $statements = array();
 
 	// Server connection and config vars.
 	public $server = '';
@@ -71,9 +75,6 @@ class failnet_core
 	/**
 	 * Constants for Failnet.
 	 */
-	const TAB = "\t";
-	const X01 = "\x01";
-	const X02 = "\x02";
 	const HR = '---------------------------------------------------------------------';
 	const ERROR_LOG = 'error';
 	const USER_LOG = 'user';
@@ -85,17 +86,34 @@ class failnet_core
 		{
 			if(file_exists(FAILNET_ROOT . 'data/restart')) 
 				unlink(FAILNET_ROOT . 'data/restart');
-			display('Failnet must be run in the CLI SAPI');
+			display('[Fatal Error] Failnet must be run in the CLI SAPI');
 			sleep(3);
 		    exit(1);
 		}
+		
+		if (!extension_loaded('PDO'))
+		{
+			if(file_exists(FAILNET_ROOT . 'data/restart')) 
+				unlink(FAILNET_ROOT . 'data/restart');
+			display('[Fatal Error] Failnet requires the PDO PHP extension to be loaded');
+			sleep(3);
+		    exit(1);
+		}
+    	if (!extension_loaded('pdo_sqlite'))
+    	{
+    		if(file_exists(FAILNET_ROOT . 'data/restart')) 
+				unlink(FAILNET_ROOT . 'data/restart');
+            display('[Fatal Error] Failnet requires the PDO_SQLite PHP extension to be loaded');
+			sleep(3);
+		    exit(1);
+    	}
 		
 		// Check to see if date.timezone is empty in the PHP.ini, if so, set the default timezone to prevent strict errors.
 		if (!ini_get('date.timezone'))
 			date_default_timezone_set(date_default_timezone_get());
 		
-		// For the windows boxes...with SQlite later, we need a temp dir.
-			//putenv('TMP=' . dirname(__FILE__) . 'data\\db\\temp\\');
+		// For the windows boxes...with SQlite we need a temp dir set.
+		@putenv('TMP="' . FAILNET_DB_ROOT . 'temp/"');
 		
 		// Set the time that Failnet was started.
 		$this->start = time();
@@ -112,6 +130,29 @@ class failnet_core
 		
 		display('- Loading configuration file for specified IRC server');
 		$this->load(($_SERVER['argc'] > 1) ? $_SERVER['argv'][1] : 'config');
+		
+		try
+		{
+			// Load or initialize the database
+			$this->db = new PDO('sqlite:' . $this->dir . 'core.db');
+			
+			// Check to see if our config table exists...if not, we need to install.  o_O
+			$failnet_installed = $this->db->query('SELECT COUNT(*) FROM sqlite_master WHERE name = ' . $this->db->quote('config'))->fetchColumn();
+			if (!$failnet_installed)
+			{
+				$this->install();
+			}
+			
+			// Now, we need to build our default statements.
+		}
+		catch (PDOException $e)
+		{
+			if(file_exists(FAILNET_ROOT . 'data/restart')) 
+				unlink(FAILNET_ROOT . 'data/restart');
+			display($error);
+			sleep(3);
+			exit(1);
+		}
 		
 		$classes = array(
 			'socket'	=> 'connection interface handler',
@@ -149,44 +190,6 @@ class failnet_core
 		// In case of restart/reload, to prevent 'Nick already in use' (which asplodes everything)
 		display('Preparing to connect...'); usleep(500);
 		display(array('Failnet loaded and ready!', failnet_common::HR));
-	}
-	
-	/**
-	 * Failnet configuration file settings load method
-	 */
-	public function load($file)
-	{
-		if(!file_exists(FAILNET_ROOT . $file . '.' . PHP_EXT) || !is_readable(FAILNET_ROOT . $file . '.' . PHP_EXT))
-			trigger_error('Required Failnet configuration file [' . $file . '.' . PHP_EXT . '] not found', E_USER_ERROR);
-
-		$settings = require FAILNET_ROOT . $file . '.' . PHP_EXT;
-
-		foreach($settings as $setting => $value)
-		{
-			if(property_exists($this, $setting))
-			{
-				$this->$setting = $value;
-			}
-			else
-			{
-				$this->settings[$setting] = $value;
-			}
-		}
-		// ...Is this it?  O_o
-	}
-	
-	/**
-	 * Get a setting from Failnet's configuration settings
-	 * @param string $setting - The config setting that we want to pull the value for.
-	 * @return mixed - The setting's value, or null if no such setting.
-	 */
-	public function get($setting)
-	{
-		if(property_exists($this, $setting))
-			return $this->$setting;
-		if(isset($this->settings[$setting]))
-			return $this->settings[$setting];
-		return NULL;
 	}
 
 	/**
@@ -290,7 +293,69 @@ class failnet_core
 		}
 		$this->terminate(false);
 	}
+
+	/**
+	 * Failnet configuration file settings load method
+	 */
+	public function load($file)
+	{
+		if(!file_exists(FAILNET_ROOT . $file . '.' . PHP_EXT) || !is_readable(FAILNET_ROOT . $file . '.' . PHP_EXT))
+			trigger_error('Required Failnet configuration file [' . $file . '.' . PHP_EXT . '] not found', E_USER_ERROR);
+
+		$settings = require FAILNET_ROOT . $file . '.' . PHP_EXT;
+
+		foreach($settings as $setting => $value)
+		{
+			if(property_exists($this, $setting))
+			{
+				$this->$setting = $value;
+			}
+			else
+			{
+				$this->settings[$setting] = $value;
+			}
+		}
+		// ...Is this it?  O_o
+	}
+
+	/**
+	 * Creates DB tables for Failnet if none are detected.
+	 * @return void
+	 */
+	public function install_tables()
+	{
+		display(array('=== Creating database tables', ' -  Creating config table...'));
+		// Config table...
+		$this->db->query(file_get_contents(FAILNET_ROOT . 'includes/schemas/config.sql'));
+		display(' -  Creating users table...');
+		$this->db->query(file_get_contents(FAILNET_ROOT . 'includes/schemas/users.sql'));
+		display(' -  Creating access table...');
+		$this->db->query(file_get_contents(FAILNET_ROOT . 'includes/schemas/access.sql'));
+		display(' -  Creating ignored hostmasks table...');
+		$this->db->query(file_get_contents(FAILNET_ROOT . 'includes/schemas/ignore.sql'));
+		display('=== Database table creation complete');
+	}
 	
+	/**
+	 * Creates initial entries for the Failnet database, using the owner's supposed usernick and 
+	 * 		what the "real name" for Failnet as the password
+	 * @return void
+	 */
+	public function final_install()
+	{
+		$this->sql('users', 'create')->execute(array(':nick' => strtolower($this->get('owner')), ':authlevel' => 100, ':hash' => $this->auth->hash->hash($this->get('name'))));
+	}
+	
+	/**
+	 * Loads default PDO statements into Failnet
+	 * @return void
+	 */
+	public function load_statements()
+	{
+		$this->build_sql('users', 'create', 'INSERT INTO users ( nick, authlevel, password ) VALUES ( :nick, :authlevel, :hash )');
+		// @todo Finish this with all the queries we should need.
+	}
+
 	/**
 	 * Terminates Failnet, and restarts if ordered to.
 	 * @param boolean $restart - Should Failnet try to restart?
@@ -303,7 +368,7 @@ class failnet_core
 		if($restart)
 		{
 			// Just a hack to get it to restart through batch, and not terminate.
-			file_put_contents('data/restart', 'yesh');
+			file_put_contents(FAILNET_ROOT . 'data/restart', 'yesh');
 			// Dump the log cache to the file.
 			$this->log->add('--- Restarting Failnet ---', true);
 			display('-!- Restarting Failnet');
@@ -320,7 +385,44 @@ class failnet_core
 			exit(1);
 		}
 	}
-	
+
+	/**
+	 * Get a setting from Failnet's configuration settings
+	 * @param string $setting - The config setting that we want to pull the value for.
+	 * @return mixed - The setting's value, or null if no such setting.
+	 */
+	public function get($setting)
+	{
+		if(property_exists($this, $setting))
+			return $this->$setting;
+		if(isset($this->settings[$setting]))
+			return $this->settings[$setting];
+		return NULL;
+	}
+
+	/**
+	 * Retrieve a prepared PDO statement for the Failnet core DB tables.
+	 * @param $table - The table that we are pulling the statement from
+	 * @param $type - The type of statement we are pulling
+	 * @return object - An instance of PDO_Statement
+	 */
+	public function sql($table, $type)
+	{
+		return $this->statements[$table][$type];
+	}
+
+	/**
+	 * 
+	 * @param $table
+	 * @param $type
+	 * @param $statement
+	 * @return unknown_type
+	 */
+	public function build_sql($table, $type, $statement)
+	{
+		$this->statements[$table][$type] = $this->db->prepare($statement);
+	}
+
 	/**
 	 * Deny function...
 	 * @return string - The deny message to use. :3

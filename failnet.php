@@ -35,8 +35,9 @@
  * @ignore
  */
 define('IN_FAILNET', true);
-define('FAILNET_VERSION', '2.0.0'); 
+define('FAILNET_VERSION', '2.0.0');
 define('FAILNET_ROOT', realpath('.') . DIRECTORY_SEPARATOR);
+define('FAILNET_DB_ROOT', realpath('.') . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'db' . DIRECTORY_SEPARATOR);
 define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
 
 require FAILNET_ROOT . 'includes/functions.' . PHP_EXT;
@@ -45,7 +46,7 @@ if(version_compare('5.2.3', PHP_VERSION, '>'))
 {
 	if(file_exists(FAILNET_ROOT . 'data/restart')) 
 		unlink(FAILNET_ROOT . 'data/restart');
-	display('Failnet requires PHP version 5.2.3 or better.  Currently installed PHP version: ' . PHP_VERSION);
+	display(array('[Fatal Error] Failnet requires PHP version 5.2.3 or better.', 'Currently installed PHP version: ' . PHP_VERSION));
 	sleep(3);
 	exit(1);
 }

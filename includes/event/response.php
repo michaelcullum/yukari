@@ -51,8 +51,6 @@ class failnet_event_response
 	/**
 	 * Constants for Failnet.
 	 */
-	const TAB = "\t";
-	const X02 = "\x02";
 	const HR = '---------------------------------------------------------------------';
 	const ERROR_LOG = 'error';
 	const USER_LOG = 'user';
