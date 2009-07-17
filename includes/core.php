@@ -39,6 +39,10 @@ if(!defined('IN_FAILNET')) exit(1);
 
 class failnet_core
 {
+/**
+ * Failnet core class properties
+ */
+	
 	/**
 	 * Object vars for Failnet's use
 	 */
@@ -51,34 +55,42 @@ class failnet_core
 	public $manager;
 	public $socket;
 	
-	// Failnet settings and stuff.
+	/**
+	 * Failnet settings and stuff.
+	 */
 	public $start = 0;
 	public $debug = false;
 	public $settings = array();
 	public $plugins = array();
 	
-	// Some info is stored here and not in plugins for easy accessibility.
+	/**
+	 * Some info is stored here and not in plugins for easy accessibility throughout.
+	 */
 	public $speak = true;
 	public $chans = array();
 	public $ignore = array();
 	public $statements = array();
 
-	// Server connection and config vars.
+	/**
+	 * Server connection vars.
+	 */
 	public $server = '';
 	public $port = 6667;
-
-	// Configs for Failnet's authorization and stuff.
-	public $owner = '';
-	public $nick = '';
-	public $pass = '';
 	
-	/**
-	 * Constants for Failnet.
-	 */
+/**
+ * Failnet core constants
+ */
 	const HR = '---------------------------------------------------------------------';
 	const ERROR_LOG = 'error';
 	const USER_LOG = 'user';
-	
+
+/**
+ * Failnet core methods
+ */
+	/**
+	 * Instantiates Failnet and sets everything up.
+	 * @return void
+	 */
 	public function __construct()
 	{
 		// Check to make sure the CLI SAPI is being used...
@@ -90,7 +102,8 @@ class failnet_core
 			sleep(3);
 		    exit(1);
 		}
-		
+
+		// Make sure that PDO is loaded, we need it.
 		if (!extension_loaded('PDO'))
 		{
 			if(file_exists(FAILNET_ROOT . 'data/restart')) 
@@ -107,17 +120,18 @@ class failnet_core
 			sleep(3);
 		    exit(1);
     	}
-		
+
 		// Check to see if date.timezone is empty in the PHP.ini, if so, set the default timezone to prevent strict errors.
 		if (!ini_get('date.timezone'))
-			date_default_timezone_set(date_default_timezone_get());
-		
+			date_default_timezone_set(@date_default_timezone_get());
+
 		// For the windows boxes...with SQlite we need a temp dir set.
-		@putenv('TMP="' . FAILNET_DB_ROOT . 'temp/"');
-		
+		// @todo Check to see if this is actually needed with SQLite 3
+		//@putenv('TMP="' . FAILNET_DB_ROOT . 'temp/"');
+
 		// Set the time that Failnet was started.
 		$this->start = time();
-		
+
 		// Begin printing info to the terminal window with some general information about Failnet.
 		display(array(
 			self::HR,
@@ -127,23 +141,59 @@ class failnet_core
 			self::HR,
 			'Failnet is starting up. Go get yourself a coffee.',
 		));
-		
+
+		// Load the config file
 		display('- Loading configuration file for specified IRC server');
 		$this->load(($_SERVER['argc'] > 1) ? $_SERVER['argv'][1] : 'config');
-		
+
+		// Load/setup the database
+		display('- Loading the Failnet database'); 
 		try
 		{
-			// Load or initialize the database
-			$this->db = new PDO('sqlite:' . $this->dir . 'core.db');
-			
+			// Initialize the database connection
+			$this->db = new PDO('sqlite:' . FAILNET_DB_ROOT . 'core.db');
+
 			// Check to see if our config table exists...if not, we need to install.  o_O
 			$failnet_installed = $this->db->query('SELECT COUNT(*) FROM sqlite_master WHERE name = ' . $this->db->quote('config'))->fetchColumn();
 			if (!$failnet_installed)
 			{
-				$this->install();
+				display(array('- Database tables not installed, installing Failnet', '=== Creating database tables', ' -  Creating config table...'));
+				// Config table...
+				$this->db->query(file_get_contents(FAILNET_ROOT . 'includes/schemas/config.sql'));
+				display(' -  Creating users table...');
+				$this->db->query(file_get_contents(FAILNET_ROOT . 'includes/schemas/users.sql'));
+				display(' -  Creating access table...');
+				$this->db->query(file_get_contents(FAILNET_ROOT . 'includes/schemas/access.sql'));
+				display(' -  Creating ignored hostmasks table...');
+				$this->db->query(file_get_contents(FAILNET_ROOT . 'includes/schemas/ignore.sql'));
+				display('=== Database table creation complete');
 			}
-			
+
 			// Now, we need to build our default statements.
+			// Config table
+			$this->build_sql('config', 'create', 'INSERT INTO config ( name, value ) VALUES ( :name, :value )');
+			$this->build_sql('config', 'get', 'SELECT value, ROWID id FROM config WHERE LOWER(name) = LOWER(:name) LIMIT 1');
+			$this->build_sql('config', 'update', 'UPDATE config SET value = :value WHERE LOWER(name) = LOWER(:name)');
+			$this->build_sql('config', 'delete', 'DELETE FROM config WHERE name = :name');
+
+			// Users table
+			$this->build_sql('users', 'create', 'INSERT INTO users ( nick, authlevel, password ) VALUES ( :nick, :authlevel, :hash )');
+			$this->build_sql('users', 'set_level', 'UPDATE users SET authlevel = :authlevel WHERE LOWER(nick) = LOWER(:nick)');
+			$this->build_sql('users', 'set_pass', 'UPDATE users SET password = :hash WHERE LOWER(nick) = LOWER(:nick)');
+			$this->build_sql('users', 'get', 'SELECT user_id, nick, authlevel, hash, ROWID id FROM users WHERE LOWER(nick) = LOWER(:nick) LIMIT 1');
+			$this->build_sql('users', 'delete', 'DELETE FROM users WHERE nick = :nick');
+
+			// Access list table
+			$this->build_sql('access', 'create', 'INSERT INTO access ( user_id, hostmask ) VALUES ( :user_id, :hostmask )');
+			$this->build_sql('access', 'delete', 'DELETE FROM access WHERE (user_id = :user_id AND hostmask = :hostmask )');
+			$this->build_sql('access', 'wipe', 'DELETE FROM access WHERE user_id = :user_id');
+			$this->build_sql('access', 'get', 'SELECT hostmask, ROWID id FROM access WHERE user_id = :user_id');
+			
+			// Ignored hostmasks table
+			$this->build_sql('ignore', 'create', 'INSERT INTO ignore ( ignore_date, hostmask ) VALUES ( :timestamp, :hostmask )');
+			$this->build_sql('ignore', 'delete', 'DELETE FROM ignore WHERE hostmask = :hostmask');
+			$this->build_sql('ignore', 'get_single', 'SELECT ignore_date, hostmask, ROWID id FROM ignore WHERE LOWER(hostmask) = LOWER(:hostmask) LIMIT 1');
+			$this->build_sql('ignore', 'get', 'SELECT hostmask, ROWID id from ignore');
 		}
 		catch (PDOException $e)
 		{
@@ -153,7 +203,7 @@ class failnet_core
 			sleep(3);
 			exit(1);
 		}
-		
+
 		$classes = array(
 			'socket'	=> 'connection interface handler',
 			'irc'		=> 'IRC protocol handler',
@@ -163,7 +213,7 @@ class failnet_core
 			'auth'		=> 'user authorization handler',
 			'factoids'	=> 'factoid handler',
 		);
-		
+
 		display('- Loading Failnet required classes');
 		foreach($classes as $class => $msg)
 		{
@@ -174,6 +224,23 @@ class failnet_core
 			}
 		}
 
+		try
+		{
+			// Add the owner to the DB if Failnet wasn't installed when we started up.  ;)
+			if (!$failnet_installed)
+			{
+				$this->sql('users', 'create')->execute(array(':nick' => $this->get('owner'), ':authlevel' => 100, ':hash' => $this->auth->hash->hash($this->get('name'))));
+			}
+		}
+		catch (PDOException $e)
+		{
+			if(file_exists(FAILNET_ROOT . 'data/restart')) 
+				unlink(FAILNET_ROOT . 'data/restart');
+			display($error);
+			sleep(3);
+			exit(1);
+		}
+
 		display('Loading Failnet plugins');
 		$plugins = $this->get('plugin_list');
 		foreach($plugins as $plugin)
@@ -181,19 +248,19 @@ class failnet_core
 			$this->manager->load($plugin);
 			display('=-= Loaded ' . $plugin . ' plugin');
 		}
-		
+
 		// This is a hack to allow us to restart Failnet if we're running the script through a batch file.
 		display('- Removing termination indicator file'); 
 		if(file_exists(FAILNET_ROOT . 'data/restart')) 
 			unlink(FAILNET_ROOT . 'data/restart');
-		
+
 		// In case of restart/reload, to prevent 'Nick already in use' (which asplodes everything)
 		display('Preparing to connect...'); usleep(500);
-		display(array('Failnet loaded and ready!', failnet_common::HR));
+		display(array('Failnet loaded and ready!', self::HR));
 	}
 
 	/**
-	 * Run Failnet.
+	 * Run Failnet! :D
 	 * @return void
 	 */
 	public function run()
@@ -297,7 +364,7 @@ class failnet_core
 	/**
 	 * Failnet configuration file settings load method
 	 */
-	public function load($file)
+	private function load($file)
 	{
 		if(!file_exists(FAILNET_ROOT . $file . '.' . PHP_EXT) || !is_readable(FAILNET_ROOT . $file . '.' . PHP_EXT))
 			trigger_error('Required Failnet configuration file [' . $file . '.' . PHP_EXT . '] not found', E_USER_ERROR);
@@ -316,44 +383,6 @@ class failnet_core
 			}
 		}
 		// ...Is this it?  O_o
-	}
-
-	/**
-	 * Creates DB tables for Failnet if none are detected.
-	 * @return void
-	 */
-	public function install_tables()
-	{
-		display(array('=== Creating database tables', ' -  Creating config table...'));
-		// Config table...
-		$this->db->query(file_get_contents(FAILNET_ROOT . 'includes/schemas/config.sql'));
-		display(' -  Creating users table...');
-		$this->db->query(file_get_contents(FAILNET_ROOT . 'includes/schemas/users.sql'));
-		display(' -  Creating access table...');
-		$this->db->query(file_get_contents(FAILNET_ROOT . 'includes/schemas/access.sql'));
-		display(' -  Creating ignored hostmasks table...');
-		$this->db->query(file_get_contents(FAILNET_ROOT . 'includes/schemas/ignore.sql'));
-		display('=== Database table creation complete');
-	}
-	
-	/**
-	 * Creates initial entries for the Failnet database, using the owner's supposed usernick and 
-	 * 		what the "real name" for Failnet as the password
-	 * @return void
-	 */
-	public function final_install()
-	{
-		$this->sql('users', 'create')->execute(array(':nick' => strtolower($this->get('owner')), ':authlevel' => 100, ':hash' => $this->auth->hash->hash($this->get('name'))));
-	}
-	
-	/**
-	 * Loads default PDO statements into Failnet
-	 * @return void
-	 */
-	public function load_statements()
-	{
-		$this->build_sql('users', 'create', 'INSERT INTO users ( nick, authlevel, password ) VALUES ( :nick, :authlevel, :hash )');
-		// @todo Finish this with all the queries we should need.
 	}
 
 	/**
@@ -412,11 +441,11 @@ class failnet_core
 	}
 
 	/**
-	 * 
-	 * @param $table
-	 * @param $type
-	 * @param $statement
-	 * @return unknown_type
+	 * Builds a prepared PDO Statement and stores it internally. 
+	 * @param $table - The table that we are making the statement for
+	 * @param $type - What is the statement for?
+	 * @param $statement - The actual PDO statement that is to be prepared
+	 * @return void
 	 */
 	public function build_sql($table, $type, $statement)
 	{
