@@ -5,3 +5,4 @@ CREATE TABLE users (
 	confirm_key varchar(10) NOT NULL DEFAULT '',
 	password varchar(40) UNSIGNED NOT NULL DEFAULT '',
 );
+CREATE UNIQUE INDEX unique_nick ON users ( nick ) ;

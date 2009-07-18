@@ -185,6 +185,7 @@ class failnet_core
 			$this->build_sql('users', 'set_confirm', 'UPDATE users SET confirm_key = :confirm WHERE LOWER(nick) = LOWER(:nick)');
 			$this->build_sql('users', 'set_pass', 'UPDATE users SET password = :hash WHERE LOWER(nick) = LOWER(:nick)');
 			$this->build_sql('users', 'get', 'SELECT user_id, nick, authlevel, confirm_key, hash, ROWID id FROM users WHERE LOWER(nick) = LOWER(:nick) LIMIT 1');
+			$this->build_sql('users', 'get_level', 'SELECT authlevel, ROWID id FROM users WHERE LOWER(nick) = LOWER(:nick) LIMIT 1');
 			$this->build_sql('users', 'get_confirm', 'SELECT confirm_key, ROWID id FROM users WHERE LOWER(nick) = LOWER(:nick) LIMIT 1');
 			$this->build_sql('users', 'delete', 'DELETE FROM users WHERE nick = :nick');
 
@@ -221,7 +222,7 @@ class failnet_core
 			'error'		=> 'error handler',
 			'manager'	=> 'plugin handler',
 			'auth'		=> 'user authorization handler',
-			'factoids'	=> 'factoid handler',
+			'factoids'	=> 'factoid engine',
 		);
 
 		display('- Loading Failnet required classes');

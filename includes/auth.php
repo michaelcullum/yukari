@@ -123,7 +123,7 @@ class failnet_auth extends failnet_common
 	 * @return mixed - Boolean true on success, false on invalid password, NULL on no such user. 
 	 */
 	public function add_access($sender, $hostmask, $password)
-	{
+	{ // @todo Rewrite for PDO!
 		foreach ($this->users as &$user)
 		{
 			if ($user['nick'] == strtolower($sender))
@@ -172,39 +172,44 @@ class failnet_auth extends failnet_common
 		if(!empty($hostmask))	
 			parse_hostmask($hostmask, $nick, $user, $host);
 
-		foreach ($this->users as &$user)
+		if(empty($hostmask))
 		{
-			if ($user['nick'] == $nick)
+			$this->failnet->sql('users', 'get_level')->execute(array(':nick' => $nick));
+			$result = $this->failnet->sql('users', 'get_level')->fetch(PDO::FETCH_ASSOC);
+			if(!$result)
 			{
-				if(!empty($hostmask) && preg_match($user['regex'], $hostmask))
-				{
-					return $user['level'];
-				}
-				else
-				{
-					return (!empty($user['authed'])) ? $user['level'] : false;
-				}
+				return false;
+			}
+			else
+			{
+				return $result['authlevel'];
 			}
 		}
-		return NULL;
+		else
+		{
+			// @todo Write a multi-query here to first check to see if the user with $nick is on the access list, and if so, THEN get the authlevel for them.
+		}
 	}
 	
 	/**
 	 * Add a user to the users database
 	 * @param string $nick - Who should we set this for?
 	 * @param string $password - The new password to use (will be stored as a hash)
-	 * @param integer $authlevel -
+	 * @param integer $authlevel - The authorization level to give to the user
 	 * @return boolean - False if user already exists, true if successful.
 	 */
 	public function adduser($nick, $password, $authlevel = 0)
 	{
-		foreach ($this->users as &$user)
+		$user_exists = $this->failnet->db->query('SELECT COUNT(*) FROM users WHERE nick = ' . $this->failnet->db->quote($nick))->fetchColumn();
+		if(!$user_exists)
 		{
-			if ($user[0] == $nick)
-				return false;
+			$this->failnet->sql('users', 'create')->execute(array(':nick' => $nick, ':authlevel' => $authlevel, ':hash' => $this->hash->hash($password)));
+			return true;
 		}
-		file_put_contents(FAILNET_ROOT . 'data/users', PHP_EOL . strtolower($nick) . '::' . (int) $authlevel . '::' . $this->hash->hash($password), FILE_APPEND);
-		return true;
+		else
+		{
+			return false;
+		}
 	}
 }
 
