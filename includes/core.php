@@ -151,7 +151,10 @@ class failnet_core
 		try
 		{
 			// Initialize the database connection
-			$this->db = new PDO('sqlite:' . FAILNET_DB_ROOT . 'core.db');
+			$this->db = new PDO('sqlite:' . FAILNET_DB_ROOT . 'failnet.db');
+			
+			// We want this as a transaction in case anything goes wrong.
+			$this->db->beginTransaction();
 
 			// Check to see if our config table exists...if not, we need to install.  o_O
 			$failnet_installed = $this->db->query('SELECT COUNT(*) FROM sqlite_master WHERE name = ' . $this->db->quote('config'))->fetchColumn();
@@ -179,8 +182,10 @@ class failnet_core
 			// Users table
 			$this->build_sql('users', 'create', 'INSERT INTO users ( nick, authlevel, password ) VALUES ( :nick, :authlevel, :hash )');
 			$this->build_sql('users', 'set_level', 'UPDATE users SET authlevel = :authlevel WHERE LOWER(nick) = LOWER(:nick)');
+			$this->build_sql('users', 'set_confirm', 'UPDATE users SET confirm_key = :confirm WHERE LOWER(nick) = LOWER(:nick)');
 			$this->build_sql('users', 'set_pass', 'UPDATE users SET password = :hash WHERE LOWER(nick) = LOWER(:nick)');
-			$this->build_sql('users', 'get', 'SELECT user_id, nick, authlevel, hash, ROWID id FROM users WHERE LOWER(nick) = LOWER(:nick) LIMIT 1');
+			$this->build_sql('users', 'get', 'SELECT user_id, nick, authlevel, confirm_key, hash, ROWID id FROM users WHERE LOWER(nick) = LOWER(:nick) LIMIT 1');
+			$this->build_sql('users', 'get_confirm', 'SELECT confirm_key, ROWID id FROM users WHERE LOWER(nick) = LOWER(:nick) LIMIT 1');
 			$this->build_sql('users', 'delete', 'DELETE FROM users WHERE nick = :nick');
 
 			// Access list table
@@ -194,9 +199,13 @@ class failnet_core
 			$this->build_sql('ignore', 'delete', 'DELETE FROM ignore WHERE hostmask = :hostmask');
 			$this->build_sql('ignore', 'get_single', 'SELECT ignore_date, hostmask, ROWID id FROM ignore WHERE LOWER(hostmask) = LOWER(:hostmask) LIMIT 1');
 			$this->build_sql('ignore', 'get', 'SELECT hostmask, ROWID id from ignore');
+			
+			// Commit the results
+			$this->db->commit();
 		}
 		catch (PDOException $e)
 		{
+			$this->db->rollBack();
 			if(file_exists(FAILNET_ROOT . 'data/restart')) 
 				unlink(FAILNET_ROOT . 'data/restart');
 			display($error);
@@ -230,11 +239,14 @@ class failnet_core
 		{
 			try
 			{
+				$this->db->beginTransaction();
 				// Add the owner to the DB if Failnet wasn't installed when we started up.  ;)
 				$this->sql('users', 'create')->execute(array(':nick' => $this->get('owner'), ':authlevel' => 100, ':hash' => $this->auth->hash->hash($this->get('name'))));
+				$this->db->commit();
 			}
 			catch (PDOException $e)
 			{
+				$this->db->rollback();
 				if(file_exists(FAILNET_ROOT . 'data/restart')) 
 					unlink(FAILNET_ROOT . 'data/restart');
 				display($error);
@@ -243,6 +255,7 @@ class failnet_core
 			}
 		}
 
+		// Load plugins
 		display('Loading Failnet plugins');
 		$plugins = $this->get('plugin_list');
 		foreach($plugins as $plugin)
@@ -257,8 +270,7 @@ class failnet_core
 			unlink(FAILNET_ROOT . 'data/restart');
 
 		// In case of restart/reload, to prevent 'Nick already in use' (which asplodes everything)
-		display('Preparing to connect...'); usleep(500);
-		display(array('Failnet loaded and ready!', self::HR));
+		usleep(500); display(array('Failnet loaded and ready!', self::HR));
 	}
 
 	/**
@@ -267,7 +279,7 @@ class failnet_core
 	 */
 	public function run()
 	{
-		// Set time limit!
+		// Set time limit, we don't want Failnet to time out, at all.
 		set_time_limit(0);
 
 		$this->socket->connect();
@@ -275,7 +287,7 @@ class failnet_core
 		{
 			$plugin->connect();
 		}
-		
+
 		// Begin zer loopage!
 		while(true)
 		{
@@ -297,7 +309,7 @@ class failnet_core
 					$eventtype = $event->type;
 				}
 			}
-			
+
 			// For each plugin... 
 			foreach ($this->plugins as $name => $plugin)
 			{
@@ -325,7 +337,7 @@ class failnet_core
 					display('pre-dispatch: ' . $name . ' ' . count($queue));
 				$plugin->pre_dispatch($queue);
 			}
-			
+
 			$quit = NULL;
 			foreach ($queue as $item)
 			{
@@ -365,6 +377,8 @@ class failnet_core
 
 	/**
 	 * Failnet configuration file settings load method
+	 * @param string $file - The configuration file to load
+	 * @return void 
 	 */
 	private function load($file)
 	{

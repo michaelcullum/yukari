@@ -55,8 +55,9 @@ if(version_compare('5.2.3', PHP_VERSION, '>'))
 require FAILNET_ROOT . 'autoload.' . PHP_EXT;
 failnet_autoload::register();
 
-// Load the core!
+// Load Failnet up!
 $failnet = new failnet_core();
 
+// Run Failnet.
 $failnet->run();
 ?>
