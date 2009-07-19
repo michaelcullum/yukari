@@ -16,6 +16,7 @@
  */
 
 // @todo failnet_core::no_factoid() method, for saying something when there's no factoid available for that.
+// @todo unique_id() function for creating session keys for auth system
 
 /**
  * This program is free software; you can redistribute it and/or modify
@@ -164,6 +165,8 @@ class failnet_core
 				// Config table...
 				$this->db->query(file_get_contents(FAILNET_ROOT . 'includes/schemas/config.sql'));
 				display(' -  Creating users table...');
+				$this->db->query(file_get_contents(FAILNET_ROOT . 'includes/schemas/session.sql'));
+				display(' -  Creating sessions table...');
 				$this->db->query(file_get_contents(FAILNET_ROOT . 'includes/schemas/users.sql'));
 				display(' -  Creating access table...');
 				$this->db->query(file_get_contents(FAILNET_ROOT . 'includes/schemas/access.sql'));
@@ -188,6 +191,11 @@ class failnet_core
 			$this->build_sql('users', 'get_level', 'SELECT authlevel, ROWID id FROM users WHERE LOWER(nick) = LOWER(:nick) LIMIT 1');
 			$this->build_sql('users', 'get_confirm', 'SELECT confirm_key, ROWID id FROM users WHERE LOWER(nick) = LOWER(:nick) LIMIT 1');
 			$this->build_sql('users', 'delete', 'DELETE FROM users WHERE nick = :nick');
+			
+			// Sessions table
+			// @todo Sessions table prepared PDO statements
+			
+			
 
 			// Access list table
 			$this->build_sql('access', 'create', 'INSERT INTO access ( user_id, hostmask ) VALUES ( :user_id, :hostmask )');
@@ -243,6 +251,8 @@ class failnet_core
 				$this->db->beginTransaction();
 				// Add the owner to the DB if Failnet wasn't installed when we started up.  ;)
 				$this->sql('users', 'create')->execute(array(':nick' => $this->get('owner'), ':authlevel' => 100, ':hash' => $this->auth->hash->hash($this->get('name'))));
+				$this->sql('config', 'create')->execute(array(':name' => 'rand_seed', ':value' => 0));
+				$this->sql('config', 'create')->execute(array(':name' => 'last_rand_seed', ':value' => 0));
 				$this->db->commit();
 			}
 			catch (PDOException $e)

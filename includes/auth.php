@@ -174,6 +174,7 @@ class failnet_auth extends failnet_common
 
 		if(empty($hostmask))
 		{
+			// @todo CHECK FOR LOGGED IN USER!
 			$this->failnet->sql('users', 'get_level')->execute(array(':nick' => $nick));
 			$result = $this->failnet->sql('users', 'get_level')->fetch(PDO::FETCH_ASSOC);
 			if(!$result)
