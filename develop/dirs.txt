@@ -37,6 +37,7 @@ see <http://opensource.org/licenses/gpl-2.0.php>.
 		plugins/						(All plugin files go in here)
 			common.php					(Plugin base class, do not remove)
 			command.php					(Extension to plugin base class, do not remove)
+		schemas/						(SQL Table schema files)
 		auth.php						(Authorization class)
 		common.php						(Base class for Failnet, contains common elements for most classes)
 		core.php						(Failnet core class)
