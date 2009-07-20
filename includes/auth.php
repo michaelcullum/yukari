@@ -18,7 +18,6 @@
 // @todo Rewrite with plugin!
 // @todo Delete user
 // @todo Delete hostmasks from access list
-// @todo Add hostmask to access list
 // @todo View access list for a user
 // @todo Link users?
 
@@ -42,7 +41,6 @@
  */
 if(!defined('IN_FAILNET')) exit(1);
 
-
 /**
  * Failnet - User authorization handling class,
  * 		Used as Failnet's authorization handler. 
@@ -59,7 +57,7 @@ class failnet_auth extends failnet_common
 	 * @var object
 	 */
 	public $hash;
-	
+
 	/**
 	 * Specialized init function to allow class construction to be easier.
 	 * @see includes/failnet_common#init()
@@ -70,7 +68,7 @@ class failnet_auth extends failnet_common
 		display('=== Loading Failnet password hashing system');
 			$this->hash = new failnet_hash(8, false);
 	}
-	
+
 	/**
 	 * Attempt to authenticate a user..
 	 * @param string $sender - The sender's nick.
@@ -101,48 +99,6 @@ class failnet_auth extends failnet_common
 		return false;
 	}
 
-	/**
-	 * Adds a hostmask to 
-	 * @param $sender
-	 * @param $hostmask
-	 * @return mixed - Boolean true on success, false on invalid password, NULL on no such user. 
-	 */
-	public function add_access($sender, $hostmask, $password)
-	{ // @todo Rewrite for PDO!
-		foreach ($this->users as &$user)
-		{
-			if ($user['nick'] == strtolower($sender))
-			{
-				// Check password first..
-				if ($this->hash->check($password, $user['hash']))
-				{
-					$user['hosts'][] = $hostmask; 
-					$user['regex'] = hostmasks_to_regex($user['hosts']);
-
-					// We need to push the new hostmask entry to the users DB file now...
-					$list = file(FAILNET_ROOT . 'data/users', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-					foreach($list as &$item)
-					{
-						$item = explode('::', rtrim($item));
-						if($item[0] == $sender)
-							$item[] = $hostmask;
-						$item = implode('::', rtrim($item));
-					}
-
-					// New that we've got it current...we need to write it back to the users DB file.  
-					// We want to OVERWRITE in this case, also.
-					file_put_contents(FAILNET_ROOT . 'data/users', implode(PHP_EOL, $list));
-					return true;
-				}
-				else
-				{
-					return false;
-				}
-			}
-		}
-		return NULL;
-	}
-	
 	/**
 	 * Looks up the authorization level for a certain user...
 	 * @param string $nick - The user to check for.
@@ -187,7 +143,7 @@ class failnet_auth extends failnet_common
 			return $result['authlevel'];
 		}
 	}
-	
+
 	/**
 	 * Add a user to the users database
 	 * @param string $nick - Who should we set this for?
@@ -195,7 +151,7 @@ class failnet_auth extends failnet_common
 	 * @param integer $authlevel - The authorization level to give to the user
 	 * @return boolean - False if user already exists, true if successful.
 	 */
-	public function adduser($nick, $password, $authlevel = 0)
+	public function add_user($nick, $password, $authlevel = 0)
 	{
 		$user_exists = $this->failnet->db->query('SELECT COUNT(*) FROM users WHERE nick = ' . $this->failnet->db->quote($nick))->fetchColumn();
 		if(!$user_exists)
@@ -206,6 +162,36 @@ class failnet_auth extends failnet_common
 		{
 			return false;
 		}
+	}
+	
+	/**
+	 * Adds a hostmask to the access list for a user
+	 * @param string $hostmask - 
+	 * @param string $password - 
+	 * @return mixed - Boolean true on success, false on invalid password, NULL on no such user. 
+	 */
+	public function add_access($hostmask, $password)
+	{ // @todo Rewrite for PDO!
+		// First, we want to parse the user's hostmask here.
+		parse_hostmask($hostmask, $nick, $user, $host);
+		
+		// Now, let's do a query to grab the row for that user
+		$this->failnet->sql('users', 'get')->execute(array(':nick' => $nick));
+		$result = $this->failnet->sql('users', 'get')->fetch(PDO::FETCH_ASSOC); 
+		
+		// No such user?  Derr...
+		if(!$result)
+			return NULL;
+		
+		// Let's check that password now...
+		if($this->hash->check($password, $result['hash']))
+		{
+			// Success!  We need to just add a row to the sessions table now so that the login persists.
+			return $this->failnet->sql('access', 'create')->execute(array(':user' => $result['user_id'], ':hostmask' => $hostmask));
+		}
+		
+		// FAIL!  NOW GIT OUT OF MAH KITCHEN!
+		return false;
 	}
 }
 
