@@ -183,13 +183,13 @@ class failnet_core
 
 			// Users table
 			$this->build_sql('users', 'create', 'INSERT INTO users ( nick, authlevel, password ) VALUES ( :nick, :authlevel, :hash )');
-			$this->build_sql('users', 'set_level', 'UPDATE users SET authlevel = :authlevel WHERE LOWER(nick) = LOWER(:nick)');
-			$this->build_sql('users', 'set_confirm', 'UPDATE users SET confirm_key = :confirm WHERE LOWER(nick) = LOWER(:nick)');
 			$this->build_sql('users', 'set_pass', 'UPDATE users SET password = :hash WHERE LOWER(nick) = LOWER(:nick)');
+			$this->build_sql('users', 'set_level', 'UPDATE users SET authlevel = :authlevel WHERE LOWER(nick) = LOWER(:nick)');
+			$this->build_sql('users', 'set_confirm', 'UPDATE users SET confirm_key = :key WHERE user_id = :user');
 			$this->build_sql('users', 'get', 'SELECT user_id, nick, authlevel, confirm_key, hash FROM users WHERE LOWER(nick) = LOWER(:nick) LIMIT 1');
 			$this->build_sql('users', 'get_level', 'SELECT authlevel FROM users WHERE LOWER(nick) = LOWER(:nick) LIMIT 1');
-			$this->build_sql('users', 'get_confirm', 'SELECT confirm_key FROM users WHERE LOWER(nick) = LOWER(:nick) LIMIT 1');
-			$this->build_sql('users', 'delete', 'DELETE FROM users WHERE nick = :nick');
+			$this->build_sql('users', 'get_confirm', 'SELECT confirm_key FROM users WHERE user_id = :user LIMIT 1');
+			$this->build_sql('users', 'delete', 'DELETE FROM users WHERE user_id = :user');
 			
 			// Sessions table
 			// @todo Sessions table prepared PDO statements
