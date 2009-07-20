@@ -52,6 +52,11 @@ class failnet_irc extends failnet_common
 	 * See /README for details.
 	 */
 	
+	/**
+	 * Specialized init function to allow class construction to be easier.
+	 * @see includes/failnet_common#init()
+	 * @return void
+	 */
 	public function init() { }
 	
 	/**

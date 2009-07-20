@@ -55,11 +55,15 @@ class failnet_socket extends failnet_common
 	private $delay = 50000;
 	private $socket = NULL;
 	
+	/**
+	 * Specialized init function to allow class construction to be easier.
+	 * @see includes/failnet_common#init()
+	 * @return void
+	 */
 	public function init() { }
 	
 	/**
 	 * Initiates a connection with the server.
-	 *
 	 * @return void
 	 */
 	public function connect()
@@ -87,9 +91,7 @@ class failnet_socket extends failnet_common
 	
 	/**
 	 * Listens for an event on the current connection.
-	 *
-	 * @return failnet_event_(response|request)|NULL - Event instance if an event was 
-	 *         received, NULL otherwise
+	 * @return failnet_event_(response|request)|NULL - Event instance if an event was received, NULL otherwise
 	 */
 	public function get()
 	{
@@ -220,11 +222,9 @@ class failnet_socket extends failnet_common
 	/**
 	 * Handles construction of command strings and their transmission to the 
 	 * server.
-	 *
-	 * @param string $command Command to send
-	 * @param string|array $args Optional string or array of sequential 
-	 *        arguments
-	 * @return string Command string that was sent 
+	 * @param string $command - Command to send
+	 * @param mixed $args - Optional string or array of sequential arguments
+	 * @return string - Command string that was sent 
 	 */
 	private function send($command, $args = '')
 	{
@@ -259,8 +259,7 @@ class failnet_socket extends failnet_common
 	
 	/**
 	 * Terminates the connection with the server.
-	 *
-	 * @param string $reason Reason for connection termination (optional)
+	 * @param string $reason - Reason for connection termination (optional)
 	 * @return void
 	 */
 	public function quit($reason = NULL)
@@ -278,10 +277,9 @@ class failnet_socket extends failnet_common
 	/**
 	 * Supporting method to parse event argument strings where the last 
 	 * argument may contain a colon.
-	 *
-	 * @param string $args Argument string to parse
-	 * @param int $count Optional maximum number of arguments
-	 * @return array Array of argument values
+	 * @param string $args - Argument string to parse
+	 * @param integer $count - Optional maximum number of arguments
+	 * @return array - Array of argument values
 	 */
 	private function args($args, $count = -1)
 	{

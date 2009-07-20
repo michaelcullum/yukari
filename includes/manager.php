@@ -48,6 +48,18 @@ class failnet_manager extends failnet_common
 {
 	public $plugins_loaded = array();
  	
+	/**
+	 * Specialized init function to allow class construction to be easier.
+	 * @see includes/failnet_common#init()
+	 * @return void
+	 */
+	public function init() {  }
+	
+	/**
+	 * Load a specific plugin
+	 * @param string $plugin - The name of the plugin to load, omitting the failnet_plugin_ class prefix 
+	 * @return boolean - If plugin loading was successful
+	 */
  	public function load($plugin)
 	{
 		if(!in_array($plugin, $plugins_loaded))
@@ -60,6 +72,11 @@ class failnet_manager extends failnet_common
 		return false; // No double-loading of plugins.
 	}
  	
+	/**
+	 * Load an array of plugins
+	 * @param array $plugins - An array of plugin names, omitting the failnet_plugin_ class prefix
+	 * @return void
+	 */
 	public function multiload(array $plugins)
 	{
 		foreach ($plugins as $plugin)

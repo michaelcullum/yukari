@@ -47,6 +47,11 @@ if(!defined('IN_FAILNET')) exit(1);
  */
 class failnet_error extends failnet_common
 {
+	/**
+	 * Specialized init function to allow class construction to be easier.
+	 * @see includes/failnet_common#init()
+	 * @return void
+	 */
 	public function init()
 	{
 		display('=== Setting main error handler');
@@ -55,6 +60,11 @@ class failnet_error extends failnet_common
 
 	/**
 	 * Error handler function for Failnet.  Modified from the phpBB 3.0.x msg_handler() function.
+	 * @param integer $errno - Level of the error encountered 
+	 * @param string $msg_text - The error message recieved
+	 * @param string $errfile - The file that the error was encountered at
+	 * @param integer $errline - The line that the error was encountered at
+	 * @return mixed - If suppressed, nothing returned...if not handled, false.
 	 */
 	public function fail($errno, $msg_text, $errfile, $errline)
 	{
@@ -90,8 +100,6 @@ class failnet_error extends failnet_common
 				break;
 	
 			case E_USER_ERROR:
-			case E_PARSE:
-			case E_ERROR:
 				$error = '[ERROR] PHP Error: in file ' . $errfile . ' on line ' . $errline . ': ' . $msg_text . PHP_EOL;
 				$this->failnet->log->write(self::ERROR_LOG, time(), date('D m/d/Y - h:i:s A') . ' - ' . $error);
 				display($error);
@@ -105,6 +113,12 @@ class failnet_error extends failnet_common
 		return false;
 	}
 	
+	/**
+	 * Manually throw an error.
+	 * @param strinv $msg - The error message
+	 * @param boolean $is_fatal - Is it a fatal error?
+	 * @return void
+	 */
 	public function error($msg, $is_fatal = false)
 	{
 		if(!$is_fatal)
