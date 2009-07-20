@@ -40,8 +40,10 @@ define('FAILNET_ROOT', realpath('.') . DIRECTORY_SEPARATOR);
 define('FAILNET_DB_ROOT', realpath('.') . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'db' . DIRECTORY_SEPARATOR);
 define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
 
+// Include our general functions file now -- We require it as it is always essential.
 require FAILNET_ROOT . 'includes/functions.' . PHP_EXT;
 
+// Check to see if we are even on the minimum PHP version necessary
 if(version_compare('5.2.3', PHP_VERSION, '>'))
 {
 	if(file_exists(FAILNET_ROOT . 'data/restart')) 
@@ -51,13 +53,13 @@ if(version_compare('5.2.3', PHP_VERSION, '>'))
 	exit(1);
 }
 
-// Load autoloader and set everything up with it...
+// Load autoloader and register it
 require FAILNET_ROOT . 'autoload.' . PHP_EXT;
 failnet_autoload::register();
 
 // Load Failnet up!
 $failnet = new failnet_core();
 
-// Run Failnet.
+// Run Failnet
 $failnet->run();
 ?>

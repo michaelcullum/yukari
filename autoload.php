@@ -48,13 +48,13 @@ class failnet_autoload
 {
 	/**
 	 * Constructor
+	 * @return void
 	 */
 	public function __construct() { }
 
 	/**
 	 * Autoload callback for loading class files.
-	 *
-	 * @param string $class Class to load
+	 * @param string $class - Class to load
 	 * @return void
 	 */
 	public function load($class)
@@ -65,7 +65,6 @@ class failnet_autoload
 
 	/**
 	 * Registers an instance of this class as an autoloader.
-	 *
 	 * @return void
 	 */
 	public static function register()

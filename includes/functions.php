@@ -37,9 +37,9 @@ if(!defined('IN_FAILNET')) exit(1);
 
 /**
  * Echos a message, and cleans out any extra NL's after the message.
- * Also will echo an array of messages properly as well.
- * 
+ * 		Also will echo an array of messages properly as well.
  * @param mixed $msg - The message or messages we want to echo to the terminal. 
+ * @return void
  */
 function display($msg)
 {
@@ -60,11 +60,11 @@ function display($msg)
 
 /**
  * Shell for Failnet's built-in error handler class.
- * 
  * @param $errno - Error number
  * @param $msg_text - Error message text
  * @param $errfile - Where was the error in?
  * @param $errline - What line was the error?
+ * @return mixed
  */
 function fail_handler($errno, $msg_text, $errfile, $errline)
 {
@@ -74,7 +74,6 @@ function fail_handler($errno, $msg_text, $errfile, $errline)
 
 /**
 * Return formatted string for filesizes
-* 
 * @param integer $bytes - The number of bytes to convert.
 * @return string - The filesize converted into KiB, MiB, or GiB.
 * 
@@ -96,7 +95,6 @@ function get_formatted_filesize($bytes)
 
 /**
  * Converts a given integer/timestamp into days, minutes and seconds
- *
  * @param integer $time - The time/integer to calulate the values from
  * @param boolean $last_comma - Should we have a comma between the second to last item of the list and the last, if more than 3 items for time? 
  * 									This WAS actually something of debate, for grammar reasons. :P
@@ -165,11 +163,9 @@ function timespan($time, $last_comma = false)
 }
 
 /**
- * Converts a delimited string of hostmasks into a regular expression
- * that will match any hostmask in the original string.
- *
- * @param string $list Array of hostmasks
- * @return string Regular expression
+ * Converts a delimited string of hostmasks into a regular expression that will match any hostmask in the original string.
+ * @param string $list - Array of hostmasks
+ * @return string - Regular expression
  * 
  * @author Phergie Development Team {@link http://code.assembla.com/phergie/subversion/nodes}
  */
@@ -208,11 +204,10 @@ function hostmasks_to_regex($list)
 
 /**
  * Parses a IRC hostmask and sets nick, user and host bits.
- *
- * @param string $hostmask Hostmask to parse
- * @param string $nick Container for the nick
- * @param string $user Container for the username
- * @param string $host Container for the hostname
+ * @param string $hostmask - Hostmask to parse
+ * @param string &$nick - Container for the nick
+ * @param string &$user - Container for the username
+ * @param string &$host - Container for the hostname
  * @return void
  * 
  * @author Phergie Development Team {@link http://code.assembla.com/phergie/subversion/nodes}
