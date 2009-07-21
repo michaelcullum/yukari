@@ -167,8 +167,8 @@ class failnet_auth extends failnet_common
 	/**
 	 * Deletes a user, but only after getting the user to confirm the deletion first.
 	 * @param $hostmask - The hostmask of the user that is requesting they be deleted
-	 * @param $password - The password for the user requesting they be deleted, or the confirm key after the initial request to confirm the deletion.
-	 * @return mixed - True if deletion successful, false if invalid confirm key and bad password, string containing confirm key if password is correct, and NULL if no such user.  
+	 * @param $password - The password for the user requesting they be deleted
+	 * @return mixed - False if invalid confirm key and bad password, string containing confirm key if password is correct, and NULL if no such user.  
 	 */
 	public function del_user($hostmask, $password)
 	{ // @todo Possibly split this into two methods?
@@ -186,11 +186,7 @@ class failnet_auth extends failnet_common
 		// We should compare to see if this is the confirmation key that the user is sending
 		// ...if so, delete.  If not, check the password.
 		
-		if($result['confirm_key'] == trim($password))
-		{
-			return $this->failnet->sql('users', 'delete')->execute(array(':user' => $result['user_id']));
-		}
-		elseif($this->hash->check($password, $result['hash']))
+		if($this->hash->check($password, $result['hash']))
 		{
 			// Let's generate a unique ID for the confirm key.
 			$confirm = $this->failnet->unique_id();
@@ -200,6 +196,31 @@ class failnet_auth extends failnet_common
 		
 		// FAIL!  NOW GIT OUT OF MAH KITCHEN!
 		return false; 
+	}
+	
+	public function confirm_del($hostmask, $confirm_key)
+	{
+	// First, we want to parse the user's hostmask here.
+		parse_hostmask($hostmask, $nick, $user, $host);
+		
+		// Now, let's do a query to grab the row for that user
+		$this->failnet->sql('users', 'get')->execute(array(':nick' => $nick));
+		$result = $this->failnet->sql('users', 'get')->fetch(PDO::FETCH_ASSOC); 
+		
+		// No such user?  Derr...
+		if(!$result)
+			return NULL;
+		
+		// We should compare to see if this is the confirmation key that the user is sending
+		// ...if so, delete.  If not, check the password.
+		
+		if($result['confirm_key'] == trim($password))
+		{
+			return $this->failnet->sql('users', 'delete')->execute(array(':user' => $result['user_id']));
+		}
+		
+		// FAIL!  NOW GIT OUT OF MAH KITCHEN!
+		return false;
 	}
 	
 	/**
