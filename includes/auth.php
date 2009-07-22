@@ -16,7 +16,6 @@
  */
 
 // @todo Rewrite with shell plugin!
-// @todo Delete hostmask from access list
 // @todo Change authlevel for a user
 
 /**
@@ -284,8 +283,8 @@ class failnet_auth extends failnet_common
 
 	/**
 	 * Adds a hostmask to the access list for a user
-	 * @param string $hostmask - 
-	 * @param string $password - 
+	 * @param string $hostmask - The hostmask to add, with the nick of the hostmask being the user to add to.
+	 * @param string $password - User's password to confirm the change being made.
 	 * @return mixed - Boolean true on success, false on invalid password, NULL on no such user. 
 	 */
 	public function add_access($hostmask, $password)
@@ -306,6 +305,36 @@ class failnet_auth extends failnet_common
 		{
 			// Success!  We need to just add a row to the sessions table now so that the login persists.
 			return $this->failnet->sql('access', 'create')->execute(array(':user' => $result['user_id'], ':hostmask' => $hostmask));
+		}
+
+		// FAIL!  NOW GIT OUT OF MAH KITCHEN!
+		return false;
+	}
+
+	/**
+	 * Deletes a hostmask from a user's access list.
+	 * @param string $hostmask - The hostmask to add, with the nick of the hostmask being the user to delete the hostmask access from.
+	 * @param string $password - User's password to confirm the change being made.
+	 * @return mixed - Boolean true on success, false on invalid password, NULL on no such user. 
+	 */
+	public function delete_access($hostmask, $password)
+	{
+		// First, we want to parse the user's hostmask here.
+		parse_hostmask($hostmask, $nick, $user, $host);
+
+		// Now, let's do a query to grab the row for that user
+		$this->failnet->sql('users', 'get')->execute(array(':nick' => $nick));
+		$result = $this->failnet->sql('users', 'get')->fetch(PDO::FETCH_ASSOC); 
+
+		// No such user?  Derr...
+		if(!$result)
+			return NULL;
+
+		// Let's check that password now...
+		if($this->hash->check($password, $result['hash']))
+		{
+			// Success!  We need to just add a row to the sessions table now so that the login persists.
+			return $this->failnet->sql('access', 'delete')->execute(array(':user' => $result['user_id'], ':hostmask' => $hostmask));
 		}
 
 		// FAIL!  NOW GIT OUT OF MAH KITCHEN!
