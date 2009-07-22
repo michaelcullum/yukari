@@ -16,7 +16,6 @@
  */
 
 // @todo Rewrite with shell plugin!
-// @todo Change authlevel for a user
 
 /**
  * This program is free software; you can redistribute it and/or modify
@@ -248,12 +247,32 @@ class failnet_auth extends failnet_common
 		// We should compare to see if this is the correct password that the user is sending to delete their user entry.
 		if($this->hash->check($old_pass, $result['hash']))
 		{
-			$this->failent->sql('users', 'set_pass')->execute(array(':hash' => $this->hash->hash($new_passs), ':user' => $result['user_id']));
+			$this->failent->sql('users', 'set_pass')->execute(array(':hash' => $this->hash->hash($new_pass), ':user' => $result['user_id']));
 			return true;
 		}
 
 		// FAIL!  NOW GIT OUT OF MAH KITCHEN!
 		return false;
+	}
+
+	/**
+	 * Set a user's authorization level
+	 * @param string $nick - The username of the user to set the authorization level for 
+	 * @param integer $level - The authlevel to give the user
+	 * @return mixed - NULL if no such user, true if set successfully
+	 */
+	public function set_authlevel($nick, $level)
+	{
+		// Now, let's do a query to grab the row for that user
+		$this->failnet->sql('users', 'get')->execute(array(':nick' => $nick));
+		$result = $this->failnet->sql('users', 'get')->fetch(PDO::FETCH_ASSOC); 
+
+		// No such user?  Derr...
+		if(!$result)
+			return NULL;
+
+		$this->failent->sql('users', 'set_level')->execute(array(':user' => $result['user_id'], ':authlevel' => (int) $level));
+		return true;
 	}
 
 	/**
@@ -304,7 +323,12 @@ class failnet_auth extends failnet_common
 		if($this->hash->check($password, $result['hash']))
 		{
 			// Success!  We need to just add a row to the sessions table now so that the login persists.
-			return $this->failnet->sql('access', 'create')->execute(array(':user' => $result['user_id'], ':hostmask' => $hostmask));
+			$this->failnet->sql('access', 'create')->execute(array(':user' => $result['user_id'], ':hostmask' => $hostmask));
+
+			// Clear out the hostmask cache
+			if(isset($this->access[$result['user_id']]))
+				unset($this->access[$result['user_id']]);
+			return true;
 		}
 
 		// FAIL!  NOW GIT OUT OF MAH KITCHEN!
@@ -333,8 +357,13 @@ class failnet_auth extends failnet_common
 		// Let's check that password now...
 		if($this->hash->check($password, $result['hash']))
 		{
-			// Success!  We need to just add a row to the sessions table now so that the login persists.
-			return $this->failnet->sql('access', 'delete')->execute(array(':user' => $result['user_id'], ':hostmask' => $hostmask));
+			// Success!  Now we just have to kill off that entry.
+			$this->failnet->sql('access', 'delete')->execute(array(':user' => $result['user_id'], ':hostmask' => $hostmask));
+
+			// Clear out the hostmask cache
+			if(isset($this->access[$result['user_id']]))
+				unset($this->access[$result['user_id']]);
+			return true;
 		}
 
 		// FAIL!  NOW GIT OUT OF MAH KITCHEN!
