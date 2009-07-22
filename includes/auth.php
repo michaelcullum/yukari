@@ -57,6 +57,12 @@ class failnet_auth extends failnet_common
 	 * @var object
 	 */
 	public $hash;
+	
+	/**
+	 * Access list cache property
+	 * @var array
+	 */
+	public $access = array();
 
 	/**
 	 * Specialized init function to allow class construction to be easier.
@@ -112,7 +118,7 @@ class failnet_auth extends failnet_common
 
 		if(!empty($hostmask))	
 			parse_hostmask($hostmask, $nick, $user, $host);
-
+		
 		if(empty($hostmask))
 		{
 			$sql = $this->failnet->db->query('SELECT u.authlevel, s.login_time
@@ -123,25 +129,41 @@ class failnet_auth extends failnet_common
 			
 			// Do we have a logged in user with that nick?
 			$result = $sql->fetch(PDO::FETCH_ASSOC);
-			if(!$result)
-				return false;
-			
-			return $result['authlevel'];
+
+			return ($result) ? $result['authlevel'] : false;
 		}
 		else
 		{
-			$sql = $this->failnet->db->query('SELECT u.authlevel
+			$sql = $this->failnet->db->query('SELECT u.authlevel, u.user_id
 				FROM access a, users u 
-				WHERE u.user_id = a.user_id
-					AND LOWER(a.hostmask) = LOWER(' . $this->failnet->db->quote($hostmask) . ')');
+				WHERE (u.user_id = a.user_id AND LOWER(u.nick) = LOWER(' . $this->failnet->db->quote($nick) . ')');
 			
-			// Do we have a user with that hostmask assigned or not?
+			// Do we have a user with that nick in the DB?
 			$result = $sql->fetch(PDO::FETCH_ASSOC);
-			if(!$result)
-				return false;
-			
-			return $result['authlevel'];
+
+			return ($result && $this->access($result['user_id'], $hostmask) ) ? $result['authlevel'] : false;
 		}
+	}
+	
+	/**
+	 * Checks to see if a provided hostmask is currently in a user's access list.
+	 * @param integer $user_id - The ID of the user that we are checking for hostmask access
+	 * @param string $hostmask - Hostmask of the user that we are checking for hostmask access
+	 * @return boolean - Is the hostmask in the access list?
+	 */
+	public function access($user_id, $hostmask)
+	{
+		// Check to see if we've got this user's access list cached.
+		if(!isset($this->access[$user_id]))
+		{
+			// Guess not, so we run a query to see if we have a user with this ID in the access lists.  
+			$this->failnet->sql('access', 'get')->execute(array(':user' => $user_id));
+			$result = $this->failnet->sql('access', 'get')->fetchAll(PDO::FETCH_COLUMN, 0);
+			$this->access[$user_id] = hostmasks_to_regex($result);
+		}
+		
+		// Now that all that junk is taken care of, we need to actually check if this hostmask is in the access list.
+		return preg_match($this->access[$user_id], $hostmask);
 	}
 
 	/**

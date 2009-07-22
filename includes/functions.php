@@ -164,7 +164,7 @@ function timespan($time, $last_comma = false)
 
 /**
  * Converts a delimited string of hostmasks into a regular expression that will match any hostmask in the original string.
- * @param string $list - Array of hostmasks
+ * @param array $list - Array of hostmasks
  * @return string - Regular expression
  * 
  * @author Phergie Development Team {@link http://code.assembla.com/phergie/subversion/nodes}
