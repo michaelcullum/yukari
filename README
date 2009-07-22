@@ -6,7 +6,7 @@
 	Script info:
 -------------------------------------------------------------------
  Version:		2.0.0
- Copyright:		(c) 2009 - Obsidian
+ Copyright:		(c) 2009 - Failnet Project
  License:		http://opensource.org/licenses/gpl-2.0.php  |  GNU Public License v2
 
 ===================================================================
@@ -21,14 +21,6 @@
  Copyright:		(c) 2009 - Kai Tamkun
  License:		http://license.youreofftask.com/software.php  |  Kai License (Compatible with GPLv2)
  Source:		Available at http://youreofftask.com/phpbot/
-
-===================================================================
-
-  pib -- PHP IRC Bot
--------------------------------------------------------------------
- Version:		0.4.0 Beta
- Copyright:		(c) 2008 - zachera
- Source:		Available at http://code.assembla.com/pib/subversion/nodes
 
 ===================================================================
 

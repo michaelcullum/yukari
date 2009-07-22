@@ -5,7 +5,7 @@
 
 	Script info:
 -------------------------------------------------------------------
- Copyright:		(c) 2009 - Obsidian
+ Copyright:		(c) 2009 - Failnet Project
  License:		http://opensource.org/licenses/gpl-2.0.php  |  GNU Public License v2
 
 ===================================================================
@@ -23,6 +23,11 @@ See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, 
 see <http://opensource.org/licenses/gpl-2.0.php>.
+
+===================================================================
+
+This doc file is now depreciated, and is only here for reference 
+during the construction of the new PDO-driven Factoid engine.
 
 ===================================================================
 
