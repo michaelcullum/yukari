@@ -17,8 +17,6 @@
 
 // @todo Rewrite with shell plugin!
 // @todo Delete hostmask from access list
-// @todo View access list for a user
-// @todo Change password
 // @todo Change authlevel for a user
 
 /**
@@ -57,7 +55,7 @@ class failnet_auth extends failnet_common
 	 * @var object
 	 */
 	public $hash;
-	
+
 	/**
 	 * Access list cache property
 	 * @var array
@@ -85,22 +83,22 @@ class failnet_auth extends failnet_common
 	{
 		// First, we want to parse the user's hostmask here.
 		parse_hostmask($hostmask, $nick, $user, $host);
-		
+
 		// Now, let's do a query to grab the row for that user
 		$this->failnet->sql('users', 'get')->execute(array(':nick' => $nick));
 		$result = $this->failnet->sql('users', 'get')->fetch(PDO::FETCH_ASSOC); 
-		
+
 		// No such user?  Derr...
 		if(!$result)
 			return NULL;
-		
+
 		// Let's check that password now...
 		if($this->hash->check($password, $result['hash']))
 		{
 			// Success!  We need to just add a row to the sessions table now so that the login persists.
 			return $this->failnet->sql('sessions', 'create')->execute(array(':key' => $this->failnet->unique_id(), ':user' => $result['user_id'], ':time' => time(), ':hostmask' => $hostmask));
 		}
-		
+
 		// FAIL!  NOW GIT OUT OF MAH KITCHEN!
 		return false;
 	}
@@ -146,6 +144,124 @@ class failnet_auth extends failnet_common
 	}
 
 	/**
+	 * User management methods
+	 */
+
+	/**
+	 * Add a user to the users database
+	 * @param string $nick - Who should we set this for?
+	 * @param string $password - The new password to use (will be stored as a hash)
+	 * @param integer $authlevel - The authorization level to give to the user
+	 * @return boolean - False if user already exists, true if successful.
+	 */
+	public function add_user($nick, $password, $authlevel = 0)
+	{
+		$user_exists = $this->failnet->db->query('SELECT COUNT(*) FROM users WHERE nick = ' . $this->failnet->db->quote($nick))->fetchColumn();
+		return (!$user_exists) ? $this->failnet->sql('users', 'create')->execute(array(':nick' => $nick, ':authlevel' => $authlevel, ':hash' => $this->hash->hash($password))) : false;
+	}
+
+	/**
+	 * Deletes a user, but only after getting the user to confirm the deletion first.
+	 * @param $hostmask - The hostmask of the user that is requesting they be deleted
+	 * @param $password - The password for the user requesting they be deleted
+	 * @return mixed - False if invalid confirm key and bad password, string containing confirm key if password is correct, and NULL if no such user.  
+	 */
+	public function del_user($hostmask, $password)
+	{
+		// First, we want to parse the user's hostmask here.
+		parse_hostmask($hostmask, $nick, $user, $host);
+
+		// Now, let's do a query to grab the row for that user
+		$this->failnet->sql('users', 'get')->execute(array(':nick' => $nick));
+		$result = $this->failnet->sql('users', 'get')->fetch(PDO::FETCH_ASSOC); 
+
+		// No such user?  Derr...
+		if(!$result)
+			return NULL;
+
+		// We should compare to see if this is the correct password that the user is sending to delete their user entry.
+		if($this->hash->check($password, $result['hash']))
+		{
+			// Let's generate a unique ID for the confirm key.
+			$confirm = $this->failnet->unique_id();
+			$this->failnet->sql('users', 'set_confirm')->execute(array(':key' => $confirm, ':user' => $result['user_id']));
+			return $confirm;
+		}
+
+		// FAIL!  NOW GIT OUT OF MAH KITCHEN!
+		return false; 
+	}
+
+	/**
+	 * Confirm deletion of a user and actually delete them.  :O
+	 * @param string $hostmask - The hostmask requesting user deletion
+	 * @param string $confirm_key - The confirmation key that...confirms the deletion.
+	 * @return mixed - NULL if no such user, true if deletion successful, false if invalid confirmation ID.
+	 */
+	public function confirm_del($hostmask, $confirm_key)
+	{
+		// First, we want to parse the user's hostmask here.
+		parse_hostmask($hostmask, $nick, $user, $host);
+
+		// Now, let's do a query to grab the row for that user
+		$this->failnet->sql('users', 'get')->execute(array(':nick' => $nick));
+		$result = $this->failnet->sql('users', 'get')->fetch(PDO::FETCH_ASSOC); 
+
+		// No such user?  Derr...
+		if(!$result)
+			return NULL;
+
+		// We should compare to see if this is the confirmation key that the user is sending
+		// ...if so, delete.  If not, check the password.
+
+		if($result['confirm_key'] == trim($password))
+		{
+			$this->failnet->sql('access', 'delete_user')->execute(array(':user' => $result['user_id']));
+			$this->failnet->sql('sessions', 'delete_user')->execute(array(':user' => $result['user_id']));
+			$this->failnet->sql('users', 'delete')->execute(array(':user' => $result['user_id']));
+			return true;
+		}
+
+		// FAIL!  NOW GIT OUT OF MAH KITCHEN!
+		return false;
+	}
+
+	/**
+	 * Change the password for a user
+	 * @param string $hostmask - The user requesting their password be changed
+	 * @param string $old_pass - The old password for the user, to confirm the change
+	 * @param string $new_pass - The new password for the user, will be set as the users password if the old password is correct
+	 * @return mixed - NULL if no such user, false if incorrect password, true if password change was successful.
+	 */
+	public function set_pass($hostmask, $old_pass, $new_pass)
+	{
+		// First, we want to parse the user's hostmask here.
+		parse_hostmask($hostmask, $nick, $user, $host);
+
+		// Now, let's do a query to grab the row for that user
+		$this->failnet->sql('users', 'get')->execute(array(':nick' => $nick));
+		$result = $this->failnet->sql('users', 'get')->fetch(PDO::FETCH_ASSOC); 
+
+		// No such user?  Derr...
+		if(!$result)
+			return NULL;
+
+		// We should compare to see if this is the correct password that the user is sending to delete their user entry.
+		if($this->hash->check($old_pass, $result['hash']))
+		{
+			$this->failent->sql('users', 'set_pass')->execute(array(':hash' => $this->hash->hash($new_passs), ':user' => $result['user_id']));
+			return true;
+		}
+
+		// FAIL!  NOW GIT OUT OF MAH KITCHEN!
+		return false;
+	}
+
+	/**
+	 * Access list methods
+	 */
+
+	/**
 	 * Checks to see if a provided hostmask is currently in a user's access list.
 	 * @param integer $user_id - The ID of the user that we are checking for hostmask access
 	 * @param string $hostmask - Hostmask of the user that we are checking for hostmask access
@@ -167,87 +283,6 @@ class failnet_auth extends failnet_common
 	}
 
 	/**
-	 * Add a user to the users database
-	 * @param string $nick - Who should we set this for?
-	 * @param string $password - The new password to use (will be stored as a hash)
-	 * @param integer $authlevel - The authorization level to give to the user
-	 * @return boolean - False if user already exists, true if successful.
-	 */
-	public function add_user($nick, $password, $authlevel = 0)
-	{
-		$user_exists = $this->failnet->db->query('SELECT COUNT(*) FROM users WHERE nick = ' . $this->failnet->db->quote($nick))->fetchColumn();
-		return (!$user_exists) ? $this->failnet->sql('users', 'create')->execute(array(':nick' => $nick, ':authlevel' => $authlevel, ':hash' => $this->hash->hash($password))) : false;
-	}
-	
-	/**
-	 * Deletes a user, but only after getting the user to confirm the deletion first.
-	 * @param $hostmask - The hostmask of the user that is requesting they be deleted
-	 * @param $password - The password for the user requesting they be deleted
-	 * @return mixed - False if invalid confirm key and bad password, string containing confirm key if password is correct, and NULL if no such user.  
-	 */
-	public function del_user($hostmask, $password)
-	{ // @todo Possibly split this into two methods?
-		// First, we want to parse the user's hostmask here.
-		parse_hostmask($hostmask, $nick, $user, $host);
-		
-		// Now, let's do a query to grab the row for that user
-		$this->failnet->sql('users', 'get')->execute(array(':nick' => $nick));
-		$result = $this->failnet->sql('users', 'get')->fetch(PDO::FETCH_ASSOC); 
-		
-		// No such user?  Derr...
-		if(!$result)
-			return NULL;
-		
-		// We should compare to see if this is the confirmation key that the user is sending
-		// ...if so, delete.  If not, check the password.
-		
-		if($this->hash->check($password, $result['hash']))
-		{
-			// Let's generate a unique ID for the confirm key.
-			$confirm = $this->failnet->unique_id();
-			$this->failnet->sql('users', 'set_confirm')->execute(array(':key' => $confirm, ':user' => $result['user_id']));
-			return $confirm;
-		}
-		
-		// FAIL!  NOW GIT OUT OF MAH KITCHEN!
-		return false; 
-	}
-	
-	/**
-	 * Confirm deletion of a user and actually delete them.  :O
-	 * @param string $hostmask - The hostmask requesting user deletion
-	 * @param string $confirm_key - The confirmation key that...confirms the deletion.
-	 * @return mixed - NULL if no such user, true if deletion successful, false if invalid confirmation ID.
-	 */
-	public function confirm_del($hostmask, $confirm_key)
-	{
-	// First, we want to parse the user's hostmask here.
-		parse_hostmask($hostmask, $nick, $user, $host);
-		
-		// Now, let's do a query to grab the row for that user
-		$this->failnet->sql('users', 'get')->execute(array(':nick' => $nick));
-		$result = $this->failnet->sql('users', 'get')->fetch(PDO::FETCH_ASSOC); 
-		
-		// No such user?  Derr...
-		if(!$result)
-			return NULL;
-		
-		// We should compare to see if this is the confirmation key that the user is sending
-		// ...if so, delete.  If not, check the password.
-		
-		if($result['confirm_key'] == trim($password))
-		{
-			$this->failnet->sql('access', 'delete_user')->execute(array(':user' => $result['user_id']));
-			$this->failnet->sql('sessions', 'delete_user')->execute(array(':user' => $result['user_id']));
-			$this->failnet->sql('users', 'delete')->execute(array(':user' => $result['user_id']));
-			return true;
-		}
-		
-		// FAIL!  NOW GIT OUT OF MAH KITCHEN!
-		return false;
-	}
-	
-	/**
 	 * Adds a hostmask to the access list for a user
 	 * @param string $hostmask - 
 	 * @param string $password - 
@@ -257,22 +292,22 @@ class failnet_auth extends failnet_common
 	{
 		// First, we want to parse the user's hostmask here.
 		parse_hostmask($hostmask, $nick, $user, $host);
-		
+
 		// Now, let's do a query to grab the row for that user
 		$this->failnet->sql('users', 'get')->execute(array(':nick' => $nick));
 		$result = $this->failnet->sql('users', 'get')->fetch(PDO::FETCH_ASSOC); 
-		
+
 		// No such user?  Derr...
 		if(!$result)
 			return NULL;
-		
+
 		// Let's check that password now...
 		if($this->hash->check($password, $result['hash']))
 		{
 			// Success!  We need to just add a row to the sessions table now so that the login persists.
 			return $this->failnet->sql('access', 'create')->execute(array(':user' => $result['user_id'], ':hostmask' => $hostmask));
 		}
-		
+
 		// FAIL!  NOW GIT OUT OF MAH KITCHEN!
 		return false;
 	}

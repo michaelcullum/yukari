@@ -184,7 +184,7 @@ class failnet_core
 
 			// Users table
 			$this->build_sql('users', 'create', 'INSERT INTO users ( nick, authlevel, password ) VALUES ( :nick, :authlevel, :hash )');
-			$this->build_sql('users', 'set_pass', 'UPDATE users SET password = :hash WHERE LOWER(nick) = LOWER(:nick)');
+			$this->build_sql('users', 'set_pass', 'UPDATE users SET password = :hash WHERE user_id = :user');
 			$this->build_sql('users', 'set_level', 'UPDATE users SET authlevel = :authlevel WHERE LOWER(nick) = LOWER(:nick)');
 			$this->build_sql('users', 'set_confirm', 'UPDATE users SET confirm_key = :key WHERE user_id = :user');
 			$this->build_sql('users', 'get', 'SELECT user_id, nick, authlevel, confirm_key, hash FROM users WHERE LOWER(nick) = LOWER(:nick) LIMIT 1');
