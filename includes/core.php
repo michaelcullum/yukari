@@ -204,7 +204,7 @@ class failnet_core
 			// Access list table
 			$this->build_sql('access', 'create', 'INSERT INTO access ( user_id, hostmask ) VALUES ( :user, :hostmask )');
 			$this->build_sql('access', 'delete', 'DELETE FROM access WHERE (user_id = :user AND LOWER(hostmask) = LOWER(:hostmask) )');
-			$this->build_sql('access', 'wipe', 'DELETE FROM access WHERE user_id = :user');
+			$this->build_sql('access', 'delete_user', 'DELETE FROM access WHERE user_id = :user');
 			$this->build_sql('access', 'get', 'SELECT hostmask FROM access WHERE user_id = :user');
 			
 			// Ignored hostmasks table

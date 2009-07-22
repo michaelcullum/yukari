@@ -118,7 +118,7 @@ class failnet_auth extends failnet_common
 
 		if(!empty($hostmask))	
 			parse_hostmask($hostmask, $nick, $user, $host);
-		
+
 		if(empty($hostmask))
 		{
 			$sql = $this->failnet->db->query('SELECT u.authlevel, s.login_time
@@ -137,14 +137,14 @@ class failnet_auth extends failnet_common
 			$sql = $this->failnet->db->query('SELECT u.authlevel, u.user_id
 				FROM access a, users u 
 				WHERE (u.user_id = a.user_id AND LOWER(u.nick) = LOWER(' . $this->failnet->db->quote($nick) . ')');
-			
+
 			// Do we have a user with that nick in the DB?
 			$result = $sql->fetch(PDO::FETCH_ASSOC);
 
 			return ($result && $this->access($result['user_id'], $hostmask) ) ? $result['authlevel'] : false;
 		}
 	}
-	
+
 	/**
 	 * Checks to see if a provided hostmask is currently in a user's access list.
 	 * @param integer $user_id - The ID of the user that we are checking for hostmask access
@@ -161,7 +161,7 @@ class failnet_auth extends failnet_common
 			$result = $this->failnet->sql('access', 'get')->fetchAll(PDO::FETCH_COLUMN, 0);
 			$this->access[$user_id] = hostmasks_to_regex($result);
 		}
-		
+
 		// Now that all that junk is taken care of, we need to actually check if this hostmask is in the access list.
 		return preg_match($this->access[$user_id], $hostmask);
 	}
@@ -176,14 +176,7 @@ class failnet_auth extends failnet_common
 	public function add_user($nick, $password, $authlevel = 0)
 	{
 		$user_exists = $this->failnet->db->query('SELECT COUNT(*) FROM users WHERE nick = ' . $this->failnet->db->quote($nick))->fetchColumn();
-		if(!$user_exists)
-		{
-			return $this->failnet->sql('users', 'create')->execute(array(':nick' => $nick, ':authlevel' => $authlevel, ':hash' => $this->hash->hash($password)));
-		}
-		else
-		{
-			return false;
-		}
+		return (!$user_exists) ? $this->failnet->sql('users', 'create')->execute(array(':nick' => $nick, ':authlevel' => $authlevel, ':hash' => $this->hash->hash($password))) : false;
 	}
 	
 	/**
@@ -220,6 +213,12 @@ class failnet_auth extends failnet_common
 		return false; 
 	}
 	
+	/**
+	 * Confirm deletion of a user and actually delete them.  :O
+	 * @param string $hostmask - The hostmask requesting user deletion
+	 * @param string $confirm_key - The confirmation key that...confirms the deletion.
+	 * @return mixed - NULL if no such user, true if deletion successful, false if invalid confirmation ID.
+	 */
 	public function confirm_del($hostmask, $confirm_key)
 	{
 	// First, we want to parse the user's hostmask here.
@@ -238,7 +237,10 @@ class failnet_auth extends failnet_common
 		
 		if($result['confirm_key'] == trim($password))
 		{
-			return $this->failnet->sql('users', 'delete')->execute(array(':user' => $result['user_id']));
+			$this->failnet->sql('access', 'delete_user')->execute(array(':user' => $result['user_id']));
+			$this->failnet->sql('sessions', 'delete_user')->execute(array(':user' => $result['user_id']));
+			$this->failnet->sql('users', 'delete')->execute(array(':user' => $result['user_id']));
+			return true;
 		}
 		
 		// FAIL!  NOW GIT OUT OF MAH KITCHEN!
