@@ -254,6 +254,8 @@ class failnet_plugin_channels extends failnet_plugin_common
 	 * Does...stuff. 
 	 *
 	 * @return void
+	 * 
+	 * @todo Rewrite to reduce dependency on preg_match()
 	 */
 	public function cmd_privmsg()
 	{
