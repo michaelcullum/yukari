@@ -53,13 +53,15 @@ class failnet_plugin_authorize extends failnet_plugin_common
 		$text = substr($text, 1);
 		$sender = $this->event->nick;
 		$cmd = (strpos($text, ' ') !== false) ? substr($text, 0, strpos($text, ' ')) : $text;
-		switch ($cmd)
+		switch($cmd)
 		{
+			case 'newuser':
 			case 'adduser':
 				$added = $this->failnet->auth->adduser($sender, substr($text, strpos($text, ' ') + 1));
 				$this->call_notice($this->event->nick, ($added) ? 'You were successfully added to my users database.' : 'I\'m sorry, but I was unable to add you to my users database.');
 			break;
 
+			case 'login':
 			case 'auth':
 				$login = $this->failnet->auth->auth($this->event->gethostmask(), substr($text, strpos($text, ' ') + 1));
 				if(is_null($login))
@@ -76,12 +78,44 @@ class failnet_plugin_authorize extends failnet_plugin_common
 				$this->call_notice($this->event->nick, ($confirm) ? 'To completely remove yourself from my users database, please reply with |delconfirm ' . $confirm : 'Cannot remove user -- invalid password entered');
 			break;
 
+			case 'confirmdel':
 			case 'delconfirm':
 				$success = $this->failnet->auth->confirm_del($this->event->gethostmask(), substr($text, strpos($text, ' ') + 1));
-				if(is_null($confirm))
+				if(is_null($success))
 					$this->call_notice($this->event->nick, 'Cannot remove user -- no such user exists in database');
 
 				$this->call_notice($this->event->nick, ($success) ? 'You have been removed from my users database.' : 'Cannot remove user -- invalid confirmation key entered');	
+			break;
+
+			case 'pass':
+			case 'setpass':
+				$pass = explode(' ', substr($text, strpos($text, ' ') + 1));
+				$success = $this->failnet->auth->setpass($this->event->gethostmask(), $pass[0], $pass[1]);
+				if(is_null($success))
+					$this->call_notice($this->event->nick, 'Cannot change password for user -- no such user exists in database');
+
+				$this->call_notice($this->event->nick, ($success) ? 'Your password has been successfully changed.' : 'Cannot change password for user -- invalid original password entered');
+			break;
+
+			case 'addaccess':
+			case 'newaccess':
+			case '+access':
+				$success = $this->failnet->auth->add_access($this->event->gethostmask(), substr($text, strpos($text, ' ') + 1));
+				if(is_null($success))
+					$this->call_notice($this->event->nick, 'Cannot add hostmask to access list for user -- no such user exists in database');
+
+				$this->call_notice($this->event->nick, ($success) ? 'Hostmask successfully added to access list for user.' : 'Cannot add hostmask to access list for user -- invalid password entered');
+			break;
+
+			case 'delaccess':
+			case 'removeaccess':
+			case 'dropaccess':
+			case '-access':
+				$success = $this->failnet->auth->delete_access($this->event->gethostmask(), substr($text, strpos($text, ' ') + 1));
+				if(is_null($success))
+					$this->call_notice($this->event->nick, 'Cannot remove hostmask from access list for user -- no such user exists in database');
+
+				$this->call_notice($this->event->nick, ($success) ? 'Hostmask successfully removed access list for user.' : 'Cannot remove hostmask from access list for user -- invalid password entered');
 			break;
 		}
 	}

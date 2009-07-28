@@ -68,7 +68,7 @@ class failnet_auth extends failnet_common
 	public function init()
 	{
 		display('=== Loading Failnet password hashing system');
-			$this->hash = new failnet_hash(8, false);
+			$this->hash = new failnet_hash(8, true);
 	}
 
 	/**
@@ -244,7 +244,7 @@ class failnet_auth extends failnet_common
 		if(!$result)
 			return NULL;
 
-		// We should compare to see if this is the correct password that the user is sending to delete their user entry.
+		// We should compare to see if this is the correct password that the user is sending to change their password to something else.
 		if($this->hash->check($old_pass, $result['hash']))
 		{
 			$this->failent->sql('users', 'set_pass')->execute(array(':hash' => $this->hash->hash($new_pass), ':user' => $result['user_id']));
