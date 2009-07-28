@@ -162,7 +162,7 @@ class failnet_auth extends failnet_common
 	 * Deletes a user, but only after getting the user to confirm the deletion first.
 	 * @param $hostmask - The hostmask of the user that is requesting they be deleted
 	 * @param $password - The password for the user requesting they be deleted
-	 * @return mixed - False if invalid confirm key and bad password, string containing confirm key if password is correct, and NULL if no such user.  
+	 * @return mixed - False if bad password, string containing confirm key if password is correct, and NULL if no such user.  
 	 */
 	public function del_user($hostmask, $password)
 	{
