@@ -46,6 +46,8 @@ if(!defined('IN_FAILNET')) exit(1);
  */
 class failnet_plugin_channels extends failnet_plugin_common
 {
+	const FOUNDER = 32;
+	const ADMIN = 16;
 	const OP = 8;
 	const HALFOP = 4;
 	const VOICE = 2;
@@ -56,10 +58,7 @@ class failnet_plugin_channels extends failnet_plugin_common
 		switch($this->event->code)
 		{
 			case failnet_event_response::RPL_ENDOFNAMES:
-				// Joined a new channel, let's track it.
-				// @note: Now tracking the channels on join in failnet_plugin_users
 				$chanargs = explode(' ', $this->event->arguments);
-				//$this->failnet->chans[] = $chanargs[1];
 				if($this->failnet->speak)
 					// Only do the intro message if we're allowed to speak.  
 					$this->call_privmsg($chanargs[1], $this->failnet->get('intro_msg'));
@@ -75,6 +74,16 @@ class failnet_plugin_channels extends failnet_plugin_common
 						continue;
 		
 					$flag = self::REGULAR;
+					if (substr($user, 0, 1) === '~')
+					{
+						$user = substr($user, 1);
+						$flag |= self::FOUNDER;
+					}
+					if (substr($user, 0, 1) === '&')
+					{
+						$user = substr($user, 1);
+						$flag |= self::ADMIN;
+					}
 					if (substr($user, 0, 1) === '@')
 					{
 						$user = substr($user, 1);
@@ -126,6 +135,28 @@ class failnet_plugin_channels extends failnet_plugin_common
 
 					case '-':
 						$mode = '-';
+					break;
+
+					case 'q':
+						if ($mode == '+')
+						{
+							$this->failnet->chans[$chan][$nick] |= self::FOUNDER;
+						}
+						elseif ($mode == '-')
+						{
+							$this->failnet->chans[$chan][$nick] ^= self::FOUNDER;
+						}
+					break;
+
+					case 'a':
+						if ($mode == '+')
+						{
+							$this->failnet->chans[$chan][$nick] |= self::ADMIN;
+						}
+						elseif ($mode == '-')
+						{
+							$this->failnet->chans[$chan][$nick] ^= self::ADMIN;
+						}
 					break;
 
 					case 'o':
