@@ -43,7 +43,7 @@ class failnet_core
 /**
  * Failnet core class properties
  */
-	
+
 	/**
 	 * Object vars for Failnet's use
 	 */
@@ -55,7 +55,7 @@ class failnet_core
 	public $log;
 	public $manager;
 	public $socket;
-	
+
 	/**
 	 * Failnet settings and stuff.
 	 */
@@ -63,7 +63,7 @@ class failnet_core
 	public $debug = false;
 	public $settings = array();
 	public $plugins = array();
-	
+
 	/**
 	 * Some info is stored here and not in plugins for easy accessibility throughout.
 	 */
@@ -77,7 +77,7 @@ class failnet_core
 	 */
 	public $server = '';
 	public $port = 6667;
-	
+
 /**
  * Failnet core constants
  */
@@ -153,7 +153,7 @@ class failnet_core
 		{
 			// Initialize the database connection
 			$this->db = new PDO('sqlite:' . FAILNET_DB_ROOT . 'failnet.db');
-			
+
 			// We want this as a transaction in case anything goes wrong.
 			$this->db->beginTransaction();
 
@@ -191,28 +191,26 @@ class failnet_core
 			$this->build_sql('users', 'get_level', 'SELECT authlevel FROM users WHERE LOWER(nick) = LOWER(:nick) LIMIT 1');
 			$this->build_sql('users', 'get_confirm', 'SELECT confirm_key FROM users WHERE user_id = :user LIMIT 1');
 			$this->build_sql('users', 'delete', 'DELETE FROM users WHERE user_id = :user');
-			
+
 			// Sessions table
-			// @todo Sessions table prepared PDO statements
 			$this->build_sql('sessions', 'create', 'INSERT INTO sessions ( key_id, user_id, login_time, hostmask ) VALUES ( :key, :user, :time, :hostmask )');
 			$this->build_sql('sessions', 'delete_key', 'DELETE FROM sessions WHERE key_id = :key');
 			$this->build_sql('sessions', 'delete_user', 'DELETE FROM sessions WHERE user_id = :user');
 			$this->build_sql('sessions', 'delete_old', 'DELETE FROM sessions WHERE login_time < :time');
 			$this->build_sql('sessions', 'delete', 'DELETE FROM sessions WHERE LOWER(hostmask) = LOWER(:hostmask)');
 			
-
 			// Access list table
 			$this->build_sql('access', 'create', 'INSERT INTO access ( user_id, hostmask ) VALUES ( :user, :hostmask )');
 			$this->build_sql('access', 'delete', 'DELETE FROM access WHERE (user_id = :user AND LOWER(hostmask) = LOWER(:hostmask) )');
 			$this->build_sql('access', 'delete_user', 'DELETE FROM access WHERE user_id = :user');
 			$this->build_sql('access', 'get', 'SELECT hostmask FROM access WHERE user_id = :user');
-			
+
 			// Ignored hostmasks table
 			$this->build_sql('ignore', 'create', 'INSERT INTO ignore ( ignore_date, hostmask ) VALUES ( :timestamp, :hostmask )');
 			$this->build_sql('ignore', 'delete', 'DELETE FROM ignore WHERE LOWER(hostmask) = LOWER(:hostmask)');
 			$this->build_sql('ignore', 'get_single', 'SELECT ignore_date, hostmask FROM ignore WHERE LOWER(hostmask) = LOWER(:hostmask) LIMIT 1');
 			$this->build_sql('ignore', 'get', 'SELECT hostmask from ignore');
-			
+
 			// Commit the results
 			$this->db->commit();
 		}
@@ -261,7 +259,7 @@ class failnet_core
 			}
 			catch (PDOException $e)
 			{
-				$this->db->rollback();
+				$this->db->rollBack();
 				if(file_exists(FAILNET_ROOT . 'data/restart')) 
 					unlink(FAILNET_ROOT . 'data/restart');
 				display($error);
@@ -297,7 +295,10 @@ class failnet_core
 		// Set time limit, we don't want Failnet to time out, at all.
 		set_time_limit(0);
 
+		// Now connect to the server
 		$this->socket->connect();
+
+		// Toss a connection call to plugins for initial setup
 		foreach ($this->plugins as $name => $plugin)
 		{
 			$plugin->connect();
@@ -307,11 +308,14 @@ class failnet_core
 		while(true)
 		{
 			$queue = array();
+
+			// Upon each 'tick' of the loop, we call these functions
 			foreach ($this->plugins as $name => $plugin)
 			{
 				$plugin->tick();
 			}
 
+			// Check for events
 			$event = $this->socket->get();
 			if ($event)
 			{
@@ -325,7 +329,7 @@ class failnet_core
 				}
 			}
 
-			// For each plugin... 
+			// For each plugin, we provide the event encountered so that the plugins can react to them for us  
 			foreach ($this->plugins as $name => $plugin)
 			{
 				if ($event)
@@ -342,6 +346,7 @@ class failnet_core
 				$plugin->events = array();
 			}
 
+			// Do we have any events to perform?
 			if (!$events)
 				continue;
 
@@ -353,6 +358,7 @@ class failnet_core
 				$plugin->pre_dispatch($queue);
 			}
 
+			// Time to fire off our events
 			$quit = NULL;
 			foreach ($queue as $item)
 			{
@@ -368,6 +374,7 @@ class failnet_core
 				}
 			}
 
+			// Post-dispatch events
 			foreach ($this->plugins as $name => $plugin)
 			{
 				if($this->debug)
@@ -375,6 +382,7 @@ class failnet_core
 				$plugin->post_dispatch($queue);
 			}
 
+			// If quit was called, we go do that now...
 			if ($quit)
 			{
 				call_user_func_array(array($this->socket, 'quit'), $quit->arguments());
@@ -413,7 +421,6 @@ class failnet_core
 				$this->settings[$setting] = $value;
 			}
 		}
-		// ...Is this it?  O_o
 	}
 
 	/**
@@ -555,7 +562,6 @@ class failnet_core
 
 	/**
 	 * Checks whether or not a given user has founder (~) status.
-	 *
 	 * @param string $nick User nick to check
 	 * @param string $chan Channel to check in
 	 * @return bool
@@ -567,7 +573,6 @@ class failnet_core
 
 	/**
 	 * Checks whether or not a given user has admin (&) status.
-	 *
 	 * @param string $nick User nick to check
 	 * @param string $chan Channel to check in
 	 * @return bool
@@ -579,7 +584,6 @@ class failnet_core
 
 	/**
 	 * Checks whether or not a given user has op (@) status.
-	 *
 	 * @param string $nick User nick to check
 	 * @param string $chan Channel to check in
 	 * @return bool
@@ -591,7 +595,6 @@ class failnet_core
 
 	/**
 	 * Checks whether or not a given user has halfop (%) status.
-	 *
 	 * @param string $nick User nick to check
 	 * @param string $chan Channel to check in
 	 * @return bool
@@ -603,7 +606,6 @@ class failnet_core
 
 	/**
 	 * Checks whether or not a given user has voice (+) status.
-	 *
 	 * @param string $nick User nick to check
 	 * @param string $chan Channel to check in
 	 * @return bool
@@ -615,7 +617,6 @@ class failnet_core
 
 	/**
 	 * Checks whether or not a particular user is in a particular channel.
-	 *
 	 * @param string $nick User nick to check
 	 * @param string $chan Channel to check in
 	 * @return bool
@@ -628,7 +629,6 @@ class failnet_core
 	/**
 	 * Are we directing this at our owner or ourself?
 	 * This is best to avoid humilation if we're using an agressive factoid.  ;)
-	 * 
 	 * @param $user - The user to chech.
 	 * @return boolean - Are we targeting the owner or ourself?
 	 */
@@ -638,11 +638,9 @@ class failnet_core
 	}
 
 	/**
-	 * Returns the entire user list for a channel or false if the bot is not
-	 * present in the channel.
-	 *
-	 * @param string $chan Channel name
-	 * @return array|bool
+	 * Get the userlist of a channel
+	 * @param string $chan - Channel name
+	 * @return mixed - The user list for the channel or false if we don't have the userlist.
 	 */
 	public function get_users($chan)
 	{
@@ -652,11 +650,9 @@ class failnet_core
 	}
 
 	/**
-	 * Returns the nick of a random user present in a given channel or false
-	 * if the bot is not present in the channel.
-	 *
-	 * @param string $chan Channel name
-	 * @return string|bool
+	 * Get a random user in a specified channel
+	 * @param string $chan - Channel name
+	 * @return mixed - Random user's name, or false if we are not in that channel
 	 */
 	public function random_user($chan)
 	{
