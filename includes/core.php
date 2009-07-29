@@ -552,7 +552,31 @@ class failnet_core
 			return false;
 		return preg_match(hostmasks_to_regex($this->ignore), $host);
 	}
-	
+
+	/**
+	 * Checks whether or not a given user has founder (~) status.
+	 *
+	 * @param string $nick User nick to check
+	 * @param string $chan Channel to check in
+	 * @return bool
+	 */
+	public function is_founder($nick, $chan)
+	{
+		return isset($this->chans[trim(strtolower($chan))][trim(strtolower($nick))]) && ($this->chans[trim(strtolower($chan))][trim(strtolower($nick))] & self::FOUNDER) != 0;
+	}
+
+	/**
+	 * Checks whether or not a given user has admin (&) status.
+	 *
+	 * @param string $nick User nick to check
+	 * @param string $chan Channel to check in
+	 * @return bool
+	 */
+	public function is_admin($nick, $chan)
+	{
+		return isset($this->chans[trim(strtolower($chan))][trim(strtolower($nick))]) && ($this->chans[trim(strtolower($chan))][trim(strtolower($nick))] & self::ADMIN) != 0;
+	}
+
 	/**
 	 * Checks whether or not a given user has op (@) status.
 	 *

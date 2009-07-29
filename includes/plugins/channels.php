@@ -261,13 +261,21 @@ class failnet_plugin_channels extends failnet_plugin_common
 	{
 		$target = $this->event->get_arg('reciever');
 		$message = $this->event->get_arg('text');
+		if (preg_match('#^\|isfounder (\S+)$#i', $message, $m))
+		{
+			$this->call_privmsg($target, $this->failnet->is_founder($m[1], $target) ? 'Yep, they\'re a founder.' : 'Nope, they aren\'t a founder.');
+		}
+		if (preg_match('#^\|isadmin (\S+)$#i', $message, $m))
+		{
+			$this->call_privmsg($target, $this->failnet->is_admin($m[1], $target) ? 'Yep, they\'re an admin.' : 'Nope, they aren\'t an admin.');
+		}
 		if (preg_match('#^\|isop (\S+)$#i', $message, $m))
 		{
-			$this->call_privmsg($target, $this->failnet->is_op($m[1], $target) ? 'Yep, they\'re an op.' : 'Nope, they are not an op.');
+			$this->call_privmsg($target, $this->failnet->is_op($m[1], $target) ? 'Yep, they\'re an op.' : 'Nope, they aren\'t an op.');
 		}
 		elseif (preg_match('#^\|ishalfop (\S+)$#i', $message, $m))
 		{
-			$this->call_privmsg($target, $this->failnet->is_halfop($m[1], $target) ? 'Yep, they\'re a halfop.' : 'Nope, they are not a halfop.');
+			$this->call_privmsg($target, $this->failnet->is_halfop($m[1], $target) ? 'Yep, they\'re a halfop.' : 'Nope, they aren\'t a halfop.');
 		}
 		elseif (preg_match('#^\|isvoice (\S+)$#i', $message, $m))
 		{
