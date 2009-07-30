@@ -54,7 +54,7 @@ class failnet_manager extends failnet_common
 	 * @return void
 	 */
 	public function init() {  }
-	
+
 	/**
 	 * Load a specific plugin
 	 * @param string $plugin - The name of the plugin to load, omitting the failnet_plugin_ class prefix 
@@ -62,16 +62,16 @@ class failnet_manager extends failnet_common
 	 */
  	public function load($plugin)
 	{
-		if(!in_array($plugin, $plugins_loaded))
+		if(!$this->loaded($plugin))
 		{
-			$plugins_loaded[] = $plugin;
+			$this->plugins_loaded[] = $plugin;
 			$plugin = 'failnet_plugin_' . $plugin;
-			$this->failnet->plugins[$plugin] = new $plugin($this->failnet);
+			$this->failnet->plugins[] = new $plugin($this->failnet);
 			return true;
 		}
 		return false; // No double-loading of plugins.
 	}
- 	
+ 
 	/**
 	 * Load an array of plugins
 	 * @param array $plugins - An array of plugin names, omitting the failnet_plugin_ class prefix
@@ -83,6 +83,16 @@ class failnet_manager extends failnet_common
 		{
 			$this->load($plugin);
 		}
+	}
+
+	/**
+	 * Checks to see if a plugin has been loaded already
+	 * @param string $plugin - The name of the plugin to check, omitting the failnet_plugin_ class prefix
+	 * @return boolean - Was the plugin already loaded?
+	 */
+	public function loaded($plugin)
+	{
+		return in_array($plugin, $this->plugins_loaded);
 	}
 }
  

@@ -269,13 +269,9 @@ class failnet_core
 		}
 
 		// Load plugins
-		display('Loading Failnet plugins');
+		display('- Loading Failnet plugins');
 		$plugins = $this->get('plugin_list');
-		foreach($plugins as $plugin)
-		{
-			$this->manager->load($plugin);
-			display('=-= Loaded ' . $plugin . ' plugin');
-		}
+		$this->manager->multiload($plugins);
 
 		// This is a hack to allow us to restart Failnet if we're running the script through a batch file.
 		display('- Removing termination indicator file'); 
@@ -283,7 +279,7 @@ class failnet_core
 			unlink(FAILNET_ROOT . 'data/restart');
 
 		// In case of restart/reload, to prevent 'Nick already in use' (which asplodes everything)
-		usleep(500); display(array('Failnet loaded and ready!', self::HR));
+		usleep(500); display(array(self::HR, 'Failnet loaded and ready!', self::HR));
 	}
 
 	/**
