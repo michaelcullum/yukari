@@ -76,7 +76,7 @@ return array(
 // The nick of the Bot's owner.
 	'owner'				=> 'Obsidian',
 
-// Should the bot say anything or stay silent?
+// Should the bot say stuff in in response to channel conversation, or stay silent?
 	'speak'				=> true,
 
 // Should the bot stop running through factoids after the first factoid it finds?

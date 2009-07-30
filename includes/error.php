@@ -69,20 +69,15 @@ class failnet_error extends failnet_common
 	public function fail($errno, $msg_text, $errfile, $errline)
 	{
 		global $msg_long_text;
-	
+
 		// Do not display notices if we suppress them via @
 		if (error_reporting() == 0)
-		{
 			return;
-		}
-	
+
 		// Message handler is stripping text. In case we need it, we are possible to define long text...
 		if (isset($msg_long_text) && $msg_long_text && !$msg_text)
-		{
 			$msg_text = $msg_long_text;
-		}
-	
-		
+
 		switch ($errno)
 		{
 			case E_NOTICE:
@@ -107,12 +102,12 @@ class failnet_error extends failnet_common
 				$this->failnet->terminate(false);
 				break;
 		}
-	
+
 		// If we notice an error not handled here we pass this back to PHP by returning false
 		// This may not work for all php versions
 		return false;
 	}
-	
+
 	/**
 	 * Manually throw an error.
 	 * @param strinv $msg - The error message

@@ -157,7 +157,7 @@ class failnet_core
 			// We want this as a transaction in case anything goes wrong.
 			$this->db->beginTransaction();
 
-			// Check to see if our config table exists...if not, we need to install.  o_O
+			// Check to see if our config table exists...if not, we probably need to install.  o_O
 			$failnet_installed = $this->db->query('SELECT COUNT(*) FROM sqlite_master WHERE name = ' . $this->db->quote('config'))->fetchColumn();
 			if (!$failnet_installed)
 			{
@@ -211,7 +211,7 @@ class failnet_core
 			$this->build_sql('ignore', 'get_single', 'SELECT ignore_date, hostmask FROM ignore WHERE LOWER(hostmask) = LOWER(:hostmask) LIMIT 1');
 			$this->build_sql('ignore', 'get', 'SELECT hostmask from ignore');
 
-			// Commit the results
+			// Commit the stuffs
 			$this->db->commit();
 		}
 		catch (PDOException $e)

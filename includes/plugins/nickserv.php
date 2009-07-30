@@ -49,6 +49,7 @@ class failnet_plugin_nickserv extends failnet_plugin_common
 		if(!$this->failnet->get('nickbot'))
 			return;
 
+		// If someone else is using our nick, let's GHOST them out of it.  :)
 		if($this->event->type == failnet_event_response::ERR_NICKNAMEINUSE && $this->failnet->get('pass'))
 		{
 			$this->call_privmsg($this->failnet->get('nickbot'), 'GHOST ' . $this->failnet->get('nick') . ' ' . $this->failnet->get('pass'));

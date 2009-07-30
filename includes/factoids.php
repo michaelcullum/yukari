@@ -13,11 +13,7 @@
  *
  *===================================================================
  * 
- * @todo: Removing factoids...
- * @todo Removing factoid entries...
- * @todo Changing factoid settings...
- * 
- * @todo Write a plugin for this?  Either convert to a plugin or use a plugin as a shell.
+ * @todo Rewrite for PDO
  * 
  */
 
