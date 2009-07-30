@@ -220,8 +220,7 @@ class failnet_socket extends failnet_common
 	}
 	
 	/**
-	 * Handles construction of command strings and their transmission to the 
-	 * server.
+	 * Handles construction of command strings and their transmission to the server.
 	 * @param string $command - Command to send
 	 * @param mixed $args - Optional string or array of sequential arguments
 	 * @return string - Command string that was sent 
@@ -262,10 +261,8 @@ class failnet_socket extends failnet_common
 	 * @param string $reason - Reason for connection termination (optional)
 	 * @return void
 	 */
-	public function quit($reason = NULL)
+	public function close()
 	{
-		// Send a QUIT command to the server
-		$this->send('QUIT', $reason);
 		display('-!- Quitting from server "' . $this->failnet->get('server') . '"');
 		$this->log->add('--- Quitting from server "' . $this->failnet->get('server') . '" ---');
 
@@ -275,8 +272,7 @@ class failnet_socket extends failnet_common
 	}
 	
 	/**
-	 * Supporting method to parse event argument strings where the last 
-	 * argument may contain a colon.
+	 * Supporting method to parse event argument strings where the last argument may contain a colon.
 	 * @param string $args - Argument string to parse
 	 * @param integer $count - Optional maximum number of arguments
 	 * @return array - Array of argument values

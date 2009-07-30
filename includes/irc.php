@@ -49,7 +49,7 @@ class failnet_irc extends failnet_common
 {
 	/**
 	 * Some methods here (actually, quite a few) borrowed from Phergie.
-	 * See /README for details.
+	 * See /README for more information.
 	 */
 	
 	/**
@@ -61,9 +61,9 @@ class failnet_irc extends failnet_common
 	
 	/**
 	 * Joins a channel.
-	 *
-	 * @param string $channels Comma-delimited list of channels to join 
-	 * @param string $keys Optional comma-delimited list of channel keys
+	 * @param string $channels - Comma-delimited list of channels to join 
+	 * @param string $keys - Optional comma-delimited list of channel keys
+	 * @return void
 	 */
 	public function join($channel, $key = NULL)
 	{
@@ -77,8 +77,8 @@ class failnet_irc extends failnet_common
 
 	/**
 	 * Leaves a channel.
-	 *
-	 * @param string $channels Comma-delimited list of channels to leave 
+	 * @param string $channels - Comma-delimited list of channels to leave
+	 * @return void 
 	 */
 	public function part($channel, $reason = NULL)
 	{
@@ -92,9 +92,9 @@ class failnet_irc extends failnet_common
 
 	/**
 	 * Invites a user to an invite-only channel.
-	 *
-	 * @param string $nick Nick of the user to invite
-	 * @param string $channel Name of the channel
+	 * @param string $nick - Nick of the user to invite
+	 * @param string $channel - Name of the channel
+	 * @return void
 	 */
 	public function invite($nick, $channel)
 	{
@@ -103,8 +103,8 @@ class failnet_irc extends failnet_common
 
 	/**
 	 * Obtains a list of nicks of usrs in currently joined channels.
-	 *
-	 * @param string $channels Comma-delimited list of one or more channels
+	 * @param string $channels - Comma-delimited list of one or more channels
+	 * @return void
 	 */
 	public function names($channels)
 	{
@@ -113,10 +113,10 @@ class failnet_irc extends failnet_common
 
 	/**
 	 * Obtains a list of channel names and topics.
-	 *
-	 * @param string $channels Comma-delimited list of one or more channels
+	 * @param string $channels - Comma-delimited list of one or more channels
 	 *                         to which the response should be restricted
 	 *                         (optional)
+	 * @return void
 	 */
 	public function channels($channels = NULL)
 	{
@@ -125,9 +125,9 @@ class failnet_irc extends failnet_common
 
 	/**
 	 * Retrieves or changes a channel topic.
-	 *
-	 * @param string $channel Name of the channel
-	 * @param string $topic New topic to assign (optional)
+	 * @param string $channel - Name of the channel
+	 * @param string $topic - New topic to assign (optional)
+	 * @return void
 	 */
 	public function topic($channel, $topic = NULL)
 	{
@@ -141,9 +141,9 @@ class failnet_irc extends failnet_common
 
 	/**
 	 * Retrieves or changes a channel or user mode.
-	 *
-	 * @param string $target Channel name or user nick
-	 * @param string $mode New mode to assign (optional)
+	 * @param string $target - Channel name or user nick
+	 * @param string $mode - New mode to assign (optional)
+	 * @return void
 	 */
 	public function mode($target, $mode = NULL)
 	{
@@ -157,8 +157,8 @@ class failnet_irc extends failnet_common
 
 	/**
 	 * Changes the client nick.
-	 *
-	 * @param string $nick New nick to assign
+	 * @param string $nick - New nick to assign
+	 * @return void
 	 */
 	public function nick($nick)
 	{
@@ -167,8 +167,8 @@ class failnet_irc extends failnet_common
 
 	/**
 	 * Retrieves information about a nick.
-	 *
-	 * @param string $nick
+	 * @param string $nick - Nick to lookup
+	 * @return void
 	 */
 	public function whois($nick)
 	{
@@ -177,9 +177,9 @@ class failnet_irc extends failnet_common
 
 	/**
 	 * Sends a message to a nick or channel.
-	 *
-	 * @param string $target Channel name or user nick
-	 * @param string $text Text of the message to send
+	 * @param string $target - Channel name or user nick
+	 * @param string $text - Text of the message to send
+	 * @return void
 	 */
 	public function privmsg($target, $text)
 	{
@@ -188,9 +188,9 @@ class failnet_irc extends failnet_common
 
 	/**
 	 * Sends a notice to a nick or channel.
-	 *
-	 * @param string $target Channel name or user nick
-	 * @param string $text Text of the notice to send
+	 * @param string $target - Channel name or user nick
+	 * @param string $text - Text of the notice to send
+	 * @return void
 	 */
 	public function notice($target, $text)
 	{
@@ -199,10 +199,10 @@ class failnet_irc extends failnet_common
 
 	/**
 	 * Kicks a user from a channel.
-	 *
-	 * @param string $nick Nick of the user
-	 * @param string $channel Channel name
-	 * @param string $reason Reason for the kick (optional)
+	 * @param string $nick - Nick of the user
+	 * @param string $channel - Channel name
+	 * @param string $reason - Reason for the kick (optional)
+	 * @return void
 	 */
 	public function kick($nick, $channel, $reason = NULL)
 	{
@@ -216,8 +216,8 @@ class failnet_irc extends failnet_common
 
 	/**
 	 * Responds to a server test of client responsiveness.
-	 *
-	 * @param string $daemon Daemon from which the original request originates
+	 * @param string $daemon - Daemon from which the original request originates
+	 * @return void
 	 */
 	public function pong($daemon)
 	{
@@ -226,11 +226,11 @@ class failnet_irc extends failnet_common
 
 	/**
 	 * Sends a CTCP response to a user.
-	 *
-	 * @param string $nick User nick 
-	 * @param string $command Command to send
-	 * @param string|array $args String or array of sequential arguments 
+	 * @param string $nick - User nick 
+	 * @param string $command - Command to send
+	 * @param string|array $args - String or array of sequential arguments 
 	 *        (optional)
+	 * @return void
 	 */
 	private function ctcp_response($nick, $command, $args = NULL)
 	{
@@ -244,9 +244,9 @@ class failnet_irc extends failnet_common
 
 	/**
 	 * Sends a CTCP ACTION (/me) command to a nick or channel.
-	 *
-	 * @param string $target Channel name or user nick
-	 * @param string $text Text of the action to perform
+	 * @param string $target - Channel name or user nick
+	 * @param string $text - Text of the action to perform
+	 * @return void
 	 */
 	public function action($target, $text)
 	{
@@ -260,10 +260,9 @@ class failnet_irc extends failnet_common
 
 	/**
 	 * Sends a CTCP PING response to a user.
-	 *
-	 * @param string $nick User nick
-	 * @param string $hash PING hash to use in the handshake
-
+	 * @param string $nick - User nick
+	 * @param string $hash - PING hash to use in the handshake
+	 * @return void
 	 */
 	public function ping($nick, $hash)
 	{
@@ -272,9 +271,9 @@ class failnet_irc extends failnet_common
 
 	/**
 	 * Sends a CTCP VERSION response to a user.
-	 *
-	 * @param string $nick User nick
-	 * @param string $version Version string to send
+	 * @param string $nick - User nick
+	 * @param string $version - Version string to send
+	 * @return void
 	 */
 	public function version($nick, $version)
 	{
@@ -283,9 +282,9 @@ class failnet_irc extends failnet_common
 
 	/**
 	 * Sends a CTCP TIME response to a user.
-	 *
-	 * @param string $user User nick
-	 * @param string $time Time string to send
+	 * @param string $user - User nick
+	 * @param string $time - Time string to send
+	 * @return void
 	 */
 	public function time($nick, $time)
 	{
@@ -294,12 +293,23 @@ class failnet_irc extends failnet_common
 
 	/**
 	 * Sends a raw command to the server.
-	 *
-	 * @param string $command Command string to send
+	 * @param string $command - Command string to send
+	 * @return void
 	 */
 	public function raw($command)
 	{
 		$this->failnet->socket->send('RAW', $command);
+	}
+
+	/**
+	 * Sends a quit command to the server
+	 * @param string $reason - The quit reason if any is available
+	 * @return void
+	 */
+	public function quit($reason = NULL)
+	{
+		$this->failnet->socket->send('QUIT', $reason);
+		$this->failnet->socket->close();
 	}
 }
 
