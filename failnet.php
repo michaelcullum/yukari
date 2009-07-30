@@ -37,7 +37,7 @@
 define('IN_FAILNET', true);
 define('FAILNET_VERSION', '2.0.0');
 define('FAILNET_ROOT', realpath('.') . DIRECTORY_SEPARATOR);
-define('FAILNET_DB_ROOT', realpath('.') . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'db' . DIRECTORY_SEPARATOR);
+define('FAILNET_DB_ROOT', FAILNET_ROOT . 'data' . DIRECTORY_SEPARATOR . 'db' . DIRECTORY_SEPARATOR);
 define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
 
 // Include our general functions file now -- We require it as it is always essential.

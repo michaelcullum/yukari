@@ -104,7 +104,7 @@ class failnet_core
 		    exit(1);
 		}
 
-		// Make sure that PDO is loaded, we need it.
+		// Make sure that PDO and the SQLite PDO extensions are loaded, we need them.
 		if (!extension_loaded('PDO'))
 		{
 			if(file_exists(FAILNET_ROOT . 'data/restart')) 
@@ -161,7 +161,7 @@ class failnet_core
 			$failnet_installed = $this->db->query('SELECT COUNT(*) FROM sqlite_master WHERE name = ' . $this->db->quote('config'))->fetchColumn();
 			if (!$failnet_installed)
 			{
-				display(array('- Database tables not installed, installing Failnet', '=== Creating database tables', ' -  Creating config table...'));
+				display(array('- Database tables not installed, installing Failnet', '=== Constructing database tables', ' -  Creating config table...'));
 				// Config table...
 				$this->db->query(file_get_contents(FAILNET_ROOT . 'includes/schemas/config.sql'));
 				display(' -  Creating users table...');
@@ -216,6 +216,7 @@ class failnet_core
 		}
 		catch (PDOException $e)
 		{
+			// Something went boom.  Time to panic!
 			$this->db->rollBack();
 			if(file_exists(FAILNET_ROOT . 'data/restart')) 
 				unlink(FAILNET_ROOT . 'data/restart');
@@ -225,6 +226,7 @@ class failnet_core
 		}
 
 		// Load required classes and systems
+		display('- Loading Failnet required classes');
 		$classes = array(
 			'socket'	=> 'connection interface handler',
 			'irc'		=> 'IRC protocol handler',
@@ -234,8 +236,6 @@ class failnet_core
 			'auth'		=> 'user authorization handler',
 			'factoids'	=> 'factoid engine',
 		);
-
-		display('- Loading Failnet required classes');
 		foreach($classes as $class => $msg)
 		{
 			if(property_exists($class))
@@ -251,7 +251,7 @@ class failnet_core
 			try
 			{
 				$this->db->beginTransaction();
-				// Add the owner to the DB if Failnet wasn't installed when we started up.  ;)
+				// Add some initial entries if Failnet was just installed 
 				$this->sql('users', 'create')->execute(array(':nick' => $this->get('owner'), ':authlevel' => 100, ':hash' => $this->auth->hash->hash($this->get('name'))));
 				$this->sql('config', 'create')->execute(array(':name' => 'rand_seed', ':value' => 0));
 				$this->sql('config', 'create')->execute(array(':name' => 'last_rand_seed', ':value' => 0));
@@ -259,6 +259,7 @@ class failnet_core
 			}
 			catch (PDOException $e)
 			{
+				// Roll back ANY CHANGES MADE, something went boom.
 				$this->db->rollBack();
 				if(file_exists(FAILNET_ROOT . 'data/restart')) 
 					unlink(FAILNET_ROOT . 'data/restart');
