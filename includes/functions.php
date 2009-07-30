@@ -36,6 +36,29 @@
 if(!defined('IN_FAILNET')) exit(1);
 
 /**
+ * Class autoloading function, takes in a class name and parses it according to built-in rules.
+ * 		Function will automatically strip out the failnet_ prefix if present.
+ * 		If the class contains underscores, the autoload function will expect the underscores to be slashes for directories.
+ * 		Example being if you load in "failnet_plugin_admin", it will attempt to load the file at /includes/plugins/admin.php
+ * @param string $name - Class name to load
+ * @return void
+ */
+function __autoload($name)
+{
+	// Begin by cleaning the class name of any possible ../. hacks
+	$name = basename($name);
+
+	// Now, drop the failnet_ prefix if it is there
+	$name = (substr($class, 0, 8) == 'failnet_') ? substr($class, 8) : $class;
+
+	// Replace any underscores with slashes...
+	$name = str_replace('_', DIRECTORY_SEPARATOR, $name);
+	
+	// Now, we try to get the file.
+	require FAILNET_ROOT . 'includes' . DIRECTORY_SEPARATOR . $name . '.' . PHP_EXT;
+}
+
+/**
  * Echos a message, and cleans out any extra NL's after the message.
  * 		Also will echo an array of messages properly as well.
  * @param mixed $msg - The message or messages we want to echo to the terminal. 

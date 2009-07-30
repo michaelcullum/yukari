@@ -41,6 +41,7 @@ define('FAILNET_DB_ROOT', FAILNET_ROOT . 'data' . DIRECTORY_SEPARATOR . 'db' . D
 define('PHP_EXT', substr(strrchr(__FILE__, '.'), 1));
 
 // Include our general functions file now -- We require it as it is always essential.
+// It also has our autoloader function, so we kinda need that.  ;)
 require FAILNET_ROOT . 'includes/functions.' . PHP_EXT;
 
 // Check to see if we are even on the minimum PHP version necessary
@@ -52,10 +53,6 @@ if(version_compare('5.2.3', PHP_VERSION, '>'))
 	sleep(3);
 	exit(1);
 }
-
-// Load autoloader and register it
-require FAILNET_ROOT . 'autoload.' . PHP_EXT;
-failnet_autoload::register();
 
 // Load Failnet up!
 $failnet = new failnet_core();
