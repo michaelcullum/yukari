@@ -1,3 +1,7 @@
+#
+# Sessions table
+#
+
 CREATE TABLE sessions (
 	key_id char(32) NOT NULL DEFAULT '',
 	user_id INTEGER UNSIGNED NOT NULL DEFAULT '0',

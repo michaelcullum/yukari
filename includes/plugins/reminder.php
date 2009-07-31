@@ -47,6 +47,12 @@ class failnet_plugin_reminder extends failnet_plugin_common
 	public $enable = true;
 	public $reminders = array();
 	
+	public function connect()
+	{
+		
+		$this->failnet->db->query('SELECT COUNT(*) FROM sqlite_master WHERE name = ' . $this->failnet->db->quote('remind'))->fetchColumn();
+	}
+	
 	public function tick()
 	{
 		
