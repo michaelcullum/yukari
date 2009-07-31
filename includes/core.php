@@ -97,8 +97,8 @@ class failnet_core
 		// Check to make sure the CLI SAPI is being used...
 		if (strtolower(PHP_SAPI) != 'cli')
 		{
-			if(file_exists(FAILNET_ROOT . 'data/restart')) 
-				unlink(FAILNET_ROOT . 'data/restart');
+			if(file_exists(FAILNET_ROOT . 'data/restart.inc')) 
+				unlink(FAILNET_ROOT . 'data/restart.inc');
 			display('[Fatal Error] Failnet must be run in the CLI SAPI');
 			sleep(3);
 		    exit(1);
@@ -107,16 +107,16 @@ class failnet_core
 		// Make sure that PDO and the SQLite PDO extensions are loaded, we need them.
 		if (!extension_loaded('PDO'))
 		{
-			if(file_exists(FAILNET_ROOT . 'data/restart')) 
-				unlink(FAILNET_ROOT . 'data/restart');
+			if(file_exists(FAILNET_ROOT . 'data/restart.inc')) 
+				unlink(FAILNET_ROOT . 'data/restart.inc');
 			display('[Fatal Error] Failnet requires the PDO PHP extension to be loaded');
 			sleep(3);
 		    exit(1);
 		}
     	if (!extension_loaded('pdo_sqlite'))
     	{
-    		if(file_exists(FAILNET_ROOT . 'data/restart')) 
-				unlink(FAILNET_ROOT . 'data/restart');
+    		if(file_exists(FAILNET_ROOT . 'data/restart.inc')) 
+				unlink(FAILNET_ROOT . 'data/restart.inc');
             display('[Fatal Error] Failnet requires the PDO_SQLite PHP extension to be loaded');
 			sleep(3);
 		    exit(1);
@@ -218,8 +218,8 @@ class failnet_core
 		{
 			// Something went boom.  Time to panic!
 			$this->db->rollBack();
-			if(file_exists(FAILNET_ROOT . 'data/restart')) 
-				unlink(FAILNET_ROOT . 'data/restart');
+			if(file_exists(FAILNET_ROOT . 'data/restart.inc')) 
+				unlink(FAILNET_ROOT . 'data/restart.inc');
 			display($error);
 			sleep(3);
 			exit(1);
@@ -261,8 +261,8 @@ class failnet_core
 			{
 				// Roll back ANY CHANGES MADE, something went boom.
 				$this->db->rollBack();
-				if(file_exists(FAILNET_ROOT . 'data/restart')) 
-					unlink(FAILNET_ROOT . 'data/restart');
+				if(file_exists(FAILNET_ROOT . 'data/restart.inc')) 
+					unlink(FAILNET_ROOT . 'data/restart.inc');
 				display($error);
 				sleep(3);
 				exit(1);
@@ -276,8 +276,8 @@ class failnet_core
 
 		// This is a hack to allow us to restart Failnet if we're running the script through a batch file.
 		display('- Removing termination indicator file'); 
-		if(file_exists(FAILNET_ROOT . 'data/restart')) 
-			unlink(FAILNET_ROOT . 'data/restart');
+		if(file_exists(FAILNET_ROOT . 'data/restart.inc')) 
+			unlink(FAILNET_ROOT . 'data/restart.inc');
 
 		// In case of restart/reload, to prevent 'Nick already in use' (which asplodes everything)
 		usleep(500); display(array(self::HR, 'Failnet loaded and ready!', self::HR));
@@ -432,7 +432,7 @@ class failnet_core
 		if($restart)
 		{
 			// Just a hack to get it to restart through batch, and not terminate.
-			file_put_contents(FAILNET_ROOT . 'data/restart', 'yesh');
+			file_put_contents(FAILNET_ROOT . 'data/restart.inc', 'yesh');
 			// Dump the log cache to the file.
 			$this->log->add('--- Restarting Failnet ---', true);
 			display('-!- Restarting Failnet');
@@ -441,8 +441,8 @@ class failnet_core
 		else
 		{
 			// Just a hack to get it to truly terminate through batch, and not restart.
-			if(file_exists(FAILNET_ROOT . 'data/restart')) 
-				unlink(FAILNET_ROOT . 'data/restart');
+			if(file_exists(FAILNET_ROOT . 'data/restart.inc')) 
+				unlink(FAILNET_ROOT . 'data/restart.inc');
 			// Dump the log cache to the file.
 			$this->log->add('--- Terminating Failnet ---', true);
 			display('-!- Terminating Failnet');
