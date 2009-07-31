@@ -163,15 +163,15 @@ class failnet_core
 			{
 				display(array('- Database tables not installed, installing Failnet', '=== Constructing database tables', ' -  Creating config table...'));
 				// Config table...
-				$this->db->query(file_get_contents(FAILNET_ROOT . 'includes/schemas/config.sql'));
+				$this->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/config.sql'));
 				display(' -  Creating users table...');
-				$this->db->query(file_get_contents(FAILNET_ROOT . 'includes/schemas/users.sql'));
+				$this->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/users.sql'));
 				display(' -  Creating sessions table...');
-				$this->db->query(file_get_contents(FAILNET_ROOT . 'includes/schemas/sessions.sql'));
+				$this->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/sessions.sql'));
 				display(' -  Creating access table...');
-				$this->db->query(file_get_contents(FAILNET_ROOT . 'includes/schemas/access.sql'));
+				$this->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/access.sql'));
 				display(' -  Creating ignored hostmasks table...');
-				$this->db->query(file_get_contents(FAILNET_ROOT . 'includes/schemas/ignore.sql'));
+				$this->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/ignore.sql'));
 				display('=== Database table creation complete');
 			}
 

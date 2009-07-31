@@ -49,18 +49,46 @@ class failnet_plugin_reminder extends failnet_plugin_common
 	
 	public function connect()
 	{
-		
-		$this->failnet->db->query('SELECT COUNT(*) FROM sqlite_master WHERE name = ' . $this->failnet->db->quote('remind'))->fetchColumn();
+		$table_exists = $this->failnet->db->query('SELECT COUNT(*) FROM sqlite_master WHERE name = ' . $this->failnet->db->quote('remind'))->fetchColumn();
+		if(!$table_exists)
+		{
+			display('=== Creating reminders table...');
+			$this->failnet->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/remind.sql'));
+		}
+		display(' - Loading reminders...');
+		// @todo Use failnet_plugin_reminder::load_all() to load the entire list of reminders into memory
 	}
 	
 	public function tick()
 	{
-		
+		// @todo Check here for any reminders that need to be processed, 
+		//			even if reminders are disabled, because we need to clear out
+		// 			the expired reminders anyways.
 	}
 	
 	public function cmd_privmsg()
 	{
-		
+		// @todo process requests for new reminders here
+	}
+	
+	public function load_all()
+	{
+		// @todo totally load the DB of reminders here
+	}
+	
+	public function remove()
+	{
+		// @todo remove a specific reminder here
+	}
+	
+	public function add()
+	{
+		// @todo add a reminder here
+	}
+	
+	public function deliver()
+	{
+		// @todo Remind a user about something here!
 	}
 }
 
