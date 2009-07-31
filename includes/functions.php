@@ -55,7 +55,7 @@ function __autoload($name)
 	$name = str_replace('_', DIRECTORY_SEPARATOR, $name);
 	
 	// Now, we try to get the file.
-	require FAILNET_ROOT . 'includes' . DIRECTORY_SEPARATOR . $name . '.' . PHP_EXT;
+	require FAILNET_ROOT . 'includes' . DIRECTORY_SEPARATOR . $name . '.php';
 }
 
 /**

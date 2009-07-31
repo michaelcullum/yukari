@@ -402,10 +402,10 @@ class failnet_core
 	 */
 	private function load($file)
 	{
-		if(!file_exists(FAILNET_ROOT . $file . '.' . PHP_EXT) || !is_readable(FAILNET_ROOT . $file . '.' . PHP_EXT))
-			trigger_error('Required Failnet configuration file [' . $file . '.' . PHP_EXT . '] not found', E_USER_ERROR);
+		if(!file_exists(FAILNET_ROOT . $file . '.php') || !is_readable(FAILNET_ROOT . $file . '.php'))
+			trigger_error('Required Failnet configuration file [' . $file . '.php] not found', E_USER_ERROR);
 
-		$settings = require FAILNET_ROOT . $file . '.' . PHP_EXT;
+		$settings = require FAILNET_ROOT . $file . '.php';
 
 		foreach($settings as $setting => $value)
 		{
