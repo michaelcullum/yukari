@@ -161,7 +161,7 @@ class failnet_core
 			$failnet_installed = $this->db->query('SELECT COUNT(*) FROM sqlite_master WHERE name = ' . $this->db->quote('config'))->fetchColumn();
 			if (!$failnet_installed)
 			{
-				display(array('- Database tables not installed, installing Failnet', '=== Constructing database tables', ' -  Creating config table...'));
+				display(array('- Database tables not installed, installing Failnet', '- Constructing database tables...', ' -  Creating config table...'));
 				// Config table...
 				$this->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/config.sql'));
 				display(' -  Creating users table...');
@@ -172,9 +172,11 @@ class failnet_core
 				$this->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/access.sql'));
 				display(' -  Creating ignored hostmasks table...');
 				$this->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/ignore.sql'));
-				display('=== Database table creation complete');
+				display('- Database table creation complete.');
 			}
 
+			display('- Preparing database...');
+			
 			// Now, we need to build our default statements.
 			// Config table
 			$this->build_sql('config', 'create', 'INSERT INTO config ( name, value ) VALUES ( :name, :value )');

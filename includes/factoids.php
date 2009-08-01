@@ -87,12 +87,12 @@ class failnet_factoids extends failnet_common
 		$table_exists = $this->failnet->db->query('SELECT COUNT(*) FROM sqlite_master WHERE name = ' . $this->failnet->db->quote('factoids'))->fetchColumn();
 		if(!$table_exists)
 		{
-			display('=== Creating factoids table...');
+			display(' -  Creating factoids table...');
 			$this->failnet->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/factoids.sql'));
-			display('=== Creating entries table...');
+			display(' -  Creating entries table...');
 			$this->failnet->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/entries.sql'));
 		}
-		display(' -  Loading Failnet factoids index...');
+		display('=== Loading Failnet factoids index...');
 		$this->load();
 	}
 	
