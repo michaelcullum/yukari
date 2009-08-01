@@ -83,15 +83,48 @@ class failnet_factoids extends failnet_common
 	 */
 	public function init()
 	{
-		// @todo Write prepared PDO statements that would be used in the factoids engine
 		$table_exists = $this->failnet->db->query('SELECT COUNT(*) FROM sqlite_master WHERE name = ' . $this->failnet->db->quote('factoids'))->fetchColumn();
 		if(!$table_exists)
 		{
-			display(' -  Creating factoids table...');
-			$this->failnet->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/factoids.sql'));
-			display(' -  Creating entries table...');
-			$this->failnet->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/entries.sql'));
+			// Attempt to install the factoids tables
+			try
+			{
+				$this->failnet->db->beginTransaction();
+				display(' -  Creating factoids table...');
+				$this->failnet->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/factoids.sql'));
+				display(' -  Creating entries table...');
+				$this->failnet->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/entries.sql'));
+				$this->failnet->db->commit();
+			}
+			catch (PDOException $e)
+			{
+				// Something went boom.  Time to panic!
+				$this->db->rollBack();
+				if(file_exists(FAILNET_ROOT . 'data/restart.inc')) 
+					unlink(FAILNET_ROOT . 'data/restart.inc');
+				display($error);
+				sleep(3);
+				exit(1);
+			}
 		}
+
+		// Factoids table
+		$this->failnet->build_sql('factoids', 'create', 'INSERT INTO factoids ( direct, pattern ) VALUES ( :direct, ":pattern" )');
+		$this->failnet->build_sql('factoids', 'set_direct', 'UPDATE factoids SET direct = :direct WHERE factoid_id = :id');
+		$this->failnet->build_sql('factoids', 'set_pattern', 'UPDATE factoids SET pattern = ":pattern" WHERE factoid_id = :id');
+		$this->failnet->build_sql('factoids', 'delete', 'DELETE FROM factoids WHERE factoid_id = :id');
+
+		// Entries table
+		$this->failnet->build_sql('entries', 'create', 'INSERT INTO entries ( factoid_id, authlevel, selfcheck, function, entry ) VALUES ( :id, :authlevel, :selfcheck, :function, ":entry" )');
+		// @todo Finish prepared PDO statements for entries table 
+		$this->failnet->build_sql();
+		$this->failnet->build_sql();
+		$this->failnet->build_sql();
+		$this->failnet->build_sql();
+		$this->failnet->build_sql();
+		$this->failnet->build_sql();
+		$this->failnet->build_sql();
+
 		display('=== Loading Failnet factoids index...');
 		$this->load();
 	}
@@ -101,9 +134,8 @@ class failnet_factoids extends failnet_common
 	{
 		// @todo Overhaul this so that it will load the index of factoid patterns
 		
-		
 	}
-	
+
 	/**
 	 * Merges in the factoids update file. We do this in case Failnet crashed unexpectedly...
 	 * 		normally on shutdown Failnet should write the current of factoids anyways and unlink the update file.
