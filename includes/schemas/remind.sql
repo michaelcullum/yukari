@@ -7,6 +7,6 @@ CREATE TABLE reminders (
 	sender_id INTEGER UNSIGNED NOT NULL DEFAULT '0',
 	create_time INTEGER UNSIGNED NOT NULL DEFAULT '0',
 	remind_time INTEGER UNSIGNED NOT NULL DEFAULT '0',
-	message text(65535) NOT NULL DEFAULT '',
-	channel varchar(255) NOT NULL DEFAULT '',
+	message TEXT NOT NULL DEFAULT '',
+	channel TEXT NOT NULL DEFAULT '',
 );

@@ -54,22 +54,10 @@ class failnet_factoids extends failnet_common
  */
 	
 	/**
-	 * List of factoids loaded
-	 * @var array
+	 * List of factoid patterns loaded for speed
+	 * @var string
 	 */
-	public $factoids = array();
-	
-	/**
-	 * List of Failnet commands
-	 * @var array
-	 */
-	public $commands = array();
-	
-	/**
-	 * List of factoids to trigger only when Failnet is specifically being spoken to
-	 * @var array
-	 */
-	public $my_factoids = array();
+	public $factoids = '';
 	
 	/**
 	 * How many factoids processed?
@@ -84,52 +72,6 @@ class failnet_factoids extends failnet_common
 	protected $return = false;
 	
 /**
- * Constants
- */
-	
-	/**
-	 * Create new factoid indicator
-	 * @var constant
-	 */
-	const TYPE_NEW = 1;
-	
-	/**
-	 * Add factoid entry indicator
-	 * @var constant
-	 */
-	const TYPE_ADD = 2;
-	
-	/**
-	 * Edit factoid entry indicator
-	 * @var constant
-	 */
-	const TYPE_EDIT = 3;
-	
-	/**
-	 * Change factoid settings indicator
-	 * @var constant
-	 */
-	const TYPE_UPDATE = 4;
-
-	/**
-	 * Change the pattern for a factoid
-	 * @var constant
-	 */
-	const TYPE_RESET = 5;
-	
-	/**
-	 * Delete factoid indicator
-	 * @var constant
-	 */
-	const TYPE_DELETE = 6;
-	
-	/**
-	 * Remove factoid entry indicator
-	 * @var constant
-	 */
-	const TYPE_REMOVE = 7;
-	
-/**
  * Methods
  */
 	
@@ -141,28 +83,25 @@ class failnet_factoids extends failnet_common
 	 */
 	public function init()
 	{
-		display('=== Loading factoids database');
+		// @todo Write prepared PDO statements that would be used in the factoids engine
+		$table_exists = $this->failnet->db->query('SELECT COUNT(*) FROM sqlite_master WHERE name = ' . $this->failnet->db->quote('factoids'))->fetchColumn();
+		if(!$table_exists)
+		{
+			display('=== Creating factoids table...');
+			$this->failnet->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/factoids.sql'));
+			display('=== Creating entries table...');
+			$this->failnet->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/entries.sql'));
+		}
+		display(' -  Loading Failnet factoids index...');
 		$this->load();
 	}
 	
 	// Method to (re)load the factoids DB.
 	public function load()
 	{
-		if(file_exists(FAILNET_ROOT . 'data/update_factoids.' . PHP_EXT)) 
-			$this->merge('factoids');
-		if(file_exists(FAILNET_ROOT . 'data/update_commands.' . PHP_EXT)) 
-			$this->merge('commands');
-		if(file_exists(FAILNET_ROOT . 'data/update_my_factoids.' . PHP_EXT)) 
-			$this->merge('my_factoids');
+		// @todo Overhaul this so that it will load the index of factoid patterns
 		
-		include FAILNET_ROOT . 'data/factoids.' . PHP_EXT;
-		$this->factoids = $factoids;
 		
-		include FAILNET_ROOT . 'data/commands.' . PHP_EXT;
-		$this->commands = $commands;
-		
-		include FAILNET_ROOT . 'data/my_factoids.' . PHP_EXT;
-		$this->my_factoids = $my_factoids;
 	}
 	
 	/**
@@ -172,7 +111,7 @@ class failnet_factoids extends failnet_common
 	 * @return void
 	 * 
 	 */
-	public function merge($filename) // @todo Rewrite this shiz for new update system.
+	public function merge($filename)
 	{
 		include FAILNET_ROOT . 'data/' . $filename . '.' .  PHP_EXT;
 		$new_factoids = $this->parse_update($filename);
