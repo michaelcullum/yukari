@@ -180,7 +180,7 @@ class failnet_core
 			// Now, we need to build our default statements.
 			// Config table
 			$this->build_sql('config', 'create', 'INSERT INTO config ( name, value ) VALUES ( ":name", ":value" )');
-			$this->build_sql('config', 'get', 'SELECT value FROM config WHERE LOWER(name) = LOWER(":name") LIMIT 1');
+			$this->build_sql('config', 'get', 'SELECT * FROM config WHERE LOWER(name) = LOWER(":name") LIMIT 1');
 			$this->build_sql('config', 'update', 'UPDATE config SET value = :value WHERE LOWER(name) = LOWER(":name")');
 			$this->build_sql('config', 'delete', 'DELETE FROM config WHERE name = ":name"');
 
@@ -189,7 +189,7 @@ class failnet_core
 			$this->build_sql('users', 'set_pass', 'UPDATE users SET password = ":hash" WHERE user_id = :user');
 			$this->build_sql('users', 'set_level', 'UPDATE users SET authlevel = :authlevel WHERE user_id = :user');
 			$this->build_sql('users', 'set_confirm', 'UPDATE users SET confirm_key = ":key" WHERE user_id = :user');
-			$this->build_sql('users', 'get', 'SELECT user_id, nick, authlevel, confirm_key, hash FROM users WHERE LOWER(nick) = LOWER(:nick) LIMIT 1');
+			$this->build_sql('users', 'get', 'SELECT * FROM users WHERE LOWER(nick) = LOWER(:nick) LIMIT 1');
 			$this->build_sql('users', 'get_level', 'SELECT authlevel FROM users WHERE LOWER(nick) = LOWER(:nick) LIMIT 1');
 			$this->build_sql('users', 'get_confirm', 'SELECT confirm_key FROM users WHERE user_id = :user LIMIT 1');
 			$this->build_sql('users', 'delete', 'DELETE FROM users WHERE user_id = :user');
@@ -210,8 +210,8 @@ class failnet_core
 			// Ignored hostmasks table
 			$this->build_sql('ignore', 'create', 'INSERT INTO ignore ( ignore_date, hostmask ) VALUES ( :timestamp, ":hostmask" )');
 			$this->build_sql('ignore', 'delete', 'DELETE FROM ignore WHERE LOWER(hostmask) = LOWER(:hostmask)');
-			$this->build_sql('ignore', 'get_single', 'SELECT ignore_date, hostmask FROM ignore WHERE LOWER(hostmask) = LOWER(:hostmask) LIMIT 1');
-			$this->build_sql('ignore', 'get', 'SELECT hostmask FROM ignore');
+			$this->build_sql('ignore', 'get_single', 'SELECT * FROM ignore WHERE LOWER(hostmask) = LOWER(:hostmask) LIMIT 1');
+			$this->build_sql('ignore', 'get', 'SELECT * FROM ignore');
 
 			// Commit the stuffs
 			$this->db->commit();
