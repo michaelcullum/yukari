@@ -222,7 +222,7 @@ class failnet_core
 			$this->db->rollBack();
 			if(file_exists(FAILNET_ROOT . 'data/restart.inc')) 
 				unlink(FAILNET_ROOT . 'data/restart.inc');
-			display($e);
+			trigger_error($e, E_USER_WARNING);
 			sleep(3);
 			exit(1);
 		}
@@ -265,7 +265,7 @@ class failnet_core
 				$this->db->rollBack();
 				if(file_exists(FAILNET_ROOT . 'data/restart.inc')) 
 					unlink(FAILNET_ROOT . 'data/restart.inc');
-				display($e);
+				trigger_error($e, E_USER_WARNING);
 				sleep(3);
 				exit(1);
 			}
