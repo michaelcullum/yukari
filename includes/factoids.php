@@ -115,7 +115,7 @@ class failnet_factoids extends failnet_common
 			$this->db->rollBack();
 			if(file_exists(FAILNET_ROOT . 'data/restart.inc')) 
 				unlink(FAILNET_ROOT . 'data/restart.inc');
-			display($error);
+			display($e);
 			sleep(3);
 			exit(1);
 		}
