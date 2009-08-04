@@ -50,8 +50,7 @@ class failnet_plugin_authorize extends failnet_plugin_common
 		if(!$this->prefix($text))
 			return;
 
-		$text = substr($text, 1);
-		$cmd = (strpos($text, ' ') !== false) ? substr($text, 0, strpos($text, ' ')) : $text;
+		$cmd = $this->purify($text);
 		$sender = $this->event->nick;
 		switch($cmd)
 		{

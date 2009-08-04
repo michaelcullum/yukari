@@ -97,7 +97,7 @@ abstract class failnet_plugin_common
 
 	/**
 	 * Cleans up the text, returns the actual command being entered, and modifies the entered text also. 
-	 * @param $text
+	 * @param string &$text - The text to process
 	 * @return unknown_type
 	 */
 	public function purify(&$text)
