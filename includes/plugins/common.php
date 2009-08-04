@@ -168,158 +168,137 @@ abstract class failnet_plugin_common
 	public function cmd_join() { }
 
 	/**
-	* Handler for when a user leaves a channel.
-	* @return void
-	*/
+	 * Handler for when a user leaves a channel.
+	 * @return void
+	 */
 	public function cmd_part() { }
 
 	/**
-	* Handler for when a user sends an invite request.
-	* @return void
-	*/
+	 * Handler for when a user sends an invite request.
+	 * @return void
+	 */
 	public function cmd_invite() { }
 
 	/**
-	* Handler for when a user obtains operator privileges.
-	* @return void
-	*/
+	 * Handler for when a user obtains operator privileges.
+	 * @return void
+	 */
 	public function cmd_oper() { }
 
 	/**
-	* Handler for when a channel topic is viewed or changed.
-	*
-	* @return void
-	*/
+	 * Handler for when a channel topic is viewed or changed.
+	 * @return void
+	 */
 	public function cmd_topic() { }
 
 	/**
-	* Handler for when a user or channel mode is changed.
-	*
-	* @return void
-	*/
+	 * Handler for when a user or channel mode is changed.
+	 * @return void
+	 */
 	public function cmd_mode() { }
 
 	/**
-	* Handler for when the server prompts the client for a nick.
-	*
-	* @return void
-	*/
+	 * Handler for when the server prompts the client for a nick.
+	 * @return void
+	 */
 	public function cmd_nick() { }
 
 	/**
-	* Handler for when a message is received from a channel or user.
-	*
-	* @return void
-	*/
+	 * Handler for when a message is received from a channel or user.
+	 * @return void
+	 */
 	public function cmd_privmsg() { }
 
 	/**
-	* Handler for when an action is received from a channel or user
-	*
-	* @return void
-	*/
+	 * Handler for when an action is received from a channel or user
+	 * @return void
+	 */
 	public function cmd_action() { }
 
 	/**
-	* Handler for when a notice is received.
-	*
-	* @return void
-	*/
+	 * Handler for when a notice is received.
+	 * @return void
+	 */
 	public function cmd_notice() { }
 
 	/**
-	* Handler for when a user is kicked from a channel.
-	*
-	* @return void
-	*/
+	 * Handler for when a user is kicked from a channel.
+	 * @return void
+	 */
 	public function cmd_kick() { }
 
 	/**
-	* Handler for when the server or a user checks the client connection to
-	* ensure activity.
-	*
-	* @return void
-	*/
+	 * Handler for when the server or a user checks the client connection to ensure activity.
+	 * @return void
+	 */
 	public function cmd_ping() { }
 
 	/**
-	* Handler for when the server sends a CTCP TIME request.
-	*
-	* @return void
-	*/
+	 * Handler for when the server sends a CTCP TIME request.
+	 * @return void
+	 */
 	public function cmd_time() { }
 
 	/**
-	* Handler for when the server sends a CTCP VERSION request.
-	*
-	* @return void
-	*/
+	 * Handler for when the server sends a CTCP VERSION request.
+	 * @return void
+	 */
 	public function cmd_version() { }
 
 	/**
-	* Handler for the reply to a CTCP PING request.
-	*
-	* @return void
-	*/
+	 * Handler for the reply to a CTCP PING request.
+	 * @return void
+	 */
 	public function cmd_pingreply() { }
 
 	/**
-	* Handler for the reply to a CTCP TIME request.
-	*
-	* @return void
-	*/
+	 * Handler for the reply to a CTCP TIME request.
+	 * @return void
+	 */
 	public function cmd_timereply() { }
 
 	/**
-	* Handler for the reply to a CTCP VERSION request. 
-	*
-	* @return void
-	*/
+	 * Handler for the reply to a CTCP VERSION request. 
+	 * @return void
+	 */
 	public function cmd_versionreply() { }
 
 	/**
-	* Handler for unrecognized CTCP requests.
-	*
-	* @return void
-	*/
+	 * Handler for unrecognized CTCP requests.
+	 * @return void
+	 */
 	public function cmd_ctcp() { }
 
 	/**
-	* Handler for unrecognized CTCP responses.
-	*
-	* @return void
-	*/
+	 * Handler for unrecognized CTCP responses.
+	 * @return void
+	 */
 	public function cmd_ctcpreply() { }
 
 	/**
-	* Handler for raw requests from the server.
-	*
-	* @return void
-	*/
+	 * Handler for raw requests from the server. 
+	 * @return void
+	 */
 	public function cmd_raw() { }
 
 	/**
-	* Handler for when the server sends a kill request.
-	*
-	* @return void
-	*/
+	 * Handler for when the server sends a kill request.
+	 * @return void
+	 */
 	public function cmd_kill() { }
 
 	/**
-	* Handler for when a server response is received to a client-issued
-	* command.
-	*
-	* @return void
-	*/
+	 * Handler for when a server response is received to a client-issued command.
+	 * @return void
+	 */
 	public function cmd_response() { }
 	
 	/**
-	* Provides cmd_* methods
-	*
-	* @param string $name Name of the method called
-	* @param array $args Arguments passed in the call
-	* @return void
-	*/
+	 * Provides cmd_* methods
+	 * @param string $name Name of the method called
+	 * @param array $args Arguments passed in the call
+	 * @return void
+	 */
 	public function __call($name, array $args)
 	{
 		if (substr($name, 0, 5) == 'call_')
@@ -338,4 +317,3 @@ abstract class failnet_plugin_common
 }
 
 ?>
-}
