@@ -300,7 +300,7 @@ class failnet_core
 		// Toss a connection call to plugins for initial setup
 		foreach ($this->plugins as $name => $plugin)
 		{
-			$plugin->connect();
+			$plugin->cmd_connect();
 		}
 
 		// Begin zer loopage!
@@ -389,7 +389,7 @@ class failnet_core
 				{
 					if($this->debug)
 						display('disconnect: ' . $name);
-					$plugin->disconnect();
+					$plugin->cmd_disconnect();
 				}
 				break;
 			}

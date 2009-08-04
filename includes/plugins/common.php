@@ -65,131 +65,122 @@ abstract class failnet_plugin_common
 	public function init() { }
 
 	/**
-	* Current event instance being processed
-	*
-	* @var object
-	*/
+	 * Current event instance being processed
+	 * @var object
+	 */
 	public $event;
 
 	/**
-	* Plugin loader used to provide access to other plugins
-	*
-	* @var failnet_plugin_loader
-	*/
-	public $plugin;
-
-	/**
-	* Queue of events initiated by the plugin in response to the current
-	* event being processed
-	*
-	* @var array
-	*/
+	 * Queue of events initiated by the plugin in response to the current
+	 * event being processed
+	 * @var array
+	 */
 	public $events = array();
 
 	/**
-	* Check if the dependencies for the plugin are met.
-	* 
-	* @return string
-	*/
+	 * Check if the dependencies for the plugin are met.
+	 * @return string
+	 */
 	public function dependencies()
 	{
-		return '';
+		return true;
 	}
 
 	/**
-	* Callback dispatched before connections are checked for new events, 
-	* allowing for the execution of logic that does not require an event 
-	* to occur.
-	*
-	* @return void
-	*/
+	 * Checks to see if this is has the proper command prefix for this message
+	 * @param string $text - The message to check 
+	 * @return boolean - Is it using the command prefix?
+	 */
+	public function prefix($text)
+	{
+		return (substr($text, 0, strlen($this->failnet->get('cmd_prefix'))) == $this->failnet->get('cmd_prefix'));
+	}
+
+	/**
+	 * Cleans up the text, returns the actual command being entered, and modifies the entered text also. 
+	 * @param $text
+	 * @return unknown_type
+	 */
+	public function purify(&$text)
+	{
+		$text = substr($text, 1);
+		return (strpos($text, ' ') !== false) ? substr($text, 0, strpos($text, ' ')) : $text;
+	}
+
+	/**
+	 * Callback dispatched before connections are checked for new events, 
+	 * allowing for the execution of logic that does not require an event 
+	 * to occur.
+	 * @return void
+	 */
 	public function tick() { }
 
 	/**
-	* Callback dispatched right before commands are to be dispatched to the
-	* server, allowing plugins to mutate, remove, or reorder events.
-	*
-	* @param array $events Events to be dispatched
-	* @return void
-	*/
+	 * Callback dispatched right before commands are to be dispatched to the
+	 * server, allowing plugins to mutate, remove, or reorder events.
+	 * @param array $events Events to be dispatched
+	 * @return void
+	 */
 	public function pre_dispatch(array &$events) { }
 
 	/**
-	* Callback dispatched right after commands are dispatched to the server,
-	* informing plugins of what events were sent in and in what order.
-	*
-	* @param array $events Events that were dispatched
-	* @return void
-	*/
+	 * Callback dispatched right after commands are dispatched to the server,
+	 * informing plugins of what events were sent in and in what order.
+	 * @param array $events Events that were dispatched
+	 * @return void
+	 */
 	public function post_dispatch(array $events) { }
 
 	/**
-	* Callback dispatched before a handler is called for the current event
-	* based on its type.
-	*
-	* @return failnet_plugin_common
-	*/
-	public function pre_event()
-	{
-		return $this;
-	}
+	 * Callback dispatched before a handler is called for the current event based on its type.
+	 * @return void
+	 */
+	public function pre_event() { }
 
 	/**
-	* Callback dispatched after a handle is called for the current event 
-	* based on its type.
-	*
-	* @return failnet_plugin_common
-	*/
-	public function post_event()
-	{
-		return $this;
-	}
+	 * Callback dispatched after a handle is called for the current event based on its type.
+	 * @return void
+	 */
+	public function post_event() { }
 
 	/**
-	* Handler for when the bot connects to the current server.
-	*
-	* @return void
-	*/
+	 * Handler for when the bot connects to the current server.
+	 * @return void
+	 */
 	public function cmd_connect() { }
 
 	/**
-	* Handler for when the bot disconnects from the current server.
-	*
-	* @return void
-	*/
+	 * Handler for when the bot disconnects from the current server.
+	 * @return void
+	 */
 	public function cmd_disconnect() { }
 
 	/**
-	* Handler for when the client session is about to be terminated.
-	*
-	* @return void
-	*/
+	 * Handler for when the client session is about to be terminated.
+	 * @return void
+	 */
 	public function cmd_quit() { }
 
 	/**
-	* Handler for when a user joins a channel.
-	*
-	* @return void
-	*/
+	 * Handler for when a user joins a channel.
+	 * @return void
+	 */
 	public function cmd_join() { }
 
 	/**
 	* Handler for when a user leaves a channel.
-	*
 	* @return void
 	*/
 	public function cmd_part() { }
 
 	/**
 	* Handler for when a user sends an invite request.
-	*
 	* @return void
 	*/
 	public function cmd_invite() { }
 
 	/**
 	* Handler for when a user obtains operator privileges.
-	*
 	* @return void
 	*/
 	public function cmd_oper() { }

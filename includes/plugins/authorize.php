@@ -47,12 +47,12 @@ class failnet_plugin_authorize extends failnet_plugin_common
 	public function cmd_privmsg()
 	{
 		$text = $this->event->get_arg('text');
-		if(substr($text, 0, 1) != '|')
+		if(!$this->prefix($text))
 			return;
 
 		$text = substr($text, 1);
-		$sender = $this->event->nick;
 		$cmd = (strpos($text, ' ') !== false) ? substr($text, 0, strpos($text, ' ')) : $text;
+		$sender = $this->event->nick;
 		switch($cmd)
 		{
 			case 'newuser':
