@@ -71,8 +71,7 @@ abstract class failnet_plugin_common
 	public $event;
 
 	/**
-	 * Queue of events initiated by the plugin in response to the current
-	 * event being processed
+	 * Queue of events initiated by the plugin in response to the current event being processed
 	 * @var array
 	 */
 	public $events = array();
@@ -109,8 +108,7 @@ abstract class failnet_plugin_common
 
 	/**
 	 * Callback dispatched before connections are checked for new events, 
-	 * allowing for the execution of logic that does not require an event 
-	 * to occur.
+	 * allowing for the execution of logic that does not require an event to occur.
 	 * @return void
 	 */
 	public function tick() { }
