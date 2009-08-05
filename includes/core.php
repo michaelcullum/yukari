@@ -392,18 +392,16 @@ class failnet_core
 				$plugin->post_dispatch($queue);
 			}
 
-			// If quit was called, we go do that now...
+			// If quit was called, we break out of the cycle and prepare to quit.
 			if ($quit)
-			{
-				call_user_func_array(array($this->socket, 'quit'), $quit->arguments());
-				foreach ($this->plugins as $name => $plugin)
-				{
-					if($this->debug)
-						display('disconnect: ' . $name);
-					$plugin->cmd_disconnect();
-				}
 				break;
-			}
+		}
+
+		foreach ($this->plugins as $name => $plugin)
+		{
+			if($this->debug)
+				display('disconnect: ' . $name);
+			$plugin->cmd_disconnect();
 		}
 		$this->terminate(false);
 	}

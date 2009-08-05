@@ -46,6 +46,12 @@ if(!defined('IN_FAILNET')) exit(1);
  */
 class failnet_plugin_admin extends failnet_plugin_common
 {
+	/**
+	 * When was the last time we requested a dai?  This is used for dai confirm timeouts.
+	 * @var integer
+	 */
+	private $dai = 0;
+
 	public function cmd_privmsg()
 	{
 		// Process the command
@@ -58,15 +64,17 @@ class failnet_plugin_admin extends failnet_plugin_common
 		$hostmask = $this->event->gethostmask();
 		switch ($cmd)
 		{
-			case 'some_command':
-				$success = $this->failnet->ignore->del_ignore($hostmask, $text);
-				if(is_null($success))
+			case 'dai':
+				if(($dai + 60) > time())
 				{
-					$this->call_notice($sender, $this->failnet->deny());
-					return;
+					$dai = time();
+					$this->call_notice($sender, 'Are you sure? If so, please repeat |dai.');
 				}
-
-				$this->call_notice($sender, ($success) ? 'Success message' : 'Failure message');
+				else
+				{
+					// Okay, we've confirmed it.  Time to go to sleep.
+					$this->call_quit();
+				}
 			break;
 		}
 	}
