@@ -46,6 +46,11 @@ if(!defined('IN_FAILNET')) exit(1);
  */
 class failnet_auth extends failnet_common
 {
+
+/**
+ * Class properties
+ */
+
 	/**
 	 * phpass hashing handler
 	 * @var object
@@ -57,6 +62,10 @@ class failnet_auth extends failnet_common
 	 * @var array
 	 */
 	public $access = array();
+
+/**
+ * Class methods
+ */
 
 	/**
 	 * Specialized init function to allow class construction to be easier.
@@ -326,10 +335,14 @@ class failnet_auth extends failnet_common
 	 * @param string $password - User's password to confirm the change being made.
 	 * @return mixed - Boolean true on success, false on invalid password, NULL on no such user. 
 	 */
-	public function add_access($hostmask, $password)
+	public function add_access($hostmask, $password, $mask = NULL)
 	{
 		// First, we want to parse the user's hostmask here.
 		parse_hostmask($hostmask, $nick, $user, $host);
+
+		// Now, let's check to see if the users hostmask is the target hostmask.
+		if($mask === NULL)
+			$mask = $hostmask;
 
 		// Now, let's do a query to grab the row for that user
 		$this->failnet->sql('users', 'get')->execute(array(':nick' => $nick));
@@ -343,7 +356,7 @@ class failnet_auth extends failnet_common
 		if($this->hash->check($password, $result['hash']))
 		{
 			// Success!  We need to just add a row to the sessions table now so that the login persists.
-			$this->failnet->sql('access', 'create')->execute(array(':user' => $result['user_id'], ':hostmask' => $hostmask));
+			$this->failnet->sql('access', 'create')->execute(array(':user' => $result['user_id'], ':hostmask' => $mask));
 
 			// Clear out the hostmask cache
 			if(isset($this->access[$result['user_id']]))
@@ -361,10 +374,14 @@ class failnet_auth extends failnet_common
 	 * @param string $password - User's password to confirm the change being made.
 	 * @return mixed - Boolean true on success, false on invalid password, NULL on no such user. 
 	 */
-	public function delete_access($hostmask, $password)
+	public function delete_access($hostmask, $password, $mask = NULL)
 	{
 		// First, we want to parse the user's hostmask here.
 		parse_hostmask($hostmask, $nick, $user, $host);
+
+		// Now, let's check to see if the users hostmask is the target hostmask.
+		if($mask === NULL)
+			$mask = $hostmask;
 
 		// Now, let's do a query to grab the row for that user
 		$this->failnet->sql('users', 'get')->execute(array(':nick' => $nick));
@@ -378,7 +395,7 @@ class failnet_auth extends failnet_common
 		if($this->hash->check($password, $result['hash']))
 		{
 			// Success!  Now we just have to kill off that entry.
-			$this->failnet->sql('access', 'delete')->execute(array(':user' => $result['user_id'], ':hostmask' => $hostmask));
+			$this->failnet->sql('access', 'delete')->execute(array(':user' => $result['user_id'], ':hostmask' => $mask));
 
 			// Clear out the hostmask cache
 			if(isset($this->access[$result['user_id']]))

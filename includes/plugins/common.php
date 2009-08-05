@@ -98,12 +98,13 @@ abstract class failnet_plugin_common
 	/**
 	 * Cleans up the text, returns the actual command being entered, and modifies the entered text also. 
 	 * @param string &$text - The text to process
-	 * @return unknown_type
+	 * @return string - The command to use
 	 */
 	public function purify(&$text)
 	{
-		$text = substr($text, 1);
-		return (strpos($text, ' ') !== false) ? substr($text, 0, strpos($text, ' ')) : $text;
+		$cmd = $text = substr($text, 1);
+		$text = substr($text, strpos($text, ' ') + 1);
+		return (strpos($cmd, ' ') !== false) ? substr($cmd, 0, strpos($cmd, ' ')) : $cmd;
 	}
 
 	/**
