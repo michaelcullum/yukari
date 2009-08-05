@@ -75,7 +75,7 @@ class failnet_factoids extends failnet_common
 	 * @see includes/failnet_common#init()
 	 * @return void
 	 */
-	public function init()
+	private function init()
 	{
 		$table_exists = $this->failnet->db->query('SELECT COUNT(*) FROM sqlite_master WHERE name = ' . $this->failnet->db->quote('factoids'))->fetchColumn();
 		try
@@ -127,7 +127,7 @@ class failnet_factoids extends failnet_common
 	 * Loads the index of factoids and caches it
 	 * @return void
 	 */
-	public function load()
+	private function load()
 	{
 		display('=== Loading Failnet factoids index...');
 		$this->failnet->sql('factoids', 'get_all')->execute();

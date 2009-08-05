@@ -281,3 +281,5 @@ class failnet_hash
 		return $hash == $stored_hash;
 	}
 }
+
+?>

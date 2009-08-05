@@ -105,13 +105,14 @@ class failnet_auth extends failnet_common
 	 * @param string $hostmask - The hostmask for the user we're checking, if we want to use access lists for this.
 	 * @return mixed - Always returns 100 if boolean false is used as the authlevel, integer for the authlevel if in the access list or logged in, or false if the user isn't logged in/does not exist.
 	 */
-	public function authlevel($nick, $hostmask = false)
+	// @todo FIX THIS. Need to check for access list first, then if that's not there, check for login.
+	public function authlevel($hostmask = false)
 	{
-		if($nick === false)
+		// Just a quick hack for allowing us to use some functions internally.  ;)
+		if($hostmask === false)
 			return 100;
 
-		if(!empty($hostmask))	
-			parse_hostmask($hostmask, $nick, $user, $host);
+		parse_hostmask($hostmask, $nick, $user, $host);
 
 		if(empty($hostmask))
 		{
@@ -137,6 +138,22 @@ class failnet_auth extends failnet_common
 
 			return ($result && $this->access($result['user_id'], $hostmask) ) ? $result['authlevel'] : false;
 		}
+	}
+
+	/**
+	 * Returns the authlevel for a specified user in the database.
+	 * @param string $nick - The user's nickname to check
+	 * @return mixed - Integer with authlevel if user found, if no such user boolean false.
+	 */
+	public function userlevel($nick)
+	{
+		if($nick === false)
+			return 100;
+
+		$this->failnet->sql('users', 'get')->execute(array(':nick' => $nick));
+		$result = $this->failnet->sql('ignore', 'get')->fetch(PDO::FETCH_ASSOC);
+
+		return ($result) ? $result['authlevel'] : false;
 	}
 
 	/**

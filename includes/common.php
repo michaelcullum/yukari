@@ -69,6 +69,4 @@ abstract class failnet_common
 	}
 }
 
-
-
 ?>

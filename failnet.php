@@ -58,4 +58,5 @@ $failnet = new failnet_core();
 
 // Run Failnet
 $failnet->run();
+
 ?>

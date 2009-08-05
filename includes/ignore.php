@@ -47,15 +47,24 @@ if(!defined('IN_FAILNET')) exit(1);
  */
 class failnet_ignore extends failnet_common
 {
-	
-	public $users = array();
+	/**
+	 * preg_match pattern cache used to check for an ignored user 
+	 * @var string
+	 */
+	private $cache = '';
+
+	/**
+	 * List of ignored user hostmasks, used to rebuild the preg_match ignore pattern when necessary 
+	 * @var unknown_type
+	 */
+	private $users = array();
 	
 	/**
 	 * Specialized init function to allow class construction to be easier.
 	 * @see includes/failnet_common#init()
 	 * @return void
 	 */
-	public function init()
+	private function init()
 	{
 		$table_exists = $this->failnet->db->query('SELECT COUNT(*) FROM sqlite_master WHERE name = ' . $this->failnet->db->quote('ignore'))->fetchColumn();
 		try
@@ -89,7 +98,68 @@ class failnet_ignore extends failnet_common
 		$this->load();
 	}
 
+	/**
+	 * Loads in the list of ignored users and caches it
+	 * @return void
+	 */
+	public function load()
+	{
+		display('=== Loading ignored users list...');
+		$this->failnet->sql('ignore', 'get')->execute();
+		$this->users = $this->failnet->sql('ignore', 'get')->fetchAll(PDO::FETCH_COLUMN, 0);
+		$this->cache = hostmasks_to_regex($this->users);
+	}
+
+	/**
+	 * Checks to see if the specified hostmask is ignored
+	 * @param string $target - The hostmask to check
+	 * @return boolean - True if the hostmask is ignored, false if not.
+	 */
+	public function ignored($target)
+	{
+		// Are _any_ hostmasks ignored?
+		if(empty($this->users))
+			return false;
+		return preg_match($this->cache, $target); 
+	}
+
+	/**
+	 * Adds the specified target user to the ignored users list.
+	 * @param string $hostmask - The sender's hostmask
+	 * @param string $target - The target hostmask to ignore 
+	 * @return True on success, false on hostmask already being ignored, NULL if not authed for this
+	 */
+	public function add_ignore($hostmask, $target)
+	{
+		if ($this->failnet->auth->authlevel(NULL, $hostmask) < 10)
+			return NULL;
+
+		// Check to see if this user would already be ignored...
+		if(!$this->ignored($target))
+		{
+			// Do that SQL thang
+			$this->failnet->sql('ignore', 'create')->execute(array(':timestamp' => time(), ':hostmask' => $target));
+
+			// Now we need to rebuild the cached PCRE pattern
+			$this->users[] = $target;
+			$this->cache = hostmasks_to_regex($this->users);
+			return true; 
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	public function del_ignore()
+	{
+		
+	}
+	
+	public function info_ignore()
+	{
+		
+	}
 }
 
 ?>
-}

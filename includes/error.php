@@ -52,7 +52,7 @@ class failnet_error extends failnet_common
 	 * @see includes/failnet_common#init()
 	 * @return void
 	 */
-	public function init()
+	private function init()
 	{
 		display('=== Setting main error handler');
 			@set_error_handler('fail_handler');

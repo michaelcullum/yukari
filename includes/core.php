@@ -553,7 +553,8 @@ class failnet_core
 			break;
 		}
 	}
-	
+
+	// @todo move to ignore user class
 	/**
 	 * Checks to see if a given hostmask is ignored by using a PCRE regex on the ignore list...
 	 * @param string $host - The hostmask to check
