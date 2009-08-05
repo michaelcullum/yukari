@@ -57,7 +57,7 @@ class failnet_irc extends failnet_common
 	 * @see includes/failnet_common#init()
 	 * @return void
 	 */
-	public function init() { }
+	private function init() { }
 	
 	/**
 	 * Joins a channel.

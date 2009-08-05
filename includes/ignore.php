@@ -131,7 +131,7 @@ class failnet_ignore extends failnet_common
 	 */
 	public function add_ignore($hostmask, $target)
 	{
-		if ($this->failnet->auth->authlevel(NULL, $hostmask) < 10)
+		if ($this->failnet->auth->authlevel($hostmask) < 10)
 			return NULL;
 
 		// Check to see if this user would already be ignored...
@@ -153,13 +153,13 @@ class failnet_ignore extends failnet_common
 
 	/**
 	 * Removes a specified hostmask pattern from the ignored users list.
-	 * @param $hostmask
+	 * @param string $hostmask - The sender's hostmask
 	 * @param $target
 	 * @return True on success, false on hostmask not within the ignore list, NULL if not authed for this
 	 */
 	public function del_ignore($hostmask, $target)
 	{
-		if ($this->failnet->auth->authlevel(NULL, $hostmask) < 10)
+		if ($this->failnet->auth->authlevel($hostmask) < 10)
 			return NULL;
 
 		// Check to see if this hostmask IS in the ignored list

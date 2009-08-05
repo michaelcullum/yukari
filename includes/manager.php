@@ -46,14 +46,14 @@ if(!defined('IN_FAILNET')) exit(1);
  */
 class failnet_manager extends failnet_common
 {
-	public $plugins_loaded = array();
+	private $plugins_loaded = array();
  	
 	/**
 	 * Specialized init function to allow class construction to be easier.
 	 * @see includes/failnet_common#init()
 	 * @return void
 	 */
-	public function init() {  }
+	private function init() {  }
 
 	/**
 	 * Load a specific plugin
