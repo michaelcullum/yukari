@@ -554,19 +554,6 @@ class failnet_core
 		}
 	}
 
-	// @todo move to ignore user class
-	/**
-	 * Checks to see if a given hostmask is ignored by using a PCRE regex on the ignore list...
-	 * @param string $host - The hostmask to check
-	 * @return boolean - True if ignored, false if not ignored or if no ignore list (might be because ignore plugin is not loaded).
-	 */
-	public function ignored($host)
-	{
-		if(empty($this->ignore))
-			return false;
-		return preg_match(hostmasks_to_regex($this->ignore), $host);
-	}
-
 	/**
 	 * Checks whether or not a given user has founder (~) status.
 	 * @param string $nick User nick to check
