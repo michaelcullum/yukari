@@ -51,6 +51,7 @@ class failnet_core
 	public $db;
 	public $error;
 	public $factoids;
+	public $ignore;
 	public $irc;
 	public $log;
 	public $manager;
@@ -69,7 +70,6 @@ class failnet_core
 	 */
 	public $speak = true;
 	public $chans = array();
-	public $ignore = array();
 	public $statements = array();
 
 	/**
@@ -77,6 +77,13 @@ class failnet_core
 	 */
 	public $server = '';
 	public $port = 6667;
+	
+	/**
+	 * DO NOT _EVER_ CHANGE THIS, FOR THE SAKE OF HUMANITY.
+	 * @var boolean
+	 */
+	private $can_become_skynet = FALSE;
+	
 
 /**
  * Failnet core constants
@@ -236,13 +243,15 @@ class failnet_core
 			'error'		=> 'error handler',
 			'manager'	=> 'plugin handler',
 			'auth'		=> 'user authorization handler',
+			'ignore'	=> 'user ignore handler',
 			'factoids'	=> 'factoid engine',
 		);
 		foreach($classes as $class => $msg)
 		{
 			if(property_exists($class))
 			{
-				$this->$class = new $class($this);
+				$name = 'failnet_' . $class;
+				$this->$class = new $name($this);
 				display('=-= Loaded ' . $msg . ' class');
 			}
 		}
