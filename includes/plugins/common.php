@@ -46,6 +46,10 @@ if(!defined('IN_FAILNET')) exit(1);
  */
 abstract class failnet_plugin_common
 {
+	/**
+	 * The mothership itself.
+	 * @var failnet_core object
+	 */
 	private $failnet;
 	
 	/**

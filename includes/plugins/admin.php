@@ -46,7 +46,30 @@ if(!defined('IN_FAILNET')) exit(1);
  */
 class failnet_plugin_admin extends failnet_plugin_common
 {
-	
+	public function cmd_privmsg()
+	{
+		// Process the command
+		$text = $this->event->get_arg('text');
+		if(!$this->prefix($text))
+			return;
+
+		$cmd = $this->purify($text);
+		$sender = $this->event->nick;
+		$hostmask = $this->event->gethostmask();
+		switch ($cmd)
+		{
+			case 'some_command':
+				$success = $this->failnet->ignore->del_ignore($hostmask, $text);
+				if(is_null($success))
+				{
+					$this->call_notice($sender, $this->failnet->deny());
+					return;
+				}
+
+				$this->call_notice($sender, ($success) ? 'Success message' : 'Failure message');
+			break;
+		}
+	}
 }
 
 ?>
