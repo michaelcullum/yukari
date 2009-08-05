@@ -15,6 +15,8 @@
  * 
  */
 
+// @todo failnet_factoids::no_factoid() method, for saying something when there's no factoid available for that.
+
 /**
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +36,6 @@
  * @ignore
  */
 if(!defined('IN_FAILNET')) exit(1);
-
 
 /**
  * Failnet - Factoid handling class,
@@ -112,7 +113,7 @@ class failnet_factoids extends failnet_common
 		catch (PDOException $e)
 		{
 			// Something went boom.  Time to panic!
-			$this->db->rollBack();
+			$this->failnet->db->rollBack();
 			if(file_exists(FAILNET_ROOT . 'data/restart.inc')) 
 				unlink(FAILNET_ROOT . 'data/restart.inc');
 			trigger_error($e, E_USER_WARNING);

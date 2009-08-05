@@ -47,7 +47,9 @@ if(!defined('IN_FAILNET')) exit(1);
  */
 class failnet_ignore extends failnet_common
 {
-
+	
+	public $users = array();
+	
 	/**
 	 * Specialized init function to allow class construction to be easier.
 	 * @see includes/failnet_common#init()
@@ -55,7 +57,36 @@ class failnet_ignore extends failnet_common
 	 */
 	public function init()
 	{
-		
+		$table_exists = $this->failnet->db->query('SELECT COUNT(*) FROM sqlite_master WHERE name = ' . $this->failnet->db->quote('ignore'))->fetchColumn();
+		try
+		{
+			$this->failnet->db->beginTransaction();
+			if(!$table_exists)
+			{
+				// Attempt to install the tables
+				display(' -  Creating ignored users table...');
+				$this->failnet->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/ignore.sql'));
+			}
+
+			// Ignored hostmasks table
+			$this->failnet->build_sql('ignore', 'create', 'INSERT INTO ignore ( ignore_date, hostmask ) VALUES ( :timestamp, ":hostmask" )');
+			$this->failnet->build_sql('ignore', 'delete', 'DELETE FROM ignore WHERE LOWER(hostmask) = LOWER(:hostmask)');
+			$this->failnet->build_sql('ignore', 'get_single', 'SELECT * FROM ignore WHERE LOWER(hostmask) = LOWER(:hostmask) LIMIT 1');
+			$this->failnet->build_sql('ignore', 'get', 'SELECT * FROM ignore');
+
+			$this->failnet->db->commit();
+		}
+		catch (PDOException $e)
+		{
+			// Something went boom.  Time to panic!
+			$this->failnet->db->rollBack();
+			if(file_exists(FAILNET_ROOT . 'data/restart.inc')) 
+				unlink(FAILNET_ROOT . 'data/restart.inc');
+			trigger_error($e, E_USER_WARNING);
+			sleep(3);
+			exit(1);
+		}
+		$this->load();
 	}
 
 }

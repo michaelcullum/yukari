@@ -15,7 +15,6 @@
  * 
  */
 
-// @todo failnet_core::no_factoid() method, for saying something when there's no factoid available for that.
 // @todo Default data file for a massive dump query on install.
 
 /**
@@ -38,6 +37,15 @@
  */
 if(!defined('IN_FAILNET')) exit(1);
 
+/**
+ * Failnet - Core class,
+ * 		Failnet 2.0 in a nutshell.  Faster, smarter, better, and with a sexier voice. 
+ * 
+ * 
+ * @author Obsidian
+ * @copyright (c) 2009 - Obsidian
+ * @license http://opensource.org/licenses/gpl-2.0.php | GNU Public License v2
+ */
 class failnet_core
 {
 /**
@@ -133,10 +141,6 @@ class failnet_core
 		if (!ini_get('date.timezone'))
 			date_default_timezone_set(@date_default_timezone_get());
 
-		// For the windows boxes...with SQlite we need a temp dir set.
-		// @todo Check to see if this is actually needed with SQLite 3
-		//@putenv('TMP="' . FAILNET_DB_ROOT . 'temp/"');
-
 		// Set the time that Failnet was started.
 		$this->start = time();
 
@@ -213,12 +217,6 @@ class failnet_core
 			$this->build_sql('access', 'delete', 'DELETE FROM access WHERE (user_id = :user AND LOWER(hostmask) = LOWER(:hostmask) )');
 			$this->build_sql('access', 'delete_user', 'DELETE FROM access WHERE user_id = :user');
 			$this->build_sql('access', 'get', 'SELECT hostmask FROM access WHERE user_id = :user');
-
-			// Ignored hostmasks table
-			$this->build_sql('ignore', 'create', 'INSERT INTO ignore ( ignore_date, hostmask ) VALUES ( :timestamp, ":hostmask" )');
-			$this->build_sql('ignore', 'delete', 'DELETE FROM ignore WHERE LOWER(hostmask) = LOWER(:hostmask)');
-			$this->build_sql('ignore', 'get_single', 'SELECT * FROM ignore WHERE LOWER(hostmask) = LOWER(:hostmask) LIMIT 1');
-			$this->build_sql('ignore', 'get', 'SELECT * FROM ignore');
 
 			// Commit the stuffs
 			$this->db->commit();
