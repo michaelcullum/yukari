@@ -15,8 +15,6 @@
  * 
  */
 
-// @todo PDO and SQLite integration
-
 /**
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +34,6 @@
  * @ignore
  */
 if(!defined('IN_FAILNET')) exit(1);
-
 
 /**
  * Failnet - Ignore handling plugin,

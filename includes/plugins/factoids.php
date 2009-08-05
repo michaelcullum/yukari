@@ -11,6 +11,8 @@
  * Copyright:	(c) 2009 - Failnet Project
  * License:		http://opensource.org/licenses/gpl-2.0.php  |  GNU Public License v2
  *
+ *===================================================================
+ *
  */
 
 /**

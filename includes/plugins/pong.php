@@ -35,7 +35,6 @@
  */
 if(!defined('IN_FAILNET')) exit(1);
 
-
 /**
  * Failnet - Ignore handling plugin,
  * 		Used as Failnet's user ignore system. 
