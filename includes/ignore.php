@@ -126,7 +126,7 @@ class failnet_ignore extends failnet_common
 	/**
 	 * Adds the specified target user to the ignored users list.
 	 * @param string $hostmask - The sender's hostmask
-	 * @param string $target - The target hostmask to ignore 
+	 * @param string $target - The target hostmask that should be added to the ignore list
 	 * @return True on success, false on hostmask already being ignored, NULL if not authed for this
 	 */
 	public function add_ignore($hostmask, $target)
@@ -154,7 +154,7 @@ class failnet_ignore extends failnet_common
 	/**
 	 * Removes a specified hostmask pattern from the ignored users list.
 	 * @param string $hostmask - The sender's hostmask
-	 * @param $target
+	 * @param string $target - The target hostmask to be removed from the ignore list
 	 * @return True on success, false on hostmask not within the ignore list, NULL if not authed for this
 	 */
 	public function del_ignore($hostmask, $target)
