@@ -105,38 +105,43 @@ class failnet_auth extends failnet_common
 	 * @param string $hostmask - The hostmask for the user we're checking, if we want to use access lists for this.
 	 * @return mixed - Always returns 100 if boolean false is used as the authlevel, integer for the authlevel if in the access list or logged in, or false if the user isn't logged in/does not exist.
 	 */
-	// @todo FIX THIS. Need to check for access list first, then if that's not there, check for login.
 	public function authlevel($hostmask = false)
 	{
 		// Just a quick hack for allowing us to use some functions internally.  ;)
 		if($hostmask === false)
 			return 100;
 
+		// First, we want to parse the user's hostmask here.
 		parse_hostmask($hostmask, $nick, $user, $host);
 
-		if(empty($hostmask))
-		{
-			$sql = $this->failnet->db->query('SELECT u.authlevel, s.login_time
-				FROM sessions s, users u 
-				WHERE u.user_id = s.user_id
-					AND LOWER(u.nick) = LOWER(' . $this->failnet->db->quote($nick) . ') 
-				ORDER BY s.login_time DESC');
-			
-			// Do we have a logged in user with that nick?
-			$result = $sql->fetch(PDO::FETCH_ASSOC);
+		// Do some SQL to get our user ID for the user
+		$this->failnet->sql('users', 'get')->execute(array(':nick' => $nick));
+		$result = $this->failnet->sql('users', 'get')->fetch(PDO::FETCH_ASSOC);
 
-			return ($result) ? $result['authlevel'] : false;
+		// Check to see if we have any results.
+		if(!$result)
+			return false;
+
+		// Is this hostmask on the access list for this user?
+		if($this->access($result['user_id'], $hostmask))
+		{
+			return $result['authlevel'];
 		}
 		else
 		{
-			$sql = $this->failnet->db->query('SELECT u.authlevel, u.user_id
-				FROM access a, users u 
-				WHERE (u.user_id = a.user_id AND LOWER(u.nick) = LOWER(' . $this->failnet->db->quote($nick) . ')');
+			// Okay, they aren't on the access list for that user.  
+			// What we'll have to do instead is to check to see if they are logged in.
+			$sql = $this->failnet->db->query('SELECT u.authlevel, s.login_time
+			FROM sessions s, users u 
+			WHERE u.user_id = s.user_id
+				AND LOWER(u.nick) = LOWER(' . $this->failnet->db->quote($nick) . ') 
+			ORDER BY s.login_time DESC');
 
-			// Do we have a user with that nick in the DB?
 			$result = $sql->fetch(PDO::FETCH_ASSOC);
 
-			return ($result && $this->access($result['user_id'], $hostmask) ) ? $result['authlevel'] : false;
+			if(!$result)
+				return false;
+			return ($result) ? $result['authlevel'] : false;
 		}
 	}
 
