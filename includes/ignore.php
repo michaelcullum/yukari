@@ -150,15 +150,46 @@ class failnet_ignore extends failnet_common
 			return false;
 		}
 	}
-	
-	public function del_ignore()
+
+	/**
+	 * Removes a specified hostmask pattern from the ignored users list.
+	 * @param $hostmask
+	 * @param $target
+	 * @return True on success, false on hostmask not within the ignore list, NULL if not authed for this
+	 */
+	public function del_ignore($hostmask, $target)
 	{
-		
+		if ($this->failnet->auth->authlevel(NULL, $hostmask) < 10)
+			return NULL;
+
+		// Check to see if this hostmask IS in the ignored list
+		if(in_array($this->users, $target))
+		{
+			// Do that SQL thang
+			$this->failnet->sql('ignore', 'delete')->execute(array(':hostmask' => $target));
+
+			// Now we need to rebuild the cached PCRE pattern
+			foreach($this->users as $i => $user)
+			{
+				if($target === $user)
+					unset($this->users[$i]);
+			}
+			$this->cache = hostmasks_to_regex($this->users);
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 	
-	public function info_ignore()
+	public function info_ignore($target)
 	{
-		
+		// Check to see if this hostmask IS in the ignored list
+		if(in_array($this->users, $target))
+		{
+			// @todo Do...stuff.
+		}
 	}
 }
 
