@@ -182,15 +182,6 @@ class failnet_ignore extends failnet_common
 			return false;
 		}
 	}
-	
-	public function info_ignore($target)
-	{
-		// Check to see if this hostmask IS in the ignored list
-		if(in_array($this->users, $target))
-		{
-			// @todo Do...stuff.
-		}
-	}
 }
 
 ?>

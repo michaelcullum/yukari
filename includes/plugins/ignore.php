@@ -40,7 +40,7 @@ if(!defined('IN_FAILNET')) exit(1);
 
 /**
  * Failnet - Ignore handling plugin,
- * 		Used as Failnet's user ignore system. 
+ * 		Used as the shell for Failnet's user ignore system. 
  * 
  * 
  * @author Obsidian
@@ -49,102 +49,43 @@ if(!defined('IN_FAILNET')) exit(1);
  */
 class failnet_plugin_ignore extends failnet_plugin_common
 {
-	public function cmd_connect()
-	{
-		$this->load();
-	}
-	
 	public function cmd_privmsg()
 	{
+		// Process the command
 		$text = $this->event->get_arg('text');
-		if(substr($text, 0, 1) != '|')
+		if(!$this->prefix($text))
 			return;
 
-		$text = substr($text, 1);
+		$cmd = $this->purify($text);
 		$sender = $this->event->nick;
-		$cmd = (strpos($text, ' ') !== false) ? substr($text, 0, strpos($text, ' ')) : $text;
+		$hostmask = $this->event->gethostmask();
 		switch ($cmd)
 		{
-			case 'ignores':
-				$this->call_privmsg('Ignored users: ' . implode(', ', $this->failnet->ignore));
-			break;
-			
-			case 'loadignores':
-			case 'loadignore':
-			case 'reloadignores':
-				$this->load($sender);
-			break;
-			
+			case 'addignore':
 			case 'ignore':
 			case '+ignore':
-				$this->ignore($sender, substr($text, strpos($text, ' ')) + 1);
+				$success = $this->failnet->ignore->add_ignore($hostmask, $text);
+				if(is_null($success))
+				{
+					$this->call_notice($sender, $this->failnet->deny());
+					return;
+				}
+
+				$this->call_notice($sender, ($success) ? 'User successfully ignored' : 'Unable to ignore user -- user hostmask already ignored');
 			break;
-			
+
+			case 'delignore':
 			case 'unignore':
 			case '-ignore':
-				$this->unignore($sender, substr($text, strpos($text, ' ')) + 1);
+				$success = $this->failnet->ignore->del_ignore($hostmask, $text);
+				if(is_null($success))
+				{
+					$this->call_notice($sender, $this->failnet->deny());
+					return;
+				}
+
+				$this->call_notice($sender, ($success) ? 'User successfully unignored' : 'Unable to ignore user -- user hostmask not ignored');
 			break;
-		}
-	}
-	
-	// Gets the ignore file (re)loads the ignore list.
-	public function load($sender = false)
-	{
-		if ($sender && $this->failnet->auth->authlevel($sender) > 9)
-		{
-			display('=== Loading ignored users/hostmasks list');
-			$this->failnet->ignore = explode(PHP_EOL, file_get_contents('data/ignorelist')); 
-			if($sender)
-				$this->call_privmsg('Reloaded ignore list.');
-		}
-		elseif($sender)
-		{
-				$this->call_privmsg($this->failnet->deny());
-		}
-	}
-	
-	// Ignore a hostmask.
-	public function ignore($sender, $victim)
-	{
-		if ($this->failnet->auth->authlevel($sender) > 9)
-		{
-			if($victim == $this->failnet->get('owner'))
-			{
-				$this->call_privmsg($this->failnet->deny());
-				return;
-			}
-			if(!in_array($victim, $this->failnet->ignore))
-			{
-				$this->failnet->ignore[] = $victim; 
-				file_put_contents('data/ignorelist', implode(PHP_EOL, $this->failnet->ignore));
-				$this->call_privmsg('Hostmask "' . $victim . '" is now ignored.'); 
-			}
-			else
-			{
-				$this->call_privmsg('Hostmask "' . $victim . '" is already ignored.');
-			}
-		}
-		else
-		{
-			$this->call_privmsg($this->failnet->deny());
-		}
-	}
-	
-	// Unignore a hostmask.
-	public function unignore($sender, $victim)
-	{
-		if ($this->failnet->auth->authlevel($sender) > 9)
-		{
-			foreach($this->failnet->ignore as $id => &$user)
-			{
-				if($user == $victim) unset($this->failnet->ignore[$id]);
-			}
-			file_put_contents('data/ignorelist', implode(PHP_EOL, $this->failnet->ignore));
-			$this->call_privmsg('Hostmask "' . $victim . '" is no longer ignored.');
-		}
-		else
-		{
-			$this->call_privmsg($this->failnet->deny());
 		}
 	}
 }
