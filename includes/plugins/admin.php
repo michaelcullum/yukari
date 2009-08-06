@@ -73,6 +73,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 				else
 				{
 					// Okay, we've confirmed it.  Time to go to sleep.
+					// @todo use an announce for the quit, roll through channels with the terminate/restart message
 					$this->call_quit();
 				}
 			break;
@@ -91,6 +92,8 @@ class failnet_plugin_admin extends failnet_plugin_common
 					$this->call_notice($sender, $this->failnet->deny());
 					return;
 				}
+
+				// @todo fire off a join channel call
 			break;
 
 			case 'part':
@@ -99,6 +102,8 @@ class failnet_plugin_admin extends failnet_plugin_common
 					$this->call_notice($sender, $this->failnet->deny());
 					return;
 				}
+
+				// @todo fire off a part channel call
 			break;
 		}
 	}
