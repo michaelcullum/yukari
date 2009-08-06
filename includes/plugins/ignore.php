@@ -61,6 +61,12 @@ class failnet_plugin_ignore extends failnet_plugin_common
 			case 'addignore':
 			case 'ignore':
 			case '+ignore':
+				if(is_null($text))
+				{
+					$this->call_notice($sender, 'Invalid arguments specified for command');
+					return;
+				}
+
 				$success = $this->failnet->ignore->add_ignore($hostmask, $text);
 				if(is_null($success))
 				{
@@ -74,6 +80,12 @@ class failnet_plugin_ignore extends failnet_plugin_common
 			case 'delignore':
 			case 'unignore':
 			case '-ignore':
+				if(is_null($text))
+				{
+					$this->call_notice($sender, 'Invalid arguments specified for command');
+					return;
+				}
+
 				$success = $this->failnet->ignore->del_ignore($hostmask, $text);
 				if(is_null($success))
 				{

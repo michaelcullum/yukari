@@ -76,6 +76,9 @@ return array(
 // The nick of the Bot's owner.
 	'owner'				=> 'Obsidian',
 
+// Something that every command that the bot recieves will be prefixed with
+	'cmd_prefix'		=> '|',
+
 // Should the bot say stuff in in response to channel conversation, or stay silent?
 	'speak'				=> true,
 

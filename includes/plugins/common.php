@@ -107,8 +107,8 @@ abstract class failnet_plugin_common
 	public function purify(&$text)
 	{
 		$cmd = $text = substr($text, 1);
-		$text = substr($text, strpos($text, ' ') + 1);
-		return (strpos($cmd, ' ') !== false) ? substr($cmd, 0, strpos($cmd, ' ')) : $cmd;
+		$text = (strpos($text, ' ') !== false) ? substr($text, strpos($text, ' ') + 1) : false;
+		return ($text !== false) ? substr($cmd, 0, strpos($cmd, ' ')) : $cmd;
 	}
 
 	/**

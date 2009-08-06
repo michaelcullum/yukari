@@ -68,12 +68,36 @@ class failnet_plugin_admin extends failnet_plugin_common
 				if(($dai + 60) > time())
 				{
 					$dai = time();
-					$this->call_notice($sender, 'Are you sure? If so, please repeat |dai.');
+					$this->call_privmsg($this->event->source(), 'Are you sure? If so, please repeat |dai.');
 				}
 				else
 				{
 					// Okay, we've confirmed it.  Time to go to sleep.
 					$this->call_quit();
+				}
+			break;
+
+			case 'uptime':
+				$this->call_privmsg($this->event->source(), 'I\'ve been running for ' . timespan(time() - $this->failnet->start, true));
+			break;
+
+			case 'memuse':
+				$this->call_privmsg($this->event->source(), 'Memory use is ' . get_formatted_filesize(memory_get_usage()) . ', and memory peak is ' . get_formatted_filesize(memory_get_peak_usage()));
+			break;
+
+			case 'join':
+				if ($this->failnet->auth->authlevel($hostmask) < 5)
+				{
+					$this->call_notice($sender, $this->failnet->deny());
+					return;
+				}
+			break;
+
+			case 'part':
+				if ($this->failnet->auth->authlevel($hostmask) < 5)
+				{
+					$this->call_notice($sender, $this->failnet->deny());
+					return;
 				}
 			break;
 		}
