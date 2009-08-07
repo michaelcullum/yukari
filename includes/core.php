@@ -173,7 +173,8 @@ class failnet_core
 			if (!$failnet_installed)
 			{
 				display(array('- Database tables not installed, installing Failnet', '- Constructing database tables...', ' -  Creating config table...'));
-				// Config table...
+				
+				// Make some DB tables here...
 				$this->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/config.sql'));
 				display(' -  Creating users table...');
 				$this->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/users.sql'));

@@ -186,6 +186,44 @@ function timespan($time, $last_comma = false)
 }
 
 /**
+ * Benchmark function used to get benchmark times for code.
+ * @param string $mode - The mode for the benchmark check
+ * @param integer &$start_time - The start time for the benchmarking
+ * @return mixed - void if mode is start or print, integer if mode is return
+ * 
+ * @author Deadpool
+ */
+function benchmark($mode, &$start_time)
+{
+	/**
+	 * Usage:
+	 * 
+	 * For benchmarking PHP code
+	 * <code>
+	 * benchmark('start', $start_time);
+	 * for (etc.) { $code }
+	 * benchmark('print', $start_time);
+	 * </code>
+	 */
+	if ($mode == 'start')
+	{
+		$start_time = explode(' ', microtime());
+		$start_time = $start_time[1] + $start_time[0];
+	}
+	else if ($mode == 'print' || $mode == 'return')
+	{
+		$ftime = explode(' ', microtime());
+		$load_time_str = substr(($ftime[0] + $ftime[1] - $start_time), 0, 9);
+
+		if ($mode == 'return')
+			return $load_time_str;
+
+		// Implicit else
+		echo $load_time_str;
+	}
+}
+
+/**
  * Converts a delimited string of hostmasks into a regular expression that will match any hostmask in the original string.
  * @param array $list - Array of hostmasks
  * @return string - Regular expression
