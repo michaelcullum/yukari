@@ -263,39 +263,57 @@ class failnet_plugin_channels extends failnet_plugin_common
 		}
 	}
 
-	/**
-	 * Does...stuff. 
-	 *
-	 * @return void
-	 */
-	// @todo Rewrite to reduce dependency on preg_match()
 	public function cmd_privmsg()
 	{
-		$target = $this->event->get_arg('reciever');
-		$message = $this->event->get_arg('text');
-		if (preg_match('#^\|isfounder (\S+)$#i', $message, $m))
+		// Process the command
+		$text = $this->event->get_arg('text');
+		if(!$this->prefix($text))
+			return;
+
+		$cmd = $this->purify($text);
+		$sender = $this->event->nick;
+		$hostmask = $this->event->gethostmask();
+		
+		// Make sure we're asking this in channel, or that we have additional params for the channel.
+		$param = explode(' ', $text);
+		if(!$this->event->fromchannel() && !isset($param[1]))
 		{
-			$this->call_privmsg($target, $this->failnet->is_founder($m[1], $target) ? 'Yep, they\'re a founder.' : 'Nope, they aren\'t a founder.');
+			$this->call_notice($sender, 'Please specify the channel name to check within.');
+			return;
 		}
-		if (preg_match('#^\|isadmin (\S+)$#i', $message, $m))
+		elseif($this->event->fromchannel() && !isset($param[1]))
 		{
-			$this->call_privmsg($target, $this->failnet->is_admin($m[1], $target) ? 'Yep, they\'re an admin.' : 'Nope, they aren\'t an admin.');
+			// If in channel and no channel param (we don't want to overwrite a specified channel),
+			// 		we assume it is for this channel
+			$param[1] = $this->event->source();
 		}
-		if (preg_match('#^\|isop (\S+)$#i', $message, $m))
+		
+		// And let's choose a command.
+		switch ($cmd)
 		{
-			$this->call_privmsg($target, $this->failnet->is_op($m[1], $target) ? 'Yep, they\'re an op.' : 'Nope, they aren\'t an op.');
-		}
-		elseif (preg_match('#^\|ishalfop (\S+)$#i', $message, $m))
-		{
-			$this->call_privmsg($target, $this->failnet->is_halfop($m[1], $target) ? 'Yep, they\'re a halfop.' : 'Nope, they aren\'t a halfop.');
-		}
-		elseif (preg_match('#^\|isvoice (\S+)$#i', $message, $m))
-		{
-			$this->call_privmsg($target, $this->failnet->is_voice($m[1], $target) ? 'Yep, they have voice.' : 'Nope, they don\'t have voice.');
-		}
-		elseif (preg_match('#^\|isin (\S+)$#i', $message, $m))
-		{
-			$this->call_privmsg($target, $this->failnet->is_in($m[1], $target) ? 'Yep, they\'re in here.' : 'Nope, they aren\'t in here.');
+			case 'isfounder':
+				$this->call_notice($sender, $this->failnet->is_founder($param[0], $param[1]) ? 'Yep, they\'re a founder.' : 'Nope, they aren\'t a founder.');
+			break;
+
+			case 'isadmin':
+				$this->call_notice($sender, $this->failnet->is_admin($param[0], $param[1]) ? 'Yep, they\'re an admin.' : 'Nope, they aren\'t an admin.');
+			break;
+
+			case 'isop':
+				$this->call_notice($sender, $this->failnet->is_op($param[0], $param[1]) ? 'Yep, they\'re an op.' : 'Nope, they aren\'t an op.');
+			break;
+
+			case 'ishalfop':
+				$this->call_notice($sender, $this->failnet->is_halfop($param[0], $param[1]) ? 'Yep, they\'re a halfop.' : 'Nope, they aren\'t a halfop.');
+			break;
+
+			case 'isvoice':
+				$this->call_notice($sender, $this->failnet->is_voice($param[0], $param[1]) ? 'Yep, they have voice.' : 'Nope, they don\'t have voice.');
+			break;
+
+			case 'isin':
+				$this->call_notice($sender, $this->failnet->is_in($param[0], $param[1]) ? 'Yep, they\'re in here.' : 'Nope, they aren\'t in here.');
+			break;
 		}
 	}
 }
