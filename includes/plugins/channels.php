@@ -240,23 +240,35 @@ class failnet_plugin_channels extends failnet_plugin_common
 	{
 		$this->failnet->chans[trim(strtolower($this->event->get_arg('channel')))][trim(strtolower($this->event->nick))] = self::REGULAR;
 	}
-	
+
 	public function cmd_quit()
 	{
 		foreach($this->failnet->chans as $channame => $chan)
 		{
-			if (isset($chan[trim(strtolower($this->event->nick))]))
+			if(isset($chan[trim(strtolower($this->event->nick))]))
 				unset($this->failnet->chans[$channame][trim(strtolower($this->event->nick))]);
 		}
 	}
-	
+
+	public function cmd_nick()
+	{
+		foreach($this->failnet->chans as $channame => $chan)
+		{
+			if(isset($chan[trim(strtolower($this->event->nick))]))
+			{
+				$data = $chan[trim(strtolower($this->event->nick))];
+				unset($this->failnet->chans[$channame][trim(strtolower($this->event->nick))]);
+				$this->failnet->chans[$channame][trim($this->event->get_arg('nick'))] = $data;
+			}
+		}
+	}
+
 	/**
 	 * Does...stuff. 
 	 *
 	 * @return void
-	 * 
-	 * @todo Rewrite to reduce dependency on preg_match()
 	 */
+	// @todo Rewrite to reduce dependency on preg_match()
 	public function cmd_privmsg()
 	{
 		$target = $this->event->get_arg('reciever');

@@ -70,6 +70,7 @@ class failnet_core
 	 */
 	public $start = 0;
 	public $debug = false;
+	public $nick = '';
 	public $settings = array();
 	public $plugins = array();
 
@@ -620,7 +621,9 @@ class failnet_core
 	 */
 	public function is_in($nick, $chan)
 	{
-		return isset($this->chans[trim(strtolower($chan))][trim(strtolower($nick))]);
+		if(isset($this->chans[trim(strtolower($chan))]))
+			return isset($this->chans[trim(strtolower($chan))][trim(strtolower($nick))]);
+		return false;
 	}
 	
 	/**

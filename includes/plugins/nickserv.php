@@ -48,11 +48,11 @@ class failnet_plugin_nickserv extends failnet_plugin_common
 {
 	public function cmd_response()
 	{
-		if(!$this->failnet->get('nickbot'))
+		if($this->event->type !== failnet_event_response::ERR_NICKNAMEINUSE)
 			return;
 
 		// If someone else is using our nick, let's GHOST them out of it.  :)
-		if($this->event->type == failnet_event_response::ERR_NICKNAMEINUSE && $this->failnet->get('pass'))
+		if($this->failnet->get('nickbot'))
 		{
 			$this->call_privmsg($this->failnet->get('nickbot'), 'GHOST ' . $this->failnet->get('nick') . ' ' . $this->failnet->get('pass'));
 		}
@@ -60,9 +60,10 @@ class failnet_plugin_nickserv extends failnet_plugin_common
 	
 	public function cmd_notice()
 	{
+		// Check to see if nickserv is asking for authentication, and if so then we'll give it
 		if (strtolower($this->event->nick) != strtolower($this->failnet->get('nickbot')))
 			return;
-			
+
 		if (preg_match('#^.*nickname is (registered|owned)#i', $this->event->get_arg(1)))
 		{
 			if (!empty($this->failnet->get('pass')))
@@ -72,6 +73,13 @@ class failnet_plugin_nickserv extends failnet_plugin_common
 		{
 			$this->call_nick($this->failnet->get('nick'));
 		}
+	}
+	
+	public function cmd_nick()
+	{
+		// If this is our nick being changed, we should react and change it internally.
+		if($this->event->nick == $this->failnet->get('nick'))
+			$this->failnet->nick = $this->event->get_arg('nick');
 	}
 }
 

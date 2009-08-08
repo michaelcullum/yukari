@@ -76,18 +76,23 @@ return array(
 // The nick of the Bot's owner.
 	'owner'				=> 'Obsidian',
 
+// @todo MOVE TO CONFIG SQL
 // Something that every command that the bot recieves will be prefixed with
 	'cmd_prefix'		=> '|',
 
+// @todo MOVE TO CONFIG SQL
 // Should the bot say stuff in in response to channel conversation, or stay silent?
 	'speak'				=> true,
 
+// @todo MOVE TO CONFIG SQL
 // Should the bot stop running through factoids after the first factoid it finds?
 	'single_factoid'	=> false,
 
+// @todo MOVE TO CONFIG SQL
 // Should the bot join a channel on invite?
 	'joininvite'		=> false, 
 
+// @todo MOVE TO CONFIG SQL
 // Should the bot attept to autorejoin a channel on kick?
 	'autorejoin'		=> false,
 
