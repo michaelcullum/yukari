@@ -105,15 +105,6 @@ return array(
 // How many messages should be stored in the log queue before the queue is written to the file?
 	'log_queue'			=> 60,
 
-// List of alternate IRC nicknames to use
-	'altnicks'			=> array(
-		'Failnet_',
-		'Failnet__',
-		'Failnet-',
-		'Failnet--',
-		'Failnet-_',
-	),
-
 // List of IRC channels to automatically join if autojoin plugin is loaded.
 	'autojoins'			=> array(
 		'#failnet',
