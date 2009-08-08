@@ -48,7 +48,7 @@ class failnet_plugin_autojoin extends failnet_plugin_common
 {
 	public function cmd_response()
 	{
-		switch ($this->_event->getCode())
+		switch ($this->event->getCode())
 		{
 			case failnet_event_response::RPL_ENDOFMOTD:
 			case failnet_event_response::ERR_NOMOTD:
