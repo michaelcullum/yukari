@@ -70,9 +70,13 @@ class failnet_socket extends failnet_common
 	{
 		// Listen for input indefinitely
 		set_time_limit(0);
+		
+		// Check to see if the transport method we are using is allowed
+		if (!in_array($this->failnet->get('transport'), stream_get_transports()))
+			trigger_error('Transport ' . $this->failnet->get('transport') . ' is not supported by this PHP installation.', E_USER_ERROR);
 
 		// Establish and configure the socket connection
-		$remote = 'tcp://' . $this->failnet->get('server') . ':' . $this->failnet->get('port');
+		$remote = $this->failnet->get('transport') . '://' . $this->failnet->get('server') . ':' . $this->failnet->get('port');
 		$this->socket = @stream_socket_client($remote, $errno, $errstr);
 		if (!$this->socket)
 			trigger_error('Unable to connect to server: socket error ' . $errno . ' : ' . $errstr, E_USER_ERROR);

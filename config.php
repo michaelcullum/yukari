@@ -44,6 +44,7 @@ if(!defined('IN_FAILNET')) exit(1);
 return array(
 
 // Server settings
+	'transport'			=> 'tcp',
 	'server'			=> 'irc.freenode.net',
 	'port'				=> 6667,
 	'nick'				=> 'Failnet',
