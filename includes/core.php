@@ -53,42 +53,113 @@ class failnet_core
  */
 
 	/**
-	 * Object vars for Failnet's use
+	 * Auth handler
+	 * @var failnet_auth object
 	 */
 	public $auth;
+
+	/**
+	 * Database object
+	 * @var PDO object
+	 */
 	public $db;
+
+	/**
+	 * Error handler
+	 * @var failnet_error object
+	 */
 	public $error;
+
+	/**
+	 * Factoids engine
+	 * @var failnet_factoids object
+	 */
 	public $factoids;
+
+	/**
+	 * Ignored users handler
+	 * @var failnet_ignore object
+	 */
 	public $ignore;
+
+	/**
+	 * IRC protocol handler
+	 * @var failnet_irc object
+	 */
 	public $irc;
+
+	/**
+	 * Logging handler
+	 * @var failnet_log object
+	 */
 	public $log;
+
+	/**
+	 * Plugin manager handler
+	 * @var failnet_manager object
+	 */
 	public $manager;
+
+	/**
+	 * Socket connection handler
+	 * @var failnet_socket object
+	 */
 	public $socket;
 
+
+
 	/**
-	 * Failnet settings and stuff.
+	 * Loaded Failnet plugins
+	 * @var unknown_type
 	 */
-	public $start = 0;
-	public $debug = false;
-	public $nick = '';
-	public $settings = array();
 	public $plugins = array();
 
-	/**
-	 * Some info is stored here and not in plugins for easy accessibility throughout.
-	 */
-	public $speak = true;
-	public $chans = array();
-	public $statements = array();
+
 
 	/**
-	 * Server connection vars.
+	 * The UNIX timestamp for when Failnet was started
+	 * @var integer
 	 */
-	public $server = '';
-	public $port = 6667;
+	public $start = 0;
+
+	/**
+	 * Our current usernick for the bot
+	 * @var string
+	 */
+	public $nick = '';
+
+	/**
+	 * Should we be in debug mode?
+	 * @var boolean
+	 */
+	public $debug = false;
+
+	/**
+	 * Are we allowed to speak?
+	 * @var boolean
+	 */
+	public $speak = true;
+
+	/**
+	 * Various config settings et al.
+	 * @var array
+	 */
+	public $settings = array();
+
+	/**
+	 * What channels are we in, and what users are in them?
+	 * @var array
+	 */
+	public $chans = array();
+
+	/**
+	 * Prepared PDO statements for use throughout Failnet
+	 * @var array
+	 */
+	public $statements = array();
 	
 	/**
-	 * DO NOT _EVER_ CHANGE THIS, FOR THE SAKE OF HUMANITY.
+	 * DO NOT _EVER_ CHANGE THIS, FOR THE SAKE OF HUMANITY.  {@link http://xkcd.com/534/ }
 	 * @var boolean
 	 */
 	private $can_become_skynet = FALSE;
