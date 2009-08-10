@@ -124,21 +124,23 @@ class failnet_plugin_admin extends failnet_plugin_common
 					return;
 				}
 
+				// Check for empty text or invalid number of parameters
 				if($text === false)
 				{
-					
+					$this->call_notice($sender, 'Please specify the setting to change and what to change it to.');
+					return;
 				}
 				
 				$param = explode(' ', $text);
-				
-				
+				if(count($param) != 2)
+				{
+					$this->call_notice($sender, 'Invalid number of arguments entered for set command.');
+					return;
+				}
+
 				try
 				{
-					
-					
-					// @todo finish
 					$this->failnet->sql('config', 'update')->execute(array(':name' => $param[0], ':value' => $param[1]));
-					
 				}
 				catch (PDOException $e)
 				{
