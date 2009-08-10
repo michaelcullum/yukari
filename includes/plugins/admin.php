@@ -64,7 +64,17 @@ class failnet_plugin_admin extends failnet_plugin_common
 		$hostmask = $this->event->gethostmask();
 		switch ($cmd)
 		{
+			// Terminates Failnet
+			case 'quit':
+			case 'die':
 			case 'dai':
+				// Check auths
+				if ($this->failnet->auth->authlevel($hostmask) < 50)
+				{
+					$this->call_notice($sender, $this->failnet->deny());
+					return;
+				}
+
 				if(($dai + 60) > time())
 				{
 					$dai = time();
@@ -73,7 +83,6 @@ class failnet_plugin_admin extends failnet_plugin_common
 				else
 				{
 					// Okay, we've confirmed it.  Time to go to sleep.
-					// @todo use an announce for the quit, roll through channels with the terminate/restart message
 					if($this->failnet->get('speak'))
 					{
 						foreach($this->failnet->chans as $channame => $chan)
@@ -81,18 +90,79 @@ class failnet_plugin_admin extends failnet_plugin_common
 							$this->call_privmsg($channame, $this->failnet->get('quit_msg'));
 						}
 					}
-					$this->call_quit();
+					$this->call_quit(false);
 				}
 			break;
 
+			// Restart Failnet
+			case 'restart':
+			case 'reboot':
+				// Check auths
+				if ($this->failnet->auth->authlevel($hostmask) < 50)
+				{
+					$this->call_notice($sender, $this->failnet->deny());
+					return;
+				}
+
+				// Let's announce the restart if we've permission to speak.
+				if($this->failnet->get('speak'))
+				{
+					foreach($this->failnet->chans as $channame => $chan)
+					{
+						$this->call_privmsg($channame, $this->failnet->get('restart_msg'));
+					}
+				}
+				$this->call_quit(true);
+			break;
+
+			// Change a config variable...if we DARE
+			case 'set':
+				// Check auths
+				if ($this->failnet->auth->authlevel($hostmask) < 100)
+				{
+					$this->call_notice($sender, $this->failnet->deny());
+					return;
+				}
+
+				if($text === false)
+				{
+					
+				}
+				
+				$param = explode(' ', $text);
+				
+				
+				try
+				{
+					
+					
+					// @todo finish
+					$this->failnet->sql('config', 'update')->execute(array(':name' => $param[0], ':value' => $param[1]));
+					
+				}
+				catch (PDOException $e)
+				{
+					// Something went boom.  Time to panic!
+					$this->db->rollBack();
+					if(file_exists(FAILNET_ROOT . 'data/restart.inc')) 
+						unlink(FAILNET_ROOT . 'data/restart.inc');
+					trigger_error($e, E_USER_WARNING);
+					sleep(3);
+					exit(1);
+				}
+			break;
+
+			// Returns how long Failnet has been running for
 			case 'uptime':
 				$this->call_privmsg($this->event->source(), 'I\'ve been running for ' . timespan(time() - $this->failnet->start, true));
 			break;
 
+			// How much memory is Failnet using?
 			case 'memuse':
 				$this->call_privmsg($this->event->source(), 'Memory use is ' . get_formatted_filesize(memory_get_usage()) . ', and memory peak is ' . get_formatted_filesize(memory_get_peak_usage()));
 			break;
 
+			// Join a channel!
 			case 'join':
 				// Check auths
 				if ($this->failnet->auth->authlevel($hostmask) < 5)
@@ -121,6 +191,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 				}
 			break;
 
+			// Leave a channel.
 			case 'part':
 				// Check auths
 				if ($this->failnet->auth->authlevel($hostmask) < 5)

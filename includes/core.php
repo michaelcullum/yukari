@@ -405,7 +405,7 @@ class failnet_core
 				display('disconnect: ' . $name);
 			$plugin->cmd_disconnect();
 		}
-		$this->terminate(false);
+		$this->terminate($quit->arguments[0]);
 	}
 
 	/**

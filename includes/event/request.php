@@ -185,7 +185,7 @@ class failnet_event_request implements ArrayAccess
 	/**
 	 * Failnet's core object
 	 * 
-	 * @var unknown_type
+	 * @var failnet_core object
 	 */
 	private $failnet;
 	
