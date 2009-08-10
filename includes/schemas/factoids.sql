@@ -1,5 +1,6 @@
 #
 # Factoids table
+# $Id$
 #
 
 CREATE TABLE factoids (

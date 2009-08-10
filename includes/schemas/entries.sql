@@ -1,5 +1,6 @@
 #
 # Factoid entries table
+# $Id$
 #
 
 CREATE TABLE entries (

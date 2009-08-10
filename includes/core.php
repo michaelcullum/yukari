@@ -262,10 +262,13 @@ class failnet_core
 			try
 			{
 				$this->db->beginTransaction();
-				// Add some initial entries if Failnet was just installed 
+				
+				// Add the default user if Failnet was just installed
 				$this->sql('users', 'create')->execute(array(':nick' => $this->get('owner'), ':authlevel' => 100, ':hash' => $this->auth->hash->hash($this->get('name'))));
-				$this->sql('config', 'create')->execute(array(':name' => 'rand_seed', ':value' => 0));
-				$this->sql('config', 'create')->execute(array(':name' => 'last_rand_seed', ':value' => 0));
+
+				// Now let's add some default data to the database tables
+				$this->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/config.sql'));
+
 				$this->db->commit();
 			}
 			catch (PDOException $e)

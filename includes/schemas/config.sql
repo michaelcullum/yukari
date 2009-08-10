@@ -1,5 +1,6 @@
 #
 # Config table
+# $Id$
 #
 
 CREATE TABLE config (

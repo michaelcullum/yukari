@@ -56,9 +56,9 @@ return array(
 		'authorize',
 		'autojoin',
 		'channels',
+		'factoids',
 		'ignore',
 		'log',
-		'moderator',
 		'nickserv',
 		'ping',
 		'pong',
@@ -78,22 +78,6 @@ return array(
 
 // Should the bot say stuff in in response to channel conversation, or stay silent?
 	'speak'				=> true,
-
-// @todo MOVE TO CONFIG SQL
-// Something that every command that the bot recieves will be prefixed with
-	'cmd_prefix'		=> '|',
-
-// @todo MOVE TO CONFIG SQL
-// Should the bot stop running through factoids after the first factoid it finds?
-	'single_factoid'	=> false,
-
-// @todo MOVE TO CONFIG SQL
-// Should the bot join a channel on invite?
-	'joininvite'		=> false, 
-
-// @todo MOVE TO CONFIG SQL
-// Should the bot attept to autorejoin a channel on kick?
-	'autorejoin'		=> false,
 
 // How long should Failnet wait after the last recieved event to ping the server to check the connection?
 	'ping_wait'			=> 120,

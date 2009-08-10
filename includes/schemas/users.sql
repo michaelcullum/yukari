@@ -1,5 +1,6 @@
 #
 # Users table
+# $Id$
 #
 
 CREATE TABLE users (

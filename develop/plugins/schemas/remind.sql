@@ -1,5 +1,6 @@
 #
 # Reminders table
+# $Id$
 #
 
 CREATE TABLE reminders (

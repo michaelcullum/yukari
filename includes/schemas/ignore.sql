@@ -1,5 +1,6 @@
 #
-# Ignored hostmasks table
+# Ignored users table
+# $Id$
 #
 
 CREATE TABLE ignore (

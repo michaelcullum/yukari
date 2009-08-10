@@ -1,5 +1,6 @@
 #
 # Access list table
+# $Id$
 #
 
 CREATE TABLE access (

@@ -1,5 +1,6 @@
 #
 # Sessions table
+# $Id$
 #
 
 CREATE TABLE sessions (
