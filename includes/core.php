@@ -157,13 +157,12 @@ class failnet_core
 	 * @var array
 	 */
 	public $statements = array();
-	
+
 	/**
 	 * DO NOT _EVER_ CHANGE THIS, FOR THE SAKE OF HUMANITY.  {@link http://xkcd.com/534/ }
 	 * @var boolean
 	 */
 	private $can_become_skynet = FALSE;
-	
 
 /**
  * Failnet core constants

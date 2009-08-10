@@ -80,7 +80,7 @@ class failnet_socket extends failnet_common
 		@stream_set_timeout($this->socket, $this->delay);
 
 		// Send the password if one is specified
-		if (!is_null($this->failnet->get('server_pass')))
+		if (!empty($this->failnet->get('server_pass')))
 			$this->send('PASS', $this->failnet->get('server_pass'));
 
 		// Send user information
