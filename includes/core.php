@@ -262,7 +262,7 @@ class failnet_core
 			try
 			{
 				$this->db->beginTransaction();
-				
+
 				// Add the default user if Failnet was just installed
 				$this->sql('users', 'create')->execute(array(':nick' => $this->get('owner'), ':authlevel' => 100, ':hash' => $this->auth->hash->hash($this->get('name'))));
 

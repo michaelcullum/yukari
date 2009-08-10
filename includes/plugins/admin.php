@@ -130,7 +130,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 					$this->call_notice($sender, 'Please specify the setting to change and what to change it to.');
 					return;
 				}
-				
+
 				$param = explode(' ', $text);
 				if(count($param) != 2)
 				{
@@ -151,6 +151,33 @@ class failnet_plugin_admin extends failnet_plugin_common
 					trigger_error($e, E_USER_WARNING);
 					sleep(3);
 					exit(1);
+				}
+			break;
+
+			// Load a plugin if it isn't already loaded
+			case 'load':
+				// Check auths
+				if ($this->failnet->auth->authlevel($hostmask) < 70)
+				{
+					$this->call_notice($sender, $this->failnet->deny());
+					return;
+				}
+
+				// Check for empty text
+				if($text === false)
+				{
+					$this->call_notice($sender, 'Please specify the plugin to load.');
+					return;
+				}
+
+				// Check to see if we've loaded that plugin already, and if not load it
+				if($this->failnet->manager->load($text))
+				{
+					$this->call_notice($sender, 'Plugin loaded successfully.');
+				}
+				else
+				{
+					$this->call_notice($sender, 'Plugin already loaded.');
 				}
 			break;
 
