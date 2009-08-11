@@ -183,13 +183,6 @@ class failnet_event_request implements ArrayAccess
 	public $buffer;
 	
 	/**
-	 * Failnet's core object
-	 * 
-	 * @var failnet_core object
-	 */
-	private $failnet;
-	
-	/**
 	 * Constructor 
 	 * @return void
 	 */

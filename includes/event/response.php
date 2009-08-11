@@ -899,13 +899,6 @@ class failnet_event_response
 	public $buffer;
 	
 	/**
-	 * Failnet's core object
-	 * 
-	 * @var unknown_type
-	 */
-	private $failnet;
-	
-	/**
 	 * Constructor 
 	 * @return void
 	 */
