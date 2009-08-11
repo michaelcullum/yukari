@@ -49,7 +49,7 @@ function __autoload($name)
 	$name = basename($name);
 
 	// Now, drop the failnet_ prefix if it is there
-	$name = (substr($class, 0, 8) == 'failnet_') ? substr($class, 8) : $class;
+	$name = (substr($name, 0, 8) == 'failnet_') ? substr($name, 8) : $name;
 
 	// Replace any underscores with slashes...
 	$name = str_replace('_', DIRECTORY_SEPARATOR, $name);
