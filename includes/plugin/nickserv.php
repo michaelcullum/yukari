@@ -66,7 +66,7 @@ class failnet_plugin_nickserv extends failnet_plugin_common
 
 		if (preg_match('#^.*nickname is (registered|owned)#i', $this->event->get_arg(1)))
 		{
-			if (!empty($this->failnet->get('pass')))
+			if (is_null($this->failnet->get('pass')) || !$this->failnet->get('pass'))
 				$this->call_privmsg($this->failnet->get('nickbot'), 'IDENTIFY ' . $this->failnet->get('pass'));
 		}
 		elseif (preg_match('#^.*' . $this->failnet->get('nick') . '.* has been killed#i', $this->event->get_arg(1)))

@@ -582,7 +582,7 @@ class failnet_core
 	 */
  	public function load_plugin($plugin)
 	{
-		if(!$this->loaded($plugin))
+		if(!$this->plugin_loaded($plugin))
 		{
 			$this->plugins_loaded[] = $plugin;
 			$plugin = 'failnet_plugin_' . $plugin;
