@@ -413,7 +413,7 @@ class failnet_core
 			}
 
 			// Check to see if the user that generated the event is ignored.
-			if($eventtype != 'response' && $this->ignore->ignored($event->gethostmask))
+			if($eventtype != 'response' && $this->ignore->ignored($event->gethostmask()))
 				continue;
 
 			// For each plugin, we provide the event encountered so that the plugins can react to them for us  
@@ -434,7 +434,7 @@ class failnet_core
 			}
 
 			// Do we have any events to perform?
-			if (!$events)
+			if (!$queue)
 				continue;
 
 			//Execute pre-dispatch callback for plugin events 
@@ -451,7 +451,7 @@ class failnet_core
 			{
 				if($this->debug)
 					display($item->type);
-				if (strcasecmp($item->type(), 'quit') != 0)
+				if (strcasecmp($item->type, 'quit') != 0)
 				{
 					call_user_func_array(array($this->irc, $item->type), $item->arguments());
 				}

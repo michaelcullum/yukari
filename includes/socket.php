@@ -53,7 +53,7 @@ class failnet_socket extends failnet_common
 	 */
 	
 	private $delay = 50000;
-	private $socket = NULL;
+	public $socket = NULL;
 	
 	/**
 	 * Specialized init function to allow class construction to be easier.
