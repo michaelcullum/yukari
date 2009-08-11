@@ -52,7 +52,7 @@ class failnet_plugin_channels extends failnet_plugin_common
 	const HALFOP = 4;
 	const VOICE = 2;
 	const REGULAR = 1;
-	
+
 	public function cmd_response()
 	{
 		switch($this->event->code)
@@ -293,27 +293,27 @@ class failnet_plugin_channels extends failnet_plugin_common
 		switch ($cmd)
 		{
 			case 'isfounder':
-				$this->call_notice($sender, $this->failnet->is_founder($param[0], $param[1]) ? 'Yep, they\'re a founder.' : 'Nope, they aren\'t a founder.');
+				$this->call_privmsg($sender, $this->failnet->is_founder($param[0], $param[1]) ? 'Yep, they\'re a founder.' : 'Nope, they aren\'t a founder.');
 			break;
 
 			case 'isadmin':
-				$this->call_notice($sender, $this->failnet->is_admin($param[0], $param[1]) ? 'Yep, they\'re an admin.' : 'Nope, they aren\'t an admin.');
+				$this->call_privmsg($sender, $this->failnet->is_admin($param[0], $param[1]) ? 'Yep, they\'re an admin.' : 'Nope, they aren\'t an admin.');
 			break;
 
 			case 'isop':
-				$this->call_notice($sender, $this->failnet->is_op($param[0], $param[1]) ? 'Yep, they\'re an op.' : 'Nope, they aren\'t an op.');
+				$this->call_privmsg($sender, $this->failnet->is_op($param[0], $param[1]) ? 'Yep, they\'re an op.' : 'Nope, they aren\'t an op.');
 			break;
 
 			case 'ishalfop':
-				$this->call_notice($sender, $this->failnet->is_halfop($param[0], $param[1]) ? 'Yep, they\'re a halfop.' : 'Nope, they aren\'t a halfop.');
+				$this->call_privmsg($sender, $this->failnet->is_halfop($param[0], $param[1]) ? 'Yep, they\'re a halfop.' : 'Nope, they aren\'t a halfop.');
 			break;
 
 			case 'isvoice':
-				$this->call_notice($sender, $this->failnet->is_voice($param[0], $param[1]) ? 'Yep, they have voice.' : 'Nope, they don\'t have voice.');
+				$this->call_privmsg($sender, $this->failnet->is_voice($param[0], $param[1]) ? 'Yep, they have voice.' : 'Nope, they don\'t have voice.');
 			break;
 
 			case 'isin':
-				$this->call_notice($sender, $this->failnet->is_in($param[0], $param[1]) ? 'Yep, they\'re in here.' : 'Nope, they aren\'t in here.');
+				$this->call_privmsg($sender, $this->failnet->is_in($param[0], $param[1]) ? 'Yep, they\'re in here.' : 'Nope, they aren\'t in here.');
 			break;
 		}
 	}

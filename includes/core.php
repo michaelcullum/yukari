@@ -168,6 +168,12 @@ class failnet_core
 	const HR = '---------------------------------------------------------------------';
 	const ERROR_LOG = 'error';
 	const USER_LOG = 'user';
+	const FOUNDER = 32;
+	const ADMIN = 16;
+	const OP = 8;
+	const HALFOP = 4;
+	const VOICE = 2;
+	const REGULAR = 1;
 
 /**
  * Failnet core methods
@@ -327,7 +333,7 @@ class failnet_core
 
 		// Set the error handler
 		display('=== Setting main error handler');
-		@set_error_handler(array(&$this, 'error', 'fail'));
+		@set_error_handler(array(&$this->error, 'fail'));
 
 		// If Failnet was just installed, we need to do something now that the auth class is loaded
 		if (!$failnet_installed)
