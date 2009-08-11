@@ -191,7 +191,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 				}
 
 				// Check to see if we've loaded that plugin already, and if not load it
-				if($this->failnet->manager->load($text))
+				if($this->failnet->load_plugin($text))
 				{
 					$this->call_privmsg($sender, 'Plugin loaded successfully.');
 				}
@@ -199,6 +199,30 @@ class failnet_plugin_admin extends failnet_plugin_common
 				{
 					$this->call_privmsg($sender, 'Plugin does not exist or is already loaded.');
 				}
+			break;
+
+			case 'loaded':
+				// Check for empty text
+				if($text === false)
+				{
+					$this->call_privmsg($sender, 'Please specify the plugin to check.');
+					return;
+				}
+
+				if($this->failnet->plugin_loaded($text))
+				{
+					$this->call_privmsg($this->event->source(), 'Plugin is loaded.');
+				}
+				else
+				{
+					$this->call_privmsg($this->event->source(), 'Plugin is not currently loaded.');
+				}
+			break;
+
+			case 'plugins':
+				// Let's build a list of plugins.
+				$plugins = implode(', ', $this->failnet->plugins_loaded);
+				$this->call_privmsg($this->event->source(), 'Plugins: ' . $plugins . '.');
 			break;
 
 			// Returns how long Failnet has been running for
