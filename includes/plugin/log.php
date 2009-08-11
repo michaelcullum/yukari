@@ -91,7 +91,7 @@ class failnet_plugin_log extends failnet_plugin_common
 		$this->failnet->log->log($this->event->get_arg('action'), $this->event->nick, $this->event->get_arg('target'));
 	}
 	
-	public function post_dispatch()
+	public function post_dispatch(array $events)
 	{
 		// @todo In here, record what WE did.
 	}

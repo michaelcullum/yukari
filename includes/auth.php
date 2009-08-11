@@ -240,7 +240,7 @@ class failnet_auth extends failnet_common
 		// We should compare to see if this is the confirmation key that the user is sending
 		// ...if so, delete.  If not, check the password.
 
-		if($result['confirm_key'] == trim($password))
+		if($result['confirm_key'] == trim($confirm_key))
 		{
 			$this->failnet->sql('access', 'delete_user')->execute(array(':user' => $result['user_id']));
 			$this->failnet->sql('sessions', 'delete_user')->execute(array(':user' => $result['user_id']));
