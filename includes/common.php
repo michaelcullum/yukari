@@ -64,6 +64,8 @@ abstract class failnet_common
 		$this->failnet = &$failnet;
 		$this->init();
 	}
+
+	abstract public function init();
 	
 	public function __call($funct, $params)
 	{
