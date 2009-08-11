@@ -98,7 +98,7 @@ class failnet_auth extends failnet_common
 			return NULL;
 
 		// Let's check that password now...
-		if($this->hash->check($password, $result['hash']))
+		if($this->hash->check($password, $result['password']))
 		{
 			// Success!  We need to just add a row to the sessions table now so that the login persists.
 			return $this->failnet->sql('sessions', 'create')->execute(array(':key' => $this->failnet->unique_id(), ':user' => $result['user_id'], ':time' => time(), ':hostmask' => $hostmask));
@@ -206,7 +206,7 @@ class failnet_auth extends failnet_common
 			return NULL;
 
 		// We should compare to see if this is the correct password that the user is sending to delete their user entry.
-		if($this->hash->check($password, $result['hash']))
+		if($this->hash->check($password, $result['password']))
 		{
 			// Let's generate a unique ID for the confirm key.
 			$confirm = $this->failnet->unique_id();
@@ -273,7 +273,7 @@ class failnet_auth extends failnet_common
 			return NULL;
 
 		// We should compare to see if this is the correct password that the user is sending to change their password to something else.
-		if($this->hash->check($old_pass, $result['hash']))
+		if($this->hash->check($old_pass, $result['password']))
 		{
 			$this->failent->sql('users', 'set_pass')->execute(array(':hash' => $this->hash->hash($new_pass), ':user' => $result['user_id']));
 			return true;
@@ -352,7 +352,7 @@ class failnet_auth extends failnet_common
 			return NULL;
 
 		// Let's check that password now...
-		if($this->hash->check($password, $result['hash']))
+		if($this->hash->check($password, $result['password']))
 		{
 			// Success!  We need to just add a row to the sessions table now so that the login persists.
 			$this->failnet->sql('access', 'create')->execute(array(':user' => $result['user_id'], ':hostmask' => $mask));
@@ -391,7 +391,7 @@ class failnet_auth extends failnet_common
 			return NULL;
 
 		// Let's check that password now...
-		if($this->hash->check($password, $result['hash']))
+		if($this->hash->check($password, $result['password']))
 		{
 			// Success!  Now we just have to kill off that entry.
 			$this->failnet->sql('access', 'delete')->execute(array(':user' => $result['user_id'], ':hostmask' => $mask));

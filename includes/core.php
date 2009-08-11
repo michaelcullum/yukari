@@ -453,7 +453,7 @@ class failnet_core
 					display($item->type);
 				if (strcasecmp($item->type, 'quit') != 0)
 				{
-					call_user_func_array(array($this->irc, $item->type), $item->arguments());
+					call_user_func_array(array($this->irc, $item->type), $item->arguments);
 				}
 				elseif (empty($quit))
 				{
@@ -516,7 +516,7 @@ class failnet_core
 	public function terminate($restart = true)
 	{
 		if($this->socket->socket !== NULL)
-			$this->socket->quit($this->get('quit_msg'));
+			$this->irc->quit($this->get('quit_msg'));
 		if($restart)
 		{
 			// Just a hack to get it to restart through batch, and not terminate.

@@ -48,7 +48,7 @@ class failnet_plugin_nickserv extends failnet_plugin_common
 {
 	public function cmd_response()
 	{
-		if($this->event->type !== failnet_event_response::ERR_NICKNAMEINUSE)
+		if($this->event->code !== failnet_event_response::ERR_NICKNAMEINUSE)
 			return;
 
 		// If someone else is using our nick, let's GHOST them out of it.  :)

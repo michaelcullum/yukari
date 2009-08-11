@@ -66,11 +66,6 @@ abstract class failnet_common
 	}
 
 	abstract public function init();
-	
-	public function __call($funct, $params)
-	{
-		trigger_error('Bad function call "' . $funct . '" with params "' . implode(', ', $params) . '" to "' . __CLASS__ . '" class.', E_USER_WARNING);
-	}
 }
 
 ?>

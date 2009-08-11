@@ -229,7 +229,7 @@ class failnet_socket extends failnet_common
 	 * @param mixed $args - Optional string or array of sequential arguments
 	 * @return string - Command string that was sent 
 	 */
-	private function send($command, $args = '')
+	public function send($command, $args = '')
 	{
 		// Require an open socket connection to continue
 		if(empty($this->socket))
