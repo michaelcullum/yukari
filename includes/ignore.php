@@ -163,7 +163,7 @@ class failnet_ignore extends failnet_common
 			return NULL;
 
 		// Check to see if this hostmask IS in the ignored list
-		if(in_array($this->users, $target))
+		if(in_array($target, $this->users))
 		{
 			// Do that SQL thang
 			$this->failnet->sql('ignore', 'delete')->execute(array(':hostmask' => $target));

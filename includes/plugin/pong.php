@@ -48,7 +48,14 @@ class failnet_plugin_pong extends failnet_plugin_common
 {
 	public function cmd_ping()
 	{
-		$this->call_ping($this->event->arguments[0], $this->event->arguments[1]);
+		if(isset($this->event->arguments[1]))
+		{
+			$this->call_ping($this->event->arguments[0], $this->event->arguments[1]);
+		}
+		else
+		{
+			$this->call_pong($this->event->arguments[0]);
+		}
 	}
 }
 

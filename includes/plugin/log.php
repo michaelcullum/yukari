@@ -48,26 +48,31 @@ class failnet_plugin_log extends failnet_plugin_common
 {	
 	public function cmd_join()
 	{
+		display(date('h:i') . ' ' . $this->event->nick . ' has joined ' . $this->event->get_arg('channel'));
 		$this->failnet->log->add(date('D m/d/Y - h:i:s A') . ' - === ' . $this->event->nick . ' has joined ' . $this->event->get_arg('channel'));
 	}
 	
 	public function cmd_part()
 	{
+		display(date('h:i') . ' ' . $this->event->nick . ' has left ' . $this->event->get_arg('channel'));
 		$this->failnet->log->add(date('D m/d/Y - h:i:s A') . ' - === ' . $this->event->nick . ' has left ' . $this->event->get_arg('channel') . (($this->event->get_arg('message')) ? ' : ' . $this->event->get_arg('message') : ''));
 	}
 	
 	public function cmd_kick()
 	{
-		$this->failnet->log->add(date('D m/d/Y - h:i:s A') . ' - === ' . $this->event->nick . ' has kicked user ' . $this->event->get_arg('user') . ' from ' . $this->event->get_arg('channel') . (($this->event->get_arg('comment')) ? ' : ' . $this->event->get_arg('comment') : ''));
+		display(date('h:i') . ' ' . $this->event->nick . ' has kicked user ' . $this->event->get_arg('user') . ' from ' . $this->event->get_arg('channel') . (($this->event->get_arg('comment')) ? ' : ' . '[' . $this->event->get_arg('comment') . ']' : ''));
+		$this->failnet->log->add(date('D m/d/Y - h:i:s A') . ' - === ' . $this->event->nick . ' has kicked user ' . $this->event->get_arg('user') . ' from ' . $this->event->get_arg('channel') . (($this->event->get_arg('comment')) ? ' : ' . '[' . $this->event->get_arg('comment') . ']' : ''));
 	}
 	
 	public function cmd_quit()
 	{
+		display(date('h:i') . ' ' . $this->event->nick . ' has quit' . (($this->event->get_arg('message')) ? ' : ' . $this->event->get_arg('message') : ''));
 		$this->failnet->log->add(date('D m/d/Y - h:i:s A') . ' - === ' . $this->event->nick . ' has quit' . (($this->event->get_arg('message')) ? ' : ' . $this->event->get_arg('message') : ''));
 	}
 	
 	public function cmd_topic()
 	{
+		display(date('h:i') . ' ' . $this->event->nick . ' has changed the topic in ' . $this->event->get_arg('channel') . ' to ' . $this->event->get_arg('topic'));
 		$this->failnet->log->add(date('D m/d/Y - h:i:s A') . ' - === ' . $this->event->nick . ' has changed the topic in ' . $this->event->get_arg('channel') . ' to ' . $this->event->get_arg('topic'));
 	}
 	
@@ -78,16 +83,19 @@ class failnet_plugin_log extends failnet_plugin_common
 	
 	public function cmd_notice()
 	{
+		display(date('h:i') . ' [Notice] ' . $this->event->nick . ': ' . $this->event->get_arg('text'));
 		$this->failnet->log->add(date('D m/d/Y - h:i:s A') . ' - === Notice from ' . $this->event->nick . ' : ' . $this->event->get_arg('text'));
 	}
 	
 	public function cmd_privmsg()
 	{
+		display(date('h:i') . ' <' . $this->event->nick . (($this->event->fromchannel()) ? '/' . $this->event->get_arg('reciever') : '') . '> ' . $this->event->get_arg('text'));
 		$this->failnet->log->log($this->event->get_arg('text'), $this->event->nick, $this->event->get_arg('reciever'));
 	}
 	
 	public function cmd_action()
 	{
+		display(date('h:i') . (($this->event->fromchannel()) ? '[' . $this->event->get_arg('reciever') . ']' : '') . ' *** ' . $this->event->nick . ' ' . $this->event->get_arg('text'));
 		$this->failnet->log->log($this->event->get_arg('action'), $this->event->nick, $this->event->get_arg('target'));
 	}
 	

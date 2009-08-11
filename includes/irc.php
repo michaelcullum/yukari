@@ -308,7 +308,7 @@ class failnet_irc extends failnet_common
 	 */
 	public function quit($reason = NULL)
 	{
-		$this->failnet->socket->send('QUIT', $reason);
+		$this->failnet->socket->send('QUIT', array($reason));
 		$this->failnet->socket->close();
 	}
 }

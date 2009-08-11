@@ -63,18 +63,18 @@ class failnet_plugin_ignore extends failnet_plugin_common
 			case '+ignore':
 				if(is_null($text))
 				{
-					$this->call_notice($sender, 'Invalid arguments specified for command');
+					$this->call_privmsg($sender, 'Invalid arguments specified for command');
 					return;
 				}
 
 				$success = $this->failnet->ignore->add_ignore($hostmask, $text);
 				if(is_null($success))
 				{
-					$this->call_notice($sender, $this->failnet->deny());
+					$this->call_privmsg($sender, $this->failnet->deny());
 					return;
 				}
 
-				$this->call_notice($sender, ($success) ? 'User successfully ignored' : 'Unable to ignore user -- user hostmask already ignored');
+				$this->call_privmsg($sender, ($success) ? 'User successfully ignored' : 'Unable to ignore user -- user hostmask already ignored');
 			break;
 
 			case 'delignore':
@@ -82,18 +82,18 @@ class failnet_plugin_ignore extends failnet_plugin_common
 			case '-ignore':
 				if(is_null($text))
 				{
-					$this->call_notice($sender, 'Invalid arguments specified for command');
+					$this->call_privmsg($sender, 'Invalid arguments specified for command');
 					return;
 				}
 
 				$success = $this->failnet->ignore->del_ignore($hostmask, $text);
 				if(is_null($success))
 				{
-					$this->call_notice($sender, $this->failnet->deny());
+					$this->call_privmsg($sender, $this->failnet->deny());
 					return;
 				}
 
-				$this->call_notice($sender, ($success) ? 'User successfully unignored' : 'Unable to ignore user -- user hostmask not ignored');
+				$this->call_privmsg($sender, ($success) ? 'User successfully unignored' : 'Unable to ignore user -- user hostmask not ignored');
 			break;
 		}
 	}
