@@ -61,15 +61,15 @@ class failnet_plugin_nickserv extends failnet_plugin_common
 	public function cmd_notice()
 	{
 		// Check to see if nickserv is asking for authentication, and if so then we'll give it
-		if (strtolower($this->event->nick) != strtolower($this->failnet->get('nickbot')))
+		if(strtolower($this->event->nick) != strtolower($this->failnet->get('nickbot')))
 			return;
 
-		if (preg_match('#^.*nickname is (registered|owned)#i', $this->event->get_arg(1)))
+		if(preg_match('#^.*nickname is (registered|owned)#i', $this->event->get_arg(1)))
 		{
-			if (is_null($this->failnet->get('pass')) || !$this->failnet->get('pass'))
+			if(is_null($this->failnet->get('pass')) || !$this->failnet->get('pass'))
 				$this->call_privmsg($this->failnet->get('nickbot'), 'IDENTIFY ' . $this->failnet->get('pass'));
 		}
-		elseif (preg_match('#^.*' . $this->failnet->get('nick') . '.* has been killed#i', $this->event->get_arg(1)))
+		elseif(preg_match('#^.*' . $this->failnet->get('nick') . '.* has been killed#i', $this->event->get_arg(1)))
 		{
 			$this->call_nick($this->failnet->get('nick'));
 		}

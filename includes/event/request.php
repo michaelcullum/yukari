@@ -190,14 +190,10 @@ class failnet_event_request implements ArrayAccess
 	private $failnet;
 	
 	/**
-	 * Constructor
-	 * @param failnet_core $failnet - Failnet core object 
-	 * @return unknown_type
+	 * Constructor 
+	 * @return void
 	 */
-	public function __construct(failnet_core $failnet)
-	{
-		$this->failnet = &$failnet;
-	}
+	public function __construct() { }
 	
 	public function __call($funct, $params)
 	{

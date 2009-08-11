@@ -50,7 +50,7 @@ abstract class failnet_plugin_common
 	 * The mothership itself.
 	 * @var failnet_core object
 	 */
-	private $failnet;
+	protected $failnet;
 	
 	/**
 	 * Constants for Failnet.
