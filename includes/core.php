@@ -339,7 +339,7 @@ class failnet_core
 				$this->sql('users', 'create')->execute(array(':nick' => $this->get('owner'), ':authlevel' => 100, ':hash' => $this->auth->hash->hash($this->get('name'))));
 
 				// Now let's add some default data to the database tables
-				$this->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/config.sql'));
+				$this->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/schema_data.sql'));
 
 				$this->db->commit();
 			}
