@@ -67,7 +67,7 @@ class failnet_plugin_authorize extends failnet_plugin_common
 					return;
 				}
 
-				$success = $this->failnet->auth->adduser($sender, $text);
+				$success = $this->failnet->auth->add_user($sender, $text);
 				$this->call_notice($sender, ($success) ? 'You were successfully added to my users database.' : 'I\'m sorry, but I was unable to add you to my users database.');
 			break;
 
@@ -99,7 +99,7 @@ class failnet_plugin_authorize extends failnet_plugin_common
 					return;
 				}
 
-				$confirm = $this->failnet->auth->deluser($hostmask, $text);
+				$confirm = $this->failnet->auth->del_user($hostmask, $text);
 				if(is_null($confirm))
 				{
 					$this->call_notice($sender, 'Cannot remove user -- no such user exists in database');
