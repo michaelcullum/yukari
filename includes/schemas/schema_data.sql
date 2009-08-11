@@ -1,7 +1,7 @@
-#
-# Schema data
-# $Id$
-#
+/**
+ * Schema data
+ * $Id$
+ */
 
 INSERT INTO config (name, value) VALUES ('rand_seed', 0);
 INSERT INTO config (name, value) VALUES ('last_rand_seed', 0);

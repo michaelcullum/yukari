@@ -1,7 +1,7 @@
-#
-# Reminders table
-# $Id$
-#
+/**
+ * Reminders table
+ * $Id: access.sql 196 2009-08-10 13:15:49Z Obsidian $
+ */
 
 CREATE TABLE reminders (
 	user_id INTEGER PRIMARY KEY NOT NULL,

@@ -1,7 +1,7 @@
-#
-# Factoid entries table
-# $Id$
-#
+/**
+ * Factoid entries table
+ * $Id$
+ */
 
 CREATE TABLE entries (
 	entry_id INTEGER PRIMARY KEY NOT NULL,

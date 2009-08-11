@@ -1,7 +1,7 @@
-#
-# Config table
-# $Id$
-#
+/**
+ * Config table
+ * $Id$
+ */
 
 CREATE TABLE config (
 	name TEXT NOT NULL DEFAULT '',

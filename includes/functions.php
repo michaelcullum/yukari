@@ -76,7 +76,7 @@ function display($msg)
 	}
 	else
 	{
-		$msg = (strrpos($log, PHP_EOL . PHP_EOL) !== false) ? substr($msg, 0, strlen($msg) - 1) : $msg;
+		$msg = (strrpos($msg, PHP_EOL . PHP_EOL) !== false) ? substr($msg, 0, strlen($msg) - 1) : $msg;
 		echo $msg . PHP_EOL;
 	}
 }

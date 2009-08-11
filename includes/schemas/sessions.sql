@@ -1,7 +1,7 @@
-#
-# Sessions table
-# $Id$
-#
+/**
+ * Sessions table
+ * $Id$
+ */
 
 CREATE TABLE sessions (
 	key_id TEXT NOT NULL DEFAULT '',

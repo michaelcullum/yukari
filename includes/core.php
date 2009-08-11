@@ -235,6 +235,7 @@ class failnet_core
 		{
 			// Initialize the database connection
 			$this->db = new PDO('sqlite:' . FAILNET_DB_ROOT . 'failnet.db');
+			$this->db->setAttribute("PDO::ATTR_ERRMODE", PDO::ERRMODE_EXCEPTION);
 
 			// We want this as a transaction in case anything goes wrong.
 			$this->db->beginTransaction();

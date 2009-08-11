@@ -1,7 +1,7 @@
-#
-# Access list table
-# $Id$
-#
+/**
+ * Access list table
+ * $Id$
+ */
 
 CREATE TABLE access (
 	user_id INTEGER UNSIGNED NOT NULL DEFAULT '0',
