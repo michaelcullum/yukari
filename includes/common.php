@@ -50,7 +50,7 @@ abstract class failnet_common
 	 * The mothership itself.
 	 * @var failnet_core object
 	 */
-	private $failnet;
+	protected $failnet;
 	
 	/**
 	 * Constants for Failnet.
@@ -59,7 +59,7 @@ abstract class failnet_common
 	const ERROR_LOG = 'error';
 	const USER_LOG = 'user';
 	
-	public function __construct(failnet_core $failnet)
+	public function __construct(failnet_core &$failnet)
 	{
 		$this->failnet = &$failnet;
 		$this->init();
