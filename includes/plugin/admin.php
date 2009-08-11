@@ -127,20 +127,21 @@ class failnet_plugin_admin extends failnet_plugin_common
 				// Check for empty text or invalid number of parameters
 				if($text === false)
 				{
-					$this->call_notice($sender, 'Please specify the setting to change and what to change it to.');
+					$this->call_privmsg($sender, 'Please specify the setting to change and what to change it to.');
 					return;
 				}
 
 				$param = explode(' ', $text);
 				if(count($param) != 2)
 				{
-					$this->call_notice($sender, 'Invalid number of arguments entered for set command.');
+					$this->call_privmsg($sender, 'Invalid number of arguments entered for set command.');
 					return;
 				}
 
 				try
 				{
 					$this->failnet->sql('config', 'update')->execute(array(':name' => $param[0], ':value' => $param[1]));
+					$this->failnet->settings[$param[0]] = $param[1];
 				}
 				catch (PDOException $e)
 				{
@@ -152,6 +153,9 @@ class failnet_plugin_admin extends failnet_plugin_common
 					sleep(3);
 					exit(1);
 				}
+
+				// Success!
+				$this->call_privmsg($sender, 'Setting "' . $param[0] . '" changed to ' . $param[1] . ' successfully.');
 			break;
 
 			// Load a plugin if it isn't already loaded
@@ -166,18 +170,18 @@ class failnet_plugin_admin extends failnet_plugin_common
 				// Check for empty text
 				if($text === false)
 				{
-					$this->call_notice($sender, 'Please specify the plugin to load.');
+					$this->call_privmsg($sender, 'Please specify the plugin to load.');
 					return;
 				}
 
 				// Check to see if we've loaded that plugin already, and if not load it
 				if($this->failnet->manager->load($text))
 				{
-					$this->call_notice($sender, 'Plugin loaded successfully.');
+					$this->call_privmsg($sender, 'Plugin loaded successfully.');
 				}
 				else
 				{
-					$this->call_notice($sender, 'Plugin already loaded.');
+					$this->call_privmsg($sender, 'Plugin already loaded.');
 				}
 			break;
 
