@@ -318,7 +318,7 @@ class failnet_core
 		);
 		foreach($classes as $class => $msg)
 		{
-			if(property_exists($class))
+			if(property_exists($this, $class))
 			{
 				$name = 'failnet_' . $class;
 				$this->$class = new $name($this);
