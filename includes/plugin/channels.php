@@ -141,11 +141,11 @@ class failnet_plugin_channels extends failnet_plugin_common
 					case 'q':
 						if ($mode == '+')
 						{
-							$this->failnet->chans[$chan][$nick] |= self::FOUNDER;
+							$this->failnet->chans[trim(strtolower($chan))][trim(strtolower($nick))] |= self::FOUNDER;
 						}
 						elseif ($mode == '-')
 						{
-							$this->failnet->chans[$chan][$nick] ^= self::FOUNDER;
+							$this->failnet->chans[trim(strtolower($chan))][trim(strtolower($nick))] ^= self::FOUNDER;
 						}
 					break;
 
@@ -156,40 +156,40 @@ class failnet_plugin_channels extends failnet_plugin_common
 						}
 						elseif ($mode == '-')
 						{
-							$this->failnet->chans[$chan][$nick] ^= self::ADMIN;
+							$this->failnet->chans[trim(strtolower($chan))][trim(strtolower($nick))] ^= self::ADMIN;
 						}
 					break;
 
 					case 'o':
 						if ($mode == '+')
 						{
-							$this->failnet->chans[$chan][$nick] |= self::OP;
+							$this->failnet->chans[trim(strtolower($chan))][trim(strtolower($nick))] |= self::OP;
 						}
 						elseif ($mode == '-')
 						{
-							$this->failnet->chans[$chan][$nick] ^= self::OP;
+							$this->failnet->chans[trim(strtolower($chan))][trim(strtolower($nick))] ^= self::OP;
 						}
 					break;
 
 					case 'h':
 						if ($mode == '+')
 						{
-							$this->failnet->chans[$chan][$nick] |= self::HALFOP;
+							$this->failnet->chans[trim(strtolower($chan))][trim(strtolower($nick))] |= self::HALFOP;
 						}
 						elseif ($mode == '-')
 						{
-							$this->failnet->chans[$chan][$nick] ^= self::HALFOP;
+							$this->failnet->chans[trim(strtolower($chan))][trim(strtolower($nick))] ^= self::HALFOP;
 						}
 					break;
 
 					case 'v':
 						if ($mode == '+')
 						{
-							$this->failnet->chans[$chan][$nick] |= self::VOICE;
+							$this->failnet->chans[trim(strtolower($chan))][trim(strtolower($nick))] |= self::VOICE;
 						}
 						elseif ($mode == '-')
 						{
-							$this->failnet->chans[$chan][$nick] ^= self::VOICE;
+							$this->failnet->chans[trim(strtolower($chan))][trim(strtolower($nick))] ^= self::VOICE;
 						}
 					break;
 				}

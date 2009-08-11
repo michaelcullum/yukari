@@ -589,7 +589,7 @@ class failnet_core
 	 */
  	public function load_plugin($plugin)
 	{
-		if(!$this->plugin_loaded($plugin))
+		if(!$this->plugin_loaded($plugin) && $this->plugin_exists($plugin))
 		{
 			$this->plugins_loaded[] = $plugin;
 			$plugin = 'failnet_plugin_' . $plugin;
@@ -621,7 +621,18 @@ class failnet_core
 	{
 		return in_array($plugin, $this->plugins_loaded);
 	}
-	
+
+	/**
+	 * Checks to see if a plugin exists
+	 * @param string $plugin - The name of the plugin to check, omitting the failnet_plugin_ class prefix
+	 * @return boolean - Does the plugin exist?
+	 */
+	public function plugin_exists($plugin)
+	{
+		$file = FAILNET_ROOT . '/includes/plugins/' . basename($plugin) . '.php';
+		return (file_exists($file) && is_readable($file));
+	}
+
 	/**
 	* Return unique id
 	* @param string $extra additional entropy

@@ -197,7 +197,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 				}
 				else
 				{
-					$this->call_privmsg($sender, 'Plugin already loaded.');
+					$this->call_privmsg($sender, 'Plugin does not exist or is already loaded.');
 				}
 			break;
 
