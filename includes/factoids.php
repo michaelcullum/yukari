@@ -62,8 +62,6 @@ class failnet_factoids extends failnet_common
  * Methods
  */
 	
-// @todo Add factoid method
-// @todo Remove factoid method
 // @todo Add entry method
 // @todo Remove entry method
 // @todo Change factoid method
@@ -94,6 +92,8 @@ class failnet_factoids extends failnet_common
 			$this->failnet->build_sql('factoids', 'create', 'INSERT INTO factoids ( direct, pattern ) VALUES ( :direct, ":pattern" )');
 			$this->failnet->build_sql('factoids', 'set_direct', 'UPDATE factoids SET direct = :direct WHERE factoid_id = :id');
 			$this->failnet->build_sql('factoids', 'set_pattern', 'UPDATE factoids SET pattern = ":pattern" WHERE factoid_id = :id');
+			$this->failnet->build_sql('factoids', 'get', 'SELECT * FROM factoids WHERE factoid_id = :id');
+			$this->failnet->build_sql('factoids', 'get_pattern', 'SELECT * FROM factoids WHERE LOWER(pattern) = LOWER(":pattern")');
 			$this->failnet->build_sql('factoids', 'get_all', 'SELECT * FROM factoids ORDER BY factoid_id DESC');
 			$this->failnet->build_sql('factoids', 'delete', 'DELETE FROM factoids WHERE factoid_id = :id');
 
@@ -108,6 +108,15 @@ class failnet_factoids extends failnet_common
 			$this->failnet->build_sql('entries', 'delete', 'DELETE FROM entries WHERE entry_id = :entry_id');
 			$this->failnet->build_sql('entries', 'delete_all', 'DELETE FROM entries WHERE factoid_id = :id');
 
+			if(!$table_exists)
+			{
+				// Let's toss in a default entry
+				$this->failnet->sql('factoids', 'create')->execute(array(':direct' => 1, ':pattern' => '^intro$'));
+				$this->failnet->sql('factoids', 'get_pattern')->execute(array(':pattern' => '^intro$'));
+				$result = $this->failnet->sql('factoids', 'get_pattern')->fetch(PDO::FETCH_ASSOC);
+				$this->failnet->sql('entries', 'create')->execute(array(':id' => $result['factoid_id'], ':authlevel' => 0, ':selfcheck' => 0, ':function' => 0, ':entry' => 'Failnet 2.  Smarter, faster, and with a sexier voice than ever before.'));
+			}
+
 			$this->failnet->db->commit();
 		}
 		catch (PDOException $e)
@@ -120,6 +129,8 @@ class failnet_factoids extends failnet_common
 			sleep(3);
 			exit(1);
 		}
+
+		// Load the factoids index
 		$this->load();
 	}
 
@@ -132,6 +143,18 @@ class failnet_factoids extends failnet_common
 		display('=== Loading Failnet factoids index...');
 		$this->failnet->sql('factoids', 'get_all')->execute();
 		$this->factoids = $this->failnet->sql('factoids', 'get_all')->fetchAll();
+	}
+
+	// @todo Add factoid method
+	public function add_factoid()
+	{
+		
+	}
+
+	// @todo Remove factoid method
+	public function delete_factoid()
+	{
+		
 	}
 }
 
