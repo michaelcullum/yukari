@@ -367,7 +367,7 @@ class failnet_core
 		$result = $this->sql('config', 'get_all')->fetchAll();
 		foreach($result as $row)
 		{
-			$this->settings[$result['name']] = $result['value'];
+			$this->settings[$row['name']] = $row['value'];
 		}
 
 		// This is a hack to allow us to restart Failnet if we're running the script through a batch file.
