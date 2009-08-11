@@ -51,23 +51,23 @@ class failnet_factoids extends failnet_common
 /**
  * Properties
  */
-	
+
 	/**
 	 * List of factoid patterns loaded for speed
 	 * @var array
 	 */
 	public $factoids = array();
-	
+
 /**
  * Methods
  */
-	
+
 // @todo Add entry method
 // @todo Remove entry method
 // @todo Change factoid method
 // @todo Change factoid settings method
 // @todo Change entry settings method
-	
+
 	/**
 	 * Failnet class initiator
 	 * @see includes/failnet_common#init()
@@ -106,7 +106,7 @@ class failnet_factoids extends failnet_common
 			$this->failnet->build_sql('entries', 'set_authlevel', 'UPDATE entries SET function = :function WHERE entry_id = :entry_id');
 			$this->failnet->build_sql('entries', 'set_authlevel', 'UPDATE entries SET entry = ":entry" WHERE entry_id = :entry_id');
 			$this->failnet->build_sql('entries', 'delete', 'DELETE FROM entries WHERE entry_id = :entry_id');
-			$this->failnet->build_sql('entries', 'delete_all', 'DELETE FROM entries WHERE factoid_id = :id');
+			$this->failnet->build_sql('entries', 'delete_id', 'DELETE FROM entries WHERE factoid_id = :id');
 
 			if(!$table_exists)
 			{
@@ -145,16 +145,30 @@ class failnet_factoids extends failnet_common
 		$this->factoids = $this->failnet->sql('factoids', 'get_all')->fetchAll();
 	}
 
-	// @todo Add factoid method
+	// @todo add factoid method
 	public function add_factoid()
 	{
 		
 	}
 
-	// @todo Remove factoid method
-	public function delete_factoid()
+	/**
+	 * Delete a factoid from the database
+	 * @param string $pattern - Pattern for the factoid that we want to delete
+	 * @return mixed - NULL if no such factoid, true if deletion successful.
+	 */
+	public function delete_factoid($pattern)
 	{
-		
+		$this->failnet->sql('factoids', 'get_pattern')->execute(array(':pattern' => $pattern));
+		$result = $this->failnet->sql('factoids', 'get_pattern')->fetch(PDO::FETCH_ASSOC);
+
+		// Do we have anything with that pattern?
+		if(!$result)
+			return NULL;
+
+		// Let's delete stuff now
+		$this->failnet->sql('factoids', 'delete')->execute(array(':id' => $result['factoid_id']));
+		$this->failnet->sql('entries', 'delete_id')->execute(array(':pattern' => $pattern));
+		return true;
 	}
 }
 
