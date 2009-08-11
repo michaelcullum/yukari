@@ -262,6 +262,7 @@ class failnet_core
 			// Now, we need to build our default statements.
 			// Config table
 			$this->build_sql('config', 'create', 'INSERT INTO config ( name, value ) VALUES ( :name, :value )');
+			$this->build_sql('config', 'get_all', 'SELECT * FROM config');
 			$this->build_sql('config', 'get', 'SELECT * FROM config WHERE LOWER(name) = LOWER(:name) LIMIT 1');
 			$this->build_sql('config', 'update', 'UPDATE config SET value = :value WHERE LOWER(name) = LOWER(:name)');
 			$this->build_sql('config', 'delete', 'DELETE FROM config WHERE name = :name');
@@ -359,6 +360,15 @@ class failnet_core
 		display('- Loading Failnet plugins');
 		$plugins = $this->get('plugin_list');
 		$this->load_plugins($plugins);
+
+		// Load our config settings
+		display('- Loading config settings');
+		$this->sql('config', 'get_all')->execute();
+		$result = $this->sql('config', 'get_all')->fetchAll();
+		foreach($result as $row)
+		{
+			$this->settings[$result['name']] = $result['value'];
+		}
 
 		// This is a hack to allow us to restart Failnet if we're running the script through a batch file.
 		display('- Removing termination indicator file'); 
@@ -617,12 +627,8 @@ class failnet_core
 	{
 		static $dss_seeded = false;
 
-		$this->sql('config', 'get')->execute(array(':name' => 'rand_seed'));
-		$result = $this->sql('config', 'get')->fetch(PDO::FETCH_ASSOC);
-		$rand_seed = $result['value'];
-		$this->sql('config', 'get')->execute(array(':name' => 'last_rand_seed'));
-		$result = $this->sql('config', 'get')->fetch(PDO::FETCH_ASSOC);
-		$last_rand_seed = $result['value'];
+		$rand_seed = $this->get('rand_seed');
+		$last_rand_seed = $this->get('last_rand_seed');
 
 		$val = md5($rand_seed . microtime());
 		$rand_seed = md5($rand_seed . $val . $extra);
@@ -630,7 +636,10 @@ class failnet_core
 		if ($dss_seeded !== true && ($last_rand_seed < time() - rand(1,10)))
 		{
 			$this->sql('config', 'update')->execute(array(':name' => 'rand_seed', ':value' => $rand_seed));
-			$this->sql('config', 'update')->execute(array(':name' => 'last_rand_seed', ':value' => time()));
+			$this->settings['rand_seed'] = $rand_seed;
+			$last_rand_seed = time();
+			$this->sql('config', 'update')->execute(array(':name' => 'last_rand_seed', ':value' => $last_rand_seed));
+			$this->settings['last_rand_seed'] = $last_rand_seed;
 			$dss_seeded = true;
 		}
 	
