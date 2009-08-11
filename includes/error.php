@@ -52,11 +52,7 @@ class failnet_error extends failnet_common
 	 * @see includes/failnet_common#init()
 	 * @return void
 	 */
-	public function init()
-	{
-		display('=== Setting main error handler');
-			@set_error_handler('fail_handler');
-	}
+	public function init() { }
 
 	/**
 	 * Error handler function for Failnet.  Modified from the phpBB 3.0.x msg_handler() function.

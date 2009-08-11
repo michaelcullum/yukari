@@ -82,20 +82,6 @@ function display($msg)
 }
 
 /**
- * Shell for Failnet's built-in error handler class.
- * @param $errno - Error number
- * @param $msg_text - Error message text
- * @param $errfile - Where was the error in?
- * @param $errline - What line was the error?
- * @return mixed
- */
-function fail_handler($errno, $msg_text, $errfile, $errline)
-{
-	global $failnet;
-	return $failnet->error->fail($errno, $msg_text, $errfile, $errline);
-}
-
-/**
 * Return formatted string for filesizes
 * @param integer $bytes - The number of bytes to convert.
 * @return string - The filesize converted into KiB, MiB, or GiB.
