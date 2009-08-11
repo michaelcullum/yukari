@@ -72,19 +72,19 @@ class failnet_socket extends failnet_common
 		set_time_limit(0);
 		
 		// Check to see if the transport method we are using is allowed
-		if (!in_array($this->failnet->get('transport'), stream_get_transports()))
+		if(!in_array($this->failnet->get('transport'), stream_get_transports()))
 			trigger_error('Transport ' . $this->failnet->get('transport') . ' is not supported by this PHP installation.', E_USER_ERROR);
 
 		// Establish and configure the socket connection
 		$remote = $this->failnet->get('transport') . '://' . $this->failnet->get('server') . ':' . $this->failnet->get('port');
 		$this->socket = @stream_socket_client($remote, $errno, $errstr);
-		if (!$this->socket)
+		if(!$this->socket)
 			trigger_error('Unable to connect to server: socket error ' . $errno . ' : ' . $errstr, E_USER_ERROR);
 		
 		@stream_set_timeout($this->socket, $this->delay);
 
 		// Send the password if one is specified
-		if (!empty($this->failnet->get('server_pass')))
+		if(is_null($this->failnet->get('server_pass')) || !$this->failnet->get('server_pass'))
 			$this->send('PASS', $this->failnet->get('server_pass'));
 
 		// Send user information
@@ -110,11 +110,11 @@ class failnet_socket extends failnet_common
 		$buffer = rtrim($buffer);
 
 		// If debugging mode is enabled, output the received event
-		if ($this->failnet->debug)
+		if($this->failnet->debug)
 			display($buffer);
 
 		// If the event is from a user...
-		if (substr($buffer, 0, 1) == ':')
+		if(substr($buffer, 0, 1) == ':')
 		{
 			// Parse the user hostmask, command, and arguments
 			list($prefix, $cmd, $args) = array_pad(explode(' ', ltrim($buffer, ':'), 3), 3, NULL);
@@ -200,7 +200,7 @@ class failnet_socket extends failnet_common
 		}
 
 		// Create, populate, and return an event object
-		if (ctype_digit($cmd))
+		if(ctype_digit($cmd))
 		{
 			$event = new failnet_event_response;
 			$event->code = $cmd;
@@ -232,12 +232,12 @@ class failnet_socket extends failnet_common
 	private function send($command, $args = '')
 	{
 		// Require an open socket connection to continue
-		if (empty($this->socket))
+		if(empty($this->socket))
 			trigger_error('Cannot send server message; failnet_socket::connect() must be called first', E_USER_ERROR);
 
 		$buffer = strtoupper($command);
 		// Add arguments
-		if (!empty($args))
+		if(!empty($args))
 		{
 			// Apply formatting if arguments are passed in as an array
 			if (is_array($args))
@@ -253,7 +253,7 @@ class failnet_socket extends failnet_common
 		fwrite($this->socket, $buffer . PHP_EOL);
 
 		// If debugging mode is enabled, output the transmitted command
-		if ($this->failnet->debug)
+		if($this->failnet->debug)
 			display($buffer);
 
 		// Return the command string that was transmitted

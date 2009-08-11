@@ -45,7 +45,7 @@ if(!defined('IN_FAILNET')) exit(1);
  * @copyright (c) 2009 - Obsidian
  * @license http://opensource.org/licenses/gpl-2.0.php | GNU Public License v2
  */
-class failnet_logs extends failnet_common
+class failnet_log extends failnet_common
 {
 	/**
 	 * Queue of logs to be written
