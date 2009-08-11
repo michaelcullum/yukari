@@ -630,7 +630,11 @@ class failnet_core
 	public function plugin_exists($plugin)
 	{
 		$file = FAILNET_ROOT . '/includes/plugins/' . basename($plugin) . '.php';
-		return (file_exists($file) && is_readable($file));
+		if(!file_exists($file))
+			return false;
+		if(!is_readable($file))
+			return false;
+		return true;
 	}
 
 	/**
