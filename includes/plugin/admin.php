@@ -71,7 +71,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 				// Check auths
 				if ($this->failnet->auth->authlevel($hostmask) < 50)
 				{
-					$this->call_notice($this->event->source(), $this->failnet->deny());
+					$this->call_privmsg($this->event->source(), $this->failnet->deny());
 					return;
 				}
 
@@ -100,7 +100,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 				// Check auths
 				if ($this->failnet->auth->authlevel($hostmask) < 50)
 				{
-					$this->call_notice($this->event->source(), $this->failnet->deny());
+					$this->call_privmsg($this->event->source(), $this->failnet->deny());
 					return;
 				}
 
@@ -120,7 +120,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 				// Check auths
 				if ($this->failnet->auth->authlevel($hostmask) < 100)
 				{
-					$this->call_notice($this->event->source(), $this->failnet->deny());
+					$this->call_privmsg($this->event->source(), $this->failnet->deny());
 					return;
 				}
 
@@ -159,7 +159,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 				// Check auths
 				if ($this->failnet->auth->authlevel($hostmask) < 70)
 				{
-					$this->call_notice($this->event->source(), $this->failnet->deny());
+					$this->call_privmsg($this->event->source(), $this->failnet->deny());
 					return;
 				}
 
@@ -196,7 +196,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 				// Check auths
 				if ($this->failnet->auth->authlevel($hostmask) < 5)
 				{
-					$this->call_notice($this->event->source(), $this->failnet->deny());
+					$this->call_privmsg($this->event->source(), $this->failnet->deny());
 					return;
 				}
 
@@ -225,7 +225,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 				// Check auths
 				if ($this->failnet->auth->authlevel($hostmask) < 5)
 				{
-					$this->call_notice($this->event->source(), $this->failnet->deny());
+					$this->call_privmsg($this->event->source(), $this->failnet->deny());
 					return;
 				}
 

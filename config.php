@@ -53,16 +53,16 @@ return array(
 
 // Plugins to automatically load on startup. 
 	'plugin_list'		=> array(
+		'ping',
+		'pong',	
+		'nickserv',
 		'admin',
 		'authorize',
-		'autojoin',
 		'channels',
-		'factoids',
 		'ignore',
 		'log',
-		'nickserv',
-		'ping',
-		'pong',
+		'autojoin',
+		'factoids',
 	),
 
 // What is the nickname service bot? If there isn't, leave this as an empty string.

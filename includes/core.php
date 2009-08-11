@@ -312,7 +312,7 @@ class failnet_core
 			'error'		=> 'error handler',
 			'auth'		=> 'user authorization handler',
 			'ignore'	=> 'user ignore handler',
-			'factoids'	=> 'factoid engine',
+			//'factoids'	=> 'factoid engine',
 		);
 		foreach($classes as $class => $msg)
 		{
@@ -425,8 +425,6 @@ class failnet_core
 					$plugin->pre_event();
 					$plugin->{'cmd_' . $eventtype}();
 					$plugin->post_event();
-					if($this->debug) 
-						display($eventtype . ': ' . $name. ' ' . count($plugin->events));
 				}
 
 				$queue = array_merge($queue, $plugin->events);
@@ -440,8 +438,6 @@ class failnet_core
 			//Execute pre-dispatch callback for plugin events 
 			foreach ($this->plugins as $name => $plugin)
 			{
-				if($this->debug)
-					display('pre-dispatch: ' . $name . ' ' . count($queue));
 				$plugin->pre_dispatch($queue);
 			}
 
@@ -449,8 +445,6 @@ class failnet_core
 			$quit = NULL;
 			foreach ($queue as $item)
 			{
-				if($this->debug)
-					display($item->type);
 				if (strcasecmp($item->type, 'quit') != 0)
 				{
 					call_user_func_array(array($this->irc, $item->type), $item->arguments);
@@ -464,8 +458,6 @@ class failnet_core
 			// Post-dispatch events
 			foreach ($this->plugins as $name => $plugin)
 			{
-				if($this->debug)
-					display('post-dispatch: ' . $name . ' ' . count($queue));
 				$plugin->post_dispatch($queue);
 			}
 
@@ -476,8 +468,6 @@ class failnet_core
 
 		foreach ($this->plugins as $name => $plugin)
 		{
-			if($this->debug)
-				display('disconnect: ' . $name);
 			$plugin->cmd_disconnect();
 		}
 		$this->irc->quit($this->get('quit_msg'));

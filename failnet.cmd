@@ -42,7 +42,7 @@ SET BOT=
 SET SERVER=config
 
 :: Ignore this.  It's just for the bot to find its termination indicator file. ;)
-SET CHECKFILE="%BOT%\data\restart"
+SET CHECKFILE="%BOT%\data\restart.inc"
 
 :: Loop to here if we're just restarting Failnet.
 :RUNBOT
