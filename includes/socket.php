@@ -60,7 +60,7 @@ class failnet_socket extends failnet_common
 	 * @see includes/failnet_common#init()
 	 * @return void
 	 */
-	private function init() { }
+	public function init() { }
 	
 	/**
 	 * Initiates a connection with the server.

@@ -53,7 +53,7 @@ class failnet_manager extends failnet_common
 	 * @see includes/failnet_common#init()
 	 * @return void
 	 */
-	private function init() {  }
+	public function init() {  }
 
 	/**
 	 * Load a specific plugin

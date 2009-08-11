@@ -57,7 +57,7 @@ class failnet_log extends failnet_common
 	 * Initiator method
 	 * @see includes/failnet_common#init()
 	 */
-	private function init()
+	public function init()
 	{
 		$this->add('--- Starting Failnet ---', true);
 	}

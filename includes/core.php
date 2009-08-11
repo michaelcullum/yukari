@@ -15,8 +15,6 @@
  * 
  */
 
-// @todo Default data file for a massive dump query on install.
-
 /**
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,12 +93,6 @@ class failnet_core
 	public $log;
 
 	/**
-	 * Plugin manager handler
-	 * @var failnet_manager object
-	 */
-	public $manager;
-
-	/**
 	 * Socket connection handler
 	 * @var failnet_socket object
 	 */
@@ -110,9 +102,15 @@ class failnet_core
 
 	/**
 	 * Loaded Failnet plugins
-	 * @var unknown_type
+	 * @var array
 	 */
 	public $plugins = array();
+
+	/**
+	 * List of loaded plugins
+	 * @var array
+	 */
+	public $plugins_loaded = array();
 
 
 
@@ -312,7 +310,6 @@ class failnet_core
 			'irc'		=> 'IRC protocol handler',
 			'log'		=> 'event logging handler',
 			'error'		=> 'error handler',
-			'manager'	=> 'plugin handler',
 			'auth'		=> 'user authorization handler',
 			'ignore'	=> 'user ignore handler',
 			'factoids'	=> 'factoid engine',
@@ -357,7 +354,7 @@ class failnet_core
 		// Load plugins
 		display('- Loading Failnet plugins');
 		$plugins = $this->get('plugin_list');
-		$this->manager->multiload($plugins);
+		$this->load_plugins($plugins);
 
 		// This is a hack to allow us to restart Failnet if we're running the script through a batch file.
 		display('- Removing termination indicator file'); 
@@ -572,6 +569,46 @@ class failnet_core
 	public function build_sql($table, $type, $statement)
 	{
 		$this->statements[$table][$type] = $this->db->prepare($statement);
+	}
+
+	/**
+	 * Load a specific plugin
+	 * @param string $plugin - The name of the plugin to load, omitting the failnet_plugin_ class prefix 
+	 * @return boolean - If plugin loading was successful
+	 */
+ 	public function load_plugin($plugin)
+	{
+		if(!$this->loaded($plugin))
+		{
+			$this->plugins_loaded[] = $plugin;
+			$plugin = 'failnet_plugin_' . $plugin;
+			$this->plugins[] = new $plugin($this);
+			return true;
+		}
+		return false; // No double-loading of plugins.
+	}
+
+	/**
+	 * Load an array of plugins
+	 * @param array $plugins - An array of plugin names, omitting the failnet_plugin_ class prefix
+	 * @return void
+	 */
+	public function load_plugins(array $plugins)
+	{
+		foreach ($plugins as $plugin)
+		{
+			$this->load_plugin($plugin);
+		}
+	}
+
+	/**
+	 * Checks to see if a plugin has been loaded already
+	 * @param string $plugin - The name of the plugin to check, omitting the failnet_plugin_ class prefix
+	 * @return boolean - Was the plugin already loaded?
+	 */
+	public function plugin_loaded($plugin)
+	{
+		return in_array($plugin, $this->plugins_loaded);
 	}
 	
 	/**

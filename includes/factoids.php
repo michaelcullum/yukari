@@ -73,7 +73,7 @@ class failnet_factoids extends failnet_common
 	 * @see includes/failnet_common#init()
 	 * @return void
 	 */
-	private function init()
+	public function init()
 	{
 		$table_exists = $this->failnet->db->query('SELECT COUNT(*) FROM sqlite_master WHERE name = ' . $this->failnet->db->quote('factoids'))->fetchColumn();
 		try

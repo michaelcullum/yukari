@@ -72,7 +72,7 @@ class failnet_auth extends failnet_common
 	 * @see includes/failnet_common#init()
 	 * @return void
 	 */
-	private function init()
+	public function init()
 	{
 		display('=== Loading Failnet password hashing system');
 			$this->hash = new failnet_hash(8, true);

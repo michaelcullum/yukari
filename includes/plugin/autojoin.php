@@ -3,7 +3,7 @@
  *
  *===================================================================
  *
- *  Failnet -- PHP-based IRC Bot
+ *  Failnet -- PHP-based IRC bot
  *-------------------------------------------------------------------
  *	Script info:
  * Version:		2.0.0
@@ -29,45 +29,38 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://opensource.org/licenses/gpl-2.0.php>.
  */
-
+ 
 /**
  * @ignore
  */
 if(!defined('IN_FAILNET')) exit(1);
 
 /**
- * Failnet - Base class,
- * 		Used as the common base class for all of Failnet's class files (at least the ones that need one) 
+ * Failnet - Autojoin plugin,
+ * 		Upon end of MOTD, attempts to automatically join all channels listed in the config. 
  * 
  * 
  * @author Obsidian
  * @copyright (c) 2009 - Obsidian
  * @license http://opensource.org/licenses/gpl-2.0.php | GNU Public License v2
  */
-abstract class failnet_common
+class failnet_plugin_autojoin extends failnet_plugin_common
 {
-	/**
-	 * The mothership itself.
-	 * @var failnet_core object
-	 */
-	private $failnet;
-	
-	/**
-	 * Constants for Failnet.
-	 */
-	const HR = '---------------------------------------------------------------------';
-	const ERROR_LOG = 'error';
-	const USER_LOG = 'user';
-	
-	public function __construct(failnet_core $failnet)
+	public function cmd_response()
 	{
-		$this->failnet = &$failnet;
-		$this->init();
-	}
-	
-	public function __call($funct, $params)
-	{
-		trigger_error('Bad function call "' . $funct . '" with params "' . implode(', ', $params) . '" to "' . __CLASS__ . '" class.', E_USER_WARNING);
+		switch ($this->event->getCode())
+		{
+			case failnet_event_response::RPL_ENDOFMOTD:
+			case failnet_event_response::ERR_NOMOTD:
+				$channels = $this->failnet->get('autojoins');
+				if (!empty($channels))
+				{
+					foreach($channels as $channel)
+					{
+						$this->call_join($channel);
+					}
+				}
+		}
 	}
 }
 
