@@ -59,8 +59,9 @@ class failnet_plugin_channels extends failnet_plugin_common
 		{
 			case failnet_event_response::RPL_ENDOFNAMES:
 				$chanargs = explode(' ', $this->event->description);
+
+				// Only do the intro message if we're allowed to speak.
 				if($this->failnet->speak)
-					// Only do the intro message if we're allowed to speak.  
 					$this->call_privmsg($chanargs[1], $this->failnet->get('intro_msg'));
 			break;
 			

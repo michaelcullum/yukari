@@ -75,10 +75,10 @@ class failnet_plugin_admin extends failnet_plugin_common
 					return;
 				}
 
-				if(($dai + 60) > time())
+				if(($dai) > time() - 60)
 				{
 					$dai = time();
-					$this->call_privmsg($this->event->source(), 'Are you sure? If so, please repeat |dai.');
+					$this->call_privmsg($sender, 'Are you sure? If so, please repeat |dai.');
 				}
 				else
 				{
@@ -87,7 +87,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 					{
 						foreach($this->failnet->chans as $channame => $chan)
 						{
-							$this->call_privmsg($channame, $this->failnet->get('quit_msg'));
+							$this->call_privmsg($channame, $this->failnet->get('dai_msg'));
 						}
 					}
 					$this->call_quit(false);

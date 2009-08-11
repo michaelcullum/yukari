@@ -268,7 +268,7 @@ class failnet_socket extends failnet_common
 	public function close()
 	{
 		display('-!- Quitting from server "' . $this->failnet->get('server') . '"');
-		$this->log->add('--- Quitting from server "' . $this->failnet->get('server') . '" ---');
+		$this->failnet->log->add('--- Quitting from server "' . $this->failnet->get('server') . '" ---');
 
 		// Terminate the socket connection
 		fclose($this->socket);

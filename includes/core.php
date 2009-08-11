@@ -261,30 +261,30 @@ class failnet_core
 			
 			// Now, we need to build our default statements.
 			// Config table
-			$this->build_sql('config', 'create', 'INSERT INTO config ( name, value ) VALUES ( ":name", ":value" )');
-			$this->build_sql('config', 'get', 'SELECT * FROM config WHERE LOWER(name) = LOWER(":name") LIMIT 1');
-			$this->build_sql('config', 'update', 'UPDATE config SET value = :value WHERE LOWER(name) = LOWER(":name")');
-			$this->build_sql('config', 'delete', 'DELETE FROM config WHERE name = ":name"');
+			$this->build_sql('config', 'create', 'INSERT INTO config ( name, value ) VALUES ( :name, :value )');
+			$this->build_sql('config', 'get', 'SELECT * FROM config WHERE LOWER(name) = LOWER(:name) LIMIT 1');
+			$this->build_sql('config', 'update', 'UPDATE config SET value = :value WHERE LOWER(name) = LOWER(:name)');
+			$this->build_sql('config', 'delete', 'DELETE FROM config WHERE name = :name');
 
 			// Users table
 			$this->build_sql('users', 'create', 'INSERT INTO users ( nick, authlevel, password ) VALUES ( :nick, :authlevel, :hash )');
-			$this->build_sql('users', 'set_pass', 'UPDATE users SET password = ":hash" WHERE user_id = :user');
+			$this->build_sql('users', 'set_pass', 'UPDATE users SET password = :hash WHERE user_id = :user');
 			$this->build_sql('users', 'set_level', 'UPDATE users SET authlevel = :authlevel WHERE user_id = :user');
-			$this->build_sql('users', 'set_confirm', 'UPDATE users SET confirm_key = ":key" WHERE user_id = :user');
+			$this->build_sql('users', 'set_confirm', 'UPDATE users SET confirm_key = :key WHERE user_id = :user');
 			$this->build_sql('users', 'get', 'SELECT * FROM users WHERE LOWER(nick) = LOWER(:nick) LIMIT 1');
 			$this->build_sql('users', 'get_level', 'SELECT authlevel FROM users WHERE LOWER(nick) = LOWER(:nick) LIMIT 1');
 			$this->build_sql('users', 'get_confirm', 'SELECT confirm_key FROM users WHERE user_id = :user LIMIT 1');
 			$this->build_sql('users', 'delete', 'DELETE FROM users WHERE user_id = :user');
 
 			// Sessions table
-			$this->build_sql('sessions', 'create', 'INSERT INTO sessions ( key_id, user_id, login_time, hostmask ) VALUES ( ":key", :user, :time, ":hostmask" )');
+			$this->build_sql('sessions', 'create', 'INSERT INTO sessions ( key_id, user_id, login_time, hostmask ) VALUES ( :key, :user, :time, :hostmask )');
 			$this->build_sql('sessions', 'delete_key', 'DELETE FROM sessions WHERE key_id = :key');
 			$this->build_sql('sessions', 'delete_user', 'DELETE FROM sessions WHERE user_id = :user');
 			$this->build_sql('sessions', 'delete_old', 'DELETE FROM sessions WHERE login_time < :time');
 			$this->build_sql('sessions', 'delete', 'DELETE FROM sessions WHERE LOWER(hostmask) = LOWER(:hostmask)');
 			
 			// Access list table
-			$this->build_sql('access', 'create', 'INSERT INTO access ( user_id, hostmask ) VALUES ( :user, ":hostmask" )');
+			$this->build_sql('access', 'create', 'INSERT INTO access ( user_id, hostmask ) VALUES ( :user, :hostmask )');
 			$this->build_sql('access', 'delete', 'DELETE FROM access WHERE (user_id = :user AND LOWER(hostmask) = LOWER(:hostmask) )');
 			$this->build_sql('access', 'delete_user', 'DELETE FROM access WHERE user_id = :user');
 			$this->build_sql('access', 'get', 'SELECT hostmask FROM access WHERE user_id = :user');
@@ -625,15 +625,20 @@ class failnet_core
 	public function unique_id($extra = 'c')
 	{
 		static $dss_seeded = false;
-		
-		$rand_seed = $this->sql('config', 'get')->execute(array(':name' => 'rand_seed'));
-		$last_rand_seed = $this->sql('config', 'get')->execute(array(':name' => 'last_rand_seed'));
+
+		$this->sql('config', 'get')->execute(array(':name' => 'rand_seed'));
+		$result = $this->sql('config', 'get')->fetch(PDO::FETCH_ASSOC);
+		$rand_seed = $result['value'];
+		$this->sql('config', 'get')->execute(array(':name' => 'last_rand_seed'));
+		$result = $this->sql('config', 'get')->fetch(PDO::FETCH_ASSOC);
+		$last_rand_seed = $result['value'];
+
 		$val = md5($rand_seed . microtime());
 		$rand_seed = md5($rand_seed . $val . $extra);
 	
 		if ($dss_seeded !== true && ($last_rand_seed < time() - rand(1,10)))
 		{
-			$this->sql('config', 'get')->execute(array(':name' => 'rand_seed', ':value' => $rand_seed));
+			$this->sql('config', 'update')->execute(array(':name' => 'rand_seed', ':value' => $rand_seed));
 			$this->sql('config', 'update')->execute(array(':name' => 'last_rand_seed', ':value' => time()));
 			$dss_seeded = true;
 		}

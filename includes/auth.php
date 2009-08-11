@@ -275,7 +275,7 @@ class failnet_auth extends failnet_common
 		// We should compare to see if this is the correct password that the user is sending to change their password to something else.
 		if($this->hash->check($old_pass, $result['password']))
 		{
-			$this->failent->sql('users', 'set_pass')->execute(array(':hash' => $this->hash->hash($new_pass), ':user' => $result['user_id']));
+			$this->failnet->sql('users', 'set_pass')->execute(array(':hash' => $this->hash->hash($new_pass), ':user' => $result['user_id']));
 			return true;
 		}
 
@@ -299,7 +299,7 @@ class failnet_auth extends failnet_common
 		if(!$result)
 			return NULL;
 
-		$this->failent->sql('users', 'set_level')->execute(array(':user' => $result['user_id'], ':authlevel' => (int) $level));
+		$this->failnet->sql('users', 'set_level')->execute(array(':user' => $result['user_id'], ':authlevel' => (int) $level));
 		return true;
 	}
 

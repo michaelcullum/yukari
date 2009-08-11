@@ -138,7 +138,7 @@ class failnet_plugin_authorize extends failnet_plugin_common
 				}
 
 				$param = explode(' ', $text);
-				$success = $this->failnet->auth->setpass($hostmask, $param[0], $param[1]);
+				$success = $this->failnet->auth->set_pass($hostmask, $param[0], $param[1]);
 				if(is_null($success))
 				{
 					$this->call_notice($sender, 'Cannot change password for user -- no such user exists in database');
