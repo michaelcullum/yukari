@@ -52,6 +52,22 @@ class failnet_plugin_admin extends failnet_plugin_common
 	 */
 	private $dai = 0;
 
+	/**
+	 * When did we last check for timed out sessions?
+	 * @var unknown_type
+	 */
+	private $time = 0;
+
+	public function tick()
+	{
+		// Check for the last time that we did a session purge.
+		if($this->time + 10800 <= time())
+		{
+			$this->time = time();
+			$this->failnet->sql('sessions', 'delete_old')->execute(array(':time' => $this->time - 3600));
+		}
+	}
+
 	public function cmd_privmsg()
 	{
 		// Process the command

@@ -111,7 +111,7 @@ class failnet_auth extends failnet_common
 	/**
 	 * Looks up the authorization level for a certain user...
 	 * @param string $hostmask - The hostmask for the user we're checking, if we want to use access lists for this.
-	 * @return mixed - Always returns 100 if boolean false is used as the authlevel, integer for the authlevel if in the access list or logged in, or false if the user isn't logged in/does not exist.
+	 * @return mixed - Always returns 100 if boolean false is used as the authlevel, integer for the authlevel if in the access list or logged in, or false if the user isn't logged in/session timed out/no such user.
 	 */
 	public function authlevel($hostmask)
 	{
@@ -149,6 +149,10 @@ class failnet_auth extends failnet_common
 
 			if(!$result)
 				return false;
+				
+			if(time() - $return['login_time'] < 3600)
+				return false;
+
 			return ($result) ? $result['authlevel'] : false;
 		}
 	}
