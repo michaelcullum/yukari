@@ -480,6 +480,7 @@ class failnet_core
 				display('disconnect: ' . $name);
 			$plugin->cmd_disconnect();
 		}
+		$this->irc->quit($this->get('quit_msg'));
 		$this->terminate($quit->arguments[0]);
 	}
 
