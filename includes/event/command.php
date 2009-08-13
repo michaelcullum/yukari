@@ -47,10 +47,10 @@ if(!defined('IN_FAILNET')) exit(1);
 class failnet_event_command extends failnet_event_request
 {
 	/**
-	* Reference to the plugin instance that created the event
-	*
-	* @var failnet_plugin_common
-	*/
+	 * Reference to the plugin instance that created the event
+	 *
+	 * @var failnet_plugin_common
+	 */
 	public $plugin;
 }
 

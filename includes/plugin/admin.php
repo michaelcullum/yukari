@@ -306,7 +306,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 		}
 	}
 	
-	public function cmd_version()
+	public function cmd_versionreply()
 	{
 		// Do stuff here.  And also respond to that CTCP version request. :P
 	}
