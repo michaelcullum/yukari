@@ -100,8 +100,11 @@ class failnet_plugin_channels extends failnet_plugin_common
 						$user = substr($user, 1);
 						$flag |= self::VOICE;
 					}
-		
-					$this->failnet->chans[trim(strtolower($chan))][trim(strtolower($user))] = $flag;
+
+					$chan = trim(strtolower($chan));
+					$nick = trim(strtolower($user));
+
+					$this->failnet->chans[$chan][$user] = $flag;
 				}
 			break;
 		}
@@ -141,11 +144,11 @@ class failnet_plugin_channels extends failnet_plugin_common
 					case 'q':
 						if ($mode == '+')
 						{
-							$this->failnet->chans[trim(strtolower($chan))][trim(strtolower($nick))] |= self::FOUNDER;
+							$this->failnet->chans[$chan][$chan] |= self::FOUNDER;
 						}
 						elseif ($mode == '-')
 						{
-							$this->failnet->chans[trim(strtolower($chan))][trim(strtolower($nick))] ^= self::FOUNDER;
+							$this->failnet->chans[$chan][$chan] ^= self::FOUNDER;
 						}
 					break;
 
@@ -156,40 +159,40 @@ class failnet_plugin_channels extends failnet_plugin_common
 						}
 						elseif ($mode == '-')
 						{
-							$this->failnet->chans[trim(strtolower($chan))][trim(strtolower($nick))] ^= self::ADMIN;
+							$this->failnet->chans[$chan][$nick] ^= self::ADMIN;
 						}
 					break;
 
 					case 'o':
 						if ($mode == '+')
 						{
-							$this->failnet->chans[trim(strtolower($chan))][trim(strtolower($nick))] |= self::OP;
+							$this->failnet->chans[$chan][$nick] |= self::OP;
 						}
 						elseif ($mode == '-')
 						{
-							$this->failnet->chans[trim(strtolower($chan))][trim(strtolower($nick))] ^= self::OP;
+							$this->failnet->chans[$chan][$nick] ^= self::OP;
 						}
 					break;
 
 					case 'h':
 						if ($mode == '+')
 						{
-							$this->failnet->chans[trim(strtolower($chan))][trim(strtolower($nick))] |= self::HALFOP;
+							$this->failnet->chans[$chan][$nick] |= self::HALFOP;
 						}
 						elseif ($mode == '-')
 						{
-							$this->failnet->chans[trim(strtolower($chan))][trim(strtolower($nick))] ^= self::HALFOP;
+							$this->failnet->chans[$chan][$nick] ^= self::HALFOP;
 						}
 					break;
 
 					case 'v':
 						if ($mode == '+')
 						{
-							$this->failnet->chans[trim(strtolower($chan))][trim(strtolower($nick))] |= self::VOICE;
+							$this->failnet->chans[$chan][$nick] |= self::VOICE;
 						}
 						elseif ($mode == '-')
 						{
-							$this->failnet->chans[trim(strtolower($chan))][trim(strtolower($nick))] ^= self::VOICE;
+							$this->failnet->chans[$chan][$nick] ^= self::VOICE;
 						}
 					break;
 				}
@@ -201,8 +204,11 @@ class failnet_plugin_channels extends failnet_plugin_common
 	{
 		if($this->event->nick != $this->failnet->get('nick'))
 		{
-			if (isset($this->failnet->chans[trim(strtolower($this->event->get_arg('channel')))][trim(strtolower($this->event->nick))]))
-				unset($this->failnet->chans[trim(strtolower($this->event->get_arg('channel')))][trim(strtolower($this->event->nick))]);
+			$chan = trim(strtolower($this->event->get_arg('channel')));
+			$nick = trim(strtolower($this->event->nick));
+
+			if (isset($this->failnet->chans[$chan][$nick]))
+				unset($this->failnet->chans[$chan][$nick]);
 		}
 		else
 		{
@@ -221,8 +227,11 @@ class failnet_plugin_channels extends failnet_plugin_common
 	{
 		if($this->event->get_arg('user') != $this->failnet->get('nick'))
 		{
-			if (isset($this->failnet->chans[trim(strtolower($this->event->get_arg('channel')))][trim(strtolower($this->event->nick))]))
-				unset($this->failnet->chans[trim(strtolower($this->event->get_arg('channel')))][trim(strtolower($this->event->nick))]);
+			$chan = trim(strtolower($this->event->get_arg('channel')));
+			$nick = trim(strtolower($this->event->nick));
+
+			if (isset($this->failnet->chans[$chan][$nick]))
+				unset($this->failnet->chans[$chan][$nick]);
 		}
 		else
 		{
@@ -239,27 +248,36 @@ class failnet_plugin_channels extends failnet_plugin_common
 
 	public function cmd_join()
 	{
-		$this->failnet->chans[trim(strtolower($this->event->get_arg('channel')))][trim(strtolower($this->event->nick))] = self::REGULAR;
+		$chan = trim(strtolower($this->event->get_arg('channel')));
+		$nick = trim(strtolower($this->event->nick));
+
+		$this->failnet->chans[$chan][$nick] = self::REGULAR;
 	}
 
 	public function cmd_quit()
 	{
+		$chan = trim(strtolower($this->event->get_arg('channel')));
+		$nick = trim(strtolower($this->event->nick));
+
 		foreach($this->failnet->chans as $channame => $chan)
 		{
-			if(isset($chan[trim(strtolower($this->event->nick))]))
-				unset($this->failnet->chans[$channame][trim(strtolower($this->event->nick))]);
+			if(isset($chan[$nick]))
+				unset($this->failnet->chans[$channame][$nick]);
 		}
 	}
 
 	public function cmd_nick()
 	{
+		$nick = trim(strtolower($this->event->nick));
+		$new_nick = trim(strtolower($this->event->get_arg('nick')));
+
 		foreach($this->failnet->chans as $channame => $chan)
 		{
-			if(isset($chan[trim(strtolower($this->event->nick))]))
+			if(isset($chan[$nick]))
 			{
-				$data = $chan[trim(strtolower($this->event->nick))];
-				unset($this->failnet->chans[$channame][trim(strtolower($this->event->nick))]);
-				$this->failnet->chans[$channame][trim($this->event->get_arg('nick'))] = $data;
+				$data = $chan[$nick];
+				unset($this->failnet->chans[$channame][$nick]);
+				$this->failnet->chans[$channame][$new_nick] = $data;
 			}
 		}
 	}

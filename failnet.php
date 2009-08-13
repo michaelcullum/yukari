@@ -36,8 +36,8 @@
  */
 define('IN_FAILNET', true);
 define('FAILNET_VERSION', '2.0.0');
-define('FAILNET_ROOT', realpath('.') . DIRECTORY_SEPARATOR);
-define('FAILNET_DB_ROOT', FAILNET_ROOT . 'data' . DIRECTORY_SEPARATOR . 'db' . DIRECTORY_SEPARATOR);
+define('FAILNET_ROOT', realpath('.') . '/');
+define('FAILNET_DB_ROOT', FAILNET_ROOT . 'data/db/');
 
 // Include our general functions file now -- We require it as it is always essential.
 // It also has our autoloader function, so we kinda need that.  ;)

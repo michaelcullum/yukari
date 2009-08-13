@@ -66,7 +66,7 @@ return array(
 	),
 
 // What is the nickname service bot? If there isn't, leave this as an empty string.
-	'nickbot'			=> 'nickserv',
+	'nickbot'			=> 'NickServ',
 	
 // Nickname service identify password. ;)
 	'pass'				=> 'somepasswordhere',

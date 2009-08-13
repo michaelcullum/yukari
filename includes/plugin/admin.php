@@ -305,6 +305,11 @@ class failnet_plugin_admin extends failnet_plugin_common
 			break;
 		}
 	}
+	
+	public function cmd_version()
+	{
+		// Do stuff here.  And also respond to that CTCP version request. :P
+	}
 }
 
 ?>
