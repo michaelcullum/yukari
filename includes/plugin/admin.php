@@ -303,10 +303,16 @@ class failnet_plugin_admin extends failnet_plugin_common
 					$this->call_notice($sender, 'Please specify a channel to part from.');
 				}
 			break;
+
+			case 'cake':
+			case 'caek':
+				cake();
+				$this->call_privmsg($this->event->source(), 'This was a triumph...');
+			break;
 		}
 	}
 	
-	public function cmd_versionreply()
+	public function cmd_version()
 	{
 		// Do stuff here.  And also respond to that CTCP version request. :P
 	}
