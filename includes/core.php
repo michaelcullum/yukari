@@ -263,14 +263,12 @@ class failnet_core
 
 		// Load required classes and systems
 		display('- Loading Failnet required classes');
-		foreach($this->get('modules') as $class => $msg)
+		foreach($this->get('modules_list') as $class)
 		{
-			if(property_exists(__CLASS__, $class))
-			{
-				$name = 'failnet_' . $class;
-				$this->$class = new $name($this);
-				display('=-= Loaded ' . $class . ' module');
-			}
+			$name = 'failnet_' . $class;
+			$this->$class = new $name($this);
+			display('=-= Loaded ' . $class . ' module');
+			
 		}
 
 		// Set the error handler

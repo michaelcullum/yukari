@@ -47,7 +47,7 @@ return array(
 	'name'				=> 'Failnet',
 
 // Class modules to load
-	'modules'			=> array(
+	'modules_list'		=> array(
 		'socket',
 		'irc',
 		'log',
