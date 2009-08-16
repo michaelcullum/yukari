@@ -30,10 +30,6 @@
  * along with this program.  If not, see <http://opensource.org/licenses/gpl-2.0.php>.
  */
 
-/**
- * @ignore
- */
-if(!defined('IN_FAILNET')) exit(1);
 
 /**
  * Failnet - Core class,

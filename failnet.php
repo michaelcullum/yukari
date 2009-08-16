@@ -31,9 +31,7 @@
  * along with this program.  If not, see <http://opensource.org/licenses/gpl-2.0.php>.
  */
 
-/**
- * @ignore
- */
+
 define('IN_FAILNET', true);
 define('FAILNET_VERSION', '2.0.0');
 define('FAILNET_ROOT', realpath('.') . '/');

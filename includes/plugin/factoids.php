@@ -29,11 +29,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://opensource.org/licenses/gpl-2.0.php>.
  */
- 
-/**
- * @ignore
- */
-if(!defined('IN_FAILNET')) exit(1);
+
 
 /**
  * Failnet - Factoid engine shell plugin,
