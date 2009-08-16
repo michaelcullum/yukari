@@ -178,6 +178,7 @@ class failnet_core
 			'License: GNU General Public License - Version 2',
 			self::HR,
 			'Failnet is starting up. Go get yourself a coffee.',
+			self::HR,
 		));
 
 		// Load the config file
