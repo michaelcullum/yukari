@@ -47,6 +47,17 @@ return array(
 	'user'				=> 'Failnet',
 	'name'				=> 'Failnet',
 
+// Class modules to load
+	'modules'			=> array(
+		'socket',
+		'irc',
+		'log',
+		'error',
+		'auth',
+		'ignore',
+		//'factoids',
+	),
+
 // Plugins to automatically load on startup. 
 	'plugin_list'		=> array(
 		'ping',
@@ -58,7 +69,7 @@ return array(
 		'ignore',
 		'log',
 		'autojoin',
-		'factoids',
+		//'factoids',
 	),
 
 // What is the nickname service bot? If there isn't, leave this as an empty string.

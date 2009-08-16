@@ -264,22 +264,13 @@ class failnet_core
 
 		// Load required classes and systems
 		display('- Loading Failnet required classes');
-		$classes = array(
-			'socket'	=> 'connection interface handler',
-			'irc'		=> 'IRC protocol handler',
-			'log'		=> 'event logging handler',
-			'error'		=> 'error handler',
-			'auth'		=> 'user authorization handler',
-			'ignore'	=> 'user ignore handler',
-			//'factoids'	=> 'factoid engine',
-		);
-		foreach($classes as $class => $msg)
+		foreach($this->get('modules') as $class => $msg)
 		{
 			if(property_exists(__CLASS__, $class))
 			{
 				$name = 'failnet_' . $class;
 				$this->$class = new $name($this);
-				display('=-= Loaded ' . $msg . ' class');
+				display('=-= Loaded ' . $class . ' module');
 			}
 		}
 
