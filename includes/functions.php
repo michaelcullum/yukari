@@ -278,6 +278,8 @@ function parse_hostmask($hostmask, &$nick, &$user, &$host)
 function cake()
 {
 	$cake = array(
+	'                                          ',
+	'                                          ',
 	'              ,:/+/-                      ',
 	'              /M/              .,-=;//;-  ',
 	'         .:/= ;MH/,    ,=/+%$XH@MM#@:     ',
@@ -298,7 +300,8 @@ function cake()
 	'      .=+HM########M+/+HM@+=.             ',
 	'          ,:/%XM####H/.                   ',
 	'               ,.:=-.                     ',
-	
+	'                                          ',
+	'                                          ',
 	);
 	display($cake);
 }
