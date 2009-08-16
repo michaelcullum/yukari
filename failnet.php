@@ -30,8 +30,7 @@
  * along with this program.  If not, see <http://opensource.org/licenses/gpl-2.0.php>.
  */
 
-
-define('IN_FAILNET', true);
+// Define some constants here for use later on
 define('FAILNET_VERSION', '2.0.0');
 define('FAILNET_ROOT', realpath('.') . '/');
 define('FAILNET_DB_ROOT', FAILNET_ROOT . 'data/db/');
@@ -40,7 +39,7 @@ define('FAILNET_DB_ROOT', FAILNET_ROOT . 'data/db/');
 // It also has our autoloader function, so we kinda need that.  ;)
 require FAILNET_ROOT . 'includes/functions.php';
 
-// Check to see if we are even on the minimum PHP version necessary
+// Check to see if we are even on the minimum PHP version necessary.
 if(version_compare('5.2.3', PHP_VERSION, '>'))
 {
 	if(file_exists(FAILNET_ROOT . 'data/restart.inc')) 

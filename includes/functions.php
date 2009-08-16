@@ -47,10 +47,10 @@ function __autoload($name)
 	$name = (substr($name, 0, 8) == 'failnet_') ? substr($name, 8) : $name;
 
 	// Replace any underscores with slashes...
-	$name = str_replace('_', DIRECTORY_SEPARATOR, $name);
+	$name = str_replace('_', '/', $name);
 	
 	// Now, we try to get the file.
-	require FAILNET_ROOT . 'includes' . DIRECTORY_SEPARATOR . $name . '.php';
+	require FAILNET_ROOT . "includes/{$name}.php";
 }
 
 /**
