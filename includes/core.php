@@ -175,7 +175,7 @@ class failnet_core
 			self::HR,
 			'Failnet -- PHP-based IRC Bot version ' . FAILNET_VERSION . ' - $Revision$',
 			'Copyright: (c) 2009 - Obsidian',
-			'License: http://opensource.org/licenses/gpl-2.0.php',
+			'License: GNU General Public License - Version 2',
 			self::HR,
 			'Failnet is starting up. Go get yourself a coffee.',
 		));
