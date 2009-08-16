@@ -47,60 +47,16 @@ class failnet_core
  */
 
 	/**
-	 * Auth handler
-	 * @var failnet_auth object
+	 * Loaded class modules
+	 * @var array
 	 */
-	public $auth;
-
-	/**
-	 * Database object
-	 * @var PDO object
-	 */
-	public $db;
-
-	/**
-	 * Error handler
-	 * @var failnet_error object
-	 */
-	public $error;
-
-	/**
-	 * Factoids engine
-	 * @var failnet_factoids object
-	 */
-	public $factoids;
-
-	/**
-	 * Ignored users handler
-	 * @var failnet_ignore object
-	 */
-	public $ignore;
-
-	/**
-	 * IRC protocol handler
-	 * @var failnet_irc object
-	 */
-	public $irc;
-
-	/**
-	 * Logging handler
-	 * @var failnet_log object
-	 */
-	public $log;
-
-	/**
-	 * Socket connection handler
-	 * @var failnet_socket object
-	 */
-	public $socket;
-
-
+	private $modules = array();
 
 	/**
 	 * Loaded Failnet plugins
 	 * @var array
 	 */
-	public $plugins = array();
+	private $plugins = array();
 
 	/**
 	 * List of loaded plugins
@@ -627,6 +583,55 @@ class failnet_core
 	{
 		$file = FAILNET_ROOT . '/includes/plugin/' . basename($plugin) . '.php';
 		return (file_exists($file) && is_readable($file));
+	}
+
+	/**
+	 * Magic method __get() to use for referencing specific module classes, used to return the property desired
+	 * @param string $name - The name of the module class to use
+	 * @return object - The object we want to use, or void.
+	 */
+	public function __get($name)
+	{
+		if(array_key_exists($name, $this->modules))
+		{
+			return $this->modules[$name];
+		}
+		else
+		{
+			$trace = debug_backtrace();
+			trigger_error('Undefined property via __get(): ' . $name . ' in ' . $trace[0]['file'] .' on line ' . $trace[0]['line'], E_USER_WARNING);
+		}
+	}
+
+	/**
+	 * Magic method __set() to use for referencing specific module classes, used to set a specific property
+	 * @param string $name - The name of the module class to use
+	 * @param mixed $value - What we want to set this to
+	 * @return void
+	 */
+	public function __set($name, $value)
+	{
+		$this->modules[$name] = $value;
+	}
+
+	/**
+	 * Magic method __isset() to use for referencing specific module classes, used to check if a certain property is set 
+	 * @param string $name - The name of the module class to use
+	 * @return boolean - Whether or not the property is set.
+	 */
+	public function __isset($name)
+	{
+		 return isset($this->modules[$name]);
+	}
+
+	/**
+	 * Magic method __isset() to use for referencing specific module classes, used to unset a certain property
+	 * @param string $name - The name of the module class to use
+	 * @return void
+	 */
+	public function __unset($name)
+	{
+		unset($this->modules[$name]);
 	}
 
 	/**
