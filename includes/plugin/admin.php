@@ -131,6 +131,75 @@ class failnet_plugin_admin extends failnet_plugin_common
 				$this->call_quit(true);
 			break;
 
+			// Join a channel!
+			case 'join':
+				// Check auths
+				if ($this->failnet->auth->authlevel($hostmask) < 5)
+				{
+					$this->call_privmsg($this->event->source(), $this->failnet->deny());
+					return;
+				}
+
+				// Make sure we specified at least the channel name to join.
+				if($text !== false)
+				{
+					// Check to see if we're trying to join a channel with a key
+					$param = explode(' ', $text);
+					if(isset($param[1]))
+					{
+						$this->call_join($param[0], $param[1]);
+					}
+					else
+					{
+						$this->call_join($param[0]);
+					}
+				}
+				else
+				{
+					$this->call_privmsg($sender, 'Please specify a channel to join.');
+				}
+			break;
+
+			// Leave a channel.
+			case 'part':
+				// Check auths
+				if ($this->failnet->auth->authlevel($hostmask) < 5)
+				{
+					$this->call_privmsg($this->event->source(), $this->failnet->deny());
+					return;
+				}
+
+				// Check to see if there was a param passed...if so, we check to see if this is from a channel.
+				// If it is, then we part the channel it was said in.
+				if($text === false && $this->event->fromchannel() === true)
+				{
+					// Annouce the channel part if we're allowed to speak.
+					if($this->failnet->get('speak'))
+						$this->call_privmsg($this->event->source(), $this->failnet->get('quit_msg'));
+					$this->call_part($this->event->source(), $this->failnet->get('quit_msg'));
+				}
+				elseif($text !== false && $this->event->fromchannel() === true)
+				{
+					if($this->failnet->is_in($this->failnet->nick, $text))
+					{
+						// Annouce the channel part if we're allowed to speak.
+						if($this->failnet->get('speak'))
+							$this->call_privmsg($text, $this->failnet->get('part_msg'));
+						$this->call_part($text, $this->failnet->get('part_msg'));
+					}
+					else
+					{
+						// I guess we're not in the channel specified.
+						$this->call_privmsg($sender, 'I\'m sorry, but I cannot part a channel I am not in.');
+					}
+				}
+				else
+				{
+					// We sent this via a private message and did not supply the channel to part.  That was smart.
+					$this->call_privmsg($sender, 'Please specify a channel to part from.');
+				}
+			break;
+
 			// Change a config variable...if we DARE
 			case 'set':
 				// Check auths
@@ -235,75 +304,6 @@ class failnet_plugin_admin extends failnet_plugin_common
 				$this->call_privmsg($this->event->source(), 'Memory use is ' . get_formatted_filesize(memory_get_usage()) . ', and memory peak is ' . get_formatted_filesize(memory_get_peak_usage()));
 			break;
 
-			// Join a channel!
-			case 'join':
-				// Check auths
-				if ($this->failnet->auth->authlevel($hostmask) < 5)
-				{
-					$this->call_privmsg($this->event->source(), $this->failnet->deny());
-					return;
-				}
-
-				// Make sure we specified at least the channel name to join.
-				if($text !== false)
-				{
-					// Check to see if we're trying to join a channel with a key
-					$param = explode(' ', $text);
-					if(isset($param[1]))
-					{
-						$this->call_join($param[0], $param[1]);
-					}
-					else
-					{
-						$this->call_join($param[0]);
-					}
-				}
-				else
-				{
-					$this->call_notice($sender, 'Please specify a channel to join.');
-				}
-			break;
-
-			// Leave a channel.
-			case 'part':
-				// Check auths
-				if ($this->failnet->auth->authlevel($hostmask) < 5)
-				{
-					$this->call_privmsg($this->event->source(), $this->failnet->deny());
-					return;
-				}
-
-				// Check to see if there was a param passed...if so, we check to see if this is from a channel.
-				// If it is, then we part the channel it was said in.
-				if($text === false && $this->event->fromchannel() === true)
-				{
-					// Annouce the channel part if we're allowed to speak.
-					if($this->failnet->get('speak'))
-						$this->call_privmsg($this->event->source(), $this->failnet->get('part_msg'));
-					$this->call_part($this->event->source(), $this->failnet->get('quit_msg'));
-				}
-				elseif($text !== false && $this->event->fromchannel() === true)
-				{
-					if($this->failnet->is_in($this->failnet->nick, $text))
-					{
-						// Annouce the channel part if we're allowed to speak.
-						if($this->failnet->get('speak'))
-							$this->call_privmsg($text, $this->failnet->get('part_msg'));
-						$this->call_part($text, $this->failnet->get('part_msg'));
-					}
-					else
-					{
-						// I guess we're not in the channel specified.
-						$this->call_notice($sender, 'I\'m sorry, but I cannot part a channel I am not in.');
-					}
-				}
-				else
-				{
-					// We sent this via a private message and did not supply the channel to part.  That was smart.
-					$this->call_notice($sender, 'Please specify a channel to part from.');
-				}
-			break;
-
 			case 'cake':
 			case 'caek':
 				cake();
@@ -314,7 +314,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 	
 	public function cmd_version()
 	{
-		// Do stuff here.  And also respond to that CTCP version request. :P
+		$this->call_version($this->event->nick, 'Failnet PHP IRC Bot v' . FAILNET_VERSION);
 	}
 }
 
