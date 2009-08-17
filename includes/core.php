@@ -163,7 +163,7 @@ class failnet_core
 		    exit(1);
     	}
 
-		// Check to see if date.timezone is empty in the PHP.ini, if so, set the default timezone to prevent strict errors.
+		// Check to see if date.timezone is empty in the PHP.ini; if so, set the default timezone to prevent strict errors.
 		if (!ini_get('date.timezone'))
 			date_default_timezone_set(@date_default_timezone_get());
 
@@ -219,34 +219,34 @@ class failnet_core
 			
 			// Now, we need to build our default statements.
 			// Config table
-			$this->build_sql('config', 'create', 'INSERT INTO config ( name, value ) VALUES ( :name, :value )');
-			$this->build_sql('config', 'get_all', 'SELECT * FROM config');
-			$this->build_sql('config', 'get', 'SELECT * FROM config WHERE LOWER(name) = LOWER(:name) LIMIT 1');
-			$this->build_sql('config', 'update', 'UPDATE config SET value = :value WHERE LOWER(name) = LOWER(:name)');
-			$this->build_sql('config', 'delete', 'DELETE FROM config WHERE name = :name');
+			$this->sql('config', 'create', 'INSERT INTO config ( name, value ) VALUES ( :name, :value )');
+			$this->sql('config', 'get_all', 'SELECT * FROM config');
+			$this->sql('config', 'get', 'SELECT * FROM config WHERE LOWER(name) = LOWER(:name) LIMIT 1');
+			$this->sql('config', 'update', 'UPDATE config SET value = :value WHERE LOWER(name) = LOWER(:name)');
+			$this->sql('config', 'delete', 'DELETE FROM config WHERE name = :name');
 
 			// Users table
-			$this->build_sql('users', 'create', 'INSERT INTO users ( nick, authlevel, password ) VALUES ( :nick, :authlevel, :hash )');
-			$this->build_sql('users', 'set_pass', 'UPDATE users SET password = :hash WHERE user_id = :user');
-			$this->build_sql('users', 'set_level', 'UPDATE users SET authlevel = :authlevel WHERE user_id = :user');
-			$this->build_sql('users', 'set_confirm', 'UPDATE users SET confirm_key = :key WHERE user_id = :user');
-			$this->build_sql('users', 'get', 'SELECT * FROM users WHERE LOWER(nick) = LOWER(:nick) LIMIT 1');
-			$this->build_sql('users', 'get_level', 'SELECT authlevel FROM users WHERE LOWER(nick) = LOWER(:nick) LIMIT 1');
-			$this->build_sql('users', 'get_confirm', 'SELECT confirm_key FROM users WHERE user_id = :user LIMIT 1');
-			$this->build_sql('users', 'delete', 'DELETE FROM users WHERE user_id = :user');
+			$this->sql('users', 'create', 'INSERT INTO users ( nick, authlevel, password ) VALUES ( :nick, :authlevel, :hash )');
+			$this->sql('users', 'set_pass', 'UPDATE users SET password = :hash WHERE user_id = :user');
+			$this->sql('users', 'set_level', 'UPDATE users SET authlevel = :authlevel WHERE user_id = :user');
+			$this->sql('users', 'set_confirm', 'UPDATE users SET confirm_key = :key WHERE user_id = :user');
+			$this->sql('users', 'get', 'SELECT * FROM users WHERE LOWER(nick) = LOWER(:nick) LIMIT 1');
+			$this->sql('users', 'get_level', 'SELECT authlevel FROM users WHERE LOWER(nick) = LOWER(:nick) LIMIT 1');
+			$this->sql('users', 'get_confirm', 'SELECT confirm_key FROM users WHERE user_id = :user LIMIT 1');
+			$this->sql('users', 'delete', 'DELETE FROM users WHERE user_id = :user');
 
 			// Sessions table
-			$this->build_sql('sessions', 'create', 'INSERT INTO sessions ( key_id, user_id, login_time, hostmask ) VALUES ( :key, :user, :time, :hostmask )');
-			$this->build_sql('sessions', 'delete_key', 'DELETE FROM sessions WHERE key_id = :key');
-			$this->build_sql('sessions', 'delete_user', 'DELETE FROM sessions WHERE user_id = :user');
-			$this->build_sql('sessions', 'delete_old', 'DELETE FROM sessions WHERE login_time < :time');
-			$this->build_sql('sessions', 'delete', 'DELETE FROM sessions WHERE LOWER(hostmask) = LOWER(:hostmask)');
+			$this->sql('sessions', 'create', 'INSERT INTO sessions ( key_id, user_id, login_time, hostmask ) VALUES ( :key, :user, :time, :hostmask )');
+			$this->sql('sessions', 'delete_key', 'DELETE FROM sessions WHERE key_id = :key');
+			$this->sql('sessions', 'delete_user', 'DELETE FROM sessions WHERE user_id = :user');
+			$this->sql('sessions', 'delete_old', 'DELETE FROM sessions WHERE login_time < :time');
+			$this->sql('sessions', 'delete', 'DELETE FROM sessions WHERE LOWER(hostmask) = LOWER(:hostmask)');
 			
 			// Access list table
-			$this->build_sql('access', 'create', 'INSERT INTO access ( user_id, hostmask ) VALUES ( :user, :hostmask )');
-			$this->build_sql('access', 'delete', 'DELETE FROM access WHERE (user_id = :user AND LOWER(hostmask) = LOWER(:hostmask) )');
-			$this->build_sql('access', 'delete_user', 'DELETE FROM access WHERE user_id = :user');
-			$this->build_sql('access', 'get', 'SELECT hostmask FROM access WHERE user_id = :user');
+			$this->sql('access', 'create', 'INSERT INTO access ( user_id, hostmask ) VALUES ( :user, :hostmask )');
+			$this->sql('access', 'delete', 'DELETE FROM access WHERE (user_id = :user AND LOWER(hostmask) = LOWER(:hostmask) )');
+			$this->sql('access', 'delete_user', 'DELETE FROM access WHERE user_id = :user');
+			$this->sql('access', 'get', 'SELECT hostmask FROM access WHERE user_id = :user');
 
 			// Commit the stuffs
 			$this->db->commit();
@@ -306,7 +306,7 @@ class failnet_core
 		// Load plugins
 		display('- Loading Failnet plugins');
 		$plugins = $this->get('plugin_list');
-		$this->load_plugins($plugins);
+		$this->plugin('load', $plugins);
 
 		// Load our config settings
 		display('- Loading config settings');
@@ -501,77 +501,81 @@ class failnet_core
 	}
 
 	/**
-	 * Retrieve a prepared PDO statement for the Failnet core DB tables.
-	 * @param $table - The table that we are pulling the statement from
-	 * @param $type - The type of statement we are pulling
-	 * @return object - An instance of PDO_Statement
+	 * Unified interface for prepared PDO statements
+	 * @param string $table - The table that we are looking at
+	 * @param string $type - The type of statement we are looking at
+	 * @param mixed $statement - The actual PDO statement that is to be prepared (if we are preparing a statement)
+	 * @return mixed - Either an instance of PDO_Statement class (if $statement is false) or void
 	 */
-	public function sql($table, $type)
+	public function sql($table, $type, $statement = false)
 	{
-		return $this->statements[$table][$type];
-	}
-
-	/**
-	 * Builds a prepared PDO Statement and stores it internally. 
-	 * @param $table - The table that we are making the statement for
-	 * @param $type - What is the statement for?
-	 * @param $statement - The actual PDO statement that is to be prepared
-	 * @return void
-	 */
-	public function build_sql($table, $type, $statement)
-	{
-		$this->statements[$table][$type] = $this->db->prepare($statement);
-	}
-
-	/**
-	 * Load a specific plugin
-	 * @param string $plugin - The name of the plugin to load, omitting the failnet_plugin_ class prefix 
-	 * @return boolean - If plugin loading was successful
-	 */
- 	public function load_plugin($plugin)
-	{
-		if(!$this->plugin_loaded($plugin) && $this->plugin_exists($plugin))
+		// Retrieve a prepared PDO statement or create one, depending on the value of $statement
+		if($statement === false)
 		{
-			$this->plugins_loaded[] = $plugin;
-			$plugin = 'failnet_plugin_' . $plugin;
-			$this->plugins[] = new $plugin($this);
-			return true;
+			return $this->statements[$table][$type];
 		}
-		return false; // No double-loading of plugins.
-	}
-
-	/**
-	 * Load an array of plugins
-	 * @param array $plugins - An array of plugin names, omitting the failnet_plugin_ class prefix
-	 * @return void
-	 */
-	public function load_plugins(array $plugins)
-	{
-		foreach ($plugins as $plugin)
+		else
 		{
-			$this->load_plugin($plugin);
+			$this->statements[$table][$type] = $this->db->prepare($statement);
 		}
 	}
 
 	/**
-	 * Checks to see if a plugin has been loaded already
-	 * @param string $plugin - The name of the plugin to check, omitting the failnet_plugin_ class prefix
-	 * @return boolean - Was the plugin already loaded?
+	 * Unified interface for plugins
+	 * @param string $mode - The method mode to use 
+	 * @param string $param - The parameters for the mode, see mode documentation
+	 * @return mixed - See mode documentation
 	 */
-	public function plugin_loaded($plugin)
+	public function plugin($mode, $param)
 	{
-		return in_array($plugin, $this->plugins_loaded);
-	}
+		switch ($mode)
+		{
+			/**
+			 * Plugin load mode
+			 * @param string $param - The name of the plugin to load, omitting the failnet_plugin_ class prefix
+			 * @return boolean - Whether or not the plugin loading was successful
+			 */
+			case 'load':
+				if(is_array($param))
+				{
+					foreach($param as $plugin)
+					{
+						$this->plugin('load', $plugin);
+					}
+				}
+				else
+				{
+					$param = (string) $param;
+					if(!$this->plugin('loaded', $param) && $this->plugin('exists', $param))
+					{
+						$this->plugins_loaded[] = $param;
+						$plugin = 'failnet_plugin_' . $param;
+						$this->plugins[] = new $plugin($this);
+						return true;
+					}
+					return false; // No double-loading of plugins.
+				}
+			break;
 
-	/**
-	 * Checks to see if a plugin exists
-	 * @param string $plugin - The name of the plugin to check, omitting the failnet_plugin_ class prefix
-	 * @return boolean - Does the plugin exist?
-	 */
-	public function plugin_exists($plugin)
-	{
-		$file = FAILNET_ROOT . '/includes/plugin/' . basename($plugin) . '.php';
-		return (file_exists($file) && is_readable($file));
+			/**
+			 * Checks to see if a plugin has been loaded already
+			 * @param string $param - The name of the plugin to check, omitting the failnet_plugin_ class prefix
+			 * @return boolean - Was the plugin already loaded?
+			 */
+			case 'loaded':
+				return in_array((string) $param, $this->plugins_loaded);
+			break;
+
+			/**
+			 * Checks to see if a plugin exists
+			 * @param string $plugin - The name of the plugin to check, omitting the failnet_plugin_ class prefix
+			 * @return boolean - Does the plugin exist?
+			 */
+			case 'exists':
+				$file = FAILNET_ROOT . '/includes/plugin/' . basename((string) $param) . '.php';
+				return (file_exists($file) && is_readable($file));
+			break;
+		}
 	}
 
 	/**

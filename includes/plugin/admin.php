@@ -255,7 +255,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 				}
 
 				// Check to see if we've loaded that plugin already, and if not load it
-				if($this->failnet->load_plugin($text))
+				if($this->failnet->plugin('load', $text))
 				{
 					$this->call_privmsg($sender, 'Plugin loaded successfully.');
 				}
@@ -273,7 +273,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 					return;
 				}
 
-				if($this->failnet->plugin_loaded($text))
+				if($this->failnet->plugin('loaded', $text))
 				{
 					$this->call_privmsg($this->event->source(), 'Plugin is loaded.');
 				}

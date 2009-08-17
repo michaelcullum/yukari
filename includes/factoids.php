@@ -84,24 +84,24 @@ class failnet_factoids extends failnet_common
 			}
 
 			// Factoids table
-			$this->failnet->build_sql('factoids', 'create', 'INSERT INTO factoids ( direct, pattern ) VALUES ( :direct, :pattern )');
-			$this->failnet->build_sql('factoids', 'set_direct', 'UPDATE factoids SET direct = :direct WHERE factoid_id = :id');
-			$this->failnet->build_sql('factoids', 'set_pattern', 'UPDATE factoids SET pattern = :pattern WHERE factoid_id = :id');
-			$this->failnet->build_sql('factoids', 'get', 'SELECT * FROM factoids WHERE factoid_id = :id');
-			$this->failnet->build_sql('factoids', 'get_pattern', 'SELECT * FROM factoids WHERE LOWER(pattern) = LOWER(:pattern)');
-			$this->failnet->build_sql('factoids', 'get_all', 'SELECT * FROM factoids ORDER BY factoid_id DESC');
-			$this->failnet->build_sql('factoids', 'delete', 'DELETE FROM factoids WHERE factoid_id = :id');
+			$this->failnet->sql('factoids', 'create', 'INSERT INTO factoids ( direct, pattern ) VALUES ( :direct, :pattern )');
+			$this->failnet->sql('factoids', 'set_direct', 'UPDATE factoids SET direct = :direct WHERE factoid_id = :id');
+			$this->failnet->sql('factoids', 'set_pattern', 'UPDATE factoids SET pattern = :pattern WHERE factoid_id = :id');
+			$this->failnet->sql('factoids', 'get', 'SELECT * FROM factoids WHERE factoid_id = :id');
+			$this->failnet->sql('factoids', 'get_pattern', 'SELECT * FROM factoids WHERE LOWER(pattern) = LOWER(:pattern)');
+			$this->failnet->sql('factoids', 'get_all', 'SELECT * FROM factoids ORDER BY factoid_id DESC');
+			$this->failnet->sql('factoids', 'delete', 'DELETE FROM factoids WHERE factoid_id = :id');
 
 			// Entries table
-			$this->failnet->build_sql('entries', 'create', 'INSERT INTO entries ( factoid_id, authlevel, selfcheck, function, entry ) VALUES ( :id, :authlevel, :selfcheck, :function, :entry )');
-			$this->failnet->build_sql('entries', 'get', 'SELECT * FROM entries WHERE factoid_id = :id LIMIT 1');
-			$this->failnet->build_sql('entries', 'rand', 'SELECT * FROM entries WHERE factoid_id = :id ORDER BY RANDOM() LIMIT 1');
-			$this->failnet->build_sql('entries', 'set_authlevel', 'UPDATE entries SET authlevel = :authlevel WHERE entry_id = :entry_id');
-			$this->failnet->build_sql('entries', 'set_authlevel', 'UPDATE entries SET selfcheck = :selfcheck WHERE entry_id = :entry_id');
-			$this->failnet->build_sql('entries', 'set_authlevel', 'UPDATE entries SET function = :function WHERE entry_id = :entry_id');
-			$this->failnet->build_sql('entries', 'set_authlevel', 'UPDATE entries SET entry = :entry WHERE entry_id = :entry_id');
-			$this->failnet->build_sql('entries', 'delete', 'DELETE FROM entries WHERE entry_id = :entry_id');
-			$this->failnet->build_sql('entries', 'delete_id', 'DELETE FROM entries WHERE factoid_id = :id');
+			$this->failnet->sql('entries', 'create', 'INSERT INTO entries ( factoid_id, authlevel, selfcheck, function, entry ) VALUES ( :id, :authlevel, :selfcheck, :function, :entry )');
+			$this->failnet->sql('entries', 'get', 'SELECT * FROM entries WHERE factoid_id = :id LIMIT 1');
+			$this->failnet->sql('entries', 'rand', 'SELECT * FROM entries WHERE factoid_id = :id ORDER BY RANDOM() LIMIT 1');
+			$this->failnet->sql('entries', 'set_authlevel', 'UPDATE entries SET authlevel = :authlevel WHERE entry_id = :entry_id');
+			$this->failnet->sql('entries', 'set_authlevel', 'UPDATE entries SET selfcheck = :selfcheck WHERE entry_id = :entry_id');
+			$this->failnet->sql('entries', 'set_authlevel', 'UPDATE entries SET function = :function WHERE entry_id = :entry_id');
+			$this->failnet->sql('entries', 'set_authlevel', 'UPDATE entries SET entry = :entry WHERE entry_id = :entry_id');
+			$this->failnet->sql('entries', 'delete', 'DELETE FROM entries WHERE entry_id = :entry_id');
+			$this->failnet->sql('entries', 'delete_id', 'DELETE FROM entries WHERE factoid_id = :id');
 
 			if(!$table_exists)
 			{

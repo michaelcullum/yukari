@@ -72,10 +72,10 @@ class failnet_ignore extends failnet_common
 			}
 
 			// Ignored hostmasks table
-			$this->failnet->build_sql('ignore', 'create', 'INSERT INTO ignore ( ignore_date, hostmask ) VALUES ( :timestamp, :hostmask )');
-			$this->failnet->build_sql('ignore', 'delete', 'DELETE FROM ignore WHERE LOWER(hostmask) = LOWER(:hostmask)');
-			$this->failnet->build_sql('ignore', 'get_single', 'SELECT * FROM ignore WHERE LOWER(hostmask) = LOWER(:hostmask) LIMIT 1');
-			$this->failnet->build_sql('ignore', 'get', 'SELECT * FROM ignore');
+			$this->failnet->sql('ignore', 'create', 'INSERT INTO ignore ( ignore_date, hostmask ) VALUES ( :timestamp, :hostmask )');
+			$this->failnet->sql('ignore', 'delete', 'DELETE FROM ignore WHERE LOWER(hostmask) = LOWER(:hostmask)');
+			$this->failnet->sql('ignore', 'get_single', 'SELECT * FROM ignore WHERE LOWER(hostmask) = LOWER(:hostmask) LIMIT 1');
+			$this->failnet->sql('ignore', 'get', 'SELECT * FROM ignore');
 
 			$this->failnet->db->commit();
 		}
