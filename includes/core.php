@@ -643,7 +643,7 @@ class failnet_core
 
 		$val = md5($rand_seed . microtime());
 		$rand_seed = md5($rand_seed . $val . $extra);
-	
+
 		if ($dss_seeded !== true && ($last_rand_seed < time() - rand(1,10)))
 		{
 			$this->sql('config', 'update')->execute(array(':name' => 'rand_seed', ':value' => $rand_seed));
@@ -756,7 +756,7 @@ class failnet_core
 			return isset($this->chans[trim(strtolower($chan))][trim(strtolower($nick))]);
 		return false;
 	}
-	
+
 	/**
 	 * Are we directing this at our owner or ourself?
 	 * This is best to avoid humilation if we're using an agressive factoid.  ;)
@@ -795,7 +795,7 @@ class failnet_core
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Undefined function handler
 	 * @param $funct - Function name

@@ -299,6 +299,11 @@ class failnet_plugin_admin extends failnet_plugin_common
 				$this->call_privmsg($this->event->source(), 'Memory use is ' . get_formatted_filesize(memory_get_usage()) . ', and memory peak is ' . get_formatted_filesize(memory_get_peak_usage()));
 			break;
 
+			case 'chans':
+				$chans = implode(', ', array_keys($this->failnet->chans));
+				$this->call_privmsg($this->event->source(), 'Current channels joined are ' . $chans);
+			break;
+
 			case 'cake':
 			case 'caek':
 				cake();
@@ -306,7 +311,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 			break;
 		}
 	}
-	
+
 	public function cmd_version()
 	{
 		$this->call_version($this->event->nick, 'Failnet PHP IRC Bot v' . FAILNET_VERSION);
