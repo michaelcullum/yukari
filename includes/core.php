@@ -765,7 +765,7 @@ class failnet_core
 	 */
 	public function checkuser($user)
 	{
-		return (!preg_match('#' . preg_quote($this->owner, '#') . '#is', $user) && !preg_match('#' . preg_quote($this->nick, '#') . '#is', $user) && !preg_match('#self#i', $user)) ? true : false;
+		return (!preg_match('#' . preg_quote($this->get('owner'), '#') . '#is', $user) && !preg_match('#' . preg_quote($this->get('nick'), '#') . '#is', $user) && !preg_match('#self#i', $user)) ? true : false;
 	}
 
 	/**
