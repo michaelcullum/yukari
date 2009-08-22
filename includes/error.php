@@ -68,6 +68,17 @@ class failnet_error extends failnet_common
 		// Message handler is stripping text. In case we need it, we are possible to define long text...
 		if (isset($msg_long_text) && $msg_long_text && !$msg_text)
 			$msg_text = $msg_long_text;
+		
+		// Strip the current directory from the offending file
+		if (empty($errfile))
+		{
+			$errfile = '';
+		}
+		else
+		{
+			$errfile = str_replace(array(fail_realpath(FAILNET_ROOT), '\\'), array('', '/'), $errfile);
+			$errfile = substr($errfile, 1);
+		}
 
 		switch ($errno)
 		{

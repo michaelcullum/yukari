@@ -32,7 +32,7 @@
 
 // Define some constants here for use later on
 define('FAILNET_VERSION', '2.0.0');
-define('FAILNET_ROOT', realpath('.') . '/');
+define('FAILNET_ROOT', './');
 define('FAILNET_DB_ROOT', FAILNET_ROOT . 'data/db/');
 
 // Include our general functions file now -- We require it as it is always essential.

@@ -77,12 +77,12 @@ function display($msg)
 }
 
 /**
-* Return formatted string for filesizes
-* @param integer $bytes - The number of bytes to convert.
-* @return string - The filesize converted into KiB, MiB, or GiB.
-* 
-* @author (c) 2007 phpBB Group 
-*/
+ * Return formatted string for filesizes
+ * @param integer $bytes - The number of bytes to convert.
+ * @return string - The filesize converted into KiB, MiB, or GiB.
+ * 
+ * @author (c) 2007 phpBB Group 
+ */
 function get_formatted_filesize($bytes)
 {
 	if ($bytes >= pow(2, 30))
@@ -169,12 +169,12 @@ function timespan($time, $last_comma = false)
 /**
  * Benchmark function used to get benchmark times for code.
  * @param string $mode - The mode for the benchmark check
- * @param integer &$start_time - The start time for the benchmarking
+ * @param integer &$start - The start time for the benchmarking
  * @return mixed - void if mode is start or print, integer if mode is return
  * 
  * @author Deadpool
  */
-function benchmark($mode, &$start_time)
+function benchmark($mode, &$start)
 {
 	/**
 	 * Usage:
@@ -188,21 +188,354 @@ function benchmark($mode, &$start_time)
 	 */
 	if ($mode == 'start')
 	{
-		$start_time = explode(' ', microtime());
-		$start_time = $start_time[1] + $start_time[0];
+		$start = explode(' ', microtime());
+		$start = $start[1] + $start[0];
 	}
 	else if ($mode == 'print' || $mode == 'return')
 	{
-		$ftime = explode(' ', microtime());
-		$load_time_str = substr(($ftime[0] + $ftime[1] - $start_time), 0, 9);
+		$micro = explode(' ', microtime());
+		$time = substr(($micro[0] + $micro[1] - $start), 0, 9);
 
 		if ($mode == 'return')
-			return $load_time_str;
+			return $time;
 
 		// Implicit else
-		echo $load_time_str;
+		echo $time;
 	}
 }
+
+/**
+ * Generate a backtrace and return it for use elsewhere. 
+ * @return array - The backtrace results.
+ */
+function dump_backtrace()
+{
+	$output = array();
+	$backtrace = debug_backtrace();
+	$path = fail_realpath(FAILNET_ROOT);
+	foreach ($backtrace as $number => $trace)
+	{
+		// We skip the first one, because it only shows this file/function
+		if ($number == 0)
+		{
+			continue;
+		}
+
+		// Strip the current directory from path
+		if (empty($trace['file']))
+		{
+			$trace['file'] = '';
+		}
+		else
+		{
+			$trace['file'] = str_replace(array($path, '\\'), array('', '/'), $trace['file']);
+			$trace['file'] = substr($trace['file'], 1);
+		}
+		$args = array();
+
+		// If include/require/include_once is not called, do not show arguments - they may contain sensible information
+		if (!in_array($trace['function'], array('include', 'require', 'include_once')))
+		{
+			unset($trace['args']);
+		}
+		else
+		{
+			// Path...
+			if (!empty($trace['args'][0]))
+			{
+				$argument = $trace['args'][0];
+				$argument = str_replace(array($path, '\\'), array('', '/'), $argument);
+				$argument = substr($argument, 1);
+				$args[] = "'{$argument}'";
+			}
+		}
+
+		$trace['class'] = (!isset($trace['class'])) ? '' : $trace['class'];
+		$trace['type'] = (!isset($trace['type'])) ? '' : $trace['type'];
+
+		$output[] = 'FILE: ' . $trace['file'];
+		$output[] = 'LINE: ' . ((!empty($trace['line'])) ? $trace['line'] : '');
+		$output[] = 'CALL: ' . $trace['class'] . $trace['type'] . $trace['function'] . '(' . ((sizeof($args)) ? implode(', ', $args) : '') . ')';
+	}
+	return $output;
+}
+
+/**
+* @author Chris Smith <chris@project-minerva.org>
+* @copyright 2006 Project Minerva Team
+* @param string $path The path which we should attempt to resolve.
+* @return mixed
+*/
+function _realpath($path)
+{
+	// Now to perform funky shizzle
+
+	// Switch to use UNIX slashes
+	$path = str_replace(DIRECTORY_SEPARATOR, '/', $path);
+	$path_prefix = '';
+
+	// Determine what sort of path we have
+	if (is_absolute($path))
+	{
+		$absolute = true;
+
+		if ($path[0] == '/')
+		{
+			// Absolute path, *NIX style
+			$path_prefix = '';
+		}
+		else
+		{
+			// Absolute path, Windows style
+			// Remove the drive letter and colon
+			$path_prefix = $path[0] . ':';
+			$path = substr($path, 2);
+		}
+	}
+	else
+	{
+		// Relative Path
+		// Prepend the current working directory
+		if (function_exists('getcwd'))
+		{
+			// This is the best method, hopefully it is enabled!
+			$path = str_replace(DIRECTORY_SEPARATOR, '/', getcwd()) . '/' . $path;
+			$absolute = true;
+			if (preg_match('#^[a-z]:#i', $path))
+			{
+				$path_prefix = $path[0] . ':';
+				$path = substr($path, 2);
+			}
+			else
+			{
+				$path_prefix = '';
+			}
+		}
+		else if (isset($_SERVER['SCRIPT_FILENAME']) && !empty($_SERVER['SCRIPT_FILENAME']))
+		{
+			// Warning: If chdir() has been used this will lie!
+			// Warning: This has some problems sometime (CLI can create them easily)
+			$path = str_replace(DIRECTORY_SEPARATOR, '/', dirname($_SERVER['SCRIPT_FILENAME'])) . '/' . $path;
+			$absolute = true;
+			$path_prefix = '';
+		}
+		else
+		{
+			// We have no way of getting the absolute path, just run on using relative ones.
+			$absolute = false;
+			$path_prefix = '.';
+		}
+	}
+
+	// Remove any repeated slashes
+	$path = preg_replace('#/{2,}#', '/', $path);
+
+	// Remove the slashes from the start and end of the path
+	$path = trim($path, '/');
+
+	// Break the string into little bits for us to nibble on
+	$bits = explode('/', $path);
+
+	// Remove any . in the path, renumber array for the loop below
+	$bits = array_values(array_diff($bits, array('.')));
+
+	// Lets get looping, run over and resolve any .. (up directory)
+	for ($i = 0, $max = sizeof($bits); $i < $max; $i++)
+	{
+		// @todo Optimise
+		if ($bits[$i] == '..' )
+		{
+			if (isset($bits[$i - 1]))
+			{
+				if ($bits[$i - 1] != '..')
+				{
+					// We found a .. and we are able to traverse upwards, lets do it!
+					unset($bits[$i]);
+					unset($bits[$i - 1]);
+					$i -= 2;
+					$max -= 2;
+					$bits = array_values($bits);
+				}
+			}
+			else if ($absolute) // ie. !isset($bits[$i - 1]) && $absolute
+			{
+				// We have an absolute path trying to descend above the root of the filesystem
+				// ... Error!
+				return false;
+			}
+		}
+	}
+
+	// Prepend the path prefix
+	array_unshift($bits, $path_prefix);
+
+	$resolved = '';
+
+	$max = sizeof($bits) - 1;
+
+	// Check if we are able to resolve symlinks, Windows cannot.
+	$symlink_resolve = (function_exists('readlink')) ? true : false;
+
+	foreach ($bits as $i => $bit)
+	{
+		if (@is_dir("$resolved/$bit") || ($i == $max && @is_file("$resolved/$bit")))
+		{
+			// Path Exists
+			if ($symlink_resolve && is_link("$resolved/$bit") && ($link = readlink("$resolved/$bit")))
+			{
+				// Resolved a symlink.
+				$resolved = $link . (($i == $max) ? '' : '/');
+				continue;
+			}
+		}
+		else
+		{
+			// Something doesn't exist here!
+			// This is correct realpath() behaviour but sadly open_basedir and safe_mode make this problematic
+			// return false;
+		}
+		$resolved .= $bit . (($i == $max) ? '' : '/');
+	}
+
+	// @todo If the file exists fine and open_basedir only has one path we should be able to prepend it
+	// because we must be inside that basedir, the question is where...
+	// @internal The slash in is_dir() gets around an open_basedir restriction
+	if (!@file_exists($resolved) || (!is_dir($resolved . '/') && !is_file($resolved)))
+	{
+		return false;
+	}
+
+	// Put the slashes back to the native operating systems slashes
+	$resolved = str_replace('/', DIRECTORY_SEPARATOR, $resolved);
+
+	// Check for DIRECTORY_SEPARATOR at the end (and remove it!)
+	if (substr($resolved, -1) == DIRECTORY_SEPARATOR)
+	{
+		return substr($resolved, 0, -1);
+	}
+
+	return $resolved; // We got here, in the end!
+}
+
+/**
+ * Realpath function set for generating a clean realpath.
+ * Borrowed from phpBB 3.0.x
+ * 
+ * @author (c) 2007 phpBB Group
+ */
+if (!function_exists('realpath'))
+{
+	/**
+	* A wrapper for realpath
+	* @ignore
+	*/
+	function fail_realpath($path)
+	{
+		return _realpath($path);
+	}
+}
+else
+{
+	/**
+	* A wrapper for realpath
+	*/
+	function fail_realpath($path)
+	{
+		$realpath = realpath($path);
+
+		// Strangely there are provider not disabling realpath but returning strange values. :o
+		// We at least try to cope with them.
+		if ($realpath === $path || $realpath === false)
+		{
+			return _realpath($path);
+		}
+
+		// Check for DIRECTORY_SEPARATOR at the end (and remove it!)
+		if (substr($realpath, -1) == DIRECTORY_SEPARATOR)
+		{
+			$realpath = substr($realpath, 0, -1);
+		}
+
+		return $realpath;
+	}
+}
+
+/**
+ * Retrieve contents from remotely stored file
+ * 
+ * @author (c) 2007 phpBB Group
+ */
+function get_remote_file($host, $directory, $filename, &$errstr, &$errno, $port = 80, $timeout = 10)
+{
+	if ($fsock = @fsockopen($host, $port, $errno, $errstr, $timeout))
+	{
+		@fputs($fsock, "GET $directory/$filename HTTP/1.1\r\n");
+		@fputs($fsock, "HOST: $host\r\n");
+		@fputs($fsock, "Connection: close\r\n\r\n");
+
+		$file_info = '';
+		$get_info = false;
+
+		while (!@feof($fsock))
+		{
+			if ($get_info)
+			{
+				$file_info .= @fread($fsock, 1024);
+			}
+			else
+			{
+				$line = @fgets($fsock, 1024);
+				if ($line == "\r\n")
+				{
+					$get_info = true;
+				}
+				else if (stripos($line, '404 not found') !== false)
+				{
+					$errstr = 'ERROR 404 FILE NOT FOUND: ' . $filename;
+					return false;
+				}
+			}
+		}
+		@fclose($fsock);
+	}
+	else
+	{
+		if ($errstr)
+		{
+			return false;
+		}
+		else
+		{
+			// If fsock is disabled, would we even be able to run Failnet?
+			$errstr = 'fsock() is disabled';
+			return false;
+		}
+	}
+
+	return $file_info;
+}
+
+/**
+ * Checks to see if the installed version is current.
+ * 
+ * @author (c) 2007 phpBB Group
+ */
+function check_version(&$up_to_date, &$latest_version, &$announcement_url)
+{
+	// Check the version, load out remote version check file!
+	$errstr = '';
+	$errno = 0;
+	$info = get_remote_file('my-svn.assembla.com', '/svn/failnet/trunk/develop', 'version.txt', $errstr, $errno);
+	if ($info === false)
+	{
+		trigger_error($errstr, E_USER_WARNING);
+	}
+	$info = explode("\n", $info);
+	$latest_version = trim($info[0]);
+	$announcement_url = htmlspecialchars(trim($info[1]));
+	$up_to_date = (!version_compare(str_replace('rc', 'RC', strtolower(FAILNET_VERSION)), str_replace('rc', 'RC', strtolower($latest_version)), '<'));
+}
+
 
 /**
  * Converts a delimited string of hostmasks into a regular expression that will match any hostmask in the original string.
