@@ -42,6 +42,12 @@
 class failnet_plugin_factoids extends failnet_plugin_common
 {
 	/**
+	 * What channels should we be quiet in?
+	 * @var array
+	 */
+	private $quiet = array();
+	
+	/**
 	 * How many factoids processed?
 	 * @var integer
 	 */
@@ -52,6 +58,64 @@ class failnet_plugin_factoids extends failnet_plugin_common
 	 * @var boolean
 	 */
 	private $return = false;
+	
+	public function cmd_privmsg()
+	{
+		// Process the command
+		$text = $this->event->get_arg('text');
+		$sender = $this->event->nick;
+		$hostmask = $this->event->gethostmask();
+
+		if($this->prefix($text))
+		{
+			$cmd = $this->purify($text);			
+			switch ($cmd)
+			{
+				case 'quiet':
+					// Make sure we are issuing this command in a channel
+					if(!$this->event->fromchannel())
+					{
+						$this->call_privmsg($this->event->source(), 'I\'m sorry, but you must use this command in the channel that you want be to be quiet in.');
+						return;
+					}
+
+					// See if we were already supposed to be quiet
+					if(in_array($this->event->source(), $this->quiet))
+					{
+						$this->call_privmsg($this->event->source(), 'I already was being quiet.');
+						return;
+					}
+
+					$this->quiet[] = $this->event->source();
+					$this->call_privmsg($this->event->source(), 'Okay, I\'ll shut up for now.');
+				break;
+
+				case 'speak':
+					// Make sure we are issuing this command in a channel
+					if(!$this->event->fromchannel())
+					{
+						$this->call_privmsg($this->event->source(), 'I\'m sorry, but you must use this command in the channel that you want be to speak in.');
+						return;
+					}
+
+					// See if we were already supposed to be quiet
+					if(!in_array($this->event->source(), $this->quiet))
+					{
+						$this->call_privmsg($this->event->source(), 'I already was allowed to speak.');
+						return;
+					}
+
+					// @todo Rewrite so this unsets the channel for speaking privs. :)
+					array_drop($this->quiet, $this->event->source());
+					$this->call_privmsg($this->event->source(), 'Okay, I\'ll shut up for now.');
+				break;
+			}
+		}
+		else
+		{
+			// This isn't a command, so I guess we should check the factoids if we aren't supposed to be quiet in this channel.
+		}
+	}
 
 	/**
 	 * Check for matching factoids that apply to what our input is.

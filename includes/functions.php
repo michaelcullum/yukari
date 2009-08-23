@@ -600,6 +600,32 @@ function parse_hostmask($hostmask, &$nick, &$user, &$host)
 }
 
 /**
+ * Based on the function at http://php.net/manual/en/function.array-filter.php#89432 by 
+ * @param array &$input - The array to process
+ * @param mixed $compare - What to compare each array value to, to determine if we should drop the value (uses strict comparison!)
+ * @return array - The vars that match in the compare callback function
+ */
+function array_drop(&$input, $compare)
+{
+	while(($item = array_pop($input)) !== NULL)
+	{
+		if ($item === $compare)
+		{
+			// If this is a match, we put it into the return array so we can return it later.
+        	$return[] = $item;
+		}
+        else
+        {
+        	
+        	// If this is not a match, we stuff it into $clean to put back into $input later.
+			$clean[] = $item;
+        }
+	}
+	$input = $clean;
+	return $return;
+}
+
+/**
  * This function is a lie.
  * @return void
  */
