@@ -600,13 +600,14 @@ function parse_hostmask($hostmask, &$nick, &$user, &$host)
 }
 
 /**
- * Based on the function at http://php.net/manual/en/function.array-filter.php#89432 by 
+ * Based on the function at http://php.net/manual/en/function.array-filter.php#89432 by "Craig", it allows separation of values based on a strict comparison
  * @param array &$input - The array to process
  * @param mixed $compare - What to compare each array value to, to determine if we should drop the value (uses strict comparison!)
- * @return array - The vars that match in the compare callback function
+ * @return array - The vars that match in the strict comparison
  */
 function array_drop(&$input, $compare)
 {
+	// @todo maybe rewrite this to use a comparison function?  It would be a bit more bloat though.
 	while(($item = array_pop($input)) !== NULL)
 	{
 		if ($item === $compare)

@@ -105,7 +105,6 @@ class failnet_plugin_factoids extends failnet_plugin_common
 						return;
 					}
 
-					// @todo Rewrite so this unsets the channel for speaking privs. :)
 					array_drop($this->quiet, $this->event->source());
 					$this->call_privmsg($this->event->source(), 'Okay, I\'ll shut up for now.');
 				break;
