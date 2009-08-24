@@ -58,7 +58,7 @@ class failnet_plugin_factoids extends failnet_plugin_common
 	 * @var boolean
 	 */
 	private $return = false;
-	
+
 	public function cmd_privmsg()
 	{
 		// Process the command
@@ -105,7 +105,9 @@ class failnet_plugin_factoids extends failnet_plugin_common
 						return;
 					}
 
-					array_drop($this->quiet, $this->event->source());
+					// Build a lambda function to kill the quiet channel, then run it through array_split
+					$drop_quiet = create_function('$param', 'return $param === "' . $this->event->source . '"'); 
+					array_split($this->quiet, $drop_quiet);
 					$this->call_privmsg($this->event->source(), 'Okay, I\'ll shut up for now.');
 				break;
 			}
