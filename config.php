@@ -46,8 +46,8 @@ return array(
 	'user'				=> 'Failnet',
 	'name'				=> 'Failnet',
 
-// Class modules to load
-	'modules_list'		=> array(
+// Nodes to load
+	'nodes_list'		=> array(
 		'socket',
 		'irc',
 		'log',
@@ -59,12 +59,11 @@ return array(
 
 // Plugins to automatically load on startup. 
 	'plugin_list'		=> array(
-		'ping',
-		'pong',	
+		'server',
+        'ping',
 		'nickserv',
 		'admin',
 		'authorize',
-		'channels',
 		'ignore',
 		'log',
 		'autojoin',

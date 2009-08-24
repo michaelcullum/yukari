@@ -46,10 +46,10 @@ class failnet_core
  */
 
 	/**
-	 * Loaded class modules
+	 * Loaded class nodes
 	 * @var array
 	 */
-	private $modules = array();
+	private $nodes = array();
 
 	/**
 	 * Loaded Failnet plugins
@@ -264,7 +264,7 @@ class failnet_core
 
 		// Load required classes and systems
 		display('- Loading Failnet required classes');
-		foreach($this->get('modules_list') as $class)
+		foreach($this->get('nodes_list') as $class)
 		{
 			$name = 'failnet_' . $class;
 			$this->$class = new $name($this);
@@ -585,14 +585,14 @@ class failnet_core
 	 */
 	public function __get($name)
 	{
-		if(array_key_exists($name, $this->modules))
+		if(array_key_exists($name, $this->nodes))
 		{
-			return $this->modules[$name];
+			return $this->nodes[$name];
 		}
 		else
 		{
 			$trace = debug_backtrace();
-			trigger_error('Undefined property via __get(): ' . $name . ' in ' . $trace[0]['file'] .' on line ' . $trace[0]['line'], E_USER_WARNING);
+			trigger_error('Undefined property via __get(): ' . $name . ' in ' . $trace[0]['file'] .' on line ' . $trace[0]['line'] . '--', E_USER_WARNING);
 		}
 	}
 
@@ -604,7 +604,7 @@ class failnet_core
 	 */
 	public function __set($name, $value)
 	{
-		$this->modules[$name] = $value;
+		$this->nodes[$name] = $value;
 	}
 
 	/**
@@ -614,7 +614,7 @@ class failnet_core
 	 */
 	public function __isset($name)
 	{
-		 return isset($this->modules[$name]);
+		 return isset($this->nodes[$name]);
 	}
 
 	/**
@@ -624,7 +624,7 @@ class failnet_core
 	 */
 	public function __unset($name)
 	{
-		unset($this->modules[$name]);
+		unset($this->nodes[$name]);
 	}
 
 	/**
