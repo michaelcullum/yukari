@@ -56,7 +56,7 @@ function __autoload($name)
 /**
  * Echos a message, and cleans out any extra NL's after the message.
  * 		Also will echo an array of messages properly as well.
- * @param mixed $msg - The message or messages we want to echo to the terminal. 
+ * @param mixed $msg - The message or array of messages we want to echo to the terminal. 
  * @return void
  */
 function display($msg)

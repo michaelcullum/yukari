@@ -58,6 +58,7 @@ class failnet_event_request implements ArrayAccess
 	const TYPE_QUIT = 'quit';
 	const TYPE_JOIN = 'join';
 	const TYPE_KICK = 'kick';
+	const TYPE_INVITE = 'invite';
 	const TYPE_PART = 'part';
 	const TYPE_MODE = 'mode';
 	const TYPE_TOPIC = 'topic';
@@ -93,6 +94,11 @@ class failnet_event_request implements ArrayAccess
 			'channel' => 0,
 			'user'    => 1,
 			'comment' => 2
+		),
+
+		self::TYPE_INVITE => array(
+			'nickname' => 0,
+			'user' => 1,
 		),
 
 		self::TYPE_PART => array(

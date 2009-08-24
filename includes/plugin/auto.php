@@ -7,7 +7,7 @@
  *-------------------------------------------------------------------
  *	Script info:
  * Version:		2.0.0
- * SVN ID:		$Id$
+ * SVN ID:		$Id: autojoin.php 251 2009-08-16 13:35:24Z Obsidian $
  * Copyright:	(c) 2009 - Failnet Project
  * License:		GNU General Public License - Version 2
  *
@@ -31,15 +31,15 @@
  
 
 /**
- * Failnet - Autojoin plugin,
- * 		Upon end of MOTD, attempts to automatically join all channels listed in the config. 
+ * Failnet - Automatic action plugin,
+ * 		Performs autojoin on end-of-MOTD, autorejoin on kick, and join on invite capabilities. 
  * 
  * 
  * @author Obsidian
  * @copyright (c) 2009 - Obsidian
  * @license http://opensource.org/licenses/gpl-2.0.php | GNU Public License v2
  */
-class failnet_plugin_autojoin extends failnet_plugin_common
+class failnet_plugin_auto extends failnet_plugin_common
 {
 	public function cmd_response()
 	{
@@ -55,6 +55,34 @@ class failnet_plugin_autojoin extends failnet_plugin_common
 						$this->call_join($channel);
 					}
 				}
+		}
+	}
+
+	public function cmd_kick()
+	{
+		// Make sure it was Failnet that was kicked.
+		if($this->event->get_arg('user') == $this->failnet->get('nick'))
+		{
+			// Are we supposed to automatically rejoin on kick?
+			if(!$this->failnet->get('autorejoin'))
+				return;
+
+			// Guess we are.  Let's setup for that.
+			$this->call_join(trim(strtolower($this->event->get_arg('channel'))));
+		}
+	}
+
+	public function cmd_invite()
+	{
+		// Check to see if it was us that is being invited to the channel.
+		if($this->event->get_arg('user') == $this->failnet->get('nick'))
+		{
+			// Are we supposed to automatically join on invite?
+			if(!$this->failnet->get('join_on_invite'))
+				return;
+
+			// Guess we are.  Let's do that then.
+			$this->call_join(trim(strtolower($this->event->get_arg('channel'))));
 		}
 	}
 }
