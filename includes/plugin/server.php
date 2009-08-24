@@ -7,7 +7,7 @@
  *-------------------------------------------------------------------
  *	Script info:
  * Version:		2.0.0
- * SVN ID:		$Id: channels.php 251 2009-08-16 13:35:24Z Obsidian $
+ * SVN ID:		$Id$
  * Copyright:	(c) 2009 - Failnet Project
  * License:		GNU General Public License - Version 2
  *
