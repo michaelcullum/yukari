@@ -62,11 +62,11 @@ return array(
 		'server',
         'ping',
 		'nickserv',
+		'auto',
 		'admin',
 		'authorize',
 		'ignore',
 		'log',
-		'autojoin',
 		//'factoids',
 	),
 

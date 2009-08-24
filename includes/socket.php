@@ -126,7 +126,8 @@ class failnet_socket extends failnet_common
 
 		// Parse the event arguments depending on the event type
 		$cmd = strtolower($cmd);
-		switch ($cmd) {
+		switch ($cmd)
+		{
 			case 'names':
 			case 'nick':
 			case 'quit':

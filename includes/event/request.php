@@ -97,8 +97,8 @@ class failnet_event_request implements ArrayAccess
 		),
 
 		self::TYPE_INVITE => array(
-			'nickname' => 0,
-			'user' => 1,
+			'user' => 0,
+			'channel' => 1,
 		),
 
 		self::TYPE_PART => array(
