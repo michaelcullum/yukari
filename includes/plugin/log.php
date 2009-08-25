@@ -58,6 +58,12 @@ class failnet_plugin_log extends failnet_plugin_common
 		display(date('h:i') . ' ' . $this->event->nick . ' has kicked user ' . $this->event->get_arg('user') . ' from ' . $this->event->get_arg('channel') . (($this->event->get_arg('comment')) ? ' : ' . '[' . $this->event->get_arg('comment') . ']' : ''));
 		$this->failnet->log->add(date('D m/d/Y - h:i:s A') . ' - === ' . $this->event->nick . ' has kicked user ' . $this->event->get_arg('user') . ' from ' . $this->event->get_arg('channel') . (($this->event->get_arg('comment')) ? ' : ' . '[' . $this->event->get_arg('comment') . ']' : ''));
 	}
+
+	public function cmd_invite()
+	{
+		display(date('h:i') . ' ' . $this->event->nick . ' has extended an invitation to  ' . $this->event->get_arg('channel'));
+		$this->failnet->log->add(date('D m/d/Y - h:i:s A') . ' - === ' . $this->event->nick . ' has extended an invitation to ' . $this->event->get_arg('channel'));
+	}
 	
 	public function cmd_quit()
 	{
@@ -73,7 +79,7 @@ class failnet_plugin_log extends failnet_plugin_common
 	
 	public function cmd_mode()
 	{
-		$this->failnet->log->add(date('D m/d/Y - h:i:s A') . ' - === ' . $this->event->nick . ' has set mode ' . $this->event->get_arg('mode') . ' on ' . $this->event->get_arg('target'));
+		$this->failnet->log->add(date('D m/d/Y - h:i:s A') . ' - === ' . $this->event->nick . ' has set mode ' . $this->event->get_arg('mode') . ' in ' . $this->event->get_arg('target') . ' on ' . $this->event->get_arg('user'));
 	}
 	
 	public function cmd_notice()
@@ -96,7 +102,75 @@ class failnet_plugin_log extends failnet_plugin_common
 	
 	public function post_dispatch(array $events)
 	{
-		// @todo In here, record what WE did.
+		foreach($events as $event)
+		{
+			// First we figure out what we are going to say...
+			$display = false;
+			switch($event->type)
+			{
+				case 'join':
+					// Already handled elsewhere.
+				break;
+
+				case 'part':
+					// Already handled elsewhere.
+				break;
+
+				case 'kick':
+					$display = 'add';
+					$message = date('h:i') . ' ' . $this->failnet->get('nick') . ' has kicked user ' . $event->get_arg('user') . ' from ' . $event->get_arg('channel') . (($event->get_arg('comment')) ? ' : ' . '[' . $event->get_arg('comment') . ']' : '');
+					$log = date('D m/d/Y - h:i:s A') . ' - === ' . $this->failnet->get('nick') . ' has kicked user ' . $event->get_arg('user') . ' from ' . $event->get_arg('channel') . (($event->get_arg('comment')) ? ' : ' . '[' . $event->get_arg('comment') . ']' : '');
+				break;
+
+				case 'invite':
+					$display = 'add';
+					$message = date('h:i') . ' ' . $this->failnet->get('nick') . ' has extended an invitation to ' . $event->get_arg('user') . ' for ' . $event->get_arg('channel');
+				break;
+
+				case 'quit':
+					$display = 'add';
+					$message = date('h:i') . ' ' . $this->failnet->get('nick') . ' has quit' . (($event->get_arg('message')) ? ' : ' . $event->get_arg('message') : '');
+					$log = date('D m/d/Y - h:i:s A') . ' - === ' . $this->failnet->get('nick') . ' has quit' . (($event->get_arg('message')) ? ' : ' . $event->get_arg('message') : '');
+				break;
+
+				case 'topic':
+					$display = 'add';
+					$message = date('h:i') . ' ' . $this->failnet->get('nick') . ' has changed the topic in ' . $event->get_arg('channel') . ' to ' . $event->get_arg('topic');
+					$log = date('D m/d/Y - h:i:s A') . ' - === ' . $this->failnet->get('nick') . ' has changed the topic in ' . $event->get_arg('channel') . ' to ' . $event->get_arg('topic');
+				break;
+
+				// @todo finish this shiz.
+				case '':
+					
+				break;
+
+				case '':
+					
+				break;
+
+				case '':
+					
+				break;
+
+				case '':
+					
+				break;
+			}
+
+			// ...Then we display stuffs and log it all.
+			if($display !== false)
+			{
+				display($message);
+				if($display = 'log')
+				{
+					$this->failnet->log->log();
+				}
+				elseif($display = 'add')
+				{
+					$this->failnet->log->add($log);
+				}
+			}
+		}
 	}
 }
 
