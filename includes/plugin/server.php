@@ -97,7 +97,7 @@ class failnet_plugin_server extends failnet_plugin_common
 					}
 
 					$chan = trim(strtolower($chan));
-					$nick = trim(strtolower($user));
+					$user = trim(strtolower($user));
 
 					$this->failnet->chans[$chan][$user] = $flag;
 				}
@@ -194,6 +194,8 @@ class failnet_plugin_server extends failnet_plugin_common
 			}
 		}
 	}
+
+	
 	
 	public function cmd_kick()
 	{
