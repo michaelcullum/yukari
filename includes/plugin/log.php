@@ -176,11 +176,11 @@ class failnet_plugin_log extends failnet_plugin_common
 				display($message);
 				if($display = 'log')
 				{
-					$this->failnet->log->log($log);
+					$this->failnet->log->log($log, $nick, $dest);
 				}
 				elseif($display = 'add')
 				{
-					$this->failnet->log->add($log, $nick, $dest);
+					$this->failnet->log->add($log);
 				}
 			}
 		}
