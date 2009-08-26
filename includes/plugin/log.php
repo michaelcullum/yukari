@@ -79,6 +79,7 @@ class failnet_plugin_log extends failnet_plugin_common
 	
 	public function cmd_mode()
 	{
+		display(date('h:i') . ' ' . $this->event->nick . ' has set mode ' . $this->event->get_arg('mode') . ' in ' . $this->event->get_arg('target') . ' on ' . $this->event->get_arg('user'));
 		$this->failnet->log->add(date('D m/d/Y - h:i:s A') . ' - === ' . $this->event->nick . ' has set mode ' . $this->event->get_arg('mode') . ' in ' . $this->event->get_arg('target') . ' on ' . $this->event->get_arg('user'));
 	}
 	
@@ -90,7 +91,7 @@ class failnet_plugin_log extends failnet_plugin_common
 	
 	public function cmd_privmsg()
 	{
-		display(date('h:i') . ' <' . $this->event->nick . (($this->event->fromchannel()) ? '/' . $this->event->arguments[0] : '') . '> ' . $this->event->get_arg('text'));
+		display(date('h:i') . ' <' . $this->event->nick . (($this->event->fromchannel()) ? '/' . $event->get_arg('reciever') : '') . '> ' . $this->event->get_arg('text'));
 		$this->failnet->log->log($this->event->get_arg('text'), $this->event->nick, $this->event->get_arg('reciever'));
 	}
 	
@@ -140,20 +141,32 @@ class failnet_plugin_log extends failnet_plugin_common
 				break;
 
 				// @todo finish this shiz.
-				case '':
-					
+				case 'mode':
+					$display = 'add';
+					$message = date('h:i') . ' ' . $this->failnet->get('nick') . ' has set mode ' . $event->get_arg('mode') . ' in ' . $event->get_arg('target') . ' on ' . $event->get_arg('user');
+					$log = date('D m/d/Y - h:i:s A') . ' - === ' . $this->failnet->get('nick') . ' has set mode ' . $event->get_arg('mode') . ' in ' . $event->get_arg('target') . ' on ' . $event->get_arg('user');
+				break;
+
+				case 'notice':
+					$display = 'add';
+					$message = date('h:i') . ' [Notice] ' . $this->failnet->get('nick') . ': ' . $this->event->get_arg('text');
+					$log = date('D m/d/Y - h:i:s A') . ' - === Notice from ' . $this->failnet->get('nick') . ' : ' . $this->event->get_arg('text');
+				break;
+
+				case 'privmsg':
+					$display = 'log';
+					$message = date('h:i') . ' <' . $this->failnet->get('nick') . (($event->fromchannel()) ? '/' . $event->get_arg('reciever') : '') . '> ' . $event->get_arg('text');
+					$log = $event->get_arg('text');
+					$nick = $this->failnet->get('nick');
+					$dest = $event->get_arg('reciever');
 				break;
 
 				case '':
-					
-				break;
-
-				case '':
-					
-				break;
-
-				case '':
-					
+					$display = 'log';
+					$message = date('h:i') . (($event->fromchannel()) ? '[' . $event->get_arg('target') . ']' : '') . ' *** ' . $$this->failnet->get('nick') . ' ' . $this->event->get_arg('action');
+					$log = $event->get_arg('action');
+					$nick = $this->failnet->get('nick');
+					$dest = $event->get_arg('target');
 				break;
 			}
 
@@ -163,11 +176,11 @@ class failnet_plugin_log extends failnet_plugin_common
 				display($message);
 				if($display = 'log')
 				{
-					$this->failnet->log->log();
+					$this->failnet->log->log($log);
 				}
 				elseif($display = 'add')
 				{
-					$this->failnet->log->add($log);
+					$this->failnet->log->add($log, $nick, $dest);
 				}
 			}
 		}
