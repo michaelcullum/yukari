@@ -106,9 +106,8 @@ class failnet_factoids extends failnet_common
 			if(!$table_exists)
 			{
 				// Let's toss in a default entry
-				$this->failnet->sql('factoids', 'create')->execute(array(':direct' => 1, ':pattern' => '^intro$'));
-				$this->failnet->sql('factoids', 'get_pattern')->execute(array(':pattern' => '^intro$'));
-				$result = $this->failnet->sql('factoids', 'get_pattern')->fetch(PDO::FETCH_ASSOC);
+				$id = $this->add_factoid('^intro$', 1);
+				// @todo replace this with a call to the entry addition method
 				$this->failnet->sql('entries', 'create')->execute(array(':id' => $result['factoid_id'], ':authlevel' => 0, ':selfcheck' => 0, ':function' => 0, ':entry' => 'Failnet 2.  Smarter, faster, and with a sexier voice than ever before.'));
 			}
 
@@ -140,10 +139,25 @@ class failnet_factoids extends failnet_common
 		$this->factoids = $this->failnet->sql('factoids', 'get_all')->fetchAll();
 	}
 
-	// @todo add factoid method
-	public function add_factoid()
+	/**
+	 * Create a new factoid (but does not add the initial entry!)
+	 * @param string $pattern - The PCRE pattern for the factoid
+	 * @param boolean $direct - Should this only be triggered if Failnet is the targeted recipient?
+	 * @return mixed - Integer with the factoid's ID if successful, false if creation failed
+	 */
+	public function add_factoid($pattern, $direct)
 	{
-		
+		$this->failnet->sql('factoids', 'create')->execute(array(':pattern' => $pattern, ':direct' => $direct));
+
+		// Grab the ID for this factoid
+		$this->failnet->sql('factoids', 'get_pattern')->execute(array(':pattern' => $pattern));
+		$result = $this->failnet->sql('factoids', 'get_pattern')->fetch(PDO::FETCH_ASSOC);
+
+		// Do we have anything with that pattern?  If not, something went boom.
+		if(!$result)
+			return false;
+
+		return (int) $result['factoids_id'];
 	}
 
 	/**

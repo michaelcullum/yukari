@@ -140,7 +140,6 @@ class failnet_plugin_log extends failnet_plugin_common
 					$log = date('D m/d/Y - h:i:s A') . ' - === ' . $this->failnet->get('nick') . ' has changed the topic in ' . $event->get_arg('channel') . ' to ' . $event->get_arg('topic');
 				break;
 
-				// @todo finish this shiz.
 				case 'mode':
 					$display = 'add';
 					$message = date('h:i') . ' ' . $this->failnet->get('nick') . ' has set mode ' . $event->get_arg('mode') . ' in ' . $event->get_arg('target') . ' on ' . $event->get_arg('user');
