@@ -91,13 +91,13 @@ class failnet_plugin_log extends failnet_plugin_common
 	
 	public function cmd_privmsg()
 	{
-		display(date('h:i') . ' <' . $this->event->nick . (($this->event->fromchannel()) ? '/' . $this->event->get_arg('reciever') : '') . '> ' . $this->event->get_arg('text'));
-		$this->failnet->log->log($this->event->get_arg('text'), $this->event->nick, $this->event->get_arg('reciever'));
+		display(date('h:i') . ' <' . $this->event->nick . (($this->event->fromchannel()) ? '/' . $this->event->get_arg('receiver') : '') . '> ' . $this->event->get_arg('text'));
+		$this->failnet->log->log($this->event->get_arg('text'), $this->event->nick, $this->event->get_arg('receiver'));
 	}
 	
 	public function cmd_action()
 	{
-		display(date('h:i') . (($this->event->fromchannel()) ? '[' . $this->event->get_arg('reciever') . ']' : '') . ' *** ' . $this->event->nick . ' ' . $this->event->get_arg('action'));
+		display(date('h:i') . (($this->event->fromchannel()) ? '[' . $this->event->get_arg('receiver') . ']' : '') . ' *** ' . $this->event->nick . ' ' . $this->event->get_arg('action'));
 		$this->failnet->log->log($this->event->get_arg('action'), $this->event->nick, $this->event->get_arg('target'));
 	}
 	
@@ -155,10 +155,10 @@ class failnet_plugin_log extends failnet_plugin_common
 
 				case 'privmsg':
 					$display = 'log';
-					$message = date('h:i') . ' <' . $this->failnet->get('nick') . (($event->fromchannel()) ? '/' . $event->get_arg('reciever') : '') . '> ' . $event->get_arg('text');
+					$message = date('h:i') . ' <' . $this->failnet->get('nick') . (($event->fromchannel()) ? '/' . $event->get_arg('receiver') : '') . '> ' . $event->get_arg('text');
 					$log = $event->get_arg('text');
 					$nick = $this->failnet->get('nick');
-					$dest = $event->get_arg('reciever');
+					$dest = $event->get_arg('receiver');
 				break;
 
 				case '':
