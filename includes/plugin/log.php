@@ -79,8 +79,8 @@ class failnet_plugin_log extends failnet_plugin_common
 	
 	public function cmd_mode()
 	{
-		display(date('h:i') . ' ' . $this->event->nick . ' has set mode ' . $this->event->get_arg('mode') . ' in ' . $this->event->get_arg('target') . ' on ' . $this->event->get_arg('user'));
-		$this->failnet->log->add(date('D m/d/Y - h:i:s A') . ' - === ' . $this->event->nick . ' has set mode ' . $this->event->get_arg('mode') . ' in ' . $this->event->get_arg('target') . ' on ' . $this->event->get_arg('user'));
+		display(date('h:i') . ' ' . $this->event->nick . ' has set mode ' . $this->event->get_arg('mode') . ' ' . $this->event->get_arg('target') . ' ' . $this->event->get_arg('limit') . ' ' . $this->event->get_arg('user') . ' ' . $this->event->get_arg('banmask'));
+		$this->failnet->log->add(date('D m/d/Y - h:i:s A') . ' - === ' . $this->event->nick . ' has set mode ' . $this->event->get_arg('mode') . ' ' . $this->event->get_arg('target') . ' ' . $this->event->get_arg('limit') . ' ' . $this->event->get_arg('user') . ' ' . $this->event->get_arg('banmask'));
 	}
 	
 	public function cmd_notice()
@@ -91,7 +91,7 @@ class failnet_plugin_log extends failnet_plugin_common
 	
 	public function cmd_privmsg()
 	{
-		display(date('h:i') . ' <' . $this->event->nick . (($this->event->fromchannel()) ? '/' . $event->get_arg('reciever') : '') . '> ' . $this->event->get_arg('text'));
+		display(date('h:i') . ' <' . $this->event->nick . (($this->event->fromchannel()) ? '/' . $this->event->get_arg('reciever') : '') . '> ' . $this->event->get_arg('text'));
 		$this->failnet->log->log($this->event->get_arg('text'), $this->event->nick, $this->event->get_arg('reciever'));
 	}
 	
@@ -144,7 +144,7 @@ class failnet_plugin_log extends failnet_plugin_common
 				case 'mode':
 					$display = 'add';
 					$message = date('h:i') . ' ' . $this->failnet->get('nick') . ' has set mode ' . $event->get_arg('mode') . ' in ' . $event->get_arg('target') . ' on ' . $event->get_arg('user');
-					$log = date('D m/d/Y - h:i:s A') . ' - === ' . $this->failnet->get('nick') . ' has set mode ' . $event->get_arg('mode') . ' in ' . $event->get_arg('target') . ' on ' . $event->get_arg('user');
+					$log = date('D m/d/Y - h:i:s A') . ' - === ' . $this->failnet->get('nick') . ' has set mode ' . $event->get_arg('mode') . ' ' . $event->get_arg('target') . ' ' . $event->get_arg('limit') . ' ' . $event->get_arg('user') . ' ' . $event->get_arg('banmask');
 				break;
 
 				case 'notice':
