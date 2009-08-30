@@ -35,10 +35,11 @@
  * Failnet - IRC class,
  * 		Used as Failnet's IRC command class, for issuing IRC commands correctly as per RFC guidelines.
  * 
- * 
+ *
+ * @package connection
  * @author Obsidian
- * @copyright (c) 2009 - Obsidian
- * @license http://opensource.org/licenses/gpl-2.0.php | GNU Public License v2
+ * @copyright (c) 2009 - Failnet Project
+ * @license GNU General Public License - Version 2
  */
 class failnet_irc extends failnet_common
 {

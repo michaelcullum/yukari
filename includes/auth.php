@@ -34,10 +34,11 @@
  * Failnet - User authorization handling class,
  * 		Used as Failnet's authorization handler. 
  * 
- * 
+ *
+ * @package auth
  * @author Obsidian
- * @copyright (c) 2009 - Obsidian
- * @license http://opensource.org/licenses/gpl-2.0.php | GNU Public License v2
+ * @copyright (c) 2009 - Failnet Project
+ * @license GNU General Public License - Version 2
  */
 class failnet_auth extends failnet_common
 {

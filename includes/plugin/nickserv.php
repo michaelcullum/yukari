@@ -34,10 +34,11 @@
  * Failnet - Nickserv automatic identification plugin,
  * 		If enabled in the config, on end of MOTD we send an identify message to the nickname services bot to identify. 
  * 
- * 
+ *
+ * @package plugins
  * @author Obsidian
- * @copyright (c) 2009 - Obsidian
- * @license http://opensource.org/licenses/gpl-2.0.php | GNU Public License v2
+ * @copyright (c) 2009 - Failnet Project
+ * @license GNU General Public License - Version 2
  */
 class failnet_plugin_nickserv extends failnet_plugin_common
 {

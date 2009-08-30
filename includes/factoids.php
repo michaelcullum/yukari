@@ -36,10 +36,11 @@
  * Failnet - Factoid handling class,
  * 		Used as Failnet's factoid handler. 
  * 
- * 
+ *
+ * @package factoids
  * @author Obsidian
- * @copyright (c) 2009 - Obsidian
- * @license http://opensource.org/licenses/gpl-2.0.php | GNU Public License v2
+ * @copyright (c) 2009 - Failnet Project
+ * @license GNU General Public License - Version 2
  */
 class failnet_factoids extends failnet_common
 {
@@ -177,6 +178,24 @@ class failnet_factoids extends failnet_common
 		// Let's delete stuff now
 		$this->failnet->sql('factoids', 'delete')->execute(array(':id' => $result['factoid_id']));
 		$this->failnet->sql('entries', 'delete_id')->execute(array(':pattern' => $pattern));
+		return true;
+	}
+
+	/**
+	 * Creates a new entry for a specified factoid
+	 * @param integer $factoid_id - The factoid ID that this should be set for
+	 * @param string $entry - The entry that we want to put in
+	 * @param integer $authlevel - The authlevel it takes to use this entry
+	 * @param boolean $selfcheck - Do we check if this includes our name or our owner's name?
+	 * @param boolean $function - Do we run this through eval() or not?
+	 * @return boolean - True on success
+	 */
+	public function add_entry($factoid_id, $entry, $authlevel, $selfcheck = false, $function = false)
+	{
+		$selfcheck = ((bool) $selfcheck === true) ? 1 : 0;
+		$function = ((bool) $function === true) ? 1 : 0;
+		$this->failnet->sql('entries', 'create')->execute(array(':id' => (int) $factoid_id, ':authlevel' => (int) $authlevel, ':selfcheck' => $selfcheck, ':function' => $function, ':entry' => trim($entry)));
+
 		return true;
 	}
 }

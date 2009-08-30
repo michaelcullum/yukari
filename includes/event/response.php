@@ -34,10 +34,11 @@
 /**
  * Failnet - IRC response event handling class
  * 
- * 
+ *
+ * @package connection
  * @author Obsidian
- * @copyright (c) 2009 - Obsidian
- * @license http://opensource.org/licenses/gpl-2.0.php | GNU Public License v2
+ * @copyright (c) 2009 - Failnet Project
+ * @license GNU General Public License - Version 2
  * 
  * @see http://www.irchelp.org/irchelp/rfc/chapter6.html
  */

@@ -34,10 +34,11 @@
  * Failnet - Core class,
  * 		Failnet 2.0 in a nutshell.  Faster, smarter, better, and with a sexier voice. 
  * 
- * 
+ *
+ * @package core
  * @author Obsidian
- * @copyright (c) 2009 - Obsidian
- * @license http://opensource.org/licenses/gpl-2.0.php | GNU Public License v2
+ * @copyright (c) 2009 - Failnet Project
+ * @license GNU General Public License - Version 2
  */
 class failnet_core
 {

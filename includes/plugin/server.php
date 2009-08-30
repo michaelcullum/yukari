@@ -34,10 +34,11 @@
  * Failnet - Server communication plugin,
  * 		Used to track what channels Failnet is in, the users inhabiting them, along with various other default server interactions.
  * 
- * 
+ *
+ * @package plugins
  * @author Obsidian
- * @copyright (c) 2009 - Obsidian
- * @license http://opensource.org/licenses/gpl-2.0.php | GNU Public License v2
+ * @copyright (c) 2009 - Failnet Project
+ * @license GNU General Public License - Version 2
  */
 class failnet_plugin_server extends failnet_plugin_common
 {

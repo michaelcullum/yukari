@@ -34,10 +34,11 @@
  * Failnet - Plugin command handler class,
  * 		Used to handle commands originating with Failnet's plugins 
  * 
- * 
+ *
+ * @package connection
  * @author Obsidian
- * @copyright (c) 2009 - Obsidian
- * @license http://opensource.org/licenses/gpl-2.0.php | GNU Public License v2
+ * @copyright (c) 2009 - Failnet Project
+ * @license GNU General Public License - Version 2
  */
 class failnet_event_command extends failnet_event_request
 {

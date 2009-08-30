@@ -34,10 +34,11 @@
  * Failnet - Automatic action plugin,
  * 		Performs autojoin on end-of-MOTD, autorejoin on kick, and join on invite capabilities. 
  * 
- * 
+ *
+ * @package plugins
  * @author Obsidian
- * @copyright (c) 2009 - Obsidian
- * @license http://opensource.org/licenses/gpl-2.0.php | GNU Public License v2
+ * @copyright (c) 2009 - Failnet Project
+ * @license GNU General Public License - Version 2
  */
 class failnet_plugin_auto extends failnet_plugin_common
 {
