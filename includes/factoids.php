@@ -58,7 +58,6 @@ class failnet_factoids extends failnet_common
  * Methods
  */
 
-// @todo Add entry method
 // @todo Remove entry method
 // @todo Change factoid method
 // @todo Change factoid settings method
@@ -108,8 +107,7 @@ class failnet_factoids extends failnet_common
 			{
 				// Let's toss in a default entry
 				$id = $this->add_factoid('^intro$', 1);
-				// @todo replace this with a call to the entry addition method
-				$this->failnet->sql('entries', 'create')->execute(array(':id' => $result['factoid_id'], ':authlevel' => 0, ':selfcheck' => 0, ':function' => 0, ':entry' => 'Failnet 2.  Smarter, faster, and with a sexier voice than ever before.'));
+				$this->add_entry($id, 'Failnet 2.0 -- Smarter, faster, and with a sexier voice than ever before.', 0, false, false);
 			}
 
 			$this->failnet->db->commit();
