@@ -93,15 +93,16 @@ class failnet_factoids extends failnet_common
 			$this->failnet->sql('factoids', 'delete', 'DELETE FROM factoids WHERE factoid_id = :id');
 
 			// Entries table
-			$this->failnet->sql('entries', 'create', 'INSERT INTO entries ( factoid_id, authlevel, selfcheck, function, entry ) VALUES ( :id, :authlevel, :selfcheck, :function, :entry )');
-			$this->failnet->sql('entries', 'get', 'SELECT * FROM entries WHERE factoid_id = :id LIMIT 1');
+			$this->failnet->sql('entries', 'create', 'INSERT INTO entries ( factoid_id, authlevel, selfcheck, is_function, entry ) VALUES ( :id, :authlevel, :selfcheck, :function, :entry )');
+			$this->failnet->sql('entries', 'get', 'SELECT * FROM entries WHERE factoid_id = :id');
+			$this->failnet->sql('entries', 'get_entry', 'SELECT * FROM entries WHERE entry_id = :id AND LIMIT 1');
 			$this->failnet->sql('entries', 'rand', 'SELECT * FROM entries WHERE factoid_id = :id ORDER BY RANDOM() LIMIT 1');
 			$this->failnet->sql('entries', 'set_authlevel', 'UPDATE entries SET authlevel = :authlevel WHERE entry_id = :entry_id');
 			$this->failnet->sql('entries', 'set_selfcheck', 'UPDATE entries SET selfcheck = :selfcheck WHERE entry_id = :entry_id');
-			$this->failnet->sql('entries', 'set_function', 'UPDATE entries SET function = :function WHERE entry_id = :entry_id');
+			$this->failnet->sql('entries', 'set_function', 'UPDATE entries SET is_function = :function WHERE entry_id = :entry_id');
 			$this->failnet->sql('entries', 'set_entry', 'UPDATE entries SET entry = :entry WHERE entry_id = :entry_id');
 			$this->failnet->sql('entries', 'delete', 'DELETE FROM entries WHERE entry_id = :entry_id');
-			$this->failnet->sql('entries', 'delete_id', 'DELETE FROM entries WHERE factoid_id = :id');
+			$this->failnet->sql('entries', 'delete_factoid_id', 'DELETE FROM entries WHERE factoid_id = :id');
 
 			if(!$table_exists)
 			{
@@ -175,7 +176,7 @@ class failnet_factoids extends failnet_common
 
 		// Let's delete stuff now, including any entries we had there
 		$this->failnet->sql('factoids', 'delete')->execute(array(':id' => $result['factoid_id']));
-		$this->failnet->sql('entries', 'delete_id')->execute(array(':pattern' => $pattern));
+		$this->failnet->sql('entries', 'delete_factoid_id')->execute(array(':pattern' => $pattern));
 		return true;
 	}
 
@@ -234,9 +235,22 @@ class failnet_factoids extends failnet_common
 		return true;
 	}
 
-	public function delete_entry()
+	/**
+	 * Deletes an entry for a factoid in the database
+	 * @param integer $entry_id - The ID of the entry that we want to delete
+	 * @return mixed - NULL if no such factoid entry, true if deletion successful.
+	 */
+	public function delete_entry($entry_id)
 	{
-		
+		$this->failnet->sql('entries', 'get_entry')->execute(array(':id' => $entry_id));
+		$result = $this->failnet->sql('entries', 'get_entry')->fetch(PDO::FETCH_ASSOC);
+
+		// Do we have anything with that ID?
+		if(!$result)
+			return NULL;
+
+		// Let's delete some shiz.
+		$this->failnet->sql('entries', 'delete')->execute(array(':id' => $entry_id));
 	}
 
 	public function edit_entry()
