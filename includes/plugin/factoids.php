@@ -127,10 +127,10 @@ class failnet_plugin_factoids extends failnet_plugin_common
 	 */
 	public function check($message, $sender = '[unknown]')
 	{
-		// @todo Rewrite for new factoid engine
-		// @todo Rewrite with proper plugin calls 
+		// Prep some vars
 		$this->done = 0;
 		$this->return = false;
+		
 		$message = str_replace('#', '\#', rtrim($message));
 		if (preg_match('#^' . $this->failnet->get('nick') . '#i', $message))
 		{
@@ -162,6 +162,9 @@ class failnet_plugin_factoids extends failnet_plugin_common
 		foreach($facts as $i => $fact)
 		{
 			$fact['pattern'] = str_replace($search, $replace, $fact['pattern']);
+
+			if($this->return = true)
+				return;
 
 			if(preg_match('#' . $fact['pattern'] . '#is', $tocheck, $matches))
 			{
