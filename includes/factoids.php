@@ -251,7 +251,8 @@ class failnet_factoids extends failnet_common
 	/**
 	 * Alters an entry for a factoid in the manner specified
 	 * @param integer $entry_id - The ID of the entry that we want to change
-	 * @param string $mode - How we will be editing the entry, reference individual mode's documentation for further details
+	 * @param string $mode - How we will be editing the entry
+	 * @param mixed value - What are we us as the new value for this entry? (reference individual mode's documentation for further details)
 	 * @return mixed - NULL if no such factoid entry, true if alteration successful.
 	 */
 	public function edit_entry($entry_id, $mode, $value)
