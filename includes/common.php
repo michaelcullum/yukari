@@ -55,9 +55,9 @@ abstract class failnet_common
 	const ERROR_LOG = 'error';
 	const USER_LOG = 'user';
 	
-	public function __construct(failnet_core &$failnet)
+	public function __construct(failnet_core $failnet)
 	{
-		$this->failnet = &$failnet;
+		$this->failnet = $failnet;
 		$this->init();
 	}
 

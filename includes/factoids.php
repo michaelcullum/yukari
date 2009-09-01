@@ -15,8 +15,6 @@
  * 
  */
 
-// @todo failnet_factoids::no_factoid() method, for saying something when there's no factoid available for that.
-
 /**
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,10 +47,22 @@ class failnet_factoids extends failnet_common
  */
 
 	/**
-	 * List of factoid patterns loaded for speed
+	 * List of factoid patterns, preloaded for speed
 	 * @var array
 	 */
-	public $factoids = array();
+	public $index = array();
+
+	/**
+	 * List of factoid patterns for indirect communication (Failnet not being addressed specifically), preloaded for speed
+	 * @var array
+	 */
+	public $indirect = array();
+
+	/**
+	 * List of factoid patterns for direct communication, preloaded for speed
+	 * @var array
+	 */
+	public $direct = array();
 
 /**
  * Methods
@@ -84,7 +94,8 @@ class failnet_factoids extends failnet_common
 			$this->failnet->sql('factoids', 'set_pattern', 'UPDATE factoids SET pattern = :pattern WHERE factoid_id = :id');
 			$this->failnet->sql('factoids', 'get', 'SELECT * FROM factoids WHERE factoid_id = :id');
 			$this->failnet->sql('factoids', 'get_pattern', 'SELECT * FROM factoids WHERE LOWER(pattern) = LOWER(:pattern)');
-			$this->failnet->sql('factoids', 'get_all', 'SELECT * FROM factoids ORDER BY factoid_id DESC');
+			$this->failnet->sql('factoids', 'get_direct', 'SELECT * FROM factoids WHERE direct = 1 ORDER BY factoid_id DESC');
+			$this->failnet->sql('factoids', 'get_indirect', 'SELECT * FROM factoids WHERE direct = 0 ORDER BY factoid_id DESC');
 			$this->failnet->sql('factoids', 'delete', 'DELETE FROM factoids WHERE factoid_id = :id');
 
 			// Entries table
@@ -130,8 +141,13 @@ class failnet_factoids extends failnet_common
 	private function load()
 	{
 		display('=== Loading Failnet factoids index...');
-		$this->failnet->sql('factoids', 'get_all')->execute();
-		$this->factoids = $this->failnet->sql('factoids', 'get_all')->fetchAll();
+		$this->failnet->sql('factoids', 'get_direct')->execute();
+		$this->direct = $this->failnet->sql('factoids', 'get_direct')->fetchAll();
+		$this->failnet->sql('factoids', 'get_indirect')->execute();
+		$this->indirect = $this->failnet->sql('factoids', 'get_indirect')->fetchAll();
+
+		// Now, as we use indirect factoids with direct ones, we do a merge here for the general index.
+		$this->index = array_merge($this->direct, $this->indirect);
 	}
 
 	/**

@@ -58,7 +58,7 @@ abstract class failnet_plugin_common
 	
 	public function __construct(failnet_core $failnet)
 	{
-		$this->failnet = &$failnet;
+		$this->failnet = $failnet;
 		$this->init();
 	}
 	

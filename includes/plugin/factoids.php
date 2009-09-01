@@ -125,61 +125,70 @@ class failnet_plugin_factoids extends failnet_plugin_common
 	 * @param string $sender - Who sent the message we are checking.
 	 * @return void
 	 */
-	public function check($tocheck, $sender = '[unknown]')
+	public function check($message, $sender = '[unknown]')
 	{
 		// @todo Rewrite for new factoid engine
 		// @todo Rewrite with proper plugin calls 
 		$this->done = 0;
 		$this->return = false;
-		$tocheck = str_replace('#', '\#', rtrim($tocheck));
-		if (preg_match('#^' . $this->failnet->nick . '#i', $tocheck))
+		$message = str_replace('#', '\#', rtrim($message));
+		if (preg_match('#^' . $this->failnet->get('nick') . '#i', $message))
 		{
-			$forme = true;
-			$command = false;
-			$tocheck = preg_replace('#^' . $this->failnet->get('nick') . '(|:|,) #is', '', $tocheck);
+			$direct = true;
+			$message = preg_replace('#^' . $this->failnet->get('nick') . '(|:|,) #is', '', $message);
 		}
 		else
 		{
-			$forme = false;
-			$command = (preg_match('#^\|#', $tocheck)) ? true : false;
+			$direct = false;
 		}
-		
+
 		// Which factoid set will we use?
-		if ($forme)
+		if($direct)
 		{
-			$facts = array_merge($this->factoids, $this->my_factoids);
-		}
-		elseif ($command)
-		{
-			$facts = array_merge($this->factoids, $this->commands);
+			$facts = &$this->failnet->factoids->index;
 		}
 		else
 		{
-			$facts = $this->factoids;
+			$facts = &$this->failnet->factoids->indirect;
 		}
-		
+
 		// Prep the search/replace stuffs.
 		$search = array('_nick_', '_owner_');
 		$replace = array($this->failnet->get('nick'), $this->failnet->get('owner'));
 		if ($sender != '[unknown]')
 			$search[] = '_sender_'; $replace[] = $sender;
-		
+
 		// Scan for matching factoids!
 		foreach($facts as $i => $fact)
-		//for ($i = 0; $i < sizeof($facts); $i++)
 		{
 			$fact['pattern'] = str_replace($search, $replace, $fact['pattern']);
-			   
-			if ($fact['function'] == true)
+
+			if(preg_match('#' . $fact['pattern'] . '#is', $tocheck, $matches))
+			{
+				// Uhm...do stuff....yeah.
+			}
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+
+			if ($fact['function'] == 1)
 			{
 				if (preg_match('#' . $fact['pattern'] . '#is', $tocheck, $matches))
 				{
-					/* WTH is this?
-					for ($j = 0; $j < sizeof($fact['factoids']); $j++)
-					{
-						$fact['factoids'][$j] = preg_replace('#\["#', '\"', $fact['factoids'][$j]);
-					}
-					*/
 					if (sizeof($fact['factoids']) > 1)
 					{
 						$usefact = $fact['factoids'][rand(0, sizeof($fact['factoids']) - 1)];
