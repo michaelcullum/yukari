@@ -58,11 +58,6 @@ class failnet_factoids extends failnet_common
  * Methods
  */
 
-// @todo Remove entry method
-// @todo Change factoid method
-// @todo Change factoid settings method
-// @todo Change entry settings method
-
 	/**
 	 * Failnet class initiator
 	 * @see includes/failnet_common#init()
@@ -253,14 +248,62 @@ class failnet_factoids extends failnet_common
 		$this->failnet->sql('entries', 'delete')->execute(array(':id' => $entry_id));
 	}
 
-	public function edit_entry()
+	/**
+	 * Alters an entry for a factoid in the manner specified
+	 * @param integer $entry_id - The ID of the entry that we want to change
+	 * @param string $mode - How we will be editing the entry, reference individual mode's documentation for further details
+	 * @return mixed - NULL if no such factoid entry, true if alteration successful.
+	 */
+	public function edit_entry($entry_id, $mode, $value)
 	{
-		
-	}
+		$this->failnet->sql('entries', 'get_entry')->execute(array(':id' => $entry_id));
+		$result = $this->failnet->sql('entries', 'get_entry')->fetch(PDO::FETCH_ASSOC);
 
-	public function set_entry()
-	{
+		// Do we have anything with that ID?
+		if(!$result)
+			return NULL;
 		
+		// Let's figure out what we want to do now
+		switch(trim(strtolower($mode)))
+		{
+			/**
+			 * @param integer $value - The new authlevel to use
+			 */
+			case 'authlevel':
+				$this->failnet->sql('entries', 'set_authlevel')->execute(array(':authlevel' => (int) $value, ':id' => $entry_id));
+			break;
+
+			/**
+			 * @param boolean $value - Should we check to see if it is ourselves or our owner that is the target
+			 */
+			case 'selfcheck':
+				$value = ((bool) $value === true) ? 1 : 0;
+				$this->failnet->sql('entries', 'set_selfcheck')->execute(array(':selfcheck' => (int) $value, ':id' => $entry_id));
+			break;
+
+			/**
+			 * @param boolean $value - Should we execute the entry as direct PHP code?
+			 */
+			case 'function':
+				$value = ((bool) $value === true) ? 1 : 0;
+				$this->failnet->sql('entries', 'set_function')->execute(array(':function' => (int) $value, ':id' => $entry_id));
+			break;
+
+			/**
+			 * @param string $value - The new entry to have in the specified entry.
+			 */
+			case 'entry':
+				$this->failnet->sql('entries', 'set_entry')->execute(array(':entry' => (int) $value, ':id' => $entry_id));
+			break;
+
+			/**
+			 * Fail, NULL mode.
+			 */
+			default:
+				trigger_error('Invalid mode specified for class method failnet_factoids::edit_entry()', E_USER_ERROR);
+			break;
+		}
+		return true;
 	}
 }
 
