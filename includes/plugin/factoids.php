@@ -165,9 +165,28 @@ class failnet_plugin_factoids extends failnet_plugin_common
 
 			if(preg_match('#' . $fact['pattern'] . '#is', $tocheck, $matches))
 			{
+				// Okay, we have a match.  Let's go through and find an entry for that factoid, then.
+				$this->failnet->sql('entries', 'rand')->execute(array(':id' => $fact['factoid_id']));
+				$result = $this->failnet->sql('entries', 'rand')->fetch(PDO::FETCH_ASSOC);
+				
+				// Now, check to see if this should be run through eval, selfcheck, authlevel, etc.
+				// Are we authed for this entry?
+				if($result['authlevel'] < $this->failnet->auth->authlevel($this->event->gethostmask()));
+				{
+					$this->call_privmsg($this->event->nick, $this->failnet->deny());
+					$this->done();
+					continue;
+				}
+				
+				if($result['selfcheck'] == true && $this->failnet->checkuser($message))
+				{
+					$this->call_privmsg($this->event->source(), $this->failnet->deny());
+					$this->done();
+					continue;
+				}
 				// Uhm...do stuff....yeah.
 			}
-			
+
 			
 			
 			

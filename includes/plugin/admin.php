@@ -171,17 +171,17 @@ class failnet_plugin_admin extends failnet_plugin_common
 				{
 					// Annouce the channel part if we're allowed to speak.
 					if($this->failnet->get('speak'))
-						$this->call_privmsg($this->event->source(), $this->failnet->get('quit_msg'));
+						$this->call_privmsg($this->event->source(), $this->failnet->get('part_msg'));
 					$this->call_part($this->event->source(), $this->failnet->get('quit_msg'));
 				}
-				elseif($text !== false && $this->event->fromchannel() === true)
+				elseif($text !== false)
 				{
 					if($this->failnet->is_in($this->failnet->nick, $text))
 					{
 						// Annouce the channel part if we're allowed to speak.
 						if($this->failnet->get('speak'))
 							$this->call_privmsg($text, $this->failnet->get('part_msg'));
-						$this->call_part($text, $this->failnet->get('part_msg'));
+						$this->call_part($text, $this->failnet->get('quit_msg'));
 					}
 					else
 					{

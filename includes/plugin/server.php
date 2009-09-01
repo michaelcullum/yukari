@@ -288,11 +288,17 @@ class failnet_plugin_server extends failnet_plugin_common
 			return;
 
 		$cmd = $this->purify($text);
+
+		// Make sure this is one of the 'is' commands, otherwise we run into a bug.
+		if(!in_array($cmd, array('isfounder', 'isadmin', 'isop', 'ishalfop', 'isvoice', 'isin')))
+			return;
+		
 		$sender = $this->event->nick;
 		$hostmask = $this->event->gethostmask();
 		
 		// Make sure we're asking this in channel, or that we have additional params for the channel.
 		$param = explode(' ', $text);
+
 		if(!$this->event->fromchannel() && !isset($param[1]))
 		{
 			$this->call_notice($sender, 'Please specify the channel name to check within.');
