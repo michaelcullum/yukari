@@ -306,6 +306,39 @@ class failnet_factoids extends failnet_common
 		}
 		return true;
 	}
+
+	/**
+	 * Deny function...
+	 * @return string - The deny message to use. :3
+	 */
+	public function no_factoid()
+	{
+		$rand = rand(0, 9);
+		switch ($rand)
+		{
+			case 0:
+			case 1:
+				return 'uhhh...';
+			break;
+			case 2:
+			case 3:
+				return '[A dustbunny rolls a cactus by in the background]';
+			break;
+			case 4:
+			case 5:
+				return 'What did I do this time?';
+				break;
+			case 6:
+				return 'Don\'t shoot! \o/';
+			case 7:
+			case 8:
+				return 'And...you are who exactly?';
+			break;
+			case 9:
+				return 'Bork bork bork.';
+			break;
+		}
+	}
 }
 
 ?>
