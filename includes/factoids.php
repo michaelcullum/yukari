@@ -97,9 +97,9 @@ class failnet_factoids extends failnet_common
 			$this->failnet->sql('entries', 'get', 'SELECT * FROM entries WHERE factoid_id = :id LIMIT 1');
 			$this->failnet->sql('entries', 'rand', 'SELECT * FROM entries WHERE factoid_id = :id ORDER BY RANDOM() LIMIT 1');
 			$this->failnet->sql('entries', 'set_authlevel', 'UPDATE entries SET authlevel = :authlevel WHERE entry_id = :entry_id');
-			$this->failnet->sql('entries', 'set_authlevel', 'UPDATE entries SET selfcheck = :selfcheck WHERE entry_id = :entry_id');
-			$this->failnet->sql('entries', 'set_authlevel', 'UPDATE entries SET function = :function WHERE entry_id = :entry_id');
-			$this->failnet->sql('entries', 'set_authlevel', 'UPDATE entries SET entry = :entry WHERE entry_id = :entry_id');
+			$this->failnet->sql('entries', 'set_selfcheck', 'UPDATE entries SET selfcheck = :selfcheck WHERE entry_id = :entry_id');
+			$this->failnet->sql('entries', 'set_function', 'UPDATE entries SET function = :function WHERE entry_id = :entry_id');
+			$this->failnet->sql('entries', 'set_entry', 'UPDATE entries SET entry = :entry WHERE entry_id = :entry_id');
 			$this->failnet->sql('entries', 'delete', 'DELETE FROM entries WHERE entry_id = :entry_id');
 			$this->failnet->sql('entries', 'delete_id', 'DELETE FROM entries WHERE factoid_id = :id');
 
@@ -173,10 +173,48 @@ class failnet_factoids extends failnet_common
 		if(!$result)
 			return NULL;
 
-		// Let's delete stuff now
+		// Let's delete stuff now, including any entries we had there
 		$this->failnet->sql('factoids', 'delete')->execute(array(':id' => $result['factoid_id']));
 		$this->failnet->sql('entries', 'delete_id')->execute(array(':pattern' => $pattern));
 		return true;
+	}
+
+	/**
+	 * Change a factoid's pattern
+	 * @param string $pattern - Pattern for the factoid that we want to change the pattern for
+	 * @param string $new_pattern - The new pattern we want to use
+	 * @return mixed - NULL if no such factoid, true if change successful.
+	 */
+	public function edit_factoid($pattern, $new_pattern)
+	{
+		$this->failnet->sql('factoids', 'get_pattern')->execute(array(':pattern' => $pattern));
+		$result = $this->failnet->sql('factoids', 'get_pattern')->fetch(PDO::FETCH_ASSOC);
+
+		// Do we have anything with that pattern?
+		if(!$result)
+			return NULL;
+
+		// Time to change that pattern
+		$this->failnet->sql('factoids', 'set_pattern')->execute(array(':pattern' => $new_pattern, ':id' => $result['factoid_id']));
+		return true;
+	}
+
+	/**
+	 * Changes whether or not a factoid will only trigger if Failnet specifically is addressed
+	 * @param string $pattern - Pattern for the factoid that we want to change the direct setting for
+	 * @param boolean $direct - Should the factoid only trigger if Failnet is specifically addressed?
+	 * @return mixed - NULL if no such factoid, true if change successful.
+	 */
+	public function set_direct($pattern, $direct)
+	{
+		$this->failnet->sql('factoids', 'get_pattern')->execute(array(':pattern' => $pattern));
+		$result = $this->failnet->sql('factoids', 'get_pattern')->fetch(PDO::FETCH_ASSOC);
+
+		// Do we have anything with that pattern?
+		if(!$result)
+			return NULL;
+
+		$this->failnet->sql('factoids', 'set_direct')->execute(array(':direct' => (bool) $direct, ':id' => $result['factoid_id']));
 	}
 
 	/**
@@ -193,8 +231,22 @@ class failnet_factoids extends failnet_common
 		$selfcheck = ((bool) $selfcheck === true) ? 1 : 0;
 		$function = ((bool) $function === true) ? 1 : 0;
 		$this->failnet->sql('entries', 'create')->execute(array(':id' => (int) $factoid_id, ':authlevel' => (int) $authlevel, ':selfcheck' => $selfcheck, ':function' => $function, ':entry' => trim($entry)));
-
 		return true;
+	}
+
+	public function delete_entry()
+	{
+		
+	}
+
+	public function edit_entry()
+	{
+		
+	}
+
+	public function set_entry()
+	{
+		
 	}
 }
 
