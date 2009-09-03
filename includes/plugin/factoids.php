@@ -153,10 +153,10 @@ class failnet_plugin_factoids extends failnet_plugin_common
 		}
 
 		// Prep the search/replace stuffs.
-		$search = array('_nick_', '_owner_');
+		$search = array('$nick', '$owner');
 		$replace = array($this->failnet->get('nick'), $this->failnet->get('owner'));
 		if ($sender != '[unknown]')
-			$search[] = '_sender_'; $replace[] = $sender;
+			$search[] = '$sender'; $replace[] = $sender;
 
 		// Scan for matching factoids!
 		foreach($facts as $i => $fact)
@@ -168,11 +168,10 @@ class failnet_plugin_factoids extends failnet_plugin_common
 
 			if(preg_match('#' . $fact['pattern'] . '#is', $tocheck, $matches))
 			{
-				// Okay, we have a match.  Let's go through and find an entry for that factoid, then.
+				// Okay, we have a match.  Let's go through and find a random entry for that factoid, then.
 				$this->failnet->sql('entries', 'rand')->execute(array(':id' => $fact['factoid_id']));
 				$result = $this->failnet->sql('entries', 'rand')->fetch(PDO::FETCH_ASSOC);
-				
-				// Now, check to see if this should be run through eval, selfcheck, authlevel, etc.
+
 				// Are we authed for this entry?
 				if($result['authlevel'] < $this->failnet->auth->authlevel($this->event->gethostmask()));
 				{
@@ -180,91 +179,56 @@ class failnet_plugin_factoids extends failnet_plugin_common
 					$this->done();
 					continue;
 				}
-				
+
+				// Make sure we aren't looking down the barrel here.
 				if($result['selfcheck'] == true && $this->failnet->checkuser($message))
 				{
 					$this->call_privmsg($this->event->source(), $this->failnet->deny());
 					$this->done();
 					continue;
 				}
-				// Uhm...do stuff....yeah.
-			}
 
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-
-			if ($fact['function'] == 1)
-			{
-				if (preg_match('#' . $fact['pattern'] . '#is', $tocheck, $matches))
+				// Shall we eval()?
+				if($result['function'] == true)
 				{
-					if (sizeof($fact['factoids']) > 1)
+					eval($result['entry']);
+				}
+				else
+				{
+					// We need to be able to use vars within the entry, so we'll have to do a find/replace to drop them in
+					$fact['entry'] = str_replace($search, $replace, $fact['entry']);
+
+					// Check to see what is up with this entry.
+					if(preg_match("#^<(.*)>#", trim($result['entry']), $type))
 					{
-						$usefact = $fact['factoids'][rand(0, sizeof($fact['factoids']) - 1)];
-						if (strpos($usefact, '_skip_') !== false)
+						if($type[1] == '<reply>')
 						{
-							eval($usefact);
-							$this->done();
+							// This is the same as if the PCRE failed to validate...
+							$this->call_privmsg($this->event->source(), $result['event']);
+						}
+						elseif($type[1] == '<action>')
+						{
+							// This, I should guess, is most DEFINITELY an action.  :D
+							$this->call_action($this->event->source(), $result['event']);
+						}
+						else
+						{
+							// OOoooh. I guess we do some special action thar.  :o
+							$this->call_action($this->event->source(), $type[1] . ' ' . $result['event']);
 						}
 					}
 					else
 					{
-						eval($fact['factoids'][0]);
-						$this->done();
+						// Basic message, meh.
+						$this->call_privmsg($this->event->source(), $result['event']);
 					}
 				}
+				// Throw the done trigger.
+				$this->done();
 			}
-			else
-			{
-				if (preg_match('#' . $fact['pattern'] . '#is', $tocheck))
-				{
-					if (sizeof($fact['factoids']) > 1)
-					{
-						$usefact = $fact['factoids'][rand(0, sizeof($fact['factoids']) - 1)];
-						if (strpos($usefact, '_action_') === 0)
-						{
-							$this->failnet->irc->action(preg_replace('#' . $fact['pattern'] . '#is', preg_replace('/^#_action\_#i', '', $usefact), $tocheck));
-							$this->done();
-						}
-						elseif (strpos($usefact, '_skip_') === false)
-						{
-							$this->failnet->irc->privmsg(preg_replace('#' . $fact['pattern'] . '#is', $usefact, $tocheck));
-							$this->done();
-						}
-					}
-					else
-					{
-						if (strpos($fact['factoids'][0], '_action_') === 0)
-						{
-							$this->failnet->irc->action(preg_replace('#' . $fact['pattern'] . '#is', preg_replace('#^\_action\_#i', '', $fact['factoids'][0]), $tocheck));
-							$this->done();
-						}
-						elseif (strpos($fact['factoids'][0], '_skip_') === false)
-						{
-							$this->failnet->irc->privmsg(preg_replace('#' . $fact['pattern'] . '#is', $fact['factoids'][0], $tocheck));
-							$this->done();
-						}
-					}
-				}
-			}
-			if($this->return = true)
-				return;
 		}
-		if ($forme && $this->done == 0)
-			return $this->failnet->no_factoid();
+		if ($direct && $this->done == 0)
+			return $this->failnet->factoids->no_factoid();
 	}
 	
 	/**

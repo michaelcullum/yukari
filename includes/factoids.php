@@ -338,14 +338,14 @@ class failnet_factoids extends failnet_common
 			break;
 			case 2:
 			case 3:
-				return '[A dustbunny rolls a cactus by in the background]';
+				return '[A tumbleweed rolls a cactus by in the background]';
 			break;
 			case 4:
 			case 5:
 				return 'What did I do this time?';
 				break;
 			case 6:
-				return 'Don\'t shoot! \o/';
+				return '\_(O_o)_/';
 			case 7:
 			case 8:
 				return 'And...you are who exactly?';
