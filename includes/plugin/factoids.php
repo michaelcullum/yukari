@@ -115,13 +115,17 @@ class failnet_plugin_factoids extends failnet_plugin_common
 		}
 		else
 		{
+			if($this->event->fromchannel() && !in_array($this->event->source(), $this->quiet))
+			{
+				$this->check($text, $this->event->nick);
+			}
 			// This isn't a command, so I guess we should check the factoids if we aren't supposed to be quiet in this channel.
 		}
 	}
 
 	/**
 	 * Check for matching factoids that apply to what our input is.
-	 * @param string $tocheck - The message to check for factoid matching.
+	 * @param string $message - The message to check for factoid matching.
 	 * @param string $sender - Who sent the message we are checking.
 	 * @return void
 	 */
@@ -130,12 +134,13 @@ class failnet_plugin_factoids extends failnet_plugin_common
 		// Prep some vars
 		$this->done = 0;
 		$this->return = false;
-		
+
+		// WTF is this here for? o.O
 		$message = str_replace('#', '\#', rtrim($message));
-		if (preg_match('#^' . $this->failnet->get('nick') . '#i', $message))
+		if (preg_match('#^' . $this->failnet->get('nick') . '#is', $message))
 		{
 			$direct = true;
-			$message = preg_replace('#^' . $this->failnet->get('nick') . '(|:|,) #is', '', $message);
+			$message = preg_replace('#^' . $this->failnet->get('nick') . '(|:|,|.) #is', '', $message);
 		}
 		else
 		{
@@ -166,7 +171,7 @@ class failnet_plugin_factoids extends failnet_plugin_common
 			if($this->return = true)
 				return;
 
-			if(preg_match('#' . $fact['pattern'] . '#is', $tocheck, $matches))
+			if(preg_match('#' . $fact['pattern'] . '#is', $message, $matches))
 			{
 				// Okay, we have a match.  Let's go through and find a random entry for that factoid, then.
 				$this->failnet->sql('entries', 'rand')->execute(array(':id' => $fact['factoid_id']));
@@ -175,7 +180,7 @@ class failnet_plugin_factoids extends failnet_plugin_common
 				// Are we authed for this entry?
 				if($result['authlevel'] < $this->failnet->auth->authlevel($this->event->gethostmask()));
 				{
-					$this->call_privmsg($this->event->nick, $this->failnet->deny());
+					$this->call_privmsg($this->event->source(), $this->failnet->deny());
 					$this->done();
 					continue;
 				}
@@ -199,7 +204,7 @@ class failnet_plugin_factoids extends failnet_plugin_common
 					$fact['entry'] = str_replace($search, $replace, $fact['entry']);
 
 					// Check to see what is up with this entry.
-					if(preg_match("#^<(.*)>#", trim($result['entry']), $type))
+					if(preg_match("#^<(.*)>#i", trim($result['entry']), $type))
 					{
 						if($type[1] == '<reply>')
 						{
@@ -228,7 +233,7 @@ class failnet_plugin_factoids extends failnet_plugin_common
 			}
 		}
 		if ($direct && $this->done == 0)
-			return $this->failnet->factoids->no_factoid();
+			$this->call_privmsg($this->event->source(), $this->failnet->factoids->no_factoid());
 	}
 	
 	/**
