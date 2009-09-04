@@ -149,20 +149,20 @@ function timespan($time, $last_comma = false)
 		$time %= 60;
 	}
 
-	$uptime = (sizeof($return) ? implode(', ', $return) : '');
+	$bigtime = (sizeof($return) ? implode(', ', $return) : '');
 
 	if(!$last_comma)
 	{
 		if ($time > 0 || count($return) <= 0)
-			$uptime .= (sizeof($return) ? ' and ' : '') . ($time > 0 ? $time : '0') . (($time == 1) ? ' second' : ' seconds');
+			$bigtime .= (sizeof($return) ? ' and ' : '') . ($time > 0 ? $time : '0') . (($time == 1) ? ' second' : ' seconds');
 	}
 	else
 	{
 		if ($time > 0 || count($return) <= 0)
-			$uptime .= (sizeof($return) ? ((sizeof($return) > 1) ? ',' : '') . ' and ' : '') . ($time > 0 ? $time : '0') . (($time == 1) ? ' second' : ' seconds');
+			$bigtime .= (sizeof($return) ? ((sizeof($return) > 1) ? ',' : '') . ' and ' : '') . ($time > 0 ? $time : '0') . (($time == 1) ? ' second' : ' seconds');
 	}
 
-	return $uptime;
+	return $bigtime;
 }
 
 /**
