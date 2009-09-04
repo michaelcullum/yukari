@@ -7,8 +7,7 @@
  *  Failnet -- PHP-based IRC Bot
  *-------------------------------------------------------------------
  *	Script info:
- * Version:		2.0.0
- * SVN ID:		$Id$
+ * Version:		2.0.0 Alpha 1
  * Copyright:	(c) 2009 - Failnet Project
  * License:		GNU General Public License - Version 2
  *
@@ -31,7 +30,7 @@
  */
 
 // Define some constants here for use later on
-define('FAILNET_VERSION', '2.0.0');
+define('FAILNET_VERSION', '2.0.0A1');
 define('FAILNET_ROOT', './');
 define('FAILNET_DB_ROOT', FAILNET_ROOT . 'data/db/');
 

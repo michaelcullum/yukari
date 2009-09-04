@@ -6,8 +6,7 @@
  *  Failnet -- PHP-based IRC Bot
  *-------------------------------------------------------------------
  *	Script info:
- * Version:		2.0.0
- * SVN ID:		$Id$
+ * Version:		2.0.0 Alpha 1
  * Copyright:	(c) 2009 - Failnet Project
  * License:		GNU General Public License - Version 2
  *
@@ -174,7 +173,7 @@ class failnet_core
 		// Begin printing info to the terminal window with some general information about Failnet.
 		display(array(
 			self::HR,
-			'Failnet -- PHP-based IRC Bot version ' . FAILNET_VERSION . ' - $Revision$',
+			'Failnet -- PHP-based IRC Bot version ' . FAILNET_VERSION,
 			'Copyright: (c) 2009 - Obsidian',
 			'License: GNU General Public License - Version 2',
 			self::HR,
