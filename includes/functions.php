@@ -516,6 +516,7 @@ function get_remote_file($host, $directory, $filename, &$errstr, &$errno, $port 
 
 /**
  * Checks to see if the installed version is current.
+ * @link http://code.assembla.com/failnet/git/node/blob/master/develop/version.txt The version check file
  * 
  * @author (c) 2007 phpBB Group
  */
@@ -524,7 +525,7 @@ function check_version(&$up_to_date, &$latest_version, &$announcement_url)
 	// Check the version, load out remote version check file!
 	$errstr = '';
 	$errno = 0;
-	$info = get_remote_file('my-svn.assembla.com', '/svn/failnet/trunk/develop', 'version.txt', $errstr, $errno);
+	$info = get_remote_file('code.assembla.com', '/failnet/git/node/blob/master/develop', 'version.txt', $errstr, $errno);
 	if ($info === false)
 	{
 		trigger_error($errstr, E_USER_WARNING);
