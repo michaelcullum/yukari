@@ -110,6 +110,32 @@ class failnet_plugin_factoids extends failnet_plugin_common
 					array_split($this->quiet, $drop_quiet);
 					$this->call_privmsg($this->event->source(), 'Okay, I\'ll shut up for now.');
 				break;
+
+				// Add a new factoid/entry
+				case 'add':
+					// @note Going to have to use PCRE here to split all this shiz up.
+
+					// Split up the data that we have here -- we need to separate the pattern from the entry.
+					$found = preg_match('#^(.*) (<.*> .*)$#i', $text, $data);
+					if($found === false)
+					{
+						$this->call_privmsg($this->event->source(), 'Invalid factoid pattern/entry');
+						return;
+					}
+
+					// We want to clean out any possible PCRE pattern injects here.
+					$data[1] = str_replace(array('#', '\\'), array('\#', '\\\\'), trim($data[1]));
+				break;
+
+				// Drop an entry from a factoid
+				case 'drop':
+					
+				break;
+
+				// Remove an entire factoid
+				case 'kill':
+					
+				break;
 			}
 		}
 		else
@@ -134,8 +160,6 @@ class failnet_plugin_factoids extends failnet_plugin_common
 		$this->done = 0;
 		$this->return = false;
 
-		// WTF is this here for? o.O
-		$message = str_replace('#', '\#', rtrim($message));
 		if (preg_match('#^' . $this->failnet->get('nick') . '#is', $message))
 		{
 			$direct = true;
