@@ -124,7 +124,7 @@ class failnet_plugin_factoids extends failnet_plugin_common
 					}
 
 					// We want to clean out any possible PCRE pattern injects here.
-					$data[1] = str_replace(array('#', '\\'), array('\#', '\\\\'), trim($data[1]));
+					$data[1] = str_replace(array('#'), array('\#'), trim($data[1]));
 				break;
 
 				// Drop an entry from a factoid
