@@ -124,7 +124,7 @@ class failnet_plugin_factoids extends failnet_plugin_common
 					}
 
 					// We want to clean out any possible PCRE pattern injects here.
-					$data[1] = str_replace(array('#'), array('\#'), trim($data[1]));
+					$data[1] = str_replace(array('#'), array('\#'), $this->clean_escape(trim($data[1])));
 				break;
 
 				// Drop an entry from a factoid
@@ -273,6 +273,38 @@ class failnet_plugin_factoids extends failnet_plugin_common
 		{
 			$this->done++;
 		}
+	}
+
+	/**
+	 * This method allows the proper removal of a final escape character which may cause issues later
+	 * @param string $input - The input to check
+	 * @return string - The cleaned input
+	 */
+	public function clean_escape($input)
+	{
+		// We need to see if the final escape character has been escaped, without being tricked.
+		$data = $input;
+		$escaped = true;
+		while(true)
+		{
+			$pos = strrpos($input, '\\');
+			if($pos === false)
+				break;
+			if(strlen($input) == ($pos + 1))
+			{
+				// Reverse the value here.
+				$escaped = ($escaped) ? false : true;
+			}
+			else
+			{
+				break;
+			}
+			$input = substr($input, 0, strlen($input) - 1);
+		}
+		if($escaped === false)
+			$data .= '\\';
+
+		return $data;
 	}
 }
 
