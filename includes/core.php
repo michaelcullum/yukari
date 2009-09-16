@@ -200,6 +200,7 @@ class failnet_core
 		try
 		{
 			// Initialize the database connection
+			// @todo create a config entry so that we can change the database name, for having a separate database per config file
 			$this->db = new PDO('sqlite:' . FAILNET_DB_ROOT . 'failnet.db');
 			$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
