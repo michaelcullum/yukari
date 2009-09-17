@@ -200,8 +200,7 @@ class failnet_core
 		try
 		{
 			// Initialize the database connection
-			// @todo create a config entry so that we can change the database name, for having a separate database per config file
-			$this->db = new PDO('sqlite:' . FAILNET_DB_ROOT . 'failnet.db');
+			$this->db = new PDO('sqlite:' . FAILNET_DB_ROOT . basename(md5($this->get('server') . '::' . $this->get('user'))) . '.db');
 			$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 			// We want this as a transaction in case anything goes wrong.
@@ -295,7 +294,7 @@ class failnet_core
 				$this->db->beginTransaction();
 
 				// Add the default user if Failnet was just installed
-				$this->sql('users', 'create')->execute(array(':nick' => $this->get('owner'), ':authlevel' => 100, ':hash' => $this->auth->hash->hash($this->get('name'))));
+				$this->sql('users', 'create')->execute(array(':nick' => $this->get('owner'), ':authlevel' => 100, ':hash' => $this->auth->hash->hash($this->get('user'))));
 
 				// Now let's add some default data to the database tables
 				$this->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/schema_data.sql'));
