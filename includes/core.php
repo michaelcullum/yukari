@@ -96,6 +96,12 @@ class failnet_core
 	public $settings = array();
 
 	/**
+	 * Config file settings
+	 * @var array
+	 */
+	public $config = array();
+
+	/**
 	 * What channels are we in, and what users are in them?
 	 * @var array
 	 */
@@ -461,7 +467,7 @@ class failnet_core
 			}
 			else
 			{
-				$this->settings[$setting] = $value;
+				$this->config[$setting] = $value;
 			}
 		}
 	}
@@ -499,14 +505,17 @@ class failnet_core
 	/**
 	 * Get a setting from Failnet's configuration settings
 	 * @param string $setting - The config setting that we want to pull the value for.
+	 * @param boolean $config_only - Is this an entry that only appears in the config file?
 	 * @return mixed - The setting's value, or null if no such setting.
 	 */
-	public function get($setting)
+	public function get($setting, $config_only = false)
 	{
 		if(property_exists($this, $setting))
 			return $this->$setting;
-		if(isset($this->settings[$setting]))
+		if(!$config_only && isset($this->settings[$setting]))
 			return $this->settings[$setting];
+		if(isset($this->config[$setting]))
+			return $this->config[$setting];
 		return NULL;
 	}
 
