@@ -142,7 +142,7 @@ class failnet_core
 	public function __construct()
 	{
 		// Check to make sure the CLI SAPI is being used...
-		if (strtolower(PHP_SAPI) != 'cli')
+		if(strtolower(PHP_SAPI) != 'cli')
 		{
 			if(file_exists(FAILNET_ROOT . 'data/restart.inc')) 
 				unlink(FAILNET_ROOT . 'data/restart.inc');
@@ -152,7 +152,7 @@ class failnet_core
 		}
 
 		// Make sure that PDO and the SQLite PDO extensions are loaded, we need them.
-		if (!extension_loaded('PDO'))
+		if(!extension_loaded('PDO'))
 		{
 			if(file_exists(FAILNET_ROOT . 'data/restart.inc')) 
 				unlink(FAILNET_ROOT . 'data/restart.inc');
@@ -160,7 +160,7 @@ class failnet_core
 			sleep(3);
 		    exit(1);
 		}
-    	if (!extension_loaded('pdo_sqlite'))
+    	if(!extension_loaded('pdo_sqlite'))
     	{
     		if(file_exists(FAILNET_ROOT . 'data/restart.inc')) 
 				unlink(FAILNET_ROOT . 'data/restart.inc');
@@ -170,11 +170,11 @@ class failnet_core
     	}
 
 		// Check to see if date.timezone is empty in the PHP.ini; if so, set the default timezone to prevent strict errors.
-		if (!ini_get('date.timezone'))
+		if(!ini_get('date.timezone'))
 			date_default_timezone_set(@date_default_timezone_get());
 
 		// Make sure our database directory actually exists and is manipulatable
-		if (!file_exists(FAILNET_DB_ROOT) || !is_readable(FAILNET_DB_ROOT) || !is_writeable(FAILNET_DB_ROOT))
+		if(!file_exists(FAILNET_DB_ROOT) || !is_readable(FAILNET_DB_ROOT) || !is_writeable(FAILNET_DB_ROOT))
     	{
     		if(file_exists(FAILNET_ROOT . 'data/restart.inc')) 
 				unlink(FAILNET_ROOT . 'data/restart.inc');
@@ -214,7 +214,7 @@ class failnet_core
 
 			// Check to see if our config table exists...if not, we probably need to install.  o_O
 			$failnet_installed = $this->db->query('SELECT COUNT(*) FROM sqlite_master WHERE name = ' . $this->db->quote('config'))->fetchColumn();
-			if (!$failnet_installed)
+			if(!$failnet_installed)
 			{
 				display(array('- Database tables not installed, installing Failnet', '- Constructing database tables...', ' -  Creating config table...'));
 				
@@ -293,7 +293,7 @@ class failnet_core
 		@set_error_handler(array(&$this->error, 'fail'));
 
 		// If Failnet was just installed, we need to do something now that the auth class is loaded
-		if (!$failnet_installed)
+		if(!$failnet_installed)
 		{
 			try
 			{
@@ -355,7 +355,7 @@ class failnet_core
 		$this->socket->connect();
 
 		// Toss a connection call to plugins for initial setup
-		foreach ($this->plugins as $name => $plugin)
+		foreach($this->plugins as $name => $plugin)
 		{
 			$plugin->cmd_connect();
 		}
@@ -366,16 +366,16 @@ class failnet_core
 			$queue = array();
 
 			// Upon each 'tick' of the loop, we call these functions
-			foreach ($this->plugins as $name => $plugin)
+			foreach($this->plugins as $name => $plugin)
 			{
 				$plugin->tick();
 			}
 
 			// Check for events
 			$event = $this->socket->get();
-			if ($event)
+			if($event)
 			{
-				if ($event instanceof failnet_event_response)
+				if($event instanceof failnet_event_response)
 				{
 					$eventtype = 'response';
 				}
@@ -390,9 +390,9 @@ class failnet_core
 				continue;
 
 			// For each plugin, we provide the event encountered so that the plugins can react to them for us  
-			foreach ($this->plugins as $name => $plugin)
+			foreach($this->plugins as $name => $plugin)
 			{
-				if ($event)
+				if($event)
 				{
 					$plugin->event = $event;
 					$plugin->pre_event();
@@ -405,20 +405,20 @@ class failnet_core
 			}
 
 			// Do we have any events to perform?
-			if (!$queue)
+			if(!$queue)
 				continue;
 
 			//Execute pre-dispatch callback for plugin events 
-			foreach ($this->plugins as $name => $plugin)
+			foreach($this->plugins as $name => $plugin)
 			{
 				$plugin->pre_dispatch($queue);
 			}
 
 			// Time to fire off our events
 			$quit = NULL;
-			foreach ($queue as $item)
+			foreach($queue as $item)
 			{
-				if (strcasecmp($item->type, 'quit') != 0)
+				if(strcasecmp($item->type, 'quit') != 0)
 				{
 					call_user_func_array(array($this->irc, $item->type), $item->arguments);
 				}
@@ -429,17 +429,17 @@ class failnet_core
 			}
 
 			// Post-dispatch events
-			foreach ($this->plugins as $name => $plugin)
+			foreach($this->plugins as $name => $plugin)
 			{
 				$plugin->post_dispatch($queue);
 			}
 
 			// If quit was called, we break out of the cycle and prepare to quit.
-			if ($quit)
+			if($quit)
 				break;
 		}
 
-		foreach ($this->plugins as $name => $plugin)
+		foreach($this->plugins as $name => $plugin)
 		{
 			$plugin->cmd_disconnect();
 		}
@@ -663,7 +663,7 @@ class failnet_core
 		$val = md5($rand_seed . microtime());
 		$rand_seed = md5($rand_seed . $val . $extra);
 
-		if ($dss_seeded !== true && ($last_rand_seed < time() - rand(1,10)))
+		if($dss_seeded !== true && ($last_rand_seed < time() - rand(1,10)))
 		{
 			$this->sql('config', 'update')->execute(array(':name' => 'rand_seed', ':value' => $rand_seed));
 			$this->settings['rand_seed'] = $rand_seed;
@@ -683,7 +683,7 @@ class failnet_core
 	public function deny()
 	{
 		$rand = rand(0, 9);
-		switch ($rand)
+		switch($rand)
 		{
 			case 0:
 			case 1:
@@ -762,7 +762,7 @@ class failnet_core
 		$chan = trim(strtolower($chan));
 		if (isset($this->chans[$chan]))
 		{
-			while (array_search(($nick = array_rand($this->chans[$chan], 1)), array('chanserv', 'q', 'l', 's')) !== false) {}
+			while(array_search(($nick = array_rand($this->chans[$chan], 1)), array('chanserv', 'q', 'l', 's')) !== false) {}
 			return $nick;
 		}
 		return false;
