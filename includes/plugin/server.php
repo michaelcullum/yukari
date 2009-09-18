@@ -119,7 +119,7 @@ class failnet_plugin_server extends failnet_plugin_common
 		$modes = $this->event->get_arg('mode');
 		$nick = $this->event->get_arg(2);
 
-		if (preg_match('/(?:\+|-)[hov+-]+/i', $modes))
+		if (preg_match('/(?:\+|-)[qaohv+-]+/i', $modes))
 		{
 			$chan = trim(strtolower($chan));
 			$modes = str_split(trim(strtolower($modes)), 1);
@@ -314,27 +314,27 @@ class failnet_plugin_server extends failnet_plugin_common
 		switch ($cmd)
 		{
 			case 'isfounder':
-				$this->call_privmsg($sender, $this->failnet->is_founder($param[0], $param[1]) ? 'Yep, they\'re a founder.' : 'Nope, they aren\'t a founder.');
+				$this->call_privmsg($sender, $this->failnet->user_is($param[0], $param[1], self::FOUNDER) ? 'Yep, they\'re a founder.' : 'Nope, they aren\'t a founder.');
 			break;
 
 			case 'isadmin':
-				$this->call_privmsg($sender, $this->failnet->is_admin($param[0], $param[1]) ? 'Yep, they\'re an admin.' : 'Nope, they aren\'t an admin.');
+				$this->call_privmsg($sender, $this->failnet->user_is($param[0], $param[1], self::ADMIN) ? 'Yep, they\'re an admin.' : 'Nope, they aren\'t an admin.');
 			break;
 
 			case 'isop':
-				$this->call_privmsg($sender, $this->failnet->is_op($param[0], $param[1]) ? 'Yep, they\'re an op.' : 'Nope, they aren\'t an op.');
+				$this->call_privmsg($sender, $this->failnet->user_is($param[0], $param[1], self::OP) ? 'Yep, they\'re an op.' : 'Nope, they aren\'t an op.');
 			break;
 
 			case 'ishalfop':
-				$this->call_privmsg($sender, $this->failnet->is_halfop($param[0], $param[1]) ? 'Yep, they\'re a halfop.' : 'Nope, they aren\'t a halfop.');
+				$this->call_privmsg($sender, $this->failnet->user_is($param[0], $param[1], self::HALFOP) ? 'Yep, they\'re a halfop.' : 'Nope, they aren\'t a halfop.');
 			break;
 
 			case 'isvoice':
-				$this->call_privmsg($sender, $this->failnet->is_voice($param[0], $param[1]) ? 'Yep, they have voice.' : 'Nope, they don\'t have voice.');
+				$this->call_privmsg($sender, $this->failnet->user_is($param[0], $param[1], self::VOICE) ? 'Yep, they have voice.' : 'Nope, they don\'t have voice.');
 			break;
 
 			case 'isin':
-				$this->call_privmsg($sender, $this->failnet->is_in($param[0], $param[1]) ? 'Yep, they\'re in here.' : 'Nope, they aren\'t in here.');
+				$this->call_privmsg($sender, $this->failnet->user_is($param[0], $param[1], NULL) ? 'Yep, they\'re in here.' : 'Nope, they aren\'t in here.');
 			break;
 		}
 	}

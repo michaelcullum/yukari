@@ -709,71 +709,24 @@ class failnet_core
 	}
 
 	/**
-	 * Checks whether or not a given user has founder (~) status.
-	 * @param string $nick User nick to check
-	 * @param string $chan Channel to check in
-	 * @return bool
+	 * Checks whether or not a user has a specified status (or if $type is NULL it checks if user is in a specified channel)
+	 * @param string $nick - The nick for the user that we are checking
+	 * @param string $chan - The channel that we are checking in
+	 * @param mixed $type - The type of check to perform, NULL checks for user being in a specified channel.  Use user type constants if not using NULL.
+	 * @return mixed - NULL if unhandled $type value, will return false if user is not in the channel or if Failnet is not in the channel, will return boolean true/false according to the check requested.
 	 */
-	public function is_founder($nick, $chan)
+	public function user_is($nick, $chan, $type = NULL)
 	{
-		return isset($this->chans[trim(strtolower($chan))][trim(strtolower($nick))]) && ($this->chans[trim(strtolower($chan))][trim(strtolower($nick))] & self::FOUNDER) != 0;
-	}
+		// Make sure we handle this check first
+		if(!in_array($type, array(self::FOUNDER, self::ADMIN, self::OP, self::HALFOP, self::VOICE, NULL)))
+			return NULL;
 
-	/**
-	 * Checks whether or not a given user has admin (&) status.
-	 * @param string $nick User nick to check
-	 * @param string $chan Channel to check in
-	 * @return bool
-	 */
-	public function is_admin($nick, $chan)
-	{
-		return isset($this->chans[trim(strtolower($chan))][trim(strtolower($nick))]) && ($this->chans[trim(strtolower($chan))][trim(strtolower($nick))] & self::ADMIN) != 0;
-	}
+		// If it is NULL, we are checking if the user is in the specified channel
+		if($type === NULL)
+			return (isset($this->chans[trim(strtolower($chan))])) ? isset($this->chans[trim(strtolower($chan))][trim(strtolower($nick))]) : false;
 
-	/**
-	 * Checks whether or not a given user has op (@) status.
-	 * @param string $nick User nick to check
-	 * @param string $chan Channel to check in
-	 * @return bool
-	 */
-	public function is_op($nick, $chan)
-	{
-		return isset($this->chans[trim(strtolower($chan))][trim(strtolower($nick))]) && ($this->chans[trim(strtolower($chan))][trim(strtolower($nick))] & self::OP) != 0;
-	}
-
-	/**
-	 * Checks whether or not a given user has halfop (%) status.
-	 * @param string $nick User nick to check
-	 * @param string $chan Channel to check in
-	 * @return bool
-	 */
-	public function is_halfop($nick, $chan)
-	{
-		return isset($this->chans[trim(strtolower($chan))][trim(strtolower($nick))]) && ($this->chans[trim(strtolower($chan))][trim(strtolower($nick))] & self::HALFOP) != 0;
-	}
-
-	/**
-	 * Checks whether or not a given user has voice (+) status.
-	 * @param string $nick User nick to check
-	 * @param string $chan Channel to check in
-	 * @return bool
-	 */
-	public function is_voice($nick, $chan)
-	{
-		return isset($this->chans[trim(strtolower($chan))][trim(strtolower($nick))]) && ($this->chans[trim(strtolower($chan))][trim(strtolower($nick))] & self::VOICE) != 0;
-	}
-
-	/**
-	 * Checks whether or not a particular user is in a particular channel.
-	 * @param string $nick User nick to check
-	 * @param string $chan Channel to check in
-	 * @return bool
-	 */
-	public function is_in($nick, $chan)
-	{
-		if(isset($this->chans[trim(strtolower($chan))]))
-			return isset($this->chans[trim(strtolower($chan))][trim(strtolower($nick))]);
-		return false;
+		// Okay, we are checking the user type.  Let's do that.
+		return isset($this->chans[trim(strtolower($chan))][trim(strtolower($nick))]) && ($this->chans[trim(strtolower($chan))][trim(strtolower($nick))] & $type) != 0;
 	}
 
 	/**
