@@ -52,7 +52,7 @@ class failnet_plugin_weather extends failnet_plugin_common
 	 * Number of seconds that someone must wait from the last forecast in order to get another one
 	 * @var integer
 	 */
-	private $forecast_floodcheck = 10;
+	private $forecast_floodcheck = 15;
 
 	/**
 	 * Location to get weather info for.
@@ -113,7 +113,7 @@ class failnet_plugin_weather extends failnet_plugin_common
 		{
 			case 'weather':
 				$weather_data = $this->weather($text);
-				if($weather_data && $weather_data['forecast_info']['city'][0] != '')
+				if($weather_data && $weather_data['forecast_info']['zip'][0] != '')
 				{
 					$current_weather = array(
 						$weather_data['forecast_info']['city'][0],
@@ -130,19 +130,19 @@ class failnet_plugin_weather extends failnet_plugin_common
 					$this->call_privmsg($this->event->source(), $this->event->nick . ': Sorry, but I wasn\'t able to retrieve the current weather conditions for the area you specified.');
 				}
 			break;
-				
+
 			case 'forecast':
 				if((time() - $this->forecast_floodcheck) >= $this->last_forecast)
 				{
 					$weather_data = $this->weather($text);
-					if ($weather_data && $weather_data['forecast_info']['city'][0] != '')
+					if($weather_data && $weather_data['forecast_info']['zip'][0] != '')
 					{
 						$this->call_privmsg($this->event->source(), $this->event->nick . ': Here\'s the current forecast for ' . $weather_data['forecast_info']['city'] . ':');
 						foreach($weather_data['forecast'] as $forecast)
 						{
 							$data = $forecast['day_of_week'] . ' / High ' . $forecast['high'] . 'F ' . $this->temp_conv('F-C', $forecast['high']) . 'C / Low ' . $forecast['low'] . 'F ' . $this->temp_conv('F-C', $forecast['low']) . 'C / Condition: ' . $forecast['condition'];
 							$this->call_privmsg($this->event->source(), $data);
-							usleep(1000);
+							usleep(500);
 						}
 						$this->last_forecast = time();
 					}
@@ -154,7 +154,7 @@ class failnet_plugin_weather extends failnet_plugin_common
 				}
 				else
 				{
-					$this->call_privmsg($this->event->nick, 'I just gave out a forecast already.');
+					$this->call_privmsg($this->event->source(), 'I just gave out a forecast already.');
 				}
 			break;
 		}
@@ -180,9 +180,6 @@ class failnet_plugin_weather extends failnet_plugin_common
 				return $return;
 		}
 
-		// build the url
-		$this->gweather_api_url .= urlencode($this->zip);
-
 		if($this->make_request())
 		{
 			$xml = new SimpleXMLElement($this->raw_data);
@@ -197,24 +194,25 @@ class failnet_plugin_weather extends failnet_plugin_common
 				'current_conditions'	=> array(
 					'condition' 			=> $xml->weather->current_conditions->condition['data'],
 					'temp_f' 				=> $xml->weather->current_conditions->temp_f['data'],
-					'temp_c' 				=> $xml->weather->current_conditions->humidity['data'],
+					'temp_c' 				=> $xml->weather->current_conditions->temp_c['data'],
+					'humidity' 				=> $xml->weather->current_conditions->humidity['data'],
 					'icon' 					=> 'http://www.google.com' . $xml->weather->current_conditions->icon['data'],
 					'wind' 					=> $xml->weather->current_conditions->wind_condition['data'],
 				),
 			);
 			for($i = 0; $i < count($xml->weather->forecast_conditions); $i++)
 			{
-				$data = $xml->weather->forecast_conditions[$i];
+				$data = &$xml->weather->forecast_conditions[$i];
 				$forecast[$i] = array(
-					'day_of_week'	=> $data->day_of_week['data'],
-					'low'			=> $data->low['data'],
-					'high'			=> $data->high['data'],
-					'icon'			=> 'http://img0.gmodules.com/' . $data->icon['data'],
-					'condition'		=> $data->condition['data'],
+					'day_of_week'	=> (string) $data->day_of_week['data'],
+					'low'			=> (string) $data->low['data'],
+					'high'			=> (string) $data->high['data'],
+					'icon'			=> (string) 'http://img0.gmodules.com/' . $data->icon['data'],
+					'condition'		=> (string) $data->condition['data'],
 				);
 			}
 
-			$return = array_merge($return, $forecast);
+			$return['forecast'] = $forecast;
 		}
 		if ($this->enable_cache && !empty($this->cache_path))
 			$this->write_cache($return);
@@ -242,7 +240,7 @@ class failnet_plugin_weather extends failnet_plugin_common
 
 	private function make_request()
 	{
-		$this->raw_data = file_get_contents($this->gweather_api_url);
+		$this->raw_data = file_get_contents($this->gweather_api_url . urlencode($this->zip));
 		return !empty($this->raw_data) ? true : false;
 	}
 
@@ -256,11 +254,11 @@ class failnet_plugin_weather extends failnet_plugin_common
 		switch($type)
 		{
 			case 'F-C':
-				return (5/9) * ($temp - 32);
+				return round((5/9) * ($temp - 32), 1);
 			break;
 		
 			case 'C-F':
-				return (9/5) * $temp + 32;
+				return round((9/5) * $temp + 32, 1);
 			break;
 		}
 	}
