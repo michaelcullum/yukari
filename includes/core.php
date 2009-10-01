@@ -174,11 +174,19 @@ class failnet_core
 			date_default_timezone_set(@date_default_timezone_get());
 
 		// Make sure our database directory actually exists and is manipulatable
-		if(!file_exists(FAILNET_DB_ROOT) || !is_readable(FAILNET_DB_ROOT) || !is_writeable(FAILNET_DB_ROOT))
+		if(!file_exists(FAILNET_DB_ROOT) || !is_readable(FAILNET_DB_ROOT) || !is_writeable(FAILNET_DB_ROOT) || !is_dir(FAILNET_DB_ROOT))
     	{
     		if(file_exists(FAILNET_ROOT . 'data/restart.inc')) 
 				unlink(FAILNET_ROOT . 'data/restart.inc');
             display('[Fatal Error] Failnet requires the database directory to exist and be readable/writeable');
+			sleep(3);
+		    exit(1);
+    	}
+		if(!file_exists(FAILNET_ROOT . 'data/weather/') || !is_readable(FAILNET_ROOT . 'data/weather/') || !is_writeable(FAILNET_ROOT . 'data/weather/') || !is_dir(FAILNET_ROOT . 'data/weather/'))
+    	{
+    		if(file_exists(FAILNET_ROOT . 'data/restart.inc')) 
+				unlink(FAILNET_ROOT . 'data/restart.inc');
+            display('[Fatal Error] Failnet requires the weather cache directory to exist and be readable/writeable');
 			sleep(3);
 		    exit(1);
     	}

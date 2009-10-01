@@ -49,7 +49,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 
 	/**
 	 * When did we last check for timed out sessions?
-	 * @var unknown_type
+	 * @var integer
 	 */
 	private $time = 0;
 
