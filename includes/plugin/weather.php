@@ -112,7 +112,7 @@ class failnet_plugin_weather extends failnet_plugin_common
 		switch ($cmd)
 		{
 			case 'weather':
-				$weather = $this->weather($text);
+				$weather_data = $this->weather($text);
 				if($weather_data && $weather_data['forecast_info']['city'][0] != '')
 				{
 					$current_weather = array(
@@ -134,7 +134,7 @@ class failnet_plugin_weather extends failnet_plugin_common
 			case 'forecast':
 				if((time() - $this->forecast_floodcheck) >= $this->last_forecast)
 				{
-					$weather = $this->weather($text);
+					$weather_data = $this->weather($text);
 					if ($weather_data && $weather_data['forecast_info']['city'][0] != '')
 					{
 						$this->call_privmsg($this->event->source(), $this->event->source() . ': Here\'s the current forecast for ' . $weather_data['forecast_info']['city'] . ':');
