@@ -125,6 +125,25 @@ class failnet_plugin_admin extends failnet_plugin_common
 				}
 				$this->call_quit(true);
 			break;
+		
+			case 'nick':
+				// Check auths
+				if ($this->failnet->auth->authlevel($hostmask) < 30)
+				{
+					$this->call_privmsg($this->event->source(), $this->failnet->deny());
+					return;
+				}
+
+				// Make sure this is a valid IRC usernick
+				if(preg_match('#^[a-zA-Z\-\_\[\]\|`]*$#i', $text))
+				{
+					$this->call_nick($text);
+				}
+				else
+				{
+					$this->call_privmsg($this->event->source(), 'I\'m sorry, but that is an invalid usernick.');
+				}
+			break;
 
 			// Join a channel!
 			case 'join':

@@ -135,7 +135,7 @@ class failnet_plugin_weather extends failnet_plugin_common
 				if((time() - $this->forecast_floodcheck) >= $this->last_forecast)
 				{
 					$weather_data = $this->weather($text);
-					if($weather_data && $weather_data['forecast_info']['zip'][0] != '')
+					if($weather_data && $weather_data['forecast_info']['zip'][0] != '' && isset($weather_data['forecast']))
 					{
 						$this->call_privmsg($this->event->source(), $this->event->nick . ': Here\'s the current forecast for ' . $weather_data['forecast_info']['city'] . ':');
 						foreach($weather_data['forecast'] as $forecast)
@@ -174,7 +174,7 @@ class failnet_plugin_weather extends failnet_plugin_common
 
 		if($this->enable_cache && !empty($this->cache_path))
 		{
-			$this->cache_file = FAILNET_ROOT . $this->cache_path . "/{$this->zip}.inc";
+			$this->cache_file = FAILNET_ROOT . $this->cache_path . "/{$this->zip}.dat";
 			$return = $this->load_cache();
 			if($return !== false)
 				return $return;
@@ -182,7 +182,9 @@ class failnet_plugin_weather extends failnet_plugin_common
 
 		if($this->make_request())
 		{
-			$xml = new SimpleXMLElement($this->raw_data);
+			// Clean up the XML because Google is stupid.
+			$data = iconv("UTF-8", "ASCII//TRANSLIT", str_replace(array('<?xml version="1.0"?>', '\''), array('<?xml version="1.0" encoding="UTF-8"?>', ''), utf8_encode($this->raw_data)));
+			$xml = new SimpleXMLElement($data);
 
 			$return = array(
 				'forecast_info'			=> array(
@@ -212,9 +214,10 @@ class failnet_plugin_weather extends failnet_plugin_common
 				);
 			}
 
-			$return['forecast'] = $forecast;
+			if(isset($forecast))
+				$return['forecast'] = $forecast;
 		}
-		if ($this->enable_cache && !empty($this->cache_path))
+		if($this->enable_cache && !empty($this->cache_path))
 			$this->write_cache($return);
 
 		return $return;
