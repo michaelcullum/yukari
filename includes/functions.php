@@ -604,26 +604,13 @@ function parse_hostmask($hostmask, &$nick, &$user, &$host)
  * @param array &$input - The array to process, also this will be filled with array values that were evaluated as boolean FALSE via the compare callback
  * @param callback $compare - Function name that we will use to check each value
  * @return array - The vars that match in the strict comparison
+ *
+ * @note Kudos to cs278 for the function redesign...like ZOMG so much nicer!
  */
 function array_split(&$input, $compare)
 {
-	$clean = $return = array(); 
-
-	while(($item = array_pop($input)) !== NULL)
-	{
-		if ($compare($item))
-		{
-			// If this is a match, we put it into the return array so we can return it later.
-        	$return[] = $item;
-		}
-        else
-        {
-        	
-        	// If this is not a match, we stuff it into $clean to put back into $input later.
-			$clean[] = $item;
-        }
-	}
-	$input = $clean;
+	$return = array_filter($input, $callback);
+	$input = array_diff($input, $return);
 	return $return;
 }
 
