@@ -84,6 +84,9 @@ function display($msg)
  */
 function get_formatted_filesize($bytes)
 {
+	if ($bytes >= pow(2, 40))
+		return round($bytes / 1024 / 1024 / 1024 / 1024, 2) . ' TiB';
+
 	if ($bytes >= pow(2, 30))
 		return round($bytes / 1024 / 1024 / 1024, 2) . ' GiB';
 

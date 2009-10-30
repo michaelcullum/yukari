@@ -54,18 +54,121 @@ class failnet_plugin_tools extends failnet_plugin_common
 		$hostmask = $this->event->gethostmask();
 		switch ($cmd)
 		{
+			// Base64 encoding
 			case '+b64':
 			case '+64':
 			case '+base64':
 			case 'base64encode':
 				$this->call_privmsg($this->event->source(), 'Result: ' . base64_encode($text));
 			break;
-		
+
 			case '-b64':
 			case '-64':
 			case '-base64':
 			case 'base64decode':
 				$this->call_privmsg($this->event->source(), 'Result: ' . base64_decode($text));
+			break;
+
+			// URL encoding
+			case '+url':
+			case 'urlencode':
+				$this->call_privmsg($this->event->source(), 'Result: ' . rawurlencode($text));
+			break;
+
+			case '-url':
+			case 'urldecode':
+				$this->call_privmsg($this->event->source(), 'Result: ' . rawurldecode($text));
+			break;
+
+			// HTML entity encoding
+			case '+html':
+			case 'htmlencode':
+				$this->call_privmsg($this->event->source(), 'Result: ' . htmlentities($text));
+			break;
+
+			case '-html':
+			case 'htmldecode':
+				$this->call_privmsg($this->event->source(), 'Result: ' . html_entity_decode($text));
+			break;
+
+			// rot13 encoding
+			case 'rot13':
+				$this->call_privmsg($this->event->source(), 'Result: ' . str_rot13($text));
+			break;
+
+			// md5 checksum
+			case 'md5':
+				$this->call_privmsg($this->event->source(), 'Result: ' . md5($text));
+			break;
+
+			// Character counting
+			case 'count':
+				$this->call_privmsg($this->event->source(), 'Character count: ' . strlen($text));
+			break;
+
+			// Byte multiple conversion
+			case 'bytes':
+				if(strtoupper(substr($text, -1, 1)) == 'B')
+				{
+					$end = strtoupper(substr($text, -2, 1));
+					if(is_numeric($end))
+					{
+						$bytes = (int) substr($text, 0, strlen($text) - 1);
+						$results = 'Result: ' . get_formatted_filesize($bytes);
+					}
+					else
+					{
+						$bytes = (int) substr($text, 0, strlen($text) - 2);
+						switch($end)
+						{
+							case 'K':
+								$bytes = $bytes * 1024;
+								$results = 'Result: ' . get_formatted_filesize($bytes);
+							break;
+
+							case 'M':
+								$bytes = $bytes * pow(1024, 2);
+								$results = 'Result: ' . get_formatted_filesize($bytes);
+							break;
+
+							case 'G':
+								$bytes = $bytes * pow(1024, 3);
+								$results = 'Result: ' . get_formatted_filesize($bytes);
+							break;
+
+							case 'T':
+								$bytes = $bytes * pow(1024, 4);
+								$results = 'Result: ' . get_formatted_filesize($bytes);
+							break;
+
+							default:
+								$results = 'Result: Unknown byte multiple';
+							break;
+						}
+					}
+				}
+				else
+				{
+					if(!is_numeric($text))
+					{
+						$results = 'Result: Invalid data provided';
+					}
+					else
+					{
+						$results = 'Result: ' . get_formatted_filesize((int) $text);
+					}
+				}
+
+				$this->call_privmsg($this->event->source(), $results);
+			break;
+
+			// Temperature conversion
+			case 'f2c':
+				$this->call_privmsg($this->event->source(), 'Result: ' . round((5/9) * ((int) $text - 32), 1));
+			break;
+
+			case 'c2f':
+				$this->call_privmsg($this->event->source(), 'Result: ' . round((9/5) * (int) $text + 32, 1));
 			break;
 		}
 	}
