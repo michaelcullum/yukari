@@ -57,7 +57,7 @@ class failnet_plugin_firefly extends failnet_plugin_common
 		10	=> 'Episode 10 - War Stories - Angered at Zoe\'s unshakable war connection to Mal, Wash demands a shot at a field assignment. Unfortunately, crime lord Niska chooses this moment to exact a brutal vengeance for Mal\'s failure to complete an earlier job. ',
 		11	=> 'Episode 11 - Trash - Saffron returns to plague Serenity with a scheme to steal a rare antique weapon from a wealthy landowner. Unfortunately for Mal, she neglects to mention just how she came across the information needed to break into the landowner\'s home. ',
 		12	=> 'Episode 12 - The Message - A former Independence soldier who had served with Mal and Zoe returns in a dramatic manner, with a vicious Alliance officer chasing after him for some unusual smuggled goods. ',
-		13	=> 'Episode 13 - Heart of Gold - A Companion-trained friend of Inara\'s who runs a brothel calls for help from Serenity when a local bigwig reveals his intentions to take “his” baby from the girl he impregnated. ',
+		13	=> 'Episode 13 - Heart of Gold - A Companion-trained friend of Inara\'s who runs a brothel calls for help from Serenity when a local bigwig reveals his intentions to take "his" baby from the girl he impregnated. ',
 		14	=> 'Episode 14 - Objects in Space - Serenity encounters a ruthlessly professional bounty hunter, Jubal Early, who will stop at nothing to retrieve River. But River, feeling unwelcome on the ship, takes a novel approach to escaping from the long arm of the Alliance. ',
 	);
 
