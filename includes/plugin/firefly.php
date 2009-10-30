@@ -39,7 +39,7 @@
  * @copyright (c) 2009 - Failnet Project
  * @license GNU General Public License - Version 2
  */
-class failnet_plugin_tools extends failnet_plugin_common
+class failnet_plugin_firefly extends failnet_plugin_common
 {
 	/**
 	 * @var array - Flans unite!
