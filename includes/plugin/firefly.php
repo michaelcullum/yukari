@@ -93,7 +93,10 @@ class failnet_plugin_firefly extends failnet_plugin_common
 						{
 							$results = 'No such episode exists';
 						}
-						$results = $this->episodes[$matches[1]][$matches[2]];
+						else
+						{
+							$results = $this->episodes[$matches[1]][$matches[2]];
+						}
 					}
 					else
 					{
