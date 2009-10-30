@@ -38,6 +38,9 @@ define('FAILNET_DB_ROOT', FAILNET_ROOT . 'data/db/');
 // It also has our autoloader function, so we kinda need that.  ;)
 require FAILNET_ROOT . 'includes/functions.php';
 
+// Set our autoload function.
+spl_autoload_register('failnet_load_file');
+
 // Check to see if we are even on the minimum PHP version necessary.
 if(version_compare('5.2.3', PHP_VERSION, '>'))
 {

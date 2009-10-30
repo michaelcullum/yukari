@@ -37,7 +37,7 @@
  * @param string $name - Class name to load
  * @return void
  */
-function __autoload($name)
+function failnet_load_file($name)
 {
 	// Begin by cleaning the class name of any possible ../. hacks
 	$name = basename($name);
