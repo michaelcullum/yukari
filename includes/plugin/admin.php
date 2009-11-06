@@ -135,7 +135,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 				}
 
 				// Make sure this is a valid IRC usernick
-				if(preg_match('#^[a-zA-Z\-\_\[\]\|`]*$#i', $text))
+				if(preg_match('#^[a-zA-Z0-9\-\_\[\]\|`]*$#i', $text))
 				{
 					$this->call_nick($text);
 				}
