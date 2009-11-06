@@ -740,7 +740,7 @@ class failnet_core
 	/**
 	 * Are we directing this at our owner or ourself?
 	 * This is best to avoid humilation if we're using an agressive factoid.  ;)
-	 * @param $user - The user to check.
+	 * @param string $user - The user to check.
 	 * @return boolean - Are we targeting the owner or ourself?
 	 */
 	public function checkuser($user)
