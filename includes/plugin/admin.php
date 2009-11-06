@@ -170,7 +170,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 				}
 				else
 				{
-					$this->call_privmsg($sender, 'Please specify a channel to join.');
+					$this->call_privmsg($this->event->source(), 'Please specify a channel to join.');
 				}
 			break;
 
@@ -204,7 +204,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 					else
 					{
 						// I guess we're not in the channel specified.
-						$this->call_privmsg($sender, 'I\'m sorry, but I cannot part a channel I am not in.');
+						$this->call_privmsg($this->event->source(), 'I\'m sorry, but I cannot part a channel I am not in.');
 					}
 				}
 				else
@@ -226,14 +226,14 @@ class failnet_plugin_admin extends failnet_plugin_common
 				// Check for empty text or invalid number of parameters
 				if($text === false)
 				{
-					$this->call_privmsg($sender, 'Please specify the setting to change and what to change it to.');
+					$this->call_privmsg($this->event->source(), 'Please specify the setting to change and what to change it to.');
 					return;
 				}
 
 				$param = explode(' ', $text);
 				if(count($param) != 2)
 				{
-					$this->call_privmsg($sender, 'Invalid number of arguments entered for set command.');
+					$this->call_privmsg($this->event->source(), 'Invalid number of arguments entered for set command.');
 					return;
 				}
 
@@ -269,18 +269,18 @@ class failnet_plugin_admin extends failnet_plugin_common
 				// Check for empty text
 				if($text === false)
 				{
-					$this->call_privmsg($sender, 'Please specify the plugin to load.');
+					$this->call_privmsg($this->event->source(), 'Please specify the plugin to load.');
 					return;
 				}
 
 				// Check to see if we've loaded that plugin already, and if not load it
 				if($this->failnet->plugin('load', $text))
 				{
-					$this->call_privmsg($sender, 'Plugin loaded successfully.');
+					$this->call_privmsg($this->event->source(), 'Plugin loaded successfully.');
 				}
 				else
 				{
-					$this->call_privmsg($sender, 'Plugin does not exist or is already loaded.');
+					$this->call_privmsg($this->event->source(), 'Plugin does not exist or is already loaded.');
 				}
 			break;
 
@@ -288,7 +288,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 				// Check for empty text
 				if($text === false)
 				{
-					$this->call_privmsg($sender, 'Please specify the plugin to check.');
+					$this->call_privmsg($this->event->source(), 'Please specify the plugin to check.');
 					return;
 				}
 
