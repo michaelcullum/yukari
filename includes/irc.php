@@ -245,12 +245,7 @@ class failnet_irc extends failnet_common
 	 */
 	public function action($target, $text)
 	{
-		if (is_array($args))
-			$args = implode(' ', $args);
-
-		$buffer = rtrim(strtoupper($command) . ' ' . $args);
-
-		$this->privmsg($target, chr(1) . $buffer . chr(1));
+		$this->privmsg($target, chr(1) . 'ACTION ' . rtrim($text) . ' ' . chr(1));
 	}
 
 	/**
