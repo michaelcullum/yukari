@@ -160,9 +160,9 @@ class failnet_plugin_log extends failnet_plugin_common
 					$dest = $event->get_arg('receiver');
 				break;
 
-				case '':
+				case 'action':
 					$display = 'log';
-					$message = date('h:i') . (($event->fromchannel()) ? '[' . $event->get_arg('target') . ']' : '') . ' *** ' . $$this->failnet->get('nick') . ' ' . $this->event->get_arg('action');
+					$message = date('h:i') . (($event->fromchannel()) ? '[' . $event->get_arg('target') . ']' : '') . ' *** ' . $this->failnet->get('nick') . ' ' . $event->get_arg('action');
 					$log = $event->get_arg('action');
 					$nick = $this->failnet->get('nick');
 					$dest = $event->get_arg('target');
