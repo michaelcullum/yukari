@@ -740,12 +740,18 @@ class failnet_core
 	/**
 	 * Are we directing this at our owner or ourself?
 	 * This is best to avoid humilation if we're using an agressive factoid.  ;)
-	 * @param $user - The user to chech.
+	 * @param $user - The user to check.
 	 * @return boolean - Are we targeting the owner or ourself?
 	 */
 	public function checkuser($user)
 	{
-		return (!preg_match('#' . preg_quote($this->get('owner'), '#') . '#is', $user) && !preg_match('#' . preg_quote($this->get('nick'), '#') . '#is', $user) && !preg_match('#self#i', $user)) ? true : false;
+		if(preg_match('#' . preg_quote($this->get('owner'), '#') . '#i', $user))
+			return true;
+		if(preg_match('#' . preg_quote($this->get('nick'), '#') . '#i', $user))
+			return true;
+		if(preg_match('#self#i', $user))
+			return true;
+		return false;
 	}
 
 	/**
