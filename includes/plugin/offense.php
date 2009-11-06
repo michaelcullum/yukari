@@ -66,10 +66,10 @@ class failnet_plugin_offense extends failnet_plugin_common
 				continue;
 			}
 
-			if(($this->last_game[$channel] + 600) < time())
+			if(($this->last_game[$channel] + 450) < time())
 			{
 				$this->last_game[$channel] = time();
-				if(rand(1, 4) == 1)
+				if(rand(1, 7) == 1)
 				{
 					$game_fail = array(
 						'Hey everyone, did you just win the game?',
