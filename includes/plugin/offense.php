@@ -52,11 +52,6 @@ class failnet_plugin_offense extends failnet_plugin_common
 	 */
 	public $last_game = array();
 	
-	public function cmd_connect()
-	{
-		$this->last_game = time();
-	}
-	
 	public function tick()
 	{
 		foreach($this->enable_game as $channel => $enabled)
