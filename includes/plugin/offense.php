@@ -149,7 +149,7 @@ class failnet_plugin_offense extends failnet_plugin_common
 				{
 					$this->enable_game[$text] = true;
 					$this->last_game[$text] = time();
-					$this->call_privmsg($sender, 'Alrighty, game mode enabled.');
+					$this->call_privmsg($this->event->source(), 'Alrighty, game mode enabled.');
 				}
 				else
 				{
@@ -171,7 +171,7 @@ class failnet_plugin_offense extends failnet_plugin_common
 				{
 					$this->enable_game[$text] = false;
 					$this->last_game[$text] = time();
-					$this->call_privmsg($sender, 'Okay, game mode disabled.');
+					$this->call_privmsg($this->event->source(), 'Okay, game mode disabled.');
 				}
 				else
 				{
@@ -181,7 +181,7 @@ class failnet_plugin_offense extends failnet_plugin_common
 			break;
 
 			case 'game':
-				$this->call_privmsg($this->event->source(), ((isset($this->enable_game[$text]) && $this->enable_game[$text] === true) ? 'The traps are set in that channel' : 'Nothing is setup for that channel'));
+				$this->call_privmsg($this->event->source(), ((isset($this->enable_game[$text]) && $this->enable_game[$text] === true) ? 'The traps are set in that channel.' : 'Nothing is setup for that channel.'));
 			break;
 		}
 	}
