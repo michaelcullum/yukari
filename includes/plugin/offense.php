@@ -138,29 +138,50 @@ class failnet_plugin_offense extends failnet_plugin_common
 
 			case '+g':
 			case 'gameon':
-				if($this->event->fromchannel() !== true)
+				// Check to see if there was a param passed...if so, we check to see if this is from a channel.
+				if($text === false && $this->event->fromchannel() === true)
 				{
-					$this->call_privmsg($this->event->source(), 'This command can only be used in channel.');
-					return;
+					$this->enable_game[$this->event->source()] = true;
+					$this->last_game[$this->event->source()] = time();
+					$this->call_privmsg($this->event->source(), 'Alrighty, game mode enabled.');
 				}
-
-				$this->enable_game[$this->event->source()] = true;
-				$this->last_game[$this->event->source()] = time();
-				$this->call_privmsg($this->event->source(), 'Alrighty, game mode enabled.');
+				elseif($text !== false)
+				{
+					$this->enable_game[$text] = true;
+					$this->last_game[$text] = time();
+					$this->call_privmsg($sender, 'Alrighty, game mode enabled.');
+				}
+				else
+				{
+					// We sent this via a private message and did not supply the channel.  That was smart.
+					$this->call_privmsg($sender, 'Please specify a channel.');
+				}
 			break;
 
-			// URL encoding
 			case '-g':
 			case 'gameoff':
-				if($this->event->fromchannel() !== true)
+				// Check to see if there was a param passed...if so, we check to see if this is from a channel.
+				if($text === false && $this->event->fromchannel() === true)
 				{
-					$this->call_privmsg($this->event->source(), 'This command can only be used in channel.');
-					return;
+					$this->enable_game[$this->event->source()] = false;
+					$this->last_game[$this->event->source()] = time();
+					$this->call_privmsg($this->event->source(), 'Okay, game mode disabled.');
 				}
+				elseif($text !== false)
+				{
+					$this->enable_game[$text] = false;
+					$this->last_game[$text] = time();
+					$this->call_privmsg($sender, 'Okay, game mode disabled.');
+				}
+				else
+				{
+					// We sent this via a private message and did not supply the channel.  That was smart.
+					$this->call_privmsg($sender, 'Please specify a channel.');
+				}
+			break;
 
-				$this->enable_game[$this->event->source()] = false;
-				$this->last_game[$this->event->source()] = time();
-				$this->call_privmsg($this->event->source(), 'Okay, game mode disabled.');
+			case 'game':
+				$this->call_privmsg($this->event->source(), ((isset($this->enable_game[$text]) && $this->enable_game[$text] === true) ? 'The traps are set in that channel' : 'Nothing is setup for that channel'));
 			break;
 		}
 	}
