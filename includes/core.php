@@ -739,7 +739,7 @@ class failnet_core
 
 	/**
 	 * Are we directing this at our owner or ourself?
-	 * This is best to avoid humilation if we're using an agressive factoid.  ;)
+	 * This is best to avoid humilation if we're using an agressive command.  ;)
 	 * @param string $user - The user to check.
 	 * @return boolean - Are we targeting the owner or ourself?
 	 */

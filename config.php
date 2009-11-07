@@ -53,7 +53,6 @@ return array(
 		'error',
 		'auth',
 		'ignore',
-		//'factoids',
 	),
 
 // Plugins to automatically load on startup. 
@@ -66,7 +65,9 @@ return array(
 		'authorize',
 		'ignore',
 		'log',
-		//'factoids',
+		'weather',
+		'tools',
+		'offense',
 	),
 
 // What is the nickname service bot? If there isn't, leave this as an empty string.
