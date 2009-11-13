@@ -59,7 +59,7 @@ class failnet_log extends failnet_common
     	{
     		if(file_exists(FAILNET_ROOT . 'data/restart.inc')) 
 				unlink(FAILNET_ROOT . 'data/restart.inc');
-            display('[Fatal Error] Failnet requires the database directory to exist and be readable/writeable');
+            display('[Fatal Error] Failnet requires the logs directory to exist and be readable/writeable');
 			sleep(3);
 		    exit(1);
     	}
