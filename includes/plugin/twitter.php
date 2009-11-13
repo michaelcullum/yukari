@@ -1,50 +1,46 @@
 <?php
+/**
+ *
+ *===================================================================
+ *
+ *  twitterPHP5
+ *-------------------------------------------------------------------
+ *	Script info:
+ * Version:		0.2.0
+ * Copyright:	(c) 2009 - Obsidian
+ * License:		GNU General Public License - Version 2
+ *
+ *===================================================================
+ *
+ * @todo check twitter API documentation for exact format of the "HTTP-formatted date" strings, see what RFC or ISO specification it follows, exactly.
+ */
 
+/**
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://opensource.org/licenses/gpl-2.0.php>.
+ */
+ 
 
-///////////////////////////////////////////
-//
-// twitterPHP
-// version 0.1
-// By David Billingham
-// david [at] slawcup [dot] com
-// http://twitter.slawcup.com/twitter.class.phps
-//
-//
-// Example 1:
-//
-// $t= new twitter();
-// $res = $t->publicTimeline();
-// if($res===false){
-//   echo "ERROR<hr/>";
-//     echo "<pre>";
-//   print_r($t->responseInfo);
-//     echo "</pre>";
-// }else{
-//   echo "SUCCESS<hr/>";
-//     echo "<pre>";
-//   print_r($res);
-//     echo "</pre>";
-// }
-//
-//
-// Example 2:
-//
-// $t= new twitter();
-// $t->username='username';
-// $t->password='password';
-// $res = $t->update('i am testing twitter.class.php');
-// if($res===false){
-//   echo "ERROR<hr/>";
-//     echo "<pre>";
-//   print_r($t->responseInfo);
-//     echo "</pre>";
-// }else{
-//   echo "SUCCESS<hr/>Status Posted";
-// }
-//
-//
-//////////////////////////////////////////
-
+/**
+ * twitterPHP5
+ * 		A rewrite of the twitterPHP class (version 0.1) by David Billingham (@link http://twitter.slawcup.com/twitter.class.phps twitterPHP)
+ *  	Rewritten to use proper PHP5 OOP and to clean up the code, along with adding a streams method for those that do not have curl available
+ * @note No license was specified in the original code for twitterPHP.
+ * 
+ *
+ * @author Damian Bushong (a.k.a. Obsidian)
+ * @copyright (c) 2009 - Obsidian
+ * @license GNU General Public License - Version 2
+ */
 class twitter
 {
 	/**
@@ -97,24 +93,29 @@ class twitter
 	 */
 	const STATUS_URL = 'http://twitter.com/statuses/';
 
-	public function __construct($username = false, $password = false, $use_curl = false)
+	/**
+	 * Constructor method for class, loads username/password if necessary, also sets if curl should be used or not
+	 * @param boolean $use_curl - Should we use curl or streams for this set of requests?
+	 * @param string $username - What is the username of the user we are authenticating as, if we need to do so?
+	 * @param string $password - What is the password of the user we are authenticating as, if we need to do so?
+	 * @return void
+	 */
+	public function __construct($use_curl = true, $username = false, $password = false)
 	{
 		if($username && $password)
 		{
 			$this->username = $username;
 			$this->password = $password;
 		}
-		$this->use_curl = $use_curl;
+		$this->use_curl = (bool) $use_curl;
 	}
 
-// Updates the authenticating user's status.  
-// Requires the status parameter specified below.
-//
-// status. (string) Required.  The text of your status update.  Must not be
-//                             more than 160 characters and should not be
-//                             more than 140 characters to ensure optimal display.
-//
-	public function update($status)
+	/**
+	 * Posts a tweet as the specified user.
+	 * @param string $status - Text for the status update.  Should not be more than 140 characters.
+	 * @return mixed - Either SimpleXMLElement object or raw XML string if successful, false if not.
+	 */
+	public function tweet($status)
 	{
 		return $this->process(self::STATUS_URL . 'update.xml', 'status=' . urlencode($status));
 	}
@@ -125,21 +126,24 @@ class twitter
 // sinceid. (int) Optional.  Returns only public statuses with an ID greater
 //                           than (that is, more recent than) the specified ID.
 //
+	/**
+	 * Returns the 20 most recent tweets from the public timeline.
+	 * @note Authentication is not required.
+	 * @param integer $since - Allows specifying statuses with an ID that is greater than this ID.
+	 * @return mixed - Either SimpleXMLElement object or raw XML string if successful, false if not.
+	 */
 	public function public_timeline($since = false)
 	{
 		return $this->process(self::STATUS_URL . 'public_timeline.xml' . ((!$since) ? '?since_id=' . (int) $since : ''));
 	}
-	
-// Returns the 20 most recent statuses posted in the last 24 hours from the
-// authenticating user and that user's friends.  It's also possible to request
-// another user's friends_timeline via the id parameter below.
-//
-// id. (string OR int) Optional.  Specifies the ID or screen name of the user for whom
-//                                to return the friends_timeline. (set to false if you
-//                                want to use authenticated user).
-// since. (HTTP-formatted date) Optional.  Narrows the returned results to just those
-//                                         statuses created after the specified date.  
-//
+
+	/**
+	 * Returns the 20 most recent tweets posted in the last 24 hours from the authenticating user and that user's friends.
+	 * If a user is specified with the first param, $id, you may be able to request that user's friends timeline instead.
+	 * @param mixed $id - The user ID or screen name of the user if you wish to return a timeline for a user other than the one authenticating.
+	 * @param string $since - HTTP-formatted date, used for narrowing down the results to those after this date.
+	 * @return mixed - Either SimpleXMLElement object or raw XML string if successful, false if not.
+	 */
 	public function friends_timeline($id = false, $since = false)
 	{
 		if(!$id)
@@ -152,18 +156,14 @@ class twitter
 		}
 	}
 
-// Returns the 20 most recent statuses posted in the last 24 hours from the
-// authenticating user.  It's also possible to request another user's timeline
-// via the id parameter below.
-//
-// id. (string OR int) Optional.  Specifies the ID or screen name of the user for whom
-//                                to return the user_timeline.
-// count. (int) Optional.  Specifies the number of statuses to retrieve.  May not be
-//                         greater than 20 for performance purposes.
-// since. (HTTP-formatted date) Optional.  Narrows the returned results to just those
-//                                         statuses created after the specified date.
-//
-	public function user_timeline($id = false, $count = 20, $since = false)
+	/**
+	 * Retrieves the 20 most recent tweets from the user that we're logging in as, for the last 24 hours.
+	 * If a user is specified with the first param, $id, you may be able to request that user's timeline instead.
+	 * @param mixed $id - The user ID or screen name of the user if you wish to return a timeline for a user other than the one authenticating.
+	 * @param string $since - HTTP-formatted date, used for narrowing down the results to those after this date.
+	 * @return mixed - Either SimpleXMLElement object or raw XML string if successful, false if not.
+	 */
+	public function user_timeline($id = false, $since = false)
 	{
 		if(!$id)
 		{
@@ -175,12 +175,12 @@ class twitter
 		}
 	}
 
-// Returns a single status, specified by the id parameter below.  The status's author
-// will be returned inline.
-//
-// id. (int) Required.  Returns status of the specified ID.
-//
-	public function show_status($id)
+	/**
+	 * Returns a specific tweet.
+	 * @param integer $id - The ID that we are pulling the tweet data for.
+	 * @return mixed - Either SimpleXMLElement object or raw XML string if successful, false if not.
+	 */
+	public function show_tweet($id)
 	{
 		return $this->process(self::STATUS_URL . 'show/' . (int) $id . '.xml');
 	}
