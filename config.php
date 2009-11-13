@@ -86,10 +86,10 @@ return array(
 	'speak'				=> true,
 
 // How long should Failnet wait after the last recieved event to ping the server to check the connection?
-	'ping_wait'			=> 120,
+	'ping_wait'			=> 300,
 
 // How long after a server ping is sent will we assume that the connection is lost?
-	'ping_timeout'		=> 10,
+	'ping_timeout'		=> 120,
 
 // How many messages should be stored in the log queue before the queue is written to the file?
 	'log_queue'			=> 60,
