@@ -112,24 +112,18 @@ class twitter
 
 	/**
 	 * Posts a tweet as the specified user.
-	 * @param string $status - Text for the status update.  Should not be more than 140 characters.
+	 * @param string $status - Text for the tweet.  Should not be more than 140 characters.
 	 * @return mixed - Either SimpleXMLElement object or raw XML string if successful, false if not.
 	 */
 	public function tweet($status)
 	{
-		return $this->process(self::STATUS_URL . 'update.xml', 'status=' . urlencode($status));
+		return $this->process(self::STATUS_URL . 'update.xml', array('status' => urlencode($status)));
 	}
 
-// Returns the 20 most recent statuses from non-protected users who have
-// set a custom user icon.  Does not require authentication.
-//
-// sinceid. (int) Optional.  Returns only public statuses with an ID greater
-//                           than (that is, more recent than) the specified ID.
-//
 	/**
 	 * Returns the 20 most recent tweets from the public timeline.
 	 * @note Authentication is not required.
-	 * @param integer $since - Allows specifying statuses with an ID that is greater than this ID.
+	 * @param integer $since - Allows specifying tweets with an ID that is greater than this ID.
 	 * @return mixed - Either SimpleXMLElement object or raw XML string if successful, false if not.
 	 */
 	public function public_timeline($since = false)
@@ -185,12 +179,11 @@ class twitter
 		return $this->process(self::STATUS_URL . 'show/' . (int) $id . '.xml');
 	}
 
-// Returns the authenticating user's friends, each with current status inline.  It's
-// also possible to request another user's friends list via the id parameter below.
-//
-// id. (string OR int) Optional.  The ID or screen name of the user for whom to request
-//                                a list of friends.
-//
+	/**
+	 * Retrieves the friends of the specified user, including their latest tweet.
+	 * @param integer $id - The user ID or screen name of the user if you wish to return the friends of for a user other than the one authenticating.
+	 * @return mixed - Either SimpleXMLElement object or raw XML string if successful, false if not.
+	 */
 	public function friends($id = false)
 	{
 		if(!$id)
@@ -202,56 +195,71 @@ class twitter
 			return $this->process(self::STATUS_URL . 'friends/' . urlencode($id) . '.xml');
 		}
 	}
-	
-// Returns the authenticating user's followers, each with current status inline.
+
+	/**
+	 * Returns the user's followers, and their latest tweet.
+	 * @return mixed - Either SimpleXMLElement object or raw XML string if successful, false if not.
+	 */
 	public function followers()
 	{
 		return $this->process(self::STATUS_URL . 'followers.xml');
 	}
-	
-// Returns a list of the users currently featured on the site with their current statuses inline.
+
+	/**
+	 * Returns a list of the users currently featured on Twitter and their latest tweet.
+	 * @return mixed - Either SimpleXMLElement object or raw XML string if successful, false if not.
+	 */
 	public function featured()
 	{
 		return $this->process(self::STATUS_URL . 'featured.xml');
 	}
-	
-// Returns extended information of a given user, specified by ID or screen name as per the required
-// id parameter below.  This information includes design settings, so third party developers can theme
-// their widgets according to a given user's preferences.
-//
-// id. (string OR int) Required.  The ID or screen name of a user.
-//
+
+	/**
+	 * Returns extended information about the user, specified by ID or screen name as per the $id param.
+	 * @param mixed $id - Either the screen name or user ID of the specified user to look up.
+	 * @return mixed - Either SimpleXMLElement object or raw XML string if successful, false if not.
+	 */
 	public function show_user($id)
 	{
 		return $this->process(self::TWITTER_URL . 'users/show/' . urlencode($id) . '.xml');
 	}
 
-// Returns a list of the direct messages sent to the authenticating user.
-//
-// since. (HTTP-formatted date) Optional.  Narrows the resulting list of direct messages to just those
-//                                         sent after the specified date.  
-//
-	public function get_direct_messages($since=false)
+	/**
+	 * Retrieves the direct messages sent to the user
+	 * @param string $since - HTTP-formatted date, used for narrowing down the results to those after this date.
+	 * @return mixed - Either SimpleXMLElement object or raw XML string if successful, false if not.
+	 */
+	public function get_direct_messages($since = false)
 	{
 		return $this->process(self::TWITTER_URL . 'direct_messages.xml' . ((!$since) ? '?since_id=' . (int) $since : ''));
 	}
 
-// Sends a new direct message to the specified user from the authenticating user.  Requires both the user
-// and text parameters below.
-//
-// user. (string OR int) Required.  The ID or screen name of the recipient user.
-// text. (string) Required.  The text of your direct message.  Be sure to URL encode as necessary, and keep
-//                           it under 140 characters.  
-//
+	/**
+	 * Sends a direct message from the specified user as the authenticating user.
+	 * @param mixed $user - The user ID or screen name of the intended recipient.
+	 * @param string $text - The text of the direct message, should not exceed 140 characters.
+	 * @return mixed - Either SimpleXMLElement object or raw XML string if successful, false if not.
+	 */
 	public function send_direct_message($user, $text)
 	{
 		return $this->process(self::TWITTER_URL . 'direct_messages/new.xml', 'user=' . urlencode($user) . '&text=' . urlencode($text));
 	}
-	
+
+	/**
+	 * Trainswitch method.  Directs the processing method call to the appropriate method, depending on whether or not we want to use curl.
+	 * @param string $url - The URL to direct the request to.
+	 * @param array $postargs - Any extra data necessary to send.
+	 * @return mixed - Either SimpleXMLElement object or raw XML string if successful, false if not.
+	 */
 	public function process($url, $postargs = false)
 	{
 		if($this->use_curl === true)
 		{
+			$postarg_str = '';
+			foreach($postargs as $postarg_k => $postarg_v)
+			{
+				$postarg_str .= $postarg_k . '=' . $postarg_v;
+			}
 			return $this->process_curl($url, $postargs);
 		}
 		else
@@ -260,49 +268,32 @@ class twitter
 		}
 	}
 
-// begin old code
-
-/////////////////////////////////////////
-//
-// Twitter API calls
-//
-// $this->update($status)
-// $this->publicTimeline($sinceid=false)
-// $this->friendsTimeline($id=false,$since=false)
-// $this->userTimeline($id=false,$count=20,$since=false)
-// $this->showStatus($id)
-// $this->friends($id=false)
-// $this->followers()
-// $this->featured()
-// $this->showUser($id)
-// $this->directMessages($since=false)
-// $this->sendDirectMessage($user,$text)
-//
-// If SimpleXMLElement exists the results will be returned as a SimpleXMLElement
-// otherwise the raw XML will be returned for a successful request.  If the request
-// fails a FALSE will be returned.
-//
-//
-/////////////////////////////////////////
-
-	// internal function where all the juicy curl fun takes place
-	// this should not be called by anything external unless you are
-	// doing something else completely then knock youself out.
-	public function process_curl($url, $postargs = false)
+	/**
+	 * Internal method for processing the request and sending the curl shiz through.
+	 * This method is protected for a reason.  If you make it a public method, you will be attacked by raptors, no questions asked.
+	 * @param string $url - The URL to direct the request to.
+	 * @param string $postargs - Any extra data necessary to send.
+	 * @return mixed - Either SimpleXMLElement object or raw XML string if successful, false if not.
+	 */
+	private function process_curl($url, $postargs = false)
 	{
+		// Begin the curl.
 		$curl = curl_init($url);
-	
+
+		// If we've post args, we should include them.
 		if($postargs)
 		{
 			curl_setopt($curl, CURLOPT_POST, true);
 			curl_setopt($curl, CURLOPT_POSTFIELDS, $postargs);
 		}
-		
+
+		// If we are authenticating, we may want to do so.  Just a thought.
 		if($this->username && $this->password)
 		{
 			curl_setopt($curl, CURLOPT_USERPWD, $this->username . ':' . $this->password);
 		}
-		
+
+		// And curl stuff that noooobody caaarrres about.
 		curl_setopt($curl, CURLOPT_VERBOSE, 1);
 		curl_setopt($curl, CURLOPT_NOBODY, 0);
 		curl_setopt($curl, CURLOPT_HEADER, 0);
@@ -310,11 +301,13 @@ class twitter
 		curl_setopt($curl, CURLOPT_FOLLOWLOCATION,1);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($curl, CURLOPT_HTTPHEADER, $this->headers);
-	
+
+		// Sent that curl request and get our data.
 		$return = curl_exec($curl);
 		$this->response_info = curl_getinfo($curl);
 		curl_close($curl);
 
+		// Is everything okay?
 		if((int) $this->response_info['http_code'] === 200)
 		{
 			if(class_exists('SimpleXMLElement'))
@@ -332,34 +325,53 @@ class twitter
 			return false;
 		}
 	}
-	
-	public function process_streams($url, $postargs = false)
+
+	/**
+	 * Internal method for processing the request and sending the streams shiz through.
+	 * This method is protected for a reason.  If you make it a public method, you will be attacked by raptors, no questions asked.
+	 * @param string $url - The URL to direct the request to.
+	 * @param string $postargs - Any extra data necessary to send.
+	 * @return mixed - Either SimpleXMLElement object or raw XML string if successful, false if not.
+	 */
+	private function process_streams($url, $postargs = false)
 	{
-		// set up to work with all of the twitter class methods
-		$headers = sprintf("Authorization: Basic %s\r\n", base64_encode($this->username . ':' . $this->password));
+		// If we want to authenticate, probably want to do so.
+		if($this->username && $this->password)
+		{
+			$headers = sprintf("Authorization: Basic %s\r\n", base64_encode($this->username . ':' . $this->password));
+		}
 
 		$context = stream_context_create(array(
 			'http' => array(
 				'method'  => 'POST',
 				'header'  => $headers . "Content-type: application/x-www-form-urlencoded\r\n",
-				'content' => http_build_query($postargs),
+				'content' => (!empty($postargs)) ? http_build_query($postargs) : '',
 				'timeout' => 5,
 			),
 		));
-		$return = file_get_contents('http://twitter.com/statuses/update.xml', false, $context);
 
-		if(class_exists('SimpleXMLElement'))
+		// Send the file_get_contents request.
+		$return = file_get_contents($url, false, $context);
+
+		// Can we do SimpleXML?
+		if($return !== false)
 		{
-			$xml = new SimpleXMLElement($return);
-			return $xml;
+			if(class_exists('SimpleXMLElement'))
+			{
+				$xml = new SimpleXMLElement($return);
+				return $xml;
+			}
+			else
+			{
+				return $return;
+			}
 		}
 		else
 		{
-			return $return;
+			return false;
 		}
 	}
 
 }
-
 
 ?> 
