@@ -292,8 +292,7 @@ class failnet_core
 		{
 			$name = 'failnet_' . $class;
 			$this->$class = new $name($this);
-			display('=-= Loaded ' . $class . ' module');
-			
+			display('=-= Loaded ' . $class . ' node');
 		}
 
 		// Set the error handler
