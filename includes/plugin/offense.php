@@ -64,7 +64,7 @@ class failnet_plugin_offense extends failnet_plugin_common
 			if(($this->last_game[$channel] + 450) < time())
 			{
 				$this->last_game[$channel] = time();
-				if(rand(1, 7) == 1)
+				if(rand(1, 15) == 1)
 				{
 					$game_fail = array(
 						'Hey everyone, did you just win the game?',
@@ -74,6 +74,7 @@ class failnet_plugin_offense extends failnet_plugin_common
 						'I think someone just lost the game.',
 						'I should make someone lose the game...',
 						'THE GAME.',
+						'Never gonna LOSE THE GAME~',
 					);
 
 					$this->call_privmsg($channel, sprintf($game_fail[array_rand($game_fail)], $this->failnet->random_user($channel)));
@@ -101,9 +102,17 @@ class failnet_plugin_offense extends failnet_plugin_common
 			case 'stab':
 			case 'attack':
 			case 'kill':
+				// Self-defense!
 				if($this->failnet->checkuser($text))
 				{
 					$this->call_privmsg($this->event->source(), $this->failnet->deny());
+					return;
+				}
+
+				// No null-victims
+				if(empty($text))
+				{
+					$this->call_privmsg($this->event->source(), $this->event->nick . ': That was full of fail.');
 					return;
 				}
 
@@ -122,9 +131,17 @@ class failnet_plugin_offense extends failnet_plugin_common
 			break;
 
 			case 'nub':
+				// Self-defense!
 				if($this->failnet->checkuser($text))
 				{
 					$this->call_privmsg($this->event->source(), $this->failnet->deny());
+					return;
+				}
+
+				// No null-victims
+				if(empty($text))
+				{
+					$this->call_privmsg($this->event->source(), $this->event->nick . ': That was full of fail.');
 					return;
 				}
 
