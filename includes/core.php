@@ -169,9 +169,9 @@ class failnet_core
 		    exit(1);
     	}
 
-		// Check to see if date.timezone is empty in the PHP.ini; if so, set the default timezone to prevent strict errors.
+		// Check to see if date.timezone is empty in the PHP.ini; if so, set the timezone to prevent strict errors.
 		if(!ini_get('date.timezone'))
-			date_default_timezone_set(@date_default_timezone_get());
+			@date_default_timezone_set('UTC');
 
 		// Make sure our database directory actually exists and is manipulatable
 		if(!file_exists(FAILNET_DB_ROOT) || !is_readable(FAILNET_DB_ROOT) || !is_writeable(FAILNET_DB_ROOT) || !is_dir(FAILNET_DB_ROOT))
@@ -182,6 +182,7 @@ class failnet_core
 			sleep(3);
 		    exit(1);
     	}
+		/*
 		if(!file_exists(FAILNET_ROOT . 'data/weather/') || !is_readable(FAILNET_ROOT . 'data/weather/') || !is_writeable(FAILNET_ROOT . 'data/weather/') || !is_dir(FAILNET_ROOT . 'data/weather/'))
     	{
     		if(file_exists(FAILNET_ROOT . 'data/restart.inc')) 
@@ -190,6 +191,7 @@ class failnet_core
 			sleep(3);
 		    exit(1);
     	}
+		*/
 
 		// Set the time that Failnet was started.
 		$this->start = time();
@@ -206,8 +208,9 @@ class failnet_core
 		));
 
 		// Load the config file
-		display('- Loading configuration file for specified IRC server');
-		$this->load(($_SERVER['argc'] > 1) ? $_SERVER['argv'][1] : 'config');
+		$cfg_file = ($_SERVER['argc'] > 1) ? $_SERVER['argv'][1] : 'config';
+		display('- Loading configuration file \'' . $cfg_file . '\' for specified IRC server');
+		$this->load($cfg_file);
 
 		// Load/setup the database
 		display('- Loading the Failnet database'); 
@@ -225,7 +228,7 @@ class failnet_core
 			if(!$failnet_installed)
 			{
 				display(array('- Database tables not installed, installing Failnet', '- Constructing database tables...', ' -  Creating config table...'));
-				
+
 				// Make some DB tables here...
 				$this->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/config.sql'));
 				display(' -  Creating users table...');
@@ -238,7 +241,7 @@ class failnet_core
 			}
 
 			display('- Preparing database...');
-			
+
 			// Now, we need to build our default statements.
 			// Config table
 			$this->sql('config', 'create', 'INSERT INTO config ( name, value ) VALUES ( :name, :value )');
@@ -263,7 +266,7 @@ class failnet_core
 			$this->sql('sessions', 'delete_user', 'DELETE FROM sessions WHERE user_id = :user');
 			$this->sql('sessions', 'delete_old', 'DELETE FROM sessions WHERE login_time < :time');
 			$this->sql('sessions', 'delete', 'DELETE FROM sessions WHERE LOWER(hostmask) = LOWER(:hostmask)');
-			
+
 			// Access list table
 			$this->sql('access', 'create', 'INSERT INTO access ( user_id, hostmask ) VALUES ( :user, :hostmask )');
 			$this->sql('access', 'delete', 'DELETE FROM access WHERE (user_id = :user AND LOWER(hostmask) = LOWER(:hostmask) )');
