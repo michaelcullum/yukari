@@ -91,14 +91,18 @@ class failnet_plugin_log extends failnet_plugin_common
 	
 	public function cmd_privmsg()
 	{
-		display(date('h:i') . ' <' . $this->event->nick . (($this->event->fromchannel()) ? '/' . $this->event->get_arg('receiver') : '') . '> ' . $this->event->get_arg('text'));
-		$this->failnet->log->log($this->event->get_arg('text'), $this->event->nick, $this->event->get_arg('receiver'));
+		// Make sure we don't record passwords
+		if(!preg_match('#^' . preg_quote($this->failnet->get('cmd_prefix'), '#') . '[[new|add|del|drop]user|login|auth|delconfirm|confirmdel|pass|setpass|[\+|\-|new|add|drop|del]access]#i', $event->get_arg('text')))
+		{
+			display(date('h:i') . ' <' . $this->event->nick . (($this->event->fromchannel()) ? '/' . $this->event->get_arg('receiver') : '') . '> ' . $this->event->get_arg('text'));
+			$this->failnet->log->log($this->event->get_arg('text'), $this->event->nick, $this->event->get_arg('receiver'));
+		}
 	}
 	
 	public function cmd_action()
 	{
 		display(date('h:i') . (($this->event->fromchannel()) ? '[' . $this->event->get_arg('receiver') . ']' : '') . ' *** ' . $this->event->nick . ' ' . $this->event->get_arg('action'));
-		$this->failnet->log->log($this->event->get_arg('action'), $this->event->nick, $this->event->get_arg('target'));
+		$this->failnet->log->log($this->event->get_arg('action'), $this->event->nick, $this->event->get_arg('target'), true);
 	}
 	
 	public function post_dispatch(array $events)
