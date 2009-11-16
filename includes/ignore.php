@@ -30,8 +30,8 @@
 
 
 /**
- * Failnet - Error handling class,
- * 		Used as Failnet's error handler. 
+ * Failnet - Ignore handling class,
+ * 		Used as Failnet's handler for ignoring users based on hostmasks. 
  * 
  *
  * @package ignore
@@ -49,7 +49,7 @@ class failnet_ignore extends failnet_common
 
 	/**
 	 * List of ignored user hostmasks, used to rebuild the preg_match ignore pattern when necessary 
-	 * @var unknown_type
+	 * @var array
 	 */
 	private $users = array();
 	
@@ -67,7 +67,7 @@ class failnet_ignore extends failnet_common
 			if(!$table_exists)
 			{
 				// Attempt to install the tables
-				display(' -  Creating ignored users table...');
+				display(' -  Creating ignored hostmasks table...');
 				$this->failnet->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/ignore.sql'));
 			}
 

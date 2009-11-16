@@ -234,8 +234,6 @@ class failnet_core
 				$this->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/sessions.sql'));
 				display(' -  Creating access table...');
 				$this->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/access.sql'));
-				display(' -  Creating ignored hostmasks table...');
-				$this->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/ignore.sql'));
 				display('- Database table creation complete.');
 			}
 
