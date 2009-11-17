@@ -75,16 +75,16 @@ class failnet_karma extends failnet_common
 
 			if(!$table_exists)
 			{
-				display(array('- Karma database tables not installed, installing karma plugin', '- Constructing database tables...', ' -  Creating karma table...'));
+				display(array('- Karma system database tables not installed, installing karma system', '- Constructing database tables...', ' -  Creating karma table...'));
 				
 				// Make our DB table...
 				$this->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/karma.sql'));
 			}
 
-			display('- Preparing database for karma plugin...');
+			display('- Preparing database for karma system...');
 
 			// Prepare some PDO statements
-			$this->failnet->sql('karma', 'insert', 'INSERT INTO karma ( karma_value, term ) VALUES ( :karma, :term )');
+			$this->failnet->sql('karma', 'create', 'INSERT INTO karma ( karma_value, term ) VALUES ( :karma, :term )');
 			$this->failnet->sql('karma', 'update', 'UPDATE karma SET karma_value = :karma WHERE LOWER(term) = LOWER(:term)');
 			$this->failnet->sql('karma', 'get', 'SELECT karma_value FROM karma WHERE LOWER(term) = LOWER(:term) LIMIT 1');
 
@@ -179,7 +179,7 @@ class failnet_karma extends failnet_common
 		}
 		else
 		{
-			$this->failnet->sql('karma', 'insert')->execute(array(':term' => $term, ':karma' => 0 + $type));
+			$this->failnet->sql('karma', 'create')->execute(array(':term' => $term, ':karma' => 0 + $type));
 		}
 
 		return true;
