@@ -35,3 +35,4 @@ CREATE TABLE ignore (
 	ignore_date INTEGER UNSIGNED NOT NULL DEFAULT 0,
 	hostmask TEXT NOT NULL DEFAULT ''
 );
+CREATE UNIQUE INDEX hostmask ON ignore ( hostmask );

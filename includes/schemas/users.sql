@@ -38,4 +38,4 @@ CREATE TABLE users (
 	confirm_key TEXT NOT NULL DEFAULT '',
 	password TEXT UNSIGNED NOT NULL DEFAULT ''
 );
-CREATE UNIQUE INDEX unique_nick ON users ( nick ) ;
+CREATE UNIQUE INDEX nick ON users ( nick );
