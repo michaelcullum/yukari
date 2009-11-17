@@ -248,7 +248,7 @@ class failnet_core
 			$this->sql('config', 'get_all', 'SELECT * FROM config');
 			$this->sql('config', 'get', 'SELECT * FROM config WHERE LOWER(name) = LOWER(:name) LIMIT 1');
 			$this->sql('config', 'update', 'UPDATE config SET value = :value WHERE LOWER(name) = LOWER(:name)');
-			$this->sql('config', 'delete', 'DELETE FROM config WHERE name = :name');
+			$this->sql('config', 'delete', 'DELETE FROM config WHERE LOWER(name) = LOWER(:name)');
 
 			// Users table
 			$this->sql('users', 'create', 'INSERT INTO users ( nick, authlevel, password ) VALUES ( :nick, :authlevel, :hash )');
