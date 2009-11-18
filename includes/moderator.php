@@ -69,7 +69,7 @@ class failnet_moderator extends failnet_common
 	 * List of channels that the moderator system is enabled in.
 	 * @var array
 	 */
-	private $channels = array();
+	public $channels = array();
 
 	/**
 	 * Reaction types
@@ -110,9 +110,10 @@ class failnet_moderator extends failnet_common
 			display('- Preparing database for moderator system...');
 
 			// Prepare some PDO statements
-			$this->failnet->sql('offenders', 'create', 'INSERT INTO offenders ( hostmask, points ) VALUES ( :hostmask, :points )');
-			$this->failnet->sql('offenders', 'update', 'UPDATE offenders SET points = :points WHERE LOWER(hostmask) = LOWER(:hostmask)');
+			$this->failnet->sql('offenders', 'create', 'INSERT INTO offenders ( hostmask, points, total_points, last_update ) VALUES ( :hostmask, :points, :total, :time )');
+			$this->failnet->sql('offenders', 'update', 'UPDATE offenders SET points = :points, total_points = :total, last_update = :time WHERE LOWER(hostmask) = LOWER(:hostmask)');
 			$this->failnet->sql('offenders', 'get', 'SELECT points FROM offenders WHERE LOWER(hostmask) = LOWER(:hostmask) LIMIT 1');
+			$this->failnet->sql('offenders', 'get_total', 'SELECT points, total_points FROM offenders WHERE LOWER(hostmask) = LOWER(:hostmask) LIMIT 1');
 			$this->failnet->sql('offenders', 'get_old', 'SELECT points FROM offenders WHERE last_update <= (:time - 3600)');
 
 			$this->failnet->sql('stopwords', 'create', 'INSERT INTO stopwords ( stopword, points ) VALUES ( :stopword, :points )');
@@ -153,6 +154,60 @@ class failnet_moderator extends failnet_common
 		}
 
 		$this->load();
+	}
+
+	/**
+	 * Method to retrieve the amount of points that a nub has collected.
+	 * @param string $hostmask - The host of the user to check.
+	 * @return mixed - Associative array of the results, or NULL if hostmask is not an offender
+	 */
+	public function get_offender_points($hostmask)
+	{
+		$this->failnet->sql('offenders', 'get_total')->execute(array(':hostmask' => $hostmask));
+		$result = $this->failnet->sql('offenders', 'get_total')->fetchAll(PDO::FETCH_ASSOC);
+		if(!$result)
+			return NULL;
+
+		return $result;
+	}
+
+	/**
+	 * Add in some points to a specified offender's total amount of points accumulated.
+	 * @param string $hostmask - Hostmask of the nub, for record's sake.
+	 * @param integer $points - Number of points that this offense carries.
+	 * @return integer - Amount of points user has now accumulated
+	 */
+	public function add_offender_points($hostmask, $points)
+	{
+		// Let's see if this nub is a repeat offender, and add up the points.
+		$result = $this->get_offender_points($hostmask);
+		if(!is_null($amount))
+		{
+			$this->failnet->sql('offenders', 'update')->execute(array(':hostmask' => $hostmask, ':points' => $result['points'] + $points, ':total' => $result['total_points'] + $points, ':time' => $last_update));
+			return $result['points'] + $points;
+		}
+		else
+		{
+			$this->failnet->sql('offenders', 'create')->execute(array(':hostmask' => $hostmask, ':points' => $points, ':total' => $points, ':time' => time()));
+			return $points;
+		}
+	}
+	
+	public function check_offense_reaction($points, &$reaction_type, &$reaction_time)
+	{
+		// see if someone needs a spanking, and what is the greatest necessary reaction due to their crimes
+		// results will be returned using params passed by reference, in order for a clean return.
+	}
+	
+	public function tick_scan_offenders()
+	{
+		// scan through the list of offenders and check for the ones that are due for a point drop.
+		// then drop their current point amount (note: NOT the point total) by a point
+	}
+	
+	public function tick_scan_banlist()
+	{
+		// scan through the list of banned hostmasks and see if there are any that are currently stored as banned that should be unbanned
 	}
 }
 

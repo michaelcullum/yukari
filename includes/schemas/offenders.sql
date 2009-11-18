@@ -35,6 +35,7 @@ CREATE TABLE offenders (
 	offender_id INTEGER PRIMARY KEY NOT NULL,
 	hostmask TEXT NOT NULL DEFAULT '',
 	points INTEGER NOT NULL DEFAULT 0,
+	total_points INTEGER NOT NULL DEFAULT 0,
 	last_update INTEGER NOT NULL DEFAULT 0
 );
 CREATE UNIQUE INDEX hostmask ON offenders ( hostmask );
