@@ -147,7 +147,7 @@ class failnet_karma extends failnet_common
 			return sprintf($this->fixed[$term], $term);
 
 		$this->failnet->sql('karma', 'get')->execute(array(':term' => $term));
-		$result = $this->failnet->sql('access', 'get')->fetchAll(PDO::FETCH_COLUMN, 0);
+		$result = $this->failnet->sql('karma', 'get')->fetchAll(PDO::FETCH_COLUMN, 0);
 		if(!$result)
 			return NULL;
 
