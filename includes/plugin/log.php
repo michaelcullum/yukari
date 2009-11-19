@@ -92,7 +92,7 @@ class failnet_plugin_log extends failnet_plugin_common
 	public function cmd_privmsg()
 	{
 		// Make sure we don't record passwords
-		if(!preg_match('#^' . preg_quote($this->failnet->get('cmd_prefix'), '#') . '[[new|add|del|drop]user|login|auth|delconfirm|confirmdel|pass|setpass|[\+|\-|new|add|drop|del]access]#i', $event->get_arg('text')))
+		if(!preg_match('#^' . preg_quote($this->failnet->get('cmd_prefix'), '#') . '[[new|add|del|drop]user|login|auth|delconfirm|confirmdel|pass|setpass|[\+|\-|new|add|drop|del]access]#i', $this->event->get_arg('text')))
 		{
 			display(date('h:i') . ' <' . $this->event->nick . (($this->event->fromchannel()) ? '/' . $this->event->get_arg('receiver') : '') . '> ' . $this->event->get_arg('text'));
 			$this->failnet->log->log($this->event->get_arg('text'), $this->event->nick, $this->event->get_arg('receiver'));
