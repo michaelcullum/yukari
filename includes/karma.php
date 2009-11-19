@@ -66,23 +66,6 @@ class failnet_karma extends failnet_common
 	 */
 	public function init()
 	{
-		$table_exists = $this->failnet->db->query('SELECT COUNT(*) FROM sqlite_master WHERE name = ' . $this->failnet->db->quote('karma'))->fetchColumn();
-
-		if(!$table_exists)
-		{
-			display(array('- Karma system database tables not installed, installing karma system', '- Constructing database tables...', ' -  Creating karma table...'));
-			
-			// Make our DB table...
-			$this->failnet->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/karma.sql'));
-		}
-
-		display('- Preparing database for karma system...');
-
-		// Prepare some PDO statements
-		$this->failnet->sql('karma', 'create', 'INSERT INTO karma ( karma_value, term ) VALUES ( :karma, :term )');
-		$this->failnet->sql('karma', 'update', 'UPDATE karma SET karma_value = :karma WHERE LOWER(term) = LOWER(:term)');
-		$this->failnet->sql('karma', 'get', 'SELECT karma_value FROM karma WHERE LOWER(term) = LOWER(:term) LIMIT 1');
-
 		if(!defined('M_EULER'))
             define('M_EULER', '0.57721566490153286061');
 

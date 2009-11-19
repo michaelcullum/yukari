@@ -60,44 +60,6 @@ class failnet_ignore extends failnet_common
 	 */
 	public function init()
 	{
-		$table_exists = $this->failnet->db->query('SELECT COUNT(*) FROM sqlite_master WHERE name = ' . $this->failnet->db->quote('ignore'))->fetchColumn();
-		try
-		{
-			$this->failnet->db->beginTransaction();
-			if(!$table_exists)
-			{
-				// Attempt to install the tables
-				display(' -  Creating ignored hostmasks table...');
-				$this->failnet->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/ignore.sql'));
-			}
-
-			// Ignored hostmasks table
-			$this->failnet->sql('ignore', 'create', 'INSERT INTO ignore ( ignore_date, hostmask ) VALUES ( :timestamp, :hostmask )');
-			$this->failnet->sql('ignore', 'delete', 'DELETE FROM ignore WHERE LOWER(hostmask) = LOWER(:hostmask)');
-			$this->failnet->sql('ignore', 'get_single', 'SELECT * FROM ignore WHERE LOWER(hostmask) = LOWER(:hostmask) LIMIT 1');
-			$this->failnet->sql('ignore', 'get', 'SELECT * FROM ignore');
-
-			$this->failnet->db->commit();
-		}
-		catch (PDOException $e)
-		{
-			// Something went boom.  Time to panic!
-			$this->failnet->db->rollBack();
-			if(file_exists(FAILNET_ROOT . 'data/restart.inc')) 
-				unlink(FAILNET_ROOT . 'data/restart.inc');
-			trigger_error($e, E_USER_WARNING);
-			sleep(3);
-			exit(1);
-		}
-		$this->load();
-	}
-
-	/**
-	 * Loads in the list of ignored users and caches it
-	 * @return void
-	 */
-	public function load()
-	{
 		display('=== Loading ignored users list...');
 		$this->failnet->sql('ignore', 'get')->execute();
 		$this->users = $this->failnet->sql('ignore', 'get')->fetchAll(PDO::FETCH_COLUMN, 0);

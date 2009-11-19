@@ -237,6 +237,10 @@ class failnet_core
 				$this->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/sessions.sql'));
 				display(' -  Creating access table...');
 				$this->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/access.sql'));
+				display(' -  Creating ignored hostmasks table...');
+				$this->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/ignore.sql'));
+				display(' -  Creating karma table...');
+				$this->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/karma.sql'));
 				display('- Database table creation complete.');
 			}
 
@@ -273,6 +277,17 @@ class failnet_core
 			$this->sql('access', 'delete_user', 'DELETE FROM access WHERE user_id = :user');
 			$this->sql('access', 'get', 'SELECT hostmask FROM access WHERE user_id = :user');
 
+			// Ignored hostmasks table
+			$this->failnet->sql('ignore', 'create', 'INSERT INTO ignore ( ignore_date, hostmask ) VALUES ( :timestamp, :hostmask )');
+			$this->failnet->sql('ignore', 'delete', 'DELETE FROM ignore WHERE LOWER(hostmask) = LOWER(:hostmask)');
+			$this->failnet->sql('ignore', 'get_single', 'SELECT * FROM ignore WHERE LOWER(hostmask) = LOWER(:hostmask) LIMIT 1');
+			$this->failnet->sql('ignore', 'get', 'SELECT * FROM ignore');
+
+			// Karma table
+			$this->failnet->sql('karma', 'create', 'INSERT INTO karma ( karma_value, term ) VALUES ( :karma, :term )');
+			$this->failnet->sql('karma', 'update', 'UPDATE karma SET karma_value = :karma WHERE LOWER(term) = LOWER(:term)');
+			$this->failnet->sql('karma', 'get', 'SELECT karma_value FROM karma WHERE LOWER(term) = LOWER(:term) LIMIT 1');
+
 			// Commit the stuffs
 			$this->db->commit();
 		}
@@ -288,7 +303,7 @@ class failnet_core
 		}
 
 		// Load required classes and systems
-		display('- Loading Failnet required classes');
+		display('- Loading Failnet nodes');
 		foreach($this->get('nodes_list') as $class)
 		{
 			$name = 'failnet_' . $class;
