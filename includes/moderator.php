@@ -164,7 +164,7 @@ class failnet_moderator extends failnet_common
 	public function get_offender_points($hostmask)
 	{
 		$this->failnet->sql('offenders', 'get_total')->execute(array(':hostmask' => $hostmask));
-		$result = $this->failnet->sql('offenders', 'get_total')->fetchAll(PDO::FETCH_ASSOC);
+		$result = $this->failnet->sql('offenders', 'get_total')->fetch(PDO::FETCH_ASSOC);
 		if(!$result)
 			return NULL;
 
