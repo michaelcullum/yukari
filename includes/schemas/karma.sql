@@ -33,6 +33,6 @@
  */
 CREATE TABLE karma (
 	karma_value INTEGER NOT NULL,
-	term TEXT NOT NULL DEFAULT '',
+	term TEXT NOT NULL DEFAULT ''
 );
-CREATE UNIQUE INDEX karma_value ON karma ( karma_value ) ;
+CREATE UNIQUE INDEX term ON karma ( term ) ;

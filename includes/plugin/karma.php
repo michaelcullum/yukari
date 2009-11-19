@@ -45,18 +45,20 @@ class failnet_plugin_karma extends failnet_plugin_common
 	{
 		// Check for karma changes first
 		$text = $this->event->get_arg('text');
+		$sender = $this->event->nick;
 		if($this->failnet->karma->check_word($text))
 		{
 			$term = strtolower(trim($text));
 			$karma_type = substr($term, -2, 2);
-			if($karma_type == '++')
+			$victim = substr($term, 0, strlen($term) - 2);
+			if($karma_type == '++' && $victim != strtolower($sender))
 			{
-				$results = $this->failnet->karma->set_karma(substr($term, 0, strlen($term) - 2), failnet_karma::KARMA_INCREASE);
+				$results = $this->failnet->karma->set_karma($victim, failnet_karma::KARMA_INCREASE);
 				return;
 			}
-			elseif($karma_type == '--')
+			elseif($karma_type == '--' && $victim != strtolower($sender))
 			{
-				$results = $this->failnet->karma->set_karma(substr($term, 0, strlen($term) - 2), failnet_karma::KARMA_DECREASE);
+				$results = $this->failnet->karma->set_karma($victim, failnet_karma::KARMA_DECREASE);
 				return;
 			}
 		}
@@ -66,7 +68,6 @@ class failnet_plugin_karma extends failnet_plugin_common
 			return;
 
 		$cmd = $this->purify($text);
-		$sender = $this->event->nick;
 		switch ($cmd)
 		{
 			case 'karma':
@@ -85,13 +86,17 @@ class failnet_plugin_karma extends failnet_plugin_common
 				}
 
 				$karma = $this->failnet->karma->get_karma($term);
-				if(!is_int($karma))
+				if(is_null($karma))
 				{
-					$this->call_privmsg($this->event->source(), $karma);
+					$this->call_privmsg($this->event->source(), 'They have a karma of 0.');
+				}
+				elseif(is_int($karma))
+				{
+					$this->call_privmsg($this->event->source(), 'They have a karma of ' . $karma . '.');
 				}
 				else
 				{
-					$this->call_privmsg($this->event->source(), 'They have a karma of ' . $karma . '.');
+					$this->call_privmsg($this->event->source(), $karma);
 				}
 			break;
 		}

@@ -66,40 +66,22 @@ class failnet_karma extends failnet_common
 	 */
 	public function init()
 	{
-		try
+		$table_exists = $this->failnet->db->query('SELECT COUNT(*) FROM sqlite_master WHERE name = ' . $this->failnet->db->quote('karma'))->fetchColumn();
+
+		if(!$table_exists)
 		{
-			$table_exists = $this->failnet->db->query('SELECT COUNT(*) FROM sqlite_master WHERE name = ' . $this->failnet->db->quote('karma'))->fetchColumn();
-
-			// We want this as a transaction in case anything goes wrong.
-			$this->db->beginTransaction();
-
-			if(!$table_exists)
-			{
-				display(array('- Karma system database tables not installed, installing karma system', '- Constructing database tables...', ' -  Creating karma table...'));
-				
-				// Make our DB table...
-				$this->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/karma.sql'));
-			}
-
-			display('- Preparing database for karma system...');
-
-			// Prepare some PDO statements
-			$this->failnet->sql('karma', 'create', 'INSERT INTO karma ( karma_value, term ) VALUES ( :karma, :term )');
-			$this->failnet->sql('karma', 'update', 'UPDATE karma SET karma_value = :karma WHERE LOWER(term) = LOWER(:term)');
-			$this->failnet->sql('karma', 'get', 'SELECT karma_value FROM karma WHERE LOWER(term) = LOWER(:term) LIMIT 1');
-
-			$this->failnet->db->commit();
+			display(array('- Karma system database tables not installed, installing karma system', '- Constructing database tables...', ' -  Creating karma table...'));
+			
+			// Make our DB table...
+			$this->failnet->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/karma.sql'));
 		}
-		catch (PDOException $e)
-		{
-			// Something went boom.  Time to panic!
-			$this->failnet->db->rollBack();
-			if(file_exists(FAILNET_ROOT . 'data/restart.inc')) 
-				unlink(FAILNET_ROOT . 'data/restart.inc');
-			trigger_error($e, E_USER_WARNING);
-			sleep(3);
-			exit(1);
-		}
+
+		display('- Preparing database for karma system...');
+
+		// Prepare some PDO statements
+		$this->failnet->sql('karma', 'create', 'INSERT INTO karma ( karma_value, term ) VALUES ( :karma, :term )');
+		$this->failnet->sql('karma', 'update', 'UPDATE karma SET karma_value = :karma WHERE LOWER(term) = LOWER(:term)');
+		$this->failnet->sql('karma', 'get', 'SELECT karma_value FROM karma WHERE LOWER(term) = LOWER(:term) LIMIT 1');
 
 		if(!defined('M_EULER'))
             define('M_EULER', '0.57721566490153286061');
@@ -147,11 +129,11 @@ class failnet_karma extends failnet_common
 			return sprintf($this->fixed[$term], $term);
 
 		$this->failnet->sql('karma', 'get')->execute(array(':term' => $term));
-		$result = $this->failnet->sql('karma', 'get')->fetchAll(PDO::FETCH_COLUMN, 0);
+		$result = $this->failnet->sql('karma', 'get')->fetch(PDO::FETCH_ASSOC);
 		if(!$result)
 			return NULL;
 
-		return (int) $result;
+		return (int) $result['karma_value'];
 	}
 
 	/**
@@ -163,7 +145,7 @@ class failnet_karma extends failnet_common
 	public function set_karma($term, $type)
 	{
 		// Make sure we're playing fair here. :)
-		if($type === self::KARMA_INCREASE || $type === self::KARMA_DECREASE)
+		if($type !== self::KARMA_INCREASE && $type !== self::KARMA_DECREASE)
 			return false;
 
 		// Check within the fixed karma list and karma blacklist.
@@ -192,7 +174,7 @@ class failnet_karma extends failnet_common
 	 */
 	public function check_word($term)
 	{
-		return preg_match('#^[a-zA-Z0-9\-\_\[\]\|`]+[\+\+|\-\-]$#i', $term);
+		return preg_match('#^[a-zA-Z0-9\+\-\_\[\]\|`]+[\+\+|\-\-]$#i', $term);
 	}
 }
 
