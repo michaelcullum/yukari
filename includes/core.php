@@ -270,11 +270,11 @@ class failnet_core
 
 		// Load required classes and systems
 		display('- Loading Failnet nodes');
-		foreach($this->get('nodes_list') as $class)
+		foreach($this->get('nodes_list') as $node)
 		{
-			$name = 'failnet_' . $class;
-			$this->$class = new $name($this);
-			display('=-= Loaded ' . $class . ' node');
+			$name = 'failnet_' . $node;
+			$this->$node = new $name($this);
+			display('=-= Loaded ' . $node . ' node');
 		}
 
 		// Set the error handler
