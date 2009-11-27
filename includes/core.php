@@ -143,31 +143,13 @@ class failnet_core
 	{
 		// Check to make sure the CLI SAPI is being used...
 		if(strtolower(PHP_SAPI) != 'cli')
-		{
-			if(file_exists(FAILNET_ROOT . 'data/restart.inc')) 
-				unlink(FAILNET_ROOT . 'data/restart.inc');
-			display('[Fatal Error] Failnet must be run in the CLI SAPI');
-			sleep(3);
-		    exit(1);
-		}
+			throw_fatal('Failnet must be run in the CLI SAPI');
 
 		// Make sure that PDO and the SQLite PDO extensions are loaded, we need them.
 		if(!extension_loaded('PDO'))
-		{
-			if(file_exists(FAILNET_ROOT . 'data/restart.inc')) 
-				unlink(FAILNET_ROOT . 'data/restart.inc');
-			display('[Fatal Error] Failnet requires the PDO PHP extension to be loaded');
-			sleep(3);
-		    exit(1);
-		}
+			throw_fatal('Failnet requires the PDO PHP extension to be loaded');
     	if(!extension_loaded('pdo_sqlite'))
-    	{
-    		if(file_exists(FAILNET_ROOT . 'data/restart.inc')) 
-				unlink(FAILNET_ROOT . 'data/restart.inc');
-            display('[Fatal Error] Failnet requires the PDO_SQLite PHP extension to be loaded');
-			sleep(3);
-		    exit(1);
-    	}
+			throw_fatal('Failnet requires the PDO_SQLite PHP extension to be loaded');
 
 		// Check to see if date.timezone is empty in the PHP.ini; if so, set the timezone to prevent strict errors.
 		if(!ini_get('date.timezone'))
@@ -175,22 +157,10 @@ class failnet_core
 
 		// Make sure our database directory actually exists and is manipulatable
 		if(!file_exists(FAILNET_DB_ROOT) || !is_readable(FAILNET_DB_ROOT) || !is_writeable(FAILNET_DB_ROOT) || !is_dir(FAILNET_DB_ROOT))
-    	{
-    		if(file_exists(FAILNET_ROOT . 'data/restart.inc')) 
-				unlink(FAILNET_ROOT . 'data/restart.inc');
-            display('[Fatal Error] Failnet requires the database directory to exist and be readable/writeable');
-			sleep(3);
-		    exit(1);
-    	}
+			throw_fatal('Failnet requires the database directory to exist and be readable/writeable');
 		/*
 		if(!file_exists(FAILNET_ROOT . 'data/weather/') || !is_readable(FAILNET_ROOT . 'data/weather/') || !is_writeable(FAILNET_ROOT . 'data/weather/') || !is_dir(FAILNET_ROOT . 'data/weather/'))
-    	{
-    		if(file_exists(FAILNET_ROOT . 'data/restart.inc')) 
-				unlink(FAILNET_ROOT . 'data/restart.inc');
-            display('[Fatal Error] Failnet requires the weather cache directory to exist and be readable/writeable');
-			sleep(3);
-		    exit(1);
-    	}
+			throw_fatal('Failnet requires the weather cache directory to exist and be readable/writeable');
 		*/
 
 		// Set the time that Failnet was started.
@@ -295,11 +265,7 @@ class failnet_core
 		{
 			// Something went boom.  Time to panic!
 			$this->db->rollBack();
-			if(file_exists(FAILNET_ROOT . 'data/restart.inc')) 
-				unlink(FAILNET_ROOT . 'data/restart.inc');
-			trigger_error($e, E_USER_WARNING);
-			sleep(3);
-			exit(1);
+			throw_fatal($e);
 		}
 
 		// Load required classes and systems
@@ -334,11 +300,7 @@ class failnet_core
 			{
 				// Roll back ANY CHANGES MADE, something went boom.
 				$this->db->rollBack();
-				if(file_exists(FAILNET_ROOT . 'data/restart.inc')) 
-					unlink(FAILNET_ROOT . 'data/restart.inc');
-				trigger_error($e, E_USER_WARNING);
-				sleep(3);
-				exit(1);
+				throw_fatal($e);
 			}
 		}
 
@@ -478,7 +440,7 @@ class failnet_core
 	private function load($file)
 	{
 		if(!file_exists(FAILNET_ROOT . $file . '.php') || !is_readable(FAILNET_ROOT . $file . '.php'))
-			trigger_error('Required Failnet configuration file [' . $file . '.php] not found', E_USER_ERROR);
+			throw_fatal('Required Failnet configuration file [' . $file . '.php] not found');
 
 		$settings = require FAILNET_ROOT . $file . '.php';
 

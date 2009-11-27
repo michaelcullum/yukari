@@ -43,13 +43,7 @@ spl_autoload_register('failnet_load_file');
 
 // Check to see if we are even on the minimum PHP version necessary.
 if(version_compare('5.2.3', PHP_VERSION, '>'))
-{
-	if(file_exists(FAILNET_ROOT . 'data/restart.inc')) 
-		unlink(FAILNET_ROOT . 'data/restart.inc');
-	display(array('[Fatal Error] Failnet requires PHP version 5.2.3 or better.', 'Currently installed PHP version: ' . PHP_VERSION));
-	sleep(3);
-	exit(1);
-}
+	throw_fatal('Failnet requires PHP version 5.2.3 or better, while the currently installed PHP version is ' . PHP_VERSION);
 
 // Load Failnet up!
 $failnet = new failnet_core();

@@ -76,6 +76,20 @@ function display($msg)
 }
 
 /**
+ * Throws a fatal and non-recoverable error.
+ * @param string $msg - The error message to use
+ * @return void
+ */
+function throw_fatal($msg)
+{
+	if(file_exists(FAILNET_ROOT . 'data/restart.inc')) 
+		unlink(FAILNET_ROOT . 'data/restart.inc');
+	display('[Fatal Error] ' . $msg);
+	sleep(3);
+	exit(1);
+}
+
+/**
  * Return formatted string for filesizes
  * @param integer $bytes - The number of bytes to convert.
  * @return string - The filesize converted into KiB, MiB, or GiB.
