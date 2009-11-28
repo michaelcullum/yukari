@@ -183,7 +183,7 @@ class failnet_core
 		$this->load($cfg_file);
 
 		// Load/setup the database
-		display('- Loading the Failnet database'); 
+		display('- Connecting to the database'); 
 		try
 		{
 			// Initialize the database connection
@@ -193,28 +193,24 @@ class failnet_core
 			// We want this as a transaction in case anything goes wrong.
 			$this->db->beginTransaction();
 
-			// Check to see if our config table exists...if not, we probably need to install.  o_O
-			$failnet_installed = $this->db->query('SELECT COUNT(*) FROM sqlite_master WHERE name = ' . $this->db->quote('config'))->fetchColumn();
-			if(!$failnet_installed)
-			{
-				display(array('- Database tables not installed, installing Failnet', '- Constructing database tables...', ' -  Creating config table...'));
+			display('- Initializing the database');
 
-				// Make some DB tables here...
-				$this->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/config.sql'));
-				display(' -  Creating users table...');
-				$this->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/users.sql'));
-				display(' -  Creating sessions table...');
-				$this->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/sessions.sql'));
-				display(' -  Creating access table...');
-				$this->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/access.sql'));
-				display(' -  Creating ignored hostmasks table...');
-				$this->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/ignore.sql'));
-				display(' -  Creating karma table...');
-				$this->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/karma.sql'));
-				display('- Database table creation complete.');
+			// Load up the list of files that we've got, and do stuff with them.
+			$schemas = scandir(FAILNET_ROOT . 'includes/schemas');
+			foreach($schemas as $schema)
+			{
+				if(substr($schema, 0, 1) == '.' || $schema == 'schema_data.sql')
+					continue;
+
+				$tablename = substr(strrchr($schema, '.'), 1);
+				if($this->db->query('SELECT COUNT(*) FROM sqlite_master WHERE name = ' . $this->db->quote($tablename))->fetchColumn())
+				{
+					display(' -  Installing the ' . $tablename . ' database table...');
+					$this->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/' . $schema));
+				}
 			}
 
-			display('- Preparing database...');
+			display('- Preparing database queries...');
 
 			// Now, we need to build our default statements.
 			// Config table
@@ -282,7 +278,9 @@ class failnet_core
 		@set_error_handler(array(&$this->error, 'fail'));
 
 		// If Failnet was just installed, we need to do something now that the auth class is loaded
-		if(!$failnet_installed)
+		$this->sql('config', 'get')->execute(array(':name' => 'rand_seed')); //check for rand_seed existing
+		$rand_seed_exists = $this->sql('config', 'get')->fetch(PDO::FETCH_ASSOC);
+		if(!$rand_seed_exists)
 		{
 			try
 			{
