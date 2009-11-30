@@ -199,11 +199,12 @@ class failnet_core
 			$schemas = scandir(FAILNET_ROOT . 'includes/schemas');
 			foreach($schemas as $schema)
 			{
-				if(substr($schema, 0, 1) == '.' || $schema == 'schema_data.sql')
+				if(substr($schema, 0, 1) == '.' || substr(strrchr($schema, '.'), 1) != 'sql' || $schema == 'schema_data.sql')
 					continue;
 
-				$tablename = substr(strrchr($schema, '.'), 1);
-				if($this->db->query('SELECT COUNT(*) FROM sqlite_master WHERE name = ' . $this->db->quote($tablename))->fetchColumn())
+				$tablename = substr($schema, 0, strrpos($schema, '.'));
+				$results = $this->db->query('SELECT COUNT(*) FROM sqlite_master WHERE name = ' . $this->db->quote($tablename))->fetchColumn();
+				if(!$results)
 				{
 					display(' -  Installing the ' . $tablename . ' database table...');
 					$this->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/' . $schema));
