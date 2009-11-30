@@ -194,7 +194,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 				}
 				elseif($text !== false)
 				{
-					if($this->failnet->is_in($this->failnet->nick, $text))
+					if($this->failnet->user_is($this->failnet->nick, $text))
 					{
 						// Annouce the channel part if we're allowed to speak.
 						if($this->failnet->get('speak'))
