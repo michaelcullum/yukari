@@ -702,11 +702,11 @@ class failnet_core
 	public function user_is($nick, $chan, $type = NULL)
 	{
 		// Make sure we handle this check first
-		if(!in_array($type, array(self::FOUNDER, self::ADMIN, self::OP, self::HALFOP, self::VOICE, NULL)))
+		if(!in_array($type, array(self::FOUNDER, self::ADMIN, self::OP, self::HALFOP, self::VOICE, self::REGULAR, NULL)))
 			return NULL;
 
 		// If it is NULL, we are checking if the user is in the specified channel
-		if($type === NULL)
+		if($type === NULL || $type === self::REGULAR)
 			return (isset($this->chans[trim(strtolower($chan))])) ? isset($this->chans[trim(strtolower($chan))][trim(strtolower($nick))]) : false;
 
 		// Okay, we are checking the user type.  Let's do that.
