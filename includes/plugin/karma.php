@@ -46,7 +46,7 @@ class failnet_plugin_karma extends failnet_plugin_common
 		// Check for karma changes first
 		$text = $this->event->get_arg('text');
 		$sender = $this->event->nick;
-		if($this->failnet->karma->check_word($text))
+		if($this->event->fromchannel() === true && $this->failnet->karma->check_word($text))
 		{
 			$term = strtolower(trim($text));
 			$karma_type = substr($term, -2, 2);
