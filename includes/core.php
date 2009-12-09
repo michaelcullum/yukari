@@ -11,7 +11,7 @@
  * License:		GNU General Public License - Version 2
  *
  *===================================================================
- * 
+ *
  */
 
 /**
@@ -31,8 +31,8 @@
 
 /**
  * Failnet - Core class,
- * 		Failnet 2.0 in a nutshell.  Faster, smarter, better, and with a sexier voice. 
- * 
+ * 		Failnet 2.0 in a nutshell.  Faster, smarter, better, and with a sexier voice.
+ *
  *
  * @package core
  * @author Obsidian
@@ -46,76 +46,74 @@ class failnet_core
  */
 
 	/**
-	 * Loaded class nodes
-	 * @var array
+	 * @var array - Loaded class nodes
 	 */
 	private $nodes = array();
 
 	/**
-	 * Loaded Failnet plugins
-	 * @var array
+	 * @var array - Loaded Failnet plugins
 	 */
 	private $plugins = array();
 
 	/**
-	 * List of loaded plugins
-	 * @var array
+	 * @var array - List of loaded plugins
 	 */
 	public $plugins_loaded = array();
 
 
 
 	/**
-	 * The UNIX timestamp for when Failnet was started
-	 * @var integer
+	 * @var integer - The UNIX timestamp for when Failnet was started
 	 */
 	public $start = 0;
 
 	/**
-	 * Our current usernick for the bot
-	 * @var string
+	 * @var string - Our current usernick for the bot
 	 */
 	public $nick = '';
 
 	/**
-	 * Should we be in debug mode?
-	 * @var boolean
+	 * @var boolean - Should we be in debug mode?
 	 */
 	public $debug = false;
 
 	/**
-	 * Are we allowed to speak?
-	 * @var boolean
+	 * @var boolean - Should we be in silent mode?
 	 */
 	public $speak = true;
 
 	/**
-	 * Various config settings et al.
-	 * @var array
+	 * @var array - Various config settings et al.
 	 */
 	public $settings = array();
 
 	/**
-	 * Config file settings
-	 * @var array
+	 * @var array - Config file settings
 	 */
 	public $config = array();
 
 	/**
-	 * What channels are we in, and what users are in them?
-	 * @var array
+	 * @var array - What channels are we in, and what users are in them?
 	 */
 	public $chans = array();
 
+    /**
+     * @var array - Array of plugins and what commands they contain
+     */
+    public $p_commands = array();
+
+    /**
+     * @var array - Array of help entries for individual commands
+     */
+    public $p_help = array();
+
 	/**
-	 * Prepared PDO statements for use throughout Failnet
-	 * @var array
+	 * @var array - Prepared PDO statements for use throughout Failnet
 	 */
 	public $statements = array();
 
 	/**
-	 * DO NOT _EVER_ CHANGE THIS, FOR THE SAKE OF HUMANITY.  {@link http://xkcd.com/534/ }
-	 * @var boolean
+	 * @var boolean - DO NOT _EVER_ CHANGE THIS, FOR THE SAKE OF HUMANITY.  {@link http://xkcd.com/534/ }
 	 */
 	private $can_become_skynet = FALSE;
 
@@ -158,10 +156,12 @@ class failnet_core
 		// Make sure our database directory actually exists and is manipulatable
 		if(!file_exists(FAILNET_DB_ROOT) || !is_readable(FAILNET_DB_ROOT) || !is_writeable(FAILNET_DB_ROOT) || !is_dir(FAILNET_DB_ROOT))
 			throw_fatal('Failnet requires the database directory to exist and be readable/writeable');
-		/*
+		/**
+         *
+         * Commented because we don't really need it
 		if(!file_exists(FAILNET_ROOT . 'data/weather/') || !is_readable(FAILNET_ROOT . 'data/weather/') || !is_writeable(FAILNET_ROOT . 'data/weather/') || !is_dir(FAILNET_ROOT . 'data/weather/'))
 			throw_fatal('Failnet requires the weather cache directory to exist and be readable/writeable');
-		*/
+		 */
 
 		// Set the time that Failnet was started.
 		$this->start = time();
@@ -179,11 +179,11 @@ class failnet_core
 
 		// Load the config file
 		$cfg_file = ($_SERVER['argc'] > 1) ? $_SERVER['argv'][1] : 'config';
-		display('- Loading configuration file \'' . $cfg_file . '\' for specified IRC server');
+		display("- Loading configuration file '$cfg_file' for specified IRC server");
 		$this->load($cfg_file);
 
 		// Load/setup the database
-		display('- Connecting to the database'); 
+		display('- Connecting to the database');
 		try
 		{
 			// Initialize the database connection
@@ -243,6 +243,8 @@ class failnet_core
 			$this->sql('access', 'delete', 'DELETE FROM access WHERE (user_id = :user AND LOWER(hostmask) = LOWER(:hostmask) )');
 			$this->sql('access', 'delete_user', 'DELETE FROM access WHERE user_id = :user');
 			$this->sql('access', 'get', 'SELECT hostmask FROM access WHERE user_id = :user');
+
+// @todo move this to the proper nodes
 
 			// Ignored hostmasks table
 			$this->sql('ignore', 'create', 'INSERT INTO ignore ( ignore_date, hostmask ) VALUES ( :timestamp, :hostmask )');
@@ -318,8 +320,8 @@ class failnet_core
 		}
 
 		// This is a hack to allow us to restart Failnet if we're running the script through a batch file.
-		display('- Removing termination indicator file'); 
-		if(file_exists(FAILNET_ROOT . 'data/restart.inc')) 
+		display('- Removing termination indicator file');
+		if(file_exists(FAILNET_ROOT . 'data/restart.inc'))
 			unlink(FAILNET_ROOT . 'data/restart.inc');
 
 		// In case of restart/reload, to prevent 'Nick already in use' (which asplodes everything)
@@ -370,10 +372,10 @@ class failnet_core
 			}
 
 			// Check to see if the user that generated the event is ignored.
-			if($eventtype != 'response' && $this->ignore->ignored($event->gethostmask()))
+			if($eventtype != 'response' && isset($this->ignore) && $this->ignore->ignored($event->gethostmask()))
 				continue;
 
-			// For each plugin, we provide the event encountered so that the plugins can react to them for us  
+			// For each plugin, we provide the event encountered so that the plugins can react to them for us
 			foreach($this->plugins as $name => $plugin)
 			{
 				if($event)
@@ -392,7 +394,7 @@ class failnet_core
 			if(!$queue)
 				continue;
 
-			//Execute pre-dispatch callback for plugin events 
+			//Execute pre-dispatch callback for plugin events
 			foreach($this->plugins as $name => $plugin)
 			{
 				$plugin->pre_dispatch($queue);
@@ -434,12 +436,12 @@ class failnet_core
 	/**
 	 * Failnet configuration file settings load method
 	 * @param string $file - The configuration file to load
-	 * @return void 
+	 * @return void
 	 */
 	private function load($file)
 	{
-		if(!file_exists(FAILNET_ROOT . $file . '.php') || !is_readable(FAILNET_ROOT . $file . '.php'))
-			throw_fatal('Required Failnet configuration file [' . $file . '.php] not found');
+		if(!@file_exists(FAILNET_ROOT . $file . '.php') || !@is_readable(FAILNET_ROOT . $file . '.php'))
+			throw_fatal("Required Failnet configuration file '$file.php' not found");
 
 		$settings = require FAILNET_ROOT . $file . '.php';
 
@@ -477,7 +479,7 @@ class failnet_core
 		else
 		{
 			// Just a hack to get it to truly terminate through batch, and not restart.
-			if(file_exists(FAILNET_ROOT . 'data/restart.inc')) 
+			if(file_exists(FAILNET_ROOT . 'data/restart.inc'))
 				unlink(FAILNET_ROOT . 'data/restart.inc');
 			// Dump the log cache to the file.
 			$this->log->add('--- Terminating Failnet ---', true);
@@ -525,7 +527,7 @@ class failnet_core
 
 	/**
 	 * Unified interface for plugins
-	 * @param string $mode - The method mode to use 
+	 * @param string $mode - The method mode to use
 	 * @param string $param - The parameters for the mode, see mode documentation
 	 * @return mixed - See mode documentation
 	 */
@@ -611,7 +613,7 @@ class failnet_core
 	}
 
 	/**
-	 * Magic method __isset() to use for referencing specific module classes, used to check if a certain property is set 
+	 * Magic method __isset() to use for referencing specific module classes, used to check if a certain property is set
 	 * @param string $name - The name of the module class to use
 	 * @return boolean - Whether or not the property is set.
 	 */
@@ -634,8 +636,8 @@ class failnet_core
 	* Return unique id
 	* @param string $extra additional entropy
 	* @return string - The unique ID
-	* 
-	* @author (c) 2007 phpBB Group 
+	*
+	* @author (c) 2007 phpBB Group
 	*/
 	public function unique_id($extra = 'c')
 	{
@@ -656,7 +658,7 @@ class failnet_core
 			$this->settings['last_rand_seed'] = $last_rand_seed;
 			$dss_seeded = true;
 		}
-	
+
 		return substr($val, 4, 16);
 	}
 
@@ -721,12 +723,8 @@ class failnet_core
 	 */
 	public function checkuser($user)
 	{
-		if(preg_match('#' . preg_quote($this->get('owner'), '#') . '#i', $user))
-			return true;
-		if(preg_match('#' . preg_quote($this->get('nick'), '#') . '#i', $user))
-			return true;
-		if(preg_match('#self#i', $user))
-			return true;
+        if(preg_match('#' . preg_quote($this->get('owner'), '#') . '|' . preg_quote($this->get('nick'), '#') . '|self#i', $user))
+            return true;
 		return false;
 	}
 

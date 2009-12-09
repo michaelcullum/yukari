@@ -31,8 +31,8 @@
 
 /**
  * Failnet - Plugin base class,
- * 		Used as the common base class for all of Failnet's plugin class files 
- * 
+ * 		Used as the common base class for all of Failnet's plugin class files
+ *
  *
  * @package plugins
  * @author Obsidian
@@ -42,11 +42,10 @@
 abstract class failnet_plugin_common
 {
 	/**
-	 * The mothership itself.
-	 * @var failnet_core object
+	 * @var object - The mothership itself.
 	 */
 	protected $failnet;
-	
+
 	/**
 	 * Constants for Failnet.
 	 */
@@ -54,26 +53,33 @@ abstract class failnet_plugin_common
 	const HR = '---------------------------------------------------------------------';
 	const ERROR_LOG = 'error';
 	const USER_LOG = 'user';
-	
+
+	/**
+	 * @var object - Current event instance being processed
+	 */
+	public $event;
+
+	/**
+	 * @var array - Queue of events initiated by the plugin in response to the current event being processed
+	 */
+	public $events = array();
+
+	/**
+	 * Constructor method.
+	 * @param object (failnet_core) $failnet - The Failnet core object.
+	 * @return void
+	 */
 	public function __construct(failnet_core $failnet)
 	{
 		$this->failnet = $failnet;
 		$this->init();
 	}
-	
+
+	/**
+	 * Handler method for plugin load
+	 * @return void
+	 */
 	public function init() { }
-
-	/**
-	 * Current event instance being processed
-	 * @var object
-	 */
-	public $event;
-
-	/**
-	 * Queue of events initiated by the plugin in response to the current event being processed
-	 * @var array
-	 */
-	public $events = array();
 
 	/**
 	 * Check if the dependencies for the plugin are met.
@@ -86,7 +92,7 @@ abstract class failnet_plugin_common
 
 	/**
 	 * Checks to see if this is has the proper command prefix for this message
-	 * @param string $text - The message to check 
+	 * @param string $text - The message to check
 	 * @return boolean - Is it using the command prefix?
 	 */
 	public function prefix($text)
@@ -95,7 +101,7 @@ abstract class failnet_plugin_common
 	}
 
 	/**
-	 * Cleans up the text, returns the actual command being entered, and modifies the entered text also. 
+	 * Cleans up the text, returns the actual command being entered, and modifies the entered text also.
 	 * @param string &$text - The text to process
 	 * @return string - The command to use
 	 */
@@ -107,7 +113,7 @@ abstract class failnet_plugin_common
 	}
 
 	/**
-	 * Callback dispatched before connections are checked for new events, 
+	 * Callback dispatched before connections are checked for new events,
 	 * allowing for the execution of logic that does not require an event to occur.
 	 * @return void
 	 */
@@ -116,7 +122,7 @@ abstract class failnet_plugin_common
 	/**
 	 * Callback dispatched right before commands are to be dispatched to the
 	 * server, allowing plugins to mutate, remove, or reorder events.
-	 * @param array $events Events to be dispatched
+	 * @param array &$events Events to be dispatched
 	 * @return void
 	 */
 	public function pre_dispatch(array &$events) { }
@@ -256,7 +262,7 @@ abstract class failnet_plugin_common
 	public function cmd_timereply() { }
 
 	/**
-	 * Handler for the reply to a CTCP VERSION request. 
+	 * Handler for the reply to a CTCP VERSION request.
 	 * @return void
 	 */
 	public function cmd_versionreply() { }
@@ -274,7 +280,7 @@ abstract class failnet_plugin_common
 	public function cmd_ctcpreply() { }
 
 	/**
-	 * Handler for raw requests from the server. 
+	 * Handler for raw requests from the server.
 	 * @return void
 	 */
 	public function cmd_raw() { }
@@ -290,7 +296,7 @@ abstract class failnet_plugin_common
 	 * @return void
 	 */
 	public function cmd_response() { }
-	
+
 	/**
 	 * Provides cmd_* methods
 	 * @param string $name Name of the method called
