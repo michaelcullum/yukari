@@ -82,6 +82,16 @@ abstract class failnet_plugin_common
 	public function init() { }
 
 	/**
+	 * Handler method for building the dynamic help information
+	 * @param string &$name - The name of the plugin.
+	 * @return array - The array of help items, with an entry for each command.
+	 */
+	public function help(&$name)
+	{
+		return array();
+	}
+
+	/**
 	 * Check if the dependencies for the plugin are met.
 	 * @return string
 	 */
