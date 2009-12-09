@@ -11,7 +11,7 @@
  * License:		GNU General Public License - Version 2
  *
  *===================================================================
- * 
+ *
  */
 
 /**
@@ -27,12 +27,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://opensource.org/licenses/gpl-2.0.php>.
  */
- 
+
 
 /**
  * Failnet - Administration plugin,
- * 		This allows the owner or authorized users to control Failnet. 
- * 
+ * 		This allows the owner or authorized users to control Failnet.
+ *
  *
  * @package plugins
  * @author Obsidian
@@ -42,16 +42,33 @@
 class failnet_plugin_admin extends failnet_plugin_common
 {
 	/**
-	 * When was the last time we requested a dai?  This is used for dai confirm timeouts.
-	 * @var integer
+	 * @var integer - When was the last time we requested a dai?  This is used for dai confirm timeouts.
 	 */
 	private $dai = 0;
 
 	/**
-	 * When did we last check for timed out sessions?
-	 * @var integer
+	 * @var integer - When did we last check for timed out sessions?
 	 */
 	private $time = 0;
+
+	public function help(&$name)
+	{
+		$name = 'admin';
+		return array(
+			'chans'			=> 'chans - (no auth) - Outputs the channels Failnet is currently inhabiting',
+			'uptime'		=> 'uptime - (no auth) - Outputs how long Failnet has been running for',
+			'memuse'		=> 'memuse - (no auth) - Outputs Failnet`s memory usage data',
+			'plugins'		=> 'plugins - (no auth) - Outputs a list of plugins currently loaded',
+			'loaded'		=> 'loaded {$plugin} - (no auth) - Checks to see if a specific Failnet plugin has been loaded already or not',
+			'load'			=> 'load {$plugin} - (authlevel 70) - Loads a specific Failnet plugin on demand if it is not already loaded',
+			'nick'			=> 'nick {$new_nick} - (authlevel 30) - Changes Failnet`s nick to $new_nick',
+			'join'			=> 'join {$channel} - (authlevel 5) - Instructs Failnet to join channel $channel',
+			'part'			=> 'part [{$channel}] - (authlevel 5) - Instructs Failnet to leave channel $channel (or if no channel is specified, Failnet will leave the channel it receives the command in)',
+			'set'			=> 'set {$config} {$setting} - (authlevel 100) - Changes a specific config setting in Failnet',
+			'restart'		=> 'restart - (authlevel 50) - Restarts Failnet',
+			'dai'			=> 'dai - (authlevel 50) - Terminates Failnet',
+		);
+	}
 
 	public function tick()
 	{
@@ -125,7 +142,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 				}
 				$this->call_quit(true);
 			break;
-		
+
 			case 'nick':
 				// Check auths
 				if ($this->failnet->auth->authlevel($hostmask) < 30)
@@ -246,7 +263,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 				{
 					// Something went boom.  Time to panic!
 					$this->db->rollBack();
-					if(file_exists(FAILNET_ROOT . 'data/restart.inc')) 
+					if(file_exists(FAILNET_ROOT . 'data/restart.inc'))
 						unlink(FAILNET_ROOT . 'data/restart.inc');
 					trigger_error($e, E_USER_WARNING);
 					sleep(3);

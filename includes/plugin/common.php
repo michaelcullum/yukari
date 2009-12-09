@@ -93,9 +93,9 @@ abstract class failnet_plugin_common
 
 	/**
 	 * Check if the dependencies for the plugin are met.
-	 * @return string
+	 * @return mixed
 	 */
-	public function dependencies()
+	public function check_dependencies()
 	{
 		return true;
 	}
