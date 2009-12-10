@@ -12,6 +12,8 @@
  *
  *===================================================================
  *
+ * @todo add a command for altering another user's authlevel
+ *
  */
 
 /**
@@ -27,12 +29,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://opensource.org/licenses/gpl-2.0.php>.
  */
- 
+
 
 /**
  * Failnet - Authorization plugin,
- * 		Full authorization system integration plugin.  Handles login, new users, etc. 
- * 
+ * 		Full authorization system integration plugin.  Handles login, new users, etc.
+ *
  *
  * @package plugins
  * @author Obsidian
@@ -41,6 +43,18 @@
  */
 class failnet_plugin_authorize extends failnet_plugin_common
 {
+	public function help(&$name)
+	{
+		$name = 'authorize';
+		return array(
+			'newuser'		=> 'newuser {$password} - (no auth) - Adds the sender to Failnet`s list of known users',
+			'login'			=> 'login {$password} - (requires valid password) - Logs in the current user if the password matches that of the registered user`s password',
+			'deluser'		=> 'deluser {$password} - (requires valid password) - Prepares to delete a specified user from Failnet`s list of known users',
+			'setpass'		=> 'setpass {$old_password} {$new_password} - (requires valid password) - Changes the password for the current user new {$new_password}',
+			// @todo +access -access addaccess delaccess
+		);
+	}
+
 	public function cmd_privmsg()
 	{
 		// Process the command
@@ -120,7 +134,7 @@ class failnet_plugin_authorize extends failnet_plugin_common
 					return;
 				}
 
-				$this->call_privmsg($sender, ($success) ? 'You have been removed from my users database.' : 'Cannot remove user -- invalid confirmation key entered');	
+				$this->call_privmsg($sender, ($success) ? 'You have been removed from my users database.' : 'Cannot remove user -- invalid confirmation key entered');
 			break;
 
 			// Change the password for this user
