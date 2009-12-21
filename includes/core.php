@@ -244,19 +244,6 @@ class failnet_core
 			$this->sql('access', 'delete_user', 'DELETE FROM access WHERE user_id = :user');
 			$this->sql('access', 'get', 'SELECT hostmask FROM access WHERE user_id = :user');
 
-// @todo move this to the proper nodes
-
-			// Ignored hostmasks table
-			$this->sql('ignore', 'create', 'INSERT INTO ignore ( ignore_date, hostmask ) VALUES ( :timestamp, :hostmask )');
-			$this->sql('ignore', 'delete', 'DELETE FROM ignore WHERE LOWER(hostmask) = LOWER(:hostmask)');
-			$this->sql('ignore', 'get_single', 'SELECT * FROM ignore WHERE LOWER(hostmask) = LOWER(:hostmask) LIMIT 1');
-			$this->sql('ignore', 'get', 'SELECT * FROM ignore');
-
-			// Karma table
-			$this->sql('karma', 'create', 'INSERT INTO karma ( karma_value, term ) VALUES ( :karma, :term )');
-			$this->sql('karma', 'update', 'UPDATE karma SET karma_value = :karma WHERE LOWER(term) = LOWER(:term)');
-			$this->sql('karma', 'get', 'SELECT karma_value FROM karma WHERE LOWER(term) = LOWER(:term) LIMIT 1');
-
 			// Commit the stuffs
 			$this->db->commit();
 		}
@@ -661,6 +648,8 @@ class failnet_core
 
 		return substr($val, 4, 16);
 	}
+	
+	// @todo move these methods out of the core
 
 	/**
 	 * Deny function...

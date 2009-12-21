@@ -96,6 +96,11 @@ class failnet_karma extends failnet_common
             'everything'		=> 'I\'m sorry, but you can\'t change the karma for everything.',
 			'everyone'			=> 'I\'m sorry, but you can\'t change the karma for everything.',
         );
+
+		// Add in our prepared SQL statements. ;)
+		$this->sql('karma', 'create', 'INSERT INTO karma ( karma_value, term ) VALUES ( :karma, :term )');
+		$this->sql('karma', 'update', 'UPDATE karma SET karma_value = :karma WHERE LOWER(term) = LOWER(:term)');
+		$this->sql('karma', 'get', 'SELECT karma_value FROM karma WHERE LOWER(term) = LOWER(:term) LIMIT 1');
 	}
 
 	/**

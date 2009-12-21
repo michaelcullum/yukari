@@ -88,11 +88,11 @@ class failnet_plugin_karma extends failnet_plugin_common
 				$karma = $this->failnet->karma->get_karma($term);
 				if(is_null($karma))
 				{
-					$this->call_privmsg($this->event->source(), 'They have a karma of 0.');
+					$this->call_privmsg($this->event->source(), sprintf('%s has a karma of 0.', $term));
 				}
 				elseif(is_int($karma))
 				{
-					$this->call_privmsg($this->event->source(), 'They have a karma of ' . $karma . '.');
+					$this->call_privmsg($this->event->source(), sprintf('%s has a karma of ' . $karma . '.', $term));
 				}
 				else
 				{

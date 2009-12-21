@@ -61,6 +61,11 @@ class failnet_ignore extends failnet_common
 	public function init()
 	{
 		display('=== Loading ignored users list...');
+		$this->sql('ignore', 'create', 'INSERT INTO ignore ( ignore_date, hostmask ) VALUES ( :timestamp, :hostmask )');
+		$this->sql('ignore', 'delete', 'DELETE FROM ignore WHERE LOWER(hostmask) = LOWER(:hostmask)');
+		$this->sql('ignore', 'get_single', 'SELECT * FROM ignore WHERE LOWER(hostmask) = LOWER(:hostmask) LIMIT 1');
+		$this->sql('ignore', 'get', 'SELECT * FROM ignore');
+
 		$this->failnet->sql('ignore', 'get')->execute();
 		$this->users = $this->failnet->sql('ignore', 'get')->fetchAll(PDO::FETCH_COLUMN, 0);
 		$this->cache = hostmasks_to_regex($this->users);
