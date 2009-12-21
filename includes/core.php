@@ -359,7 +359,7 @@ class failnet_core
 			}
 
 			// Check to see if the user that generated the event is ignored.
-			if($eventtype != 'response' && isset($this->ignore) && $this->ignore->ignored($event->gethostmask()))
+			if($eventtype != 'response' && isset($this->ignore) && $this->ignore->ignored($event->hostmask))
 				continue;
 
 			// For each plugin, we provide the event encountered so that the plugins can react to them for us

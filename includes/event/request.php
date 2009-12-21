@@ -167,7 +167,7 @@ class failnet_event_request implements ArrayAccess
 	 */
 	public function __construct() { }
 	
-	public function __call($funct, $params)
+	public function __call($name, array $arguments)
 	{
 		trigger_error('Call to undefined method "' . $name . '" in class "' . __CLASS__ . '"', E_USER_WARNING);
 	}

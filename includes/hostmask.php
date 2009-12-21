@@ -67,7 +67,7 @@ class failnet_hostmask
 		if(preg_match('/^([^!@]+)!(?:[ni]=)?([^@]+)@([^ ]+)/', $hostmask, $match))
 		{
 			list(, $nick, $username, $host) = $match; 
-			return new self($nick, $username, $host);
+			return new failnet_hostmask($nick, $username, $host);
 		}
 		else
 		{

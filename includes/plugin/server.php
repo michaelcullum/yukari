@@ -199,10 +199,10 @@ class failnet_plugin_server extends failnet_plugin_common
 	
 	public function cmd_kick()
 	{
-		if($this->event->nick != $this->failnet->get('nick'))
+		if($this->event->hostmask->nick != $this->failnet->get('nick'))
 		{
 			$chan = trim(strtolower($this->event->get_arg('channel')));
-			$nick = trim(strtolower($this->event->nick));
+			$nick = trim(strtolower($this->event->hostmask->nick));
 
 			if (isset($this->failnet->chans[$chan][$nick]))
 				unset($this->failnet->chans[$chan][$nick]);
@@ -246,7 +246,7 @@ class failnet_plugin_server extends failnet_plugin_common
 	public function cmd_join()
 	{
 		$chan = trim(strtolower($this->event->get_arg('channel')));
-		$nick = trim(strtolower($this->event->nick));
+		$nick = trim(strtolower($this->event->hostmask->nick));
 
 		$this->failnet->chans[$chan][$nick] = self::REGULAR;
 	}
@@ -254,7 +254,7 @@ class failnet_plugin_server extends failnet_plugin_common
 	public function cmd_quit()
 	{
 		$chan = trim(strtolower($this->event->get_arg('channel')));
-		$nick = trim(strtolower($this->event->nick));
+		$nick = trim(strtolower($this->event->hostmask->nick));
 
 		foreach($this->failnet->chans as $channame => $chan)
 		{
@@ -265,7 +265,7 @@ class failnet_plugin_server extends failnet_plugin_common
 
 	public function cmd_nick()
 	{
-		$nick = trim(strtolower($this->event->nick));
+		$nick = trim(strtolower($this->event->hostmask->nick));
 		$new_nick = trim(strtolower($this->event->get_arg('nick')));
 
 		foreach($this->failnet->chans as $channame => $chan)

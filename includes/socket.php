@@ -114,12 +114,19 @@ class failnet_socket extends failnet_common
 			// Parse the user hostmask, command, and arguments
 			list($prefix, $cmd, $args) = array_pad(explode(' ', ltrim($buffer, ':'), 3), 3, NULL);
 			if(strpos($prefix, '@') !== false)
+			{
 				$hostmask = failnet_hostmask::load($prefix);
+			}
+			else
+			{
+				$hostmask = failnet_hostmask::load('unknown' . ((strpos($prefix, '!') === false) ? '!unknown' : '') . '@' . $prefix);
+			}
 		}
 		else // If the event is from the server...
 		{
 			// Parse the command and arguments
 			list($cmd, $args) = array_pad(explode(' ', $buffer, 2), 2, NULL);
+			$hostmask = failnet_hostmask::load('server!server@' . $this->failnet->get('server'));
 		}
 
 		// Parse the event arguments depending on the event type
@@ -154,14 +161,14 @@ class failnet_socket extends failnet_common
 							if ($reply)
 								$cmd .= 'reply';
 						case 'action':
-							$args = array($nick, $args);
+							$args = array($hostmask->nick, $args);
 						break;
 
 						default:
 							$cmd = 'ctcp';
 							if ($reply)
 								$cmd .= 'reply';
-							$args = array($nick, $ctcp);
+							$args = array($hostmask->nick, $ctcp);
 						break;
 					}
 				}
