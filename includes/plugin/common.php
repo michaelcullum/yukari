@@ -41,18 +41,9 @@
  */
 abstract class failnet_plugin_common extends failnet_common
 {
-	/**
-	 * @var object - The mothership itself.
-	 */
-	protected $failnet;
-
-	/**
-	 * Constants for Failnet.
-	 */
-	const TAB = "\t";
-	const HR = '---------------------------------------------------------------------';
-	const ERROR_LOG = 'error';
-	const USER_LOG = 'user';
+/**
+ * Common properties
+ */
 
 	/**
 	 * @var object - Current event instance being processed
@@ -64,42 +55,9 @@ abstract class failnet_plugin_common extends failnet_common
 	 */
 	public $events = array();
 
-	/**
-	 * Constructor method.
-	 * @param object (failnet_core) $failnet - The Failnet core object.
-	 * @return void
-	 */
-	public function __construct(failnet_core $failnet)
-	{
-		$this->failnet = $failnet;
-		$this->init();
-	}
-
-	/**
-	 * Handler method for plugin load
-	 * @return void
-	 */
-	public function init() { }
-
-	/**
-	 * Handler method for building the dynamic help information
-	 * @param string &$name - The name of the plugin.
-	 * @param array &$commands - The array of help items, with an entry for each command.
-	 */
-	public function help(&$name, &$commands)
-	{
-		$name = '';
-		$commands = array();
-	}
-
-	/**
-	 * Check if the dependencies for the plugin are met.
-	 * @return mixed
-	 */
-	public function check_dependencies()
-	{
-		return true;
-	}
+/**
+ * Commonly used plugin methods
+ */
 
 	/**
 	 * Checks to see if this is has the proper command prefix for this message
@@ -123,17 +81,36 @@ abstract class failnet_plugin_common extends failnet_common
 		return ($text !== false) ? substr($cmd, 0, strpos($cmd, ' ')) : $cmd;
 	}
 
+/**
+ * Handler methods (methods that are intended to be overridden by plugins)
+ */
+
 	/**
-	 * Callback dispatched before connections are checked for new events,
-	 * allowing for the execution of logic that does not require an event to occur.
+	 * Handler method for plugin load
+	 * @return void
+	 */
+	public function init() { }
+
+	/**
+	 * Handler method for building the dynamic help information
+	 * @param string &$name - The name of the plugin.
+	 * @param array &$commands - The array of help items, with an entry for each command.
+	 */
+	public function help(&$name, &$commands)
+	{
+		$name = '';
+		$commands = array();
+	}
+
+	/**
+	 * Callback dispatched before connections are checked for new events, allowing for the execution of logic that does not require an event to occur.
 	 * @return void
 	 */
 	public function tick() { }
 
 	/**
-	 * Callback dispatched right before commands are to be dispatched to the
-	 * server, allowing plugins to mutate, remove, or reorder events.
-	 * @param array &$events Events to be dispatched
+	 * Callback dispatched right before commands are to be dispatched to the server, allowing plugins to mutate, remove, or reorder events.
+	 * @param array &$events - Events to be dispatched
 	 * @return void
 	 */
 	public function pre_dispatch(array &$events) { }
