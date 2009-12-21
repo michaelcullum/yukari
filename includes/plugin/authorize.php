@@ -43,15 +43,18 @@
  */
 class failnet_plugin_authorize extends failnet_plugin_common
 {
-	public function help(&$name)
+	public function help(&$name, &$commands)
 	{
 		$name = 'authorize';
-		return array(
+		$commands = array(
 			'newuser'		=> 'newuser {$password} - (no auth) - Adds the sender to Failnet`s list of known users',
 			'login'			=> 'login {$password} - (requires valid password) - Logs in the current user if the password matches that of the registered user`s password',
 			'deluser'		=> 'deluser {$password} - (requires valid password) - Prepares to delete a specified user from Failnet`s list of known users',
 			'setpass'		=> 'setpass {$old_password} {$new_password} - (requires valid password) - Changes the password for the current user new {$new_password}',
-			// @todo +access -access addaccess delaccess
+			'+access'		=> '+access {$password} - (requires valid password) - Adds the user`s current hostmask to the access list of the current user',
+			'-access'		=> '-access {$password} - (requires valid password) - Removes the user`s current hostmask from the access list of the current user',
+			'addaccess'		=> 'addaccess {$hostmask} {$password} - (requires valid password) - Adds the specified hostmask to the access list of the current user',
+			'delaccess'		=> 'delaccess {$hostmask} {$password} - (requires valid password) - Removes the specified hostmaks from the access list of the current user',
 		);
 	}
 

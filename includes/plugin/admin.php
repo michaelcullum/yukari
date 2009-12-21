@@ -51,10 +51,10 @@ class failnet_plugin_admin extends failnet_plugin_common
 	 */
 	private $time = 0;
 
-	public function help(&$name)
+	public function help(&$name, &$commands)
 	{
 		$name = 'admin';
-		return array(
+		$commands = array(
 			'chans'			=> 'chans - (no auth) - Outputs the channels Failnet is currently inhabiting',
 			'uptime'		=> 'uptime - (no auth) - Outputs how long Failnet has been running for',
 			'memuse'		=> 'memuse - (no auth) - Outputs Failnet`s memory usage data',
