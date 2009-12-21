@@ -39,7 +39,7 @@
  * @copyright (c) 2009 - Failnet Project
  * @license GNU General Public License - Version 2
  */
-abstract class failnet_plugin_common
+abstract class failnet_plugin_common extends failnet_common
 {
 	/**
 	 * @var object - The mothership itself.
@@ -311,22 +311,24 @@ abstract class failnet_plugin_common
 	/**
 	 * Provides cmd_* methods
 	 * @param string $name Name of the method called
-	 * @param array $args Arguments passed in the call
+	 * @param array $arguments Arguments passed in the call
 	 * @return void
 	 */
-	public function __call($name, array $args)
+	public function __call($name, array $arguments)
 	{
-		if (substr($name, 0, 5) == 'call_')
+		if(substr($name, 0, 5) == 'call_')
 		{
 			$type = substr($name, 5);
-			if (defined('failnet_event_command::TYPE_' . strtoupper($type)))
+			if(defined('failnet_event_command::TYPE_' . strtoupper($type)))
 			{
 				$request = new failnet_event_command();
-				$request->plugin = $this;
-				$request->type = $type;
-				$request->arguments = $args;
+				$request->load_data($this, $type, $arguments);
 				$this->events[] = $request;
 			}
+		}
+		else
+		{
+			return parent::__call($name, $arguments);
 		}
 	}
 }

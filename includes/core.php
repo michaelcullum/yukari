@@ -764,7 +764,7 @@ class failnet_core
 	 */
 	public function __call($funct, $params)
 	{
-		trigger_error('Bad function call "' . $funct . '" with params "' . implode(', ', $params) . '" to "' . get_class() . '" class.', E_USER_WARNING);
+		trigger_error('Call to undefined function "' . $name . '" in class "' . __CLASS__ . '"', E_USER_WARNING);
 	}
 }
 

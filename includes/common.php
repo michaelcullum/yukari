@@ -42,8 +42,7 @@
 abstract class failnet_common
 {
 	/**
-	 * The mothership itself.
-	 * @var failnet_core object
+	 * @var object failnet_core - The mothership itself.
 	 */
 	protected $failnet;
 	
@@ -53,14 +52,41 @@ abstract class failnet_common
 	const HR = '---------------------------------------------------------------------';
 	const ERROR_LOG = 'error';
 	const USER_LOG = 'user';
-	
+
+	/**
+	 * Constructor method.
+	 * @param object (failnet_core) $failnet - The Failnet core object.
+	 * @return void
+	 */
 	public function __construct(failnet_core $failnet)
 	{
 		$this->failnet = $failnet;
 		$this->init();
 	}
 
+	/**
+	 * Hnadler method for class load
+	 * @return void
+	 */
 	abstract public function init();
+
+	/**
+	 * Magic method __call, checks to see if a method that is called exists in the master class, and if not it throws a warning accordingly.
+	 * @param string $name - The name of the method that is being called
+	 * @param array $arguments - The arguments that are being passed to the specified method
+	 * @return mixed
+	 */
+	public function __call($name, array $arguments)
+	{
+		if(!method_exists($this->failnet, $name))
+		{
+			trigger_error('Call to undefined function "' . $name . '" in class "' . __CLASS__ . '"', E_USER_WARNING);
+		}
+		else
+		{
+			return call_user_method_array($name, $this->failnet, $arguments);
+		}
+	}
 }
 
 ?>
