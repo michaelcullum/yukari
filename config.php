@@ -51,7 +51,7 @@ return array(
 		'irc',
 		'log',
 		'error',
-		'auth',
+		'authorize',
 		'ignore',
 	),
 
@@ -82,7 +82,8 @@ return array(
 // The nick of the Bot's owner.
 	'owner'				=> 'Obsidian',
 
-// Should the bot say stuff in in response to channel conversation, or stay silent?
+// Should the bot say things in channel, or directly message users instead?
+// @todo implement this properly
 	'speak'				=> true,
 
 // How long should Failnet wait after the last recieved event to ping the server to check the connection?
@@ -98,6 +99,9 @@ return array(
 	'autojoins'			=> array(
 		'#failnet',
 	),
+
+// Prefix for commands directed at Failnet.
+	'cmd_prefix'		=> '|',
 
 // Standard messages for Failnet.
 	'intro_msg'			=> 'Let there be faiiiillll!',
