@@ -901,7 +901,7 @@ class failnet_event_response
 	
 	public function __call($funct, $params)
 	{
-		trigger_error('Bad function call "' . $funct . '" with params "' . implode(', ', $params) . '" to "' . get_class() . ' class.', E_USER_WARNING);
+		trigger_error('Call to undefined method "' . $name . '" in class "' . __CLASS__ . '"', E_USER_WARNING);
 	}
 }
 ?>

@@ -142,44 +142,22 @@ class failnet_event_request implements ArrayAccess
 	
 	
 	/**
-	 * Host name for the originating server or user
-	 *
-	 * @var string
+	 * @var string - Hostmask for the originating server or user
 	 */
-	public $host;
+	public $hostmask;
 
 	/**
-	 * Username of the user from which the event originates
-	 *
-	 * @var string
-	 */
-	public $username;
-
-	/**
-	 * Nick of the user from which the event originates
-	 *
-	 * @var string
-	 */
-	public $nick;
-
-	/**
-	 * Request type, which can be compared to the TYPE_* class constants
-	 *
-	 * @var string
+	 * @var string - Request type, which can be compared to the TYPE_* class constants
 	 */
 	public $type;
 
 	/**
-	 * Arguments included with the message
-	 *
-	 * @var array
+	 * @var array - Arguments included with the message
 	 */
 	public $arguments;
 
 	/**
-	 * The raw buffer that was sent by the server
-	 *
-	 * @var string
+	 * @var string - The raw buffer that was sent by the server
 	 */
 	public $buffer;
 	
@@ -191,17 +169,7 @@ class failnet_event_request implements ArrayAccess
 	
 	public function __call($funct, $params)
 	{
-		trigger_error('Bad function call "' . $funct . '" with params "' . implode(', ', $params) . '" to "' . get_class() . ' class.', E_USER_WARNING);
-	}
-	
-	/**
-	 * Returns the hostmask for the originating server or user.
-	 *
-	 * @return string
-	 */
-	public function gethostmask()
-	{
-		return $this->nick . '!' . $this->username . '@' . $this->host;
+		trigger_error('Call to undefined method "' . $name . '" in class "' . __CLASS__ . '"', E_USER_WARNING);
 	}
 
 	/**

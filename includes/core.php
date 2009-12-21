@@ -753,7 +753,7 @@ class failnet_core
 	 */
 	public function __call($funct, $params)
 	{
-		trigger_error('Call to undefined function "' . $name . '" in class "' . __CLASS__ . '"', E_USER_WARNING);
+		trigger_error('Call to undefined method "' . $name . '" in class "' . __CLASS__ . '"', E_USER_WARNING);
 	}
 }
 
