@@ -43,27 +43,20 @@ class failnet_plugin_offense extends failnet_plugin_common
 {
 
 	/**
-	 * @var array - Is THE GAME mode enabled, and if so, in what channels?
+	 * @var array - Data for The Game.
 	 */
-	public $enable_game = array();
-
-	/**
-	 * @var array - When did we last mention the game, for each channel?
-	 */
-	public $last_game = array();
+	public $thegame = array();
 	
 	public function tick()
 	{
-		foreach($this->enable_game as $channel => $enabled)
+		foreach($this->thegame as $channel_name => $channel)
 		{
-			if($enabled === false || !isset($this->failnet->chans[$channel]))
-			{
+			if($channel['enabled'] === false || !isset($this->failnet->chans[$channel_name]))
 				continue;
-			}
 
-			if(($this->last_game[$channel] + 450) < time())
+			if(($channel['last'] + 450) < time())
 			{
-				$this->last_game[$channel] = time();
+				$channel['last'] = time();
 				if(rand(1, 15) == 1)
 				{
 					$game_fail = array(
@@ -77,7 +70,7 @@ class failnet_plugin_offense extends failnet_plugin_common
 						'Never gonna LOSE THE GAME~',
 					);
 
-					$this->call_privmsg($channel, sprintf($game_fail[array_rand($game_fail)], $this->failnet->random_user($channel)));
+					$this->call_privmsg($channel_name, sprintf($game_fail[array_rand($game_fail)], $this->failnet->random_user($channel_name)));
 				}
 			}
 		}
@@ -91,8 +84,8 @@ class failnet_plugin_offense extends failnet_plugin_common
 			return;
 
 		$cmd = $this->purify($text);
-		$sender = $this->event->nick;
-		$hostmask = $this->event->gethostmask();
+		$sender = $this->event->hostmask->nick;
+		$hostmask = $this->event->hostmask;
 		switch ($cmd)
 		{
 			// Base64 encoding
@@ -150,18 +143,26 @@ class failnet_plugin_offense extends failnet_plugin_common
 
 			case '+g':
 			case 'gameon':
-				// Check to see if there was a param passed...if so, we check to see if this is from a channel.
+				// Check to see if there was a param passed...if not, we check to see if this is from a channel.
 				if($text === false && $this->event->fromchannel() === true)
 				{
-					$this->enable_game[$this->event->source()] = true;
-					$this->last_game[$this->event->source()] = time();
+					$this->thegame[$this->event->source()] = array(
+						'enabled'		=> true,
+						'last'			=> time(),
+						'start'			=> date('D m/d/Y - h:i:s A'),
+						'who'			=> $this->event->hostmask->nick . ' [' . $this->event->hostmask . ']',
+					);
 					$this->call_privmsg($this->event->source(), 'Alrighty, game mode enabled.');
 				}
 				elseif($text !== false)
 				{
-					$this->enable_game[$text] = true;
-					$this->last_game[$text] = time();
-					$this->call_privmsg($this->event->source(), 'Alrighty, game mode enabled.');
+					$this->thegame[$text] = array(
+						'enabled'		=> true,
+						'last'			=> time(),
+						'start'			=> date('D m/d/Y - h:i:s A'),
+						'who'			=> $this->event->hostmask->nick . ' [' . $this->event->hostmask . ']',
+					);
+					$this->call_privmsg($sender, 'Alrighty, game mode enabled.');
 				}
 				else
 				{
@@ -175,15 +176,52 @@ class failnet_plugin_offense extends failnet_plugin_common
 				// Check to see if there was a param passed...if so, we check to see if this is from a channel.
 				if($text === false && $this->event->fromchannel() === true)
 				{
-					$this->enable_game[$this->event->source()] = false;
-					$this->last_game[$this->event->source()] = time();
+					$this->thegame[$this->event->source()] = array(
+						'enabled'		=> false,
+						'last'			=> time(),
+					);
 					$this->call_privmsg($this->event->source(), 'Okay, game mode disabled.');
 				}
 				elseif($text !== false)
 				{
-					$this->enable_game[$text] = false;
-					$this->last_game[$text] = time();
-					$this->call_privmsg($this->event->source(), 'Okay, game mode disabled.');
+					$this->thegame[$text] = array(
+						'enabled'		=> false,
+						'last'			=> time(),
+					);
+					$this->call_privmsg($sender, 'Okay, game mode disabled.');
+				}
+				else
+				{
+					// We sent this via a private message and did not supply the channel.  That was smart.
+					$this->call_privmsg($sender, 'Please specify a channel.');
+				}
+			break;
+
+			case 'lastgame':
+			case 'gamewho':
+			case 'gamewhen':
+				// Check to see if there was a param passed...if so, we check to see if this is from a channel.
+				if($text === false && $this->event->fromchannel() === true)
+				{
+					if(!isset($this->thegame[$this->event->source()]) || $this->thegame[$this->event->source()]['enabled'] !== true)
+					{
+						$this->call_privmsg($this->event->source(), 'The Game is not afoot anyways.');
+					}
+					else
+					{
+						$this->call_privmsg($this->event->source(), 'The Game was begun by ' . $this->thegame[$this->event->source()]['who'] . ' on ' . $this->thegame[$this->event->source()]['start']);
+					}
+				}
+				elseif($text !== false)
+				{
+					if(!isset($this->thegame[$text]) || $this->thegame[$text]['enabled'] !== true)
+					{
+						$this->call_privmsg($sender, 'The Game is not afoot in that channel anyways.');
+					}
+					else
+					{
+						$this->call_privmsg($sender, 'The Game was begun by ' . $this->thegame[$text]['who'] . ' on ' . $this->thegame[$text]['start']);
+					}
 				}
 				else
 				{
@@ -193,7 +231,42 @@ class failnet_plugin_offense extends failnet_plugin_common
 			break;
 
 			case 'game':
-				$this->call_privmsg($this->event->source(), ((isset($this->enable_game[$text]) && $this->enable_game[$text] === true) ? 'The traps are set in that channel.' : 'Nothing is setup for that channel.'));
+				// Check to see if there was a param passed...if so, we check to see if this is from a channel.
+				if($text === false && $this->event->fromchannel() === true)
+				{
+					if(!isset($this->thegame[$this->event->source()]) || $this->thegame[$this->event->source()]['enabled'] !== true)
+					{
+						$this->call_privmsg($this->event->source(), 'The Game is not ongoing.');
+					}
+					else
+					{
+						$this->call_privmsg($this->event->source(), 'The Game is afoot.');
+					}
+				}
+				elseif($text !== false)
+				{
+					if(!isset($this->thegame[$text]) || $this->thegame[$text]['enabled'] !== true)
+					{
+						$this->call_privmsg($sender, 'The Game is not ongoing in that channel.');
+					}
+					else
+					{
+						$this->call_privmsg($sender, 'The Game is afoot in that channel.');
+					}
+				}
+				else
+				{
+					// We sent this via a private message and did not supply the channel.  That was smart.
+					$this->call_privmsg($sender, 'Please specify a channel.');
+				}
+			break;
+
+			case 'whatisthegame':
+				$this->call_privmsg($this->event->source(), (($text === false) ? $this->event->hostmask->nick : $text) . ': Let me tell you about The Game.');
+				$this->call_privmsg($this->event->source(), 'The Game is a simple Game, and there are three rules.');
+				$this->call_privmsg($this->event->source(), 'Rule 1) You are always playing The Game.');
+				$this->call_privmsg($this->event->source(), 'Rule 2) Every time you think about The Game, you lose.');
+				$this->call_privmsg($this->event->source(), 'Rule 3) Loss of The Game must be announced to someone else.');
 			break;
 		}
 	}

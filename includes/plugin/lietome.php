@@ -79,8 +79,8 @@ class failnet_plugin_lietome extends failnet_plugin_common
 			return;
 
 		$cmd = $this->purify($text);
-		$sender = $this->event->nick;
-		$hostmask = $this->event->gethostmask();
+		$sender = $this->event->hostmask->nick;
+		$hostmask = $this->event->hostmask;
 		switch ($cmd)
 		{
 			// Handle both specific episode inquiries and requests for a random episode

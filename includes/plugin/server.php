@@ -292,8 +292,8 @@ class failnet_plugin_server extends failnet_plugin_common
 		if(!in_array($cmd, array('isfounder', 'isadmin', 'isop', 'ishalfop', 'isvoice', 'isin')))
 			return;
 		
-		$sender = $this->event->nick;
-		$hostmask = $this->event->gethostmask();
+		$sender = $this->event->hostmask->nick;
+		$hostmask = $this->event->hostmask;
 		
 		// Make sure we're asking this in channel, or that we have additional params for the channel.
 		$param = explode(' ', $text);

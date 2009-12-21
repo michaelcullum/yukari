@@ -66,8 +66,8 @@ class failnet_plugin_authorize extends failnet_plugin_common
 			return;
 
 		$cmd = $this->purify($text);
-		$sender = $this->event->nick;
-		$hostmask = $this->event->gethostmask();
+		$sender = $this->event->hostmask->nick;
+		$hostmask = $this->event->hostmask;
 		switch($cmd)
 		{
 			// Add a new user to the DB

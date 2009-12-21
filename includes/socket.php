@@ -113,10 +113,8 @@ class failnet_socket extends failnet_common
 		{
 			// Parse the user hostmask, command, and arguments
 			list($prefix, $cmd, $args) = array_pad(explode(' ', ltrim($buffer, ':'), 3), 3, NULL);
-			preg_match('/^([^!@]+)!(?:[ni]=)?([^@]+)@([^ ]+)/', $prefix, $match);
-			list(, $nick, $user, $host) = array_pad($match, 4, NULL);
-
-		
+			if(strpos($prefix, '@') !== false)
+				$hostmask = failnet_hostmask::load($prefix);
 		}
 		else // If the event is from the server...
 		{
@@ -208,12 +206,8 @@ class failnet_socket extends failnet_common
 			$event = new failnet_event_request;
 			$event->type = $cmd;
 			$event->arguments = $args;
-			if (isset($user))
-			{
-				$event->host = $host;
-				$event->username = $user;
-				$event->nick = $nick;
-			}
+			if (isset($hostmask))
+				$event->hostmask = $hostmask;
 			$event->buffer = $buffer;
 		}
 		return $event;
@@ -246,7 +240,7 @@ class failnet_socket extends failnet_common
 		}
 
 		// Transmit the command over the socket connection
-		fwrite($this->socket, $buffer . PHP_EOL);
+		fwrite($this->socket, $buffer . "\r\n");
 
 		// If debugging mode is enabled, output the transmitted command
 		if($this->failnet->debug)

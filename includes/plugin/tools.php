@@ -50,8 +50,8 @@ class failnet_plugin_tools extends failnet_plugin_common
 			return;
 
 		$cmd = $this->purify($text);
-		$sender = $this->event->nick;
-		$hostmask = $this->event->gethostmask();
+		$sender = $this->event->hostmask->nick;
+		$hostmask = $this->event->hostmask;
 		switch ($cmd)
 		{
 			// Base64 encoding

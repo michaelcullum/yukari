@@ -202,21 +202,24 @@ function benchmark($mode, &$start)
 	 * benchmark('print', $start_time);
 	 * </code>
 	 */
-	if ($mode == 'start')
+	if($mode == 'start')
 	{
 		$start = explode(' ', microtime());
 		$start = $start[1] + $start[0];
 	}
-	else if ($mode == 'print' || $mode == 'return')
+	elseif($mode == 'print' || $mode == 'return')
 	{
 		$micro = explode(' ', microtime());
 		$time = substr(($micro[0] + $micro[1] - $start), 0, 9);
 
 		if ($mode == 'return')
+		{
 			return $time;
-
-		// Implicit else
-		echo $time;
+		}
+		else
+		{
+			display($time);
+		}
 	}
 }
 
@@ -591,7 +594,7 @@ function hostmasks_to_regex($list)
 		$patterns[] = str_replace('*', ($excluded === '' ? '.*' : '[^' . $excluded . ']*'), $hostmask);
 	}
 
-	return ('#^' . implode('|', $patterns) . '$#is');
+	return ('#^' . implode('|', $patterns) . '$#iS');
 }
 
 /**
@@ -612,7 +615,9 @@ function parse_hostmask($hostmask, &$nick, &$user, &$host)
 	}
 	else
 	{
-		$host = $hostmask;
+		$nick = NULL;
+		$user = NULL;
+		$host = NULL;
 	}
 }
 
