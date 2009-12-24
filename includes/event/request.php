@@ -142,9 +142,14 @@ class failnet_event_request implements ArrayAccess
 	
 	
 	/**
-	 * @var string - Hostmask for the originating server or user
+	 * @var object failnet_hostmask - Hostmask for the originating server or user
 	 */
 	public $hostmask;
+
+	/**
+	 * @var boolean - Is this event from a channel?
+	 */
+	public $fromchannel = false;
 
 	/**
 	 * @var string - Request type, which can be compared to the TYPE_* class constants
@@ -173,16 +178,13 @@ class failnet_event_request implements ArrayAccess
 	}
 
 	/**
-	 * Returns the channel name or user nick representing the source of the
-	 * event.
+	 * Returns the channel name or user nick representing the source of the event.
 	 *
 	 * @return string
 	 */
 	public function source()
 	{
-		if ($this->fromchannel())
-			return $this->arguments[0];
-		return $this->nick;
+		return ($this->fromchannel) ? $this->arguments[0] : $this->hostmask->nick;
 	}
 
 	/**
@@ -192,7 +194,7 @@ class failnet_event_request implements ArrayAccess
 	 */
 	public function fromchannel()
 	{
-		return (substr($this->arguments[0], 0, 1) == '#');
+		return $this->fromchannel;
 	}
 	
 	/**
