@@ -97,7 +97,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 			case 'die':
 			case 'dai':
 				// Check auths
-				if ($this->failnet->auth->authlevel($hostmask) < 50)
+				if ($this->failnet->authorize->authlevel($hostmask) < 50)
 				{
 					$this->call_privmsg($this->event->source(), $this->failnet->deny());
 					return;
@@ -126,7 +126,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 			case 'restart':
 			case 'reboot':
 				// Check auths
-				if ($this->failnet->auth->authlevel($hostmask) < 50)
+				if ($this->failnet->authorize->authlevel($hostmask) < 50)
 				{
 					$this->call_privmsg($this->event->source(), $this->failnet->deny());
 					return;
@@ -145,7 +145,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 
 			case 'nick':
 				// Check auths
-				if ($this->failnet->auth->authlevel($hostmask) < 30)
+				if ($this->failnet->authorize->authlevel($hostmask) < 30)
 				{
 					$this->call_privmsg($this->event->source(), $this->failnet->deny());
 					return;
@@ -165,7 +165,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 			// Join a channel!
 			case 'join':
 				// Check auths
-				if ($this->failnet->auth->authlevel($hostmask) < 5)
+				if ($this->failnet->authorize->authlevel($hostmask) < 5)
 				{
 					$this->call_privmsg($this->event->source(), $this->failnet->deny());
 					return;
@@ -194,7 +194,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 			// Leave a channel.
 			case 'part':
 				// Check auths
-				if ($this->failnet->auth->authlevel($hostmask) < 5)
+				if ($this->failnet->authorize->authlevel($hostmask) < 5)
 				{
 					$this->call_privmsg($this->event->source(), $this->failnet->deny());
 					return;
@@ -234,7 +234,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 			// Change a config variable...if we DARE
 			case 'set':
 				// Check auths
-				if ($this->failnet->auth->authlevel($hostmask) < 100)
+				if ($this->failnet->authorize->authlevel($hostmask) < 100)
 				{
 					$this->call_privmsg($this->event->source(), $this->failnet->deny());
 					return;
@@ -277,7 +277,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 			// Load a plugin if it isn't already loaded
 			case 'load':
 				// Check auths
-				if ($this->failnet->auth->authlevel($hostmask) < 70)
+				if ($this->failnet->authorize->authlevel($hostmask) < 70)
 				{
 					$this->call_privmsg($this->event->source(), $this->failnet->deny());
 					return;

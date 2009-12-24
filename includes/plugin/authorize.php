@@ -79,7 +79,7 @@ class failnet_plugin_authorize extends failnet_plugin_common
 					return;
 				}
 
-				$success = $this->failnet->auth->add_user($sender, $text);
+				$success = $this->failnet->authorize->add_user($sender, $text);
 				$this->call_privmsg($sender, ($success) ? 'You were successfully added to my users database.' : 'I\'m sorry, but I was unable to add you to my users database.');
 			break;
 
@@ -92,7 +92,7 @@ class failnet_plugin_authorize extends failnet_plugin_common
 					return;
 				}
 
-				$success = $this->failnet->auth->auth($hostmask, $text);
+				$success = $this->failnet->authorize->auth($hostmask, $text);
 				if(is_null($success))
 				{
 					$this->call_privmsg($sender, 'Cannot login -- no such user exists in database');
@@ -111,7 +111,7 @@ class failnet_plugin_authorize extends failnet_plugin_common
 					return;
 				}
 
-				$confirm = $this->failnet->auth->del_user($hostmask, $text);
+				$confirm = $this->failnet->authorize->del_user($hostmask, $text);
 				if(is_null($confirm))
 				{
 					$this->call_privmsg($sender, 'Cannot remove user -- no such user exists in database');
@@ -130,7 +130,7 @@ class failnet_plugin_authorize extends failnet_plugin_common
 					return;
 				}
 
-				$success = $this->failnet->auth->confirm_del($hostmask, $text);
+				$success = $this->failnet->authorize->confirm_del($hostmask, $text);
 				if(is_null($success))
 				{
 					$this->call_privmsg($sender, 'Cannot remove user -- no such user exists in database');
@@ -150,7 +150,7 @@ class failnet_plugin_authorize extends failnet_plugin_common
 				}
 
 				$param = explode(' ', $text);
-				$success = $this->failnet->auth->set_pass($hostmask, $param[0], $param[1]);
+				$success = $this->failnet->authorize->set_pass($hostmask, $param[0], $param[1]);
 				if(is_null($success))
 				{
 					$this->call_privmsg($sender, 'Cannot change password for user -- no such user exists in database');
@@ -168,7 +168,7 @@ class failnet_plugin_authorize extends failnet_plugin_common
 					return;
 				}
 
-				$success = $this->failnet->auth->add_access($hostmask, $text);
+				$success = $this->failnet->authorize->add_access($hostmask, $text);
 				if(is_null($success))
 				{
 					$this->call_privmsg($senderk, 'Cannot add hostmask to access list for user -- no such user exists in database');
@@ -186,7 +186,7 @@ class failnet_plugin_authorize extends failnet_plugin_common
 					return;
 				}
 
-				$success = $this->failnet->auth->delete_access($hostmask, $text);
+				$success = $this->failnet->authorize->delete_access($hostmask, $text);
 				if(is_null($success))
 				{
 					$this->call_privmsg($sender, 'Cannot remove hostmask from access list for user -- no such user exists in database');
@@ -205,7 +205,7 @@ class failnet_plugin_authorize extends failnet_plugin_common
 					return;
 				}
 				$param = explode(' ', $text);
-				$success = $this->failnet->auth->add_access($hostmask, $param[1], $param[0]);
+				$success = $this->failnet->authorize->add_access($hostmask, $param[1], $param[0]);
 				if(is_null($success))
 				{
 					$this->call_privmsg($senderk, 'Cannot add hostmask to access list for user -- no such user exists in database');
@@ -225,7 +225,7 @@ class failnet_plugin_authorize extends failnet_plugin_common
 				}
 
 				$param = explode(' ', $text);
-				$success = $this->failnet->auth->delete_access($hostmask, $param[1], $param[0]);
+				$success = $this->failnet->authorize->delete_access($hostmask, $param[1], $param[0]);
 				if(is_null($success))
 				{
 					$this->call_privmsg($sender, 'Cannot remove hostmask from access list for user -- no such user exists in database');
