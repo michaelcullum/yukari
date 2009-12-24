@@ -39,7 +39,7 @@
  * @copyright (c) 2009 - Failnet Project
  * @license GNU General Public License - Version 2
  */
-class failnet_auth extends failnet_common
+class failnet_authorize extends failnet_common
 {
 
 /**
