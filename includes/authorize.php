@@ -144,8 +144,8 @@ class failnet_authorize extends failnet_common
 
 			if(!$result)
 				return false;
-				
-			if(time() - $return['login_time'] < 3600)
+
+			if(time() - $result['login_time'] < 3600)
 				return false;
 
 			return ($result) ? $result['authlevel'] : false;
