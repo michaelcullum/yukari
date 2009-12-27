@@ -41,6 +41,15 @@
  */
 class failnet_plugin_ignore extends failnet_plugin_common
 {
+	public function help(&$name, &$commands)
+	{
+		$name = 'admin';
+		$commands = array(
+			'ignore'			=> 'ignore {$hostmask} - (authlevel ADMIN) - Orders Failnet to ignore messages from the specified hostmask',
+			'unignore'			=> 'unignore {$hostmask} - (authlevel ADMIN) - Orders Failnet to no longer ignore messages from the specified hostmask',
+		);
+	}
+
 	public function cmd_privmsg()
 	{
 		// Process the command
@@ -56,18 +65,21 @@ class failnet_plugin_ignore extends failnet_plugin_common
 			case 'addignore':
 			case 'ignore':
 			case '+ignore':
-				if(is_null($text))
+				// Check auths
+				if($this->failnet->authorize->authlevel($hostmask) < 10)
+				{
+					$this->call_privmsg($this->event->source(), $this->failnet->deny());
+					return;
+				}
+
+				// Check for no params
+				if(empty($text))
 				{
 					$this->call_privmsg($sender, 'Invalid arguments specified for command');
 					return;
 				}
 
 				$success = $this->failnet->ignore->add_ignore($hostmask, $text);
-				if(is_null($success))
-				{
-					$this->call_privmsg($sender, $this->failnet->deny());
-					return;
-				}
 
 				$this->call_privmsg($sender, ($success) ? 'User successfully ignored' : 'Unable to ignore user -- user hostmask already ignored');
 			break;
@@ -75,18 +87,20 @@ class failnet_plugin_ignore extends failnet_plugin_common
 			case 'delignore':
 			case 'unignore':
 			case '-ignore':
-				if(is_null($text))
+				if($this->failnet->authorize->authlevel($hostmask) < 10)
+				{
+					$this->call_privmsg($this->event->source(), $this->failnet->deny());
+					return;
+				}
+
+				// Check for no params
+				if(empty($text))
 				{
 					$this->call_privmsg($sender, 'Invalid arguments specified for command');
 					return;
 				}
 
 				$success = $this->failnet->ignore->del_ignore($hostmask, $text);
-				if(is_null($success))
-				{
-					$this->call_privmsg($sender, $this->failnet->deny());
-					return;
-				}
 
 				$this->call_privmsg($sender, ($success) ? 'User successfully unignored' : 'Unable to ignore user -- user hostmask not ignored');
 			break;

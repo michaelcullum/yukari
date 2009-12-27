@@ -92,9 +92,6 @@ class failnet_ignore extends failnet_common
 	 */
 	public function add_ignore($hostmask, $target)
 	{
-		if ($this->failnet->authorize->authlevel($hostmask) < 10)
-			return NULL;
-
 		// Check to see if this user would already be ignored...
 		if(!$this->ignored($target))
 		{
@@ -120,9 +117,6 @@ class failnet_ignore extends failnet_common
 	 */
 	public function del_ignore($hostmask, $target)
 	{
-		if ($this->failnet->authorize->authlevel($hostmask) < 10)
-			return NULL;
-
 		// Check to see if this hostmask IS in the ignored list
 		if(in_array($target, $this->users))
 		{
