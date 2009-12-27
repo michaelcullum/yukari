@@ -50,6 +50,8 @@ class failnet_authorize extends failnet_common
 	 * @var array - Access list cache property
 	 */
 	public $access = array();
+	
+	public $authlevels = array();
 
 /**
  * Class methods
@@ -60,7 +62,18 @@ class failnet_authorize extends failnet_common
 	 * @see includes/failnet_common#init()
 	 * @return void
 	 */
-	public function init() { }
+	public function init()
+	{
+		$this->authlevels = array(
+			self::AUTH_UNKNOWNUSER		=> 'UNKNOWNUSER',
+			self::AUTH_REGISTEREDUSER	=> 'REGISTEREDUSER',
+			self::AUTH_KNOWNUSER		=> 'KNOWNUSER',
+			self::AUTH_TRUSTEDUSER		=> 'TRUSTEDUSER',
+			self::AUTH_ADMIN			=> 'ADMIN',
+			self::AUTH_SUPERADMIN		=> 'SUPERADMIN',
+			self::AUTH_OWNER			=> 'OWNER',
+		);
+	}
 
 	/**
 	 * Attempt to authenticate a user..
@@ -392,6 +405,24 @@ class failnet_authorize extends failnet_common
 
 		// FAIL!  NOW GIT OUT OF MAH KITCHEN!
 		return false;
+	}
+
+	/**
+	 * Translator method that translates between ye'olde integer-constants and what they represent.
+	 * @param mixed $authlevel - The string name or the integer value of the authlevel to get the integer value/string name of.
+	 * @return mixed - The desired data.
+	 */
+	public function identify_authlevel($authlevel)
+	{
+		if(is_int($authlevel))
+		{
+			return (isset($this->authlevel[$authlevel]) ? $this->authlevel[$authlevel] : NULL);
+		}
+		else
+		{
+			$authlevels = array_flip($this->authlevel);
+			return (isset($authlevels[$authlevel]) ? $authlevels[$authlevel] : NULL);
+		}
 	}
 }
 

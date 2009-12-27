@@ -51,6 +51,7 @@ class failnet_plugin_authorize extends failnet_plugin_common
 			'login'			=> 'login {$password} - (requires valid password) - Logs in the current user if the password matches that of the registered user`s password',
 			'deluser'		=> 'deluser {$password} - (requires valid password) - Prepares to delete a specified user from Failnet`s list of known users',
 			'setpass'		=> 'setpass {$old_password} {$new_password} - (requires valid password) - Changes the password for the current user new {$new_password}',
+			'authlevel'		=> 'authlevel {$username} - (no auth) - Fetches the specified user`s current authlevel.',
 			'+access'		=> '+access {$password} - (requires valid password) - Adds the user`s current hostmask to the access list of the current user',
 			'-access'		=> '-access {$password} - (requires valid password) - Removes the user`s current hostmask from the access list of the current user',
 			'addaccess'		=> 'addaccess {$hostmask} {$password} - (requires valid password) - Adds the specified hostmask to the access list of the current user',
@@ -158,6 +159,24 @@ class failnet_plugin_authorize extends failnet_plugin_common
 				}
 
 				$this->call_privmsg($sender, ($success) ? 'Your password has been successfully changed.' : 'Cannot change password for user -- invalid original password entered');
+			break;
+
+			case 'userlevel':
+			case 'authlevel':
+				if(is_null($text))
+				{
+					$this->call_privmsg($sender, 'Invalid arguments specified for command');
+					return;
+				}
+
+				$userlevel = $this->failnet->authorize->userlevel($text);
+				$this->call_privmsg($sender, 'User`s current authlevel is ' . $this->failnet->authorize->identify_authlevel(($userlevel) ? $userlevel : self::AUTH_UNKNOWNUSER) . '.');
+			break;
+		
+			case 'setlevel':
+			case 'setauth':
+			case 'setauthlevel':
+				
 			break;
 
 			// Add current hostmask to the access list
