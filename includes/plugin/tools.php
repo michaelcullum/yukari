@@ -149,14 +149,7 @@ class failnet_plugin_tools extends failnet_plugin_common
 				}
 				else
 				{
-					if(!is_numeric($text))
-					{
-						$results = 'Result: Invalid data provided';
-					}
-					else
-					{
-						$results = 'Result: ' . get_formatted_filesize((int) $text);
-					}
+					$results = (!is_numeric($text)) ? 'Result: Invalid data provided' : 'Result: ' . get_formatted_filesize((int) $text);
 				}
 
 				$this->call_privmsg($this->event->source(), $results);
