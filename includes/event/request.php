@@ -72,9 +72,7 @@ class failnet_event_request implements ArrayAccess
 	const TYPE_RAW = 'raw';
 	
 	/**
-	 * Mapping of event types to their named parameters
-	 *
-	 * @var array
+	 * @var array - Mapping of event types to their named parameters
 	 */
 	protected static $map = array(
 
