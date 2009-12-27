@@ -104,6 +104,12 @@ return array(
 // Prefix for commands directed at Failnet.
 	'cmd_prefix'		=> '|',
 
+// Should Failnet join a channel when invited?
+	'join_on_invite'	=> false,
+
+// Should Failnet automatically rejoin a channel when kicked?
+	'autorejoin'		=> false,
+
 // Standard messages for Failnet.
 	'intro_msg'			=> 'Let there be faiiiillll!',
 	'part_msg'			=> 'Bai baiiii!',

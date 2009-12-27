@@ -569,6 +569,17 @@ class failnet_core
 			break;
 		}
 	}
+	
+	/**
+	 * Undefined function handler
+	 * @param $funct - Function name
+	 * @param $params - Function parameters
+	 * @return void
+	 */
+	public function __call($funct, $params)
+	{
+		trigger_error('Call to undefined method "' . $name . '" in class "' . __CLASS__ . '"', E_USER_WARNING);
+	}
 
 	/**
 	 * Magic method __get() to use for referencing specific module classes, used to return the property desired
@@ -583,7 +594,7 @@ class failnet_core
 		}
 		else
 		{
-			$trace = debug_backtrace();
+			$trace = dump_backtrace();
 			trigger_error('Undefined property via __get(): ' . $name . ' in ' . $trace[0]['file'] .' on line ' . $trace[0]['line'] . '--', E_USER_WARNING);
 		}
 	}
@@ -743,17 +754,6 @@ class failnet_core
 			return $nick;
 		}
 		return false;
-	}
-
-	/**
-	 * Undefined function handler
-	 * @param $funct - Function name
-	 * @param $params - Function parameters
-	 * @return void
-	 */
-	public function __call($funct, $params)
-	{
-		trigger_error('Call to undefined method "' . $name . '" in class "' . __CLASS__ . '"', E_USER_WARNING);
 	}
 }
 
