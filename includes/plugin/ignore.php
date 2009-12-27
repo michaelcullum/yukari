@@ -45,8 +45,9 @@ class failnet_plugin_ignore extends failnet_plugin_common
 	{
 		$name = 'admin';
 		$commands = array(
-			'ignore'			=> 'ignore {$hostmask} - (authlevel ADMIN) - Orders Failnet to ignore messages from the specified hostmask',
-			'unignore'			=> 'unignore {$hostmask} - (authlevel ADMIN) - Orders Failnet to no longer ignore messages from the specified hostmask',
+			'ignore'			=> 'ignore {$hostmask} - (authlevel 10) - Orders Failnet to ignore messages from the specified hostmask',
+			'unignore'			=> 'unignore {$hostmask} - (authlevel 10) - Orders Failnet to no longer ignore messages from the specified hostmask',
+			'ignored'			=> 'ignored {$hostmask} - (no auth) - Checks to see if the specified hostmask $hostmask is currently being ignored',
 		);
 	}
 
@@ -75,13 +76,13 @@ class failnet_plugin_ignore extends failnet_plugin_common
 				// Check for no params
 				if(empty($text))
 				{
-					$this->call_privmsg($sender, 'Invalid arguments specified for command');
+					$this->call_privmsg($this->event->source(), 'Invalid arguments specified for command');
 					return;
 				}
 
 				$success = $this->failnet->ignore->add_ignore($hostmask, $text);
 
-				$this->call_privmsg($sender, ($success) ? 'User successfully ignored' : 'Unable to ignore user -- user hostmask already ignored');
+				$this->call_privmsg($this->event->source(), ($success) ? 'User successfully ignored' : 'Unable to ignore user -- user hostmask already ignored');
 			break;
 
 			case 'delignore':
@@ -96,13 +97,18 @@ class failnet_plugin_ignore extends failnet_plugin_common
 				// Check for no params
 				if(empty($text))
 				{
-					$this->call_privmsg($sender, 'Invalid arguments specified for command');
+					$this->call_privmsg($this->event->source(), 'Invalid arguments specified for command');
 					return;
 				}
 
 				$success = $this->failnet->ignore->del_ignore($hostmask, $text);
 
-				$this->call_privmsg($sender, ($success) ? 'User successfully unignored' : 'Unable to ignore user -- user hostmask not ignored');
+				$this->call_privmsg($this->event->source(), ($success) ? 'User successfully unignored' : 'Unable to ignore user -- user hostmask not ignored');
+			break;
+		
+			case 'ignored':
+				$result = $this->failnet->ignore->ignored($hostmask, $text);
+				$this->call_privmsg($this->event->source(),'The specified hostmask is ' . (($result) ? '' : 'not') . ' currently ignored.');
 			break;
 		}
 	}
