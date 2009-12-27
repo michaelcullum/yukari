@@ -55,11 +55,11 @@ class failnet_plugin_admin extends failnet_plugin_common
 	{
 		$name = 'admin';
 		$commands = array(
-			'chans'			=> 'chans - (no auth) - Outputs the channels Failnet is currently inhabiting',
-			'uptime'		=> 'uptime - (no auth) - Outputs how long Failnet has been running for',
-			'memuse'		=> 'memuse - (no auth) - Outputs Failnet`s memory usage data',
-			'plugins'		=> 'plugins - (no auth) - Outputs a list of plugins currently loaded',
-			'loaded'		=> 'loaded {$plugin} - (no auth) - Checks to see if a specific Failnet plugin has been loaded already or not',
+			'chans'			=> 'chans - (authlevel REGISTEREDUSER) - Outputs the channels Failnet is currently inhabiting',
+			'uptime'		=> 'uptime - (authlevel REGISTEREDUSER) - Outputs how long Failnet has been running for',
+			'memuse'		=> 'memuse - (authlevel REGISTEREDUSER) - Outputs Failnet`s memory usage data',
+			'plugins'		=> 'plugins - (authlevel TRUSTEDUSER) - Outputs a list of plugins currently loaded',
+			'loaded'		=> 'loaded {$plugin} - (authlevel TRUSTEDUSER) - Checks to see if a specific Failnet plugin has been loaded already or not',
 			'load'			=> 'load {$plugin} - (authlevel SUPERADMIN) - Loads a specific Failnet plugin on demand if it is not already loaded',
 			'nick'			=> 'nick {$new_nick} - (authlevel ADMIN) - Changes Failnet`s nick to $new_nick',
 			'join'			=> 'join {$channel} - (authlevel TRUSTEDUSER) - Instructs Failnet to join channel $channel',
