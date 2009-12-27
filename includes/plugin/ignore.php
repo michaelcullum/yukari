@@ -45,8 +45,8 @@ class failnet_plugin_ignore extends failnet_plugin_common
 	{
 		$name = 'admin';
 		$commands = array(
-			'ignore'			=> 'ignore {$hostmask} - (authlevel 10) - Orders Failnet to ignore messages from the specified hostmask',
-			'unignore'			=> 'unignore {$hostmask} - (authlevel 10) - Orders Failnet to no longer ignore messages from the specified hostmask',
+			'ignore'			=> 'ignore {$hostmask} - (authlevel ADMIN) - Orders Failnet to ignore messages from the specified hostmask',
+			'unignore'			=> 'unignore {$hostmask} - (authlevel ADMIN) - Orders Failnet to no longer ignore messages from the specified hostmask',
 			'ignored'			=> 'ignored {$hostmask} - (no auth) - Checks to see if the specified hostmask $hostmask is currently being ignored',
 		);
 	}
@@ -67,7 +67,7 @@ class failnet_plugin_ignore extends failnet_plugin_common
 			case 'ignore':
 			case '+ignore':
 				// Check auths
-				if($this->failnet->authorize->authlevel($hostmask) < 10)
+				if($this->failnet->authorize->authlevel($hostmask) < self::AUTH_ADMIN)
 				{
 					$this->call_privmsg($this->event->source(), $this->failnet->deny());
 					return;
@@ -88,7 +88,7 @@ class failnet_plugin_ignore extends failnet_plugin_common
 			case 'delignore':
 			case 'unignore':
 			case '-ignore':
-				if($this->failnet->authorize->authlevel($hostmask) < 10)
+				if($this->failnet->authorize->authlevel($hostmask) < self::AUTH_ADMIN)
 				{
 					$this->call_privmsg($this->event->source(), $this->failnet->deny());
 					return;

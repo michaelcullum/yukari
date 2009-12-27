@@ -101,7 +101,7 @@ class failnet_authorize extends failnet_common
 	{
 		// Just a quick hack for allowing us to use some functions internally.  ;)
 		if($hostmask === false)
-			return 100;
+			return self::AUTH_OWNER;
 
 		// First, we want to parse the user's hostmask here.
 		parse_hostmask($hostmask, $nick, $user, $host);
@@ -149,7 +149,7 @@ class failnet_authorize extends failnet_common
 	public function userlevel($nick)
 	{
 		if($nick === false)
-			return 100;
+			return self::AUTH_OWNER;
 
 		$this->failnet->sql('users', 'get')->execute(array(':nick' => $nick));
 		$result = $this->failnet->sql('ignore', 'get')->fetch(PDO::FETCH_ASSOC);

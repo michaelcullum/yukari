@@ -45,13 +45,24 @@ abstract class failnet_common
 	 * @var object failnet_core - The mothership itself.
 	 */
 	protected $failnet;
-	
+
 	/**
 	 * Constants for Failnet.
 	 */
 	const HR = '---------------------------------------------------------------------';
 	const ERROR_LOG = 'error';
 	const USER_LOG = 'user';
+
+	/**
+	 * Auth levels for Failnet
+	 */
+	const AUTH_OWNER = 6;
+	const AUTH_SUPERADMIN = 5;
+	const AUTH_ADMIN = 4;
+	const AUTH_TRUSTEDUSER = 3;
+	const AUTH_KNOWNUSER = 2;
+	const AUTH_REGISTEREDUSER = 1;
+	const AUTH_UNKNOWNUSER = 0;
 
 	/**
 	 * Constructor method.

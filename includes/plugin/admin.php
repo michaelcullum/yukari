@@ -60,13 +60,12 @@ class failnet_plugin_admin extends failnet_plugin_common
 			'memuse'		=> 'memuse - (no auth) - Outputs Failnet`s memory usage data',
 			'plugins'		=> 'plugins - (no auth) - Outputs a list of plugins currently loaded',
 			'loaded'		=> 'loaded {$plugin} - (no auth) - Checks to see if a specific Failnet plugin has been loaded already or not',
-			'load'			=> 'load {$plugin} - (authlevel 70) - Loads a specific Failnet plugin on demand if it is not already loaded',
-			'nick'			=> 'nick {$new_nick} - (authlevel 30) - Changes Failnet`s nick to $new_nick',
-			'join'			=> 'join {$channel} - (authlevel 5) - Instructs Failnet to join channel $channel',
-			'part'			=> 'part [{$channel}] - (authlevel 5) - Instructs Failnet to leave channel $channel (or if no channel is specified, Failnet will leave the channel it receives the command in)',
-			'set'			=> 'set {$config} {$setting} - (authlevel 100) - Changes a specific config setting in Failnet',
-			'restart'		=> 'restart - (authlevel 50) - Restarts Failnet',
-			'dai'			=> 'dai - (authlevel 50) - Terminates Failnet',
+			'load'			=> 'load {$plugin} - (authlevel SUPERADMIN) - Loads a specific Failnet plugin on demand if it is not already loaded',
+			'nick'			=> 'nick {$new_nick} - (authlevel ADMIN) - Changes Failnet`s nick to $new_nick',
+			'join'			=> 'join {$channel} - (authlevel TRUSTEDUSER) - Instructs Failnet to join channel $channel',
+			'part'			=> 'part [{$channel}] - (authlevel TRUSTEDUSER) - Instructs Failnet to leave channel $channel (or if no channel is specified, Failnet will leave the channel it receives the command in)',
+			'restart'		=> 'restart - (authlevel ADMIN) - Restarts Failnet',
+			'dai'			=> 'dai - (authlevel ADMIN) - Terminates Failnet',
 		);
 	}
 
@@ -97,7 +96,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 			case 'die':
 			case 'dai':
 				// Check auths
-				if ($this->failnet->authorize->authlevel($hostmask) < 50)
+				if ($this->failnet->authorize->authlevel($hostmask) < self::AUTH_ADMIN)
 				{
 					$this->call_privmsg($this->event->source(), $this->failnet->deny());
 					return;
@@ -126,7 +125,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 			case 'restart':
 			case 'reboot':
 				// Check auths
-				if ($this->failnet->authorize->authlevel($hostmask) < 50)
+				if ($this->failnet->authorize->authlevel($hostmask) < self::AUTH_ADMIN)
 				{
 					$this->call_privmsg($this->event->source(), $this->failnet->deny());
 					return;
@@ -145,7 +144,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 
 			case 'nick':
 				// Check auths
-				if ($this->failnet->authorize->authlevel($hostmask) < 30)
+				if ($this->failnet->authorize->authlevel($hostmask) < self::AUTH_ADMIN)
 				{
 					$this->call_privmsg($this->event->source(), $this->failnet->deny());
 					return;
@@ -165,7 +164,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 			// Join a channel!
 			case 'join':
 				// Check auths
-				if ($this->failnet->authorize->authlevel($hostmask) < 5)
+				if ($this->failnet->authorize->authlevel($hostmask) < self::AUTH_TRUSTEDUSER)
 				{
 					$this->call_privmsg($this->event->source(), $this->failnet->deny());
 					return;
@@ -194,7 +193,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 			// Leave a channel.
 			case 'part':
 				// Check auths
-				if ($this->failnet->authorize->authlevel($hostmask) < 5)
+				if ($this->failnet->authorize->authlevel($hostmask) < self::AUTH_TRUSTEDUSER)
 				{
 					$this->call_privmsg($this->event->source(), $this->failnet->deny());
 					return;
@@ -231,53 +230,10 @@ class failnet_plugin_admin extends failnet_plugin_common
 				}
 			break;
 
-			// Change a config variable...if we DARE
-			case 'set':
-				// Check auths
-				if ($this->failnet->authorize->authlevel($hostmask) < 100)
-				{
-					$this->call_privmsg($this->event->source(), $this->failnet->deny());
-					return;
-				}
-
-				// Check for empty text or invalid number of parameters
-				if($text === false)
-				{
-					$this->call_privmsg($this->event->source(), 'Please specify the setting to change and what to change it to.');
-					return;
-				}
-
-				$param = explode(' ', $text);
-				if(count($param) != 2)
-				{
-					$this->call_privmsg($this->event->source(), 'Invalid number of arguments entered for set command.');
-					return;
-				}
-
-				try
-				{
-					$this->failnet->sql('config', 'update')->execute(array(':name' => $param[0], ':value' => $param[1]));
-					$this->failnet->settings[$param[0]] = $param[1];
-				}
-				catch (PDOException $e)
-				{
-					// Something went boom.  Time to panic!
-					$this->db->rollBack();
-					if(file_exists(FAILNET_ROOT . 'data/restart.inc'))
-						unlink(FAILNET_ROOT . 'data/restart.inc');
-					trigger_error($e, E_USER_WARNING);
-					sleep(3);
-					exit(1);
-				}
-
-				// Success!
-				$this->call_privmsg($sender, 'Setting "' . $param[0] . '" changed to ' . $param[1] . ' successfully.');
-			break;
-
 			// Load a plugin if it isn't already loaded
 			case 'load':
 				// Check auths
-				if ($this->failnet->authorize->authlevel($hostmask) < 70)
+				if ($this->failnet->authorize->authlevel($hostmask) < self::AUTH_SUPERADMIN)
 				{
 					$this->call_privmsg($this->event->source(), $this->failnet->deny());
 					return;
@@ -302,6 +258,13 @@ class failnet_plugin_admin extends failnet_plugin_common
 			break;
 
 			case 'loaded':
+				// Check auths
+				if ($this->failnet->authorize->authlevel($hostmask) < self::AUTH_TRUSTEDUSER)
+				{
+					$this->call_privmsg($this->event->source(), $this->failnet->deny());
+					return;
+				}
+				
 				// Check for empty text
 				if($text === false)
 				{
@@ -320,6 +283,13 @@ class failnet_plugin_admin extends failnet_plugin_common
 			break;
 
 			case 'plugins':
+				// Check auths
+				if ($this->failnet->authorize->authlevel($hostmask) < self::AUTH_TRUSTEDUSER)
+				{
+					$this->call_privmsg($this->event->source(), $this->failnet->deny());
+					return;
+				}
+
 				// Let's build a list of plugins.
 				$plugins = implode(', ', $this->failnet->plugins_loaded);
 				$this->call_privmsg($this->event->source(), 'Plugins: ' . $plugins . '.');
@@ -327,15 +297,36 @@ class failnet_plugin_admin extends failnet_plugin_common
 
 			// Returns how long Failnet has been running for
 			case 'uptime':
+				// Check auths
+				if ($this->failnet->authorize->authlevel($hostmask) < self::AUTH_REGISTEREDUSER)
+				{
+					$this->call_privmsg($this->event->source(), $this->failnet->deny());
+					return;
+				}
+
 				$this->call_privmsg($this->event->source(), 'I\'ve been running for ' . timespan(time() - $this->failnet->start, true));
 			break;
 
 			// How much memory is Failnet using?
 			case 'memuse':
+				// Check auths
+				if ($this->failnet->authorize->authlevel($hostmask) < self::AUTH_REGISTEREDUSER)
+				{
+					$this->call_privmsg($this->event->source(), $this->failnet->deny());
+					return;
+				}
+
 				$this->call_privmsg($this->event->source(), 'Memory use is ' . get_formatted_filesize(memory_get_usage()) . ', and memory peak is ' . get_formatted_filesize(memory_get_peak_usage()));
 			break;
 
 			case 'chans':
+				// Check auths
+				if ($this->failnet->authorize->authlevel($hostmask) < self::AUTH_REGISTEREDUSER)
+				{
+					$this->call_privmsg($this->event->source(), $this->failnet->deny());
+					return;
+				}
+
 				$chans = implode(', ', array_keys($this->failnet->chans));
 				$this->call_privmsg($this->event->source(), 'Current channels joined are ' . $chans);
 			break;
