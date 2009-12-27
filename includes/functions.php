@@ -55,23 +55,21 @@ function failnet_load_file($name)
 /**
  * Echos a message, and cleans out any extra NL's after the message.
  * 		Also will echo an array of messages properly as well.
- * @param mixed $msg - The message or array of messages we want to echo to the terminal. 
+ * @param mixed $message - The message or array of messages we want to echo to the terminal. 
  * @return void
  */
-function display($msg)
+function display($message)
 {
-	if(is_array($msg))
+	if(is_array($message))
 	{
-		foreach($msg as $line)
+		foreach($message as $line)
 		{
-			$line = (strrpos($line, PHP_EOL . PHP_EOL) !== false) ? substr($line, 0, strlen($line) - 1) : $line;
-			echo $line . PHP_EOL;		
+			echo ((strrpos($line, PHP_EOL . PHP_EOL) !== false) ? substr($line, 0, strlen($line) - 1) : $line) . PHP_EOL;	
 		}
 	}
 	else
 	{
-		$msg = (strrpos($msg, PHP_EOL . PHP_EOL) !== false) ? substr($msg, 0, strlen($msg) - 1) : $msg;
-		echo $msg . PHP_EOL;
+		echo ((strrpos($message, PHP_EOL . PHP_EOL) !== false) ? substr($message, 0, strlen($message) - 1) : $message) . PHP_EOL;
 	}
 }
 
@@ -85,7 +83,8 @@ function throw_fatal($msg)
 	if(file_exists(FAILNET_ROOT . 'data/restart.inc')) 
 		unlink(FAILNET_ROOT . 'data/restart.inc');
 	display('[Fatal Error] ' . $msg);
-	sleep(3);
+	display(dump_backtrace());
+	sleep(7);
 	exit(1);
 }
 
