@@ -215,7 +215,7 @@ class failnet_socket extends failnet_common
 			$event->arguments = $args;
 			if (isset($hostmask))
 				$event->hostmask = $hostmask;
-			$event->fromchannel = (substr($this->arguments[0], 0, 1) == '#') ? true : false;
+			$event->fromchannel = (substr($event->arguments[0], 0, 1) == '#') ? true : false;
 			$event->buffer = $buffer;
 		}
 		return $event;
