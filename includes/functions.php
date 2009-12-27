@@ -279,11 +279,42 @@ function dump_backtrace()
 }
 
 /**
-* @author Chris Smith <chris@project-minerva.org>
-* @copyright 2006 Project Minerva Team
-* @param string $path The path which we should attempt to resolve.
-* @return mixed
-*/
+ * Adjust destination path (no trailing slash), and make it safe to use.
+ * Ripped from adm/index.php of phpBB 3.0.x
+ *
+ * @author phpBB Group
+ */
+function sanitize_filepath($path)
+{
+	if(substr($path, -1, 1) == '/' || substr($path, -1, 1) == '\\')
+	{
+		$path = substr($path, 0, -1);
+	}
+
+	$path = str_replace(array('../', '..\\', './', '.\\'), '', $path);
+	if ($path && ($path[0] == '/' || $path[0] == "\\"))
+	{
+		$path = '';
+	}
+
+	$path = trim($path);
+
+	// Make sure no NUL byte is present...
+	if (strpos($path, "\0") !== false || strpos($path, '%00') !== false)
+	{
+		$path = '';
+	}
+
+	// Should be safe now. Return the value...
+	return $path;
+}
+
+/**
+ * @author Chris Smith <chris@project-minerva.org>
+ * @copyright 2006 Project Minerva Team
+ * @param string $path The path which we should attempt to resolve.
+ * @return mixed
+ */
 function _realpath($path)
 {
 	// Now to perform funky shizzle

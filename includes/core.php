@@ -503,13 +503,9 @@ class failnet_core
 	{
 		// Retrieve a prepared PDO statement or create one, depending on the value of $statement
 		if($statement === false)
-		{
 			return $this->statements[$table][$type];
-		}
-		else
-		{
-			$this->statements[$table][$type] = $this->db->prepare($statement);
-		}
+
+		$this->statements[$table][$type] = $this->db->prepare($statement);
 	}
 
 	/**
@@ -564,7 +560,7 @@ class failnet_core
 			 * @return boolean - Does the plugin exist?
 			 */
 			case 'exists':
-				$file = FAILNET_ROOT . '/includes/plugin/' . basename((string) $param) . '.php';
+				$file = FAILNET_ROOT . 'includes/plugin/' . basename(sanitize_filepath($param)) . '.php';
 				return (file_exists($file) && is_readable($file));
 			break;
 		}
