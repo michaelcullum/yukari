@@ -47,14 +47,7 @@ class failnet_authorize extends failnet_common
  */
 
 	/**
-	 * phpass hashing handler
-	 * @var object
-	 */
-	public $hash;
-
-	/**
-	 * Access list cache property
-	 * @var array
+	 * @var array - Access list cache property
 	 */
 	public $access = array();
 
@@ -67,11 +60,7 @@ class failnet_authorize extends failnet_common
 	 * @see includes/failnet_common#init()
 	 * @return void
 	 */
-	public function init()
-	{
-		display('=== Loading Failnet password hashing system');
-			$this->hash = new failnet_hash(8, true);
-	}
+	public function init() { }
 
 	/**
 	 * Attempt to authenticate a user..
@@ -93,7 +82,7 @@ class failnet_authorize extends failnet_common
 			return NULL;
 
 		// Let's check that password now...
-		if($this->hash->check($password, $result['password']))
+		if($this->failnet->hash->check($password, $result['password']))
 		{
 			// Success!  We need to just add a row to the sessions table now so that the login persists.
 			return $this->failnet->sql('sessions', 'create')->execute(array(':key' => $this->failnet->unique_id(), ':user' => $result['user_id'], ':time' => time(), ':hostmask' => $hostmask));
@@ -126,9 +115,9 @@ class failnet_authorize extends failnet_common
 			return false;
 
 		// Is this hostmask on the access list for this user?
-		if($this->access($result['user_id'], $hostmask))
+		if($this->access((int) $result['user_id'], $hostmask))
 		{
-			return $result['authlevel'];
+			return (int) $result['authlevel'];
 		}
 		else
 		{
@@ -148,7 +137,7 @@ class failnet_authorize extends failnet_common
 			if(time() - $result['login_time'] < 3600)
 				return false;
 
-			return ($result) ? $result['authlevel'] : false;
+			return ($result) ? (int) $result['authlevel'] : false;
 		}
 	}
 
@@ -165,7 +154,7 @@ class failnet_authorize extends failnet_common
 		$this->failnet->sql('users', 'get')->execute(array(':nick' => $nick));
 		$result = $this->failnet->sql('ignore', 'get')->fetch(PDO::FETCH_ASSOC);
 
-		return ($result) ? $result['authlevel'] : false;
+		return ($result) ? (int) $result['authlevel'] : false;
 	}
 
 	/**
@@ -182,7 +171,7 @@ class failnet_authorize extends failnet_common
 	public function add_user($nick, $password, $authlevel = 0)
 	{
 		$user_exists = $this->failnet->db->query('SELECT COUNT(*) FROM users WHERE nick = ' . $this->failnet->db->quote($nick))->fetchColumn();
-		return (!$user_exists) ? $this->failnet->sql('users', 'create')->execute(array(':nick' => $nick, ':authlevel' => $authlevel, ':hash' => $this->hash->hash($password))) : false;
+		return (!$user_exists) ? $this->failnet->sql('users', 'create')->execute(array(':nick' => $nick, ':authlevel' => $authlevel, ':hash' => $this->failnet->hash->hash($password))) : false;
 	}
 
 	/**
@@ -205,7 +194,7 @@ class failnet_authorize extends failnet_common
 			return NULL;
 
 		// We should compare to see if this is the correct password that the user is sending to delete their user entry.
-		if($this->hash->check($password, $result['password']))
+		if($this->failnet->hash->check($password, $result['password']))
 		{
 			// Let's generate a unique ID for the confirm key.
 			$confirm = $this->failnet->unique_id();
@@ -272,9 +261,9 @@ class failnet_authorize extends failnet_common
 			return NULL;
 
 		// We should compare to see if this is the correct password that the user is sending to change their password to something else.
-		if($this->hash->check($old_pass, $result['password']))
+		if($this->failnet->hash->check($old_pass, $result['password']))
 		{
-			$this->failnet->sql('users', 'set_pass')->execute(array(':hash' => $this->hash->hash($new_pass), ':user' => $result['user_id']));
+			$this->failnet->sql('users', 'set_pass')->execute(array(':hash' => $this->failnet->hash->hash($new_pass), ':user' => $result['user_id']));
 			return true;
 		}
 
@@ -324,7 +313,7 @@ class failnet_authorize extends failnet_common
 		}
 
 		// Now that all that junk is taken care of, we need to actually check if this hostmask is in the access list.
-		return preg_match($this->access[$user_id], $hostmask);
+		return preg_match($this->access[(int) $user_id], $hostmask);
 	}
 
 	/**
@@ -351,7 +340,7 @@ class failnet_authorize extends failnet_common
 			return NULL;
 
 		// Let's check that password now...
-		if($this->hash->check($password, $result['password']))
+		if($this->failnet->hash->check($password, $result['password']))
 		{
 			// Success!  We need to just add a row to the sessions table now so that the login persists.
 			$this->failnet->sql('access', 'create')->execute(array(':user' => $result['user_id'], ':hostmask' => $mask));
@@ -390,7 +379,7 @@ class failnet_authorize extends failnet_common
 			return NULL;
 
 		// Let's check that password now...
-		if($this->hash->check($password, $result['password']))
+		if($this->failnet->hash->check($password, $result['password']))
 		{
 			// Success!  Now we just have to kill off that entry.
 			$this->failnet->sql('access', 'delete')->execute(array(':user' => $result['user_id'], ':hostmask' => $mask));

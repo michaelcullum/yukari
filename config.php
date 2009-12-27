@@ -48,6 +48,7 @@ return array(
 // Nodes to load
 	'nodes_list'		=> array(
 		'socket',
+		'hash',
 		'irc',
 		'log',
 		'error',

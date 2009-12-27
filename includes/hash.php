@@ -65,7 +65,12 @@ class failnet_hash
 	public $portable_hashes;
 	public $random_state;
 
-	public function __construct($iteration_count_log2, $portable_hashes)
+	public function __construct(failnet_core $failnet)
+	{
+		$this->init(8, true);
+	}
+
+	public function init($iteration_count_log2, $portable_hashes)
 	{
 		if ($iteration_count_log2 < 4 || $iteration_count_log2 > 31)
 			$iteration_count_log2 = 8;

@@ -277,7 +277,7 @@ class failnet_core
 				$this->db->beginTransaction();
 
 				// Add the default user if Failnet was just installed
-				$this->sql('users', 'create')->execute(array(':nick' => $this->get('owner'), ':authlevel' => 100, ':hash' => $this->authorize->hash->hash($this->get('user'))));
+				$this->sql('users', 'create')->execute(array(':nick' => $this->get('owner'), ':authlevel' => 100, ':hash' => $this->hash->hash($this->get('user'))));
 
 				// Now let's add some default data to the database tables
 				$this->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/schema_data.sql'));
