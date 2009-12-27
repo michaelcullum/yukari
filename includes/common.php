@@ -55,7 +55,7 @@ abstract class failnet_common
 
 	/**
 	 * Constructor method.
-	 * @param object (failnet_core) $failnet - The Failnet core object.
+	 * @param object failnet_core $failnet - The Failnet core object.
 	 * @return void
 	 */
 	public function __construct(failnet_core $failnet)
@@ -65,7 +65,7 @@ abstract class failnet_common
 	}
 
 	/**
-	 * Hnadler method for class load
+	 * Handler method for class load
 	 * @return void
 	 */
 	abstract public function init();
