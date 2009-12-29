@@ -105,7 +105,7 @@ class failnet_plugin_offense extends failnet_plugin_common
 				// No null-victims
 				if(empty($text))
 				{
-					$this->call_privmsg($this->event->source(), $this->event->nick . ': That was full of fail.');
+					$this->call_privmsg($this->event->source(), $this->event->hostmask->nick . ': That was full of fail.');
 					return;
 				}
 
@@ -134,7 +134,7 @@ class failnet_plugin_offense extends failnet_plugin_common
 				// No null-victims
 				if(empty($text))
 				{
-					$this->call_privmsg($this->event->source(), $this->event->nick . ': That was full of fail.');
+					$this->call_privmsg($this->event->source(), $this->event->hostmask->nick . ': That was full of fail.');
 					return;
 				}
 

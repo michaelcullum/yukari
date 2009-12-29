@@ -341,7 +341,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 
 	public function cmd_version()
 	{
-		$this->call_version($this->event->nick, 'Failnet PHP IRC Bot v' . FAILNET_VERSION);
+		$this->call_version($this->event->hostmask->nick, 'Failnet PHP IRC Bot v' . FAILNET_VERSION);
 	}
 }
 

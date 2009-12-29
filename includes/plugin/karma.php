@@ -74,7 +74,7 @@ class failnet_plugin_karma extends failnet_plugin_common
 				// Make sure we're getting the karma for SOMETHING.
 				if(empty($text))
 				{
-					$this->call_privmsg($this->event->source(), $this->event->nick . ': You know you DO need to specify something, right?');
+					$this->call_privmsg($this->event->source(), $this->event->hostmask->nick . ': You know you DO need to specify something, right?');
 					return;
 				}
 

@@ -127,7 +127,7 @@ class failnet_plugin_weather extends failnet_plugin_common
 				}
 				else
 				{
-					$this->call_privmsg($this->event->source(), $this->event->nick . ': Sorry, but I wasn\'t able to retrieve the current weather conditions for the area you specified.');
+					$this->call_privmsg($this->event->source(), $this->event->hostmask->nick . ': Sorry, but I wasn\'t able to retrieve the current weather conditions for the area you specified.');
 				}
 			break;
 
@@ -137,7 +137,7 @@ class failnet_plugin_weather extends failnet_plugin_common
 					$weather_data = $this->weather($text);
 					if($weather_data && $weather_data['forecast_info']['zip'][0] != '' && isset($weather_data['forecast']))
 					{
-						$this->call_privmsg($this->event->source(), $this->event->nick . ': Here\'s the current forecast for ' . $weather_data['forecast_info']['city'] . ':');
+						$this->call_privmsg($this->event->source(), $this->event->hostmask->nick . ': Here\'s the current forecast for ' . $weather_data['forecast_info']['city'] . ':');
 						foreach($weather_data['forecast'] as $forecast)
 						{
 							$data = $forecast['day_of_week'] . ' / High ' . $forecast['high'] . 'F ' . $this->temp_conv('F-C', $forecast['high']) . 'C / Low ' . $forecast['low'] . 'F ' . $this->temp_conv('F-C', $forecast['low']) . 'C / Condition: ' . $forecast['condition'];
@@ -148,7 +148,7 @@ class failnet_plugin_weather extends failnet_plugin_common
 					}
 					else
 					{
-						$this->call_privmsg($this->event->source(), $this->event->nick . ': Sorry, but I wasn\'t able to retrieve a forecast for the area you specified.');
+						$this->call_privmsg($this->event->source(), $this->event->hostmask->nick . ': Sorry, but I wasn\'t able to retrieve a forecast for the area you specified.');
 					}
 					
 				}

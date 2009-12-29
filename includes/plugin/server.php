@@ -225,7 +225,7 @@ class failnet_plugin_server extends failnet_plugin_common
 		if($this->event->get_arg('user') != $this->failnet->get('nick'))
 		{
 			$chan = trim(strtolower($this->event->get_arg('channel')));
-			$nick = trim(strtolower($this->event->nick));
+			$nick = trim(strtolower($this->event->hostmask->nick));
 
 			if (isset($this->failnet->chans[$chan][$nick]))
 				unset($this->failnet->chans[$chan][$nick]);
