@@ -31,8 +31,8 @@
 
 /**
  * Failnet - Base class,
- * 		Used as the common base class for all of Failnet's class files (at least the ones that need one) 
- * 
+ * 		Used as the common base class for all of Failnet's class files (at least the ones that need one)
+ *
  *
  * @package core
  * @author Obsidian
@@ -95,7 +95,7 @@ abstract class failnet_common
 		}
 		else
 		{
-			return call_user_method_array($name, $this->failnet, $arguments);
+			return call_user_func_array(array($this->failnet, $name), $arguments);
 		}
 	}
 }
