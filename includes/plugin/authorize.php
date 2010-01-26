@@ -185,10 +185,11 @@ class failnet_plugin_authorize extends failnet_plugin_common
 				$param = explode(' ', $text);
 
 				// Identify the level we want to use
-				$level = $this->identify_authlevel($param[1]);
+				$level = $this->failnet->authorize->identify_authlevel($param[1]);
 				if(is_null($level))
 				{
 					$this->call_privmsg($sender, 'Invalid new level specified for command');
+					return;
 				}
 
 				// Check auths
