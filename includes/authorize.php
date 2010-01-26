@@ -300,6 +300,11 @@ class failnet_authorize extends failnet_common
 		if(!$result)
 			return NULL;
 
+		if((int) $result['authlevel'] === self::AUTH_OWNER)
+		{
+			return false;
+		}
+
 		$this->failnet->sql('users', 'set_level')->execute(array(':user' => $result['user_id'], ':authlevel' => (int) $level));
 		return true;
 	}

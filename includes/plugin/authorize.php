@@ -205,7 +205,7 @@ class failnet_plugin_authorize extends failnet_plugin_common
 					$this->call_privmsg($sender, 'Invalid user specified for command');
 				}
 
-				$this->call_privmsg($sender, 'New authlevel successfully set for specified user');
+				$this->call_privmsg($sender, ($success) ? 'New authlevel successfully set for specified user' : 'Authlevel was not changed for owner');
 			break;
 
 			// Add current hostmask to the access list
