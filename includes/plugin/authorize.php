@@ -81,7 +81,7 @@ class failnet_plugin_authorize extends failnet_plugin_common
 					return;
 				}
 
-				$success = $this->failnet->authorize->add_user($sender, $text);
+				$success = $this->failnet->authorize->add_user($sender, $text, self::AUTH_REGISTEREDUSER);
 				$this->call_privmsg($sender, ($success) ? 'You were successfully added to my users database.' : 'I\'m sorry, but I was unable to add you to my users database.');
 			break;
 

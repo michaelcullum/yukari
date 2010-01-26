@@ -181,7 +181,7 @@ class failnet_authorize extends failnet_common
 	 * @param integer $authlevel - The authorization level to give to the user
 	 * @return boolean - False if user already exists, true if successful.
 	 */
-	public function add_user($nick, $password, $authlevel = 0)
+	public function add_user($nick, $password, $authlevel)
 	{
 		$user_exists = $this->failnet->db->query('SELECT COUNT(*) FROM users WHERE nick = ' . $this->failnet->db->quote($nick))->fetchColumn();
 		return (!$user_exists) ? $this->failnet->sql('users', 'create')->execute(array(':nick' => $nick, ':authlevel' => $authlevel, ':hash' => $this->failnet->hash->hash($password))) : false;
