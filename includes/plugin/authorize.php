@@ -68,7 +68,8 @@ class failnet_plugin_authorize extends failnet_plugin_common
 			return;
 
 		$cmd = $this->purify($text);
-		$sender = ($this->failnet->get('speak')) ? $this->event->source() : $this->event->hostmask->nick;
+		$sender = $this->event->hostmask->nick;
+		$recipient = ($this->failnet->get('speak')) ? $this->event->source() : $this->event->hostmask->nick;
 		$hostmask = $this->event->hostmask;
 		switch($cmd)
 		{
@@ -77,12 +78,12 @@ class failnet_plugin_authorize extends failnet_plugin_common
 			case 'adduser':
 				if(is_null($text))
 				{
-					$this->call_privmsg($sender, 'Invalid arguments specified for command');
+					$this->call_privmsg($recipient, 'Invalid arguments specified for command');
 					return;
 				}
 
 				$success = $this->failnet->authorize->add_user($sender, $text, self::AUTH_REGISTEREDUSER);
-				$this->call_privmsg($sender, ($success) ? 'You were successfully added to my users database.' : 'I\'m sorry, but I was unable to add you to my users database.');
+				$this->call_privmsg($recipient, ($success) ? 'You were successfully added to my users database.' : 'I\'m sorry, but I was unable to add you to my users database.');
 			break;
 
 			// Log the user in
@@ -90,18 +91,18 @@ class failnet_plugin_authorize extends failnet_plugin_common
 			case 'auth':
 				if(is_null($text))
 				{
-					$this->call_privmsg($sender, 'Invalid arguments specified for command');
+					$this->call_privmsg($recipient, 'Invalid arguments specified for command');
 					return;
 				}
 
 				$success = $this->failnet->authorize->auth($hostmask, $text);
 				if(is_null($success))
 				{
-					$this->call_privmsg($sender, 'Cannot login -- no such user exists in database');
+					$this->call_privmsg($recipient, 'Cannot login -- no such user exists in database');
 					return;
 				}
 
-				$this->call_privmsg($sender, ($success) ? 'You have been logged in.' : 'Cannot login -- invalid password entered');
+				$this->call_privmsg($recipient, ($success) ? 'You have been logged in.' : 'Cannot login -- invalid password entered');
 			break;
 
 			// Delete user from the DB
@@ -109,18 +110,18 @@ class failnet_plugin_authorize extends failnet_plugin_common
 			case 'dropuser':
 				if(is_null($text))
 				{
-					$this->call_privmsg($sender, 'Invalid arguments specified for command');
+					$this->call_privmsg($recipient, 'Invalid arguments specified for command');
 					return;
 				}
 
 				$confirm = $this->failnet->authorize->del_user($hostmask, $text);
 				if(is_null($confirm))
 				{
-					$this->call_privmsg($sender, 'Cannot remove user -- no such user exists in database');
+					$this->call_privmsg($recipient, 'Cannot remove user -- no such user exists in database');
 					return;
 				}
 
-				$this->call_privmsg($sender, ($confirm) ? 'To completely remove yourself from my users database, please reply with |delconfirm ' . $confirm : 'Cannot remove user -- invalid password entered');
+				$this->call_privmsg($recipient, ($confirm) ? 'To completely remove yourself from my users database, please reply with |delconfirm ' . $confirm : 'Cannot remove user -- invalid password entered');
 			break;
 
 			// Confirm user deletion from DB
@@ -128,18 +129,18 @@ class failnet_plugin_authorize extends failnet_plugin_common
 			case 'delconfirm':
 				if(is_null($text))
 				{
-					$this->call_privmsg($sender, 'Invalid arguments specified for command');
+					$this->call_privmsg($recipient, 'Invalid arguments specified for command');
 					return;
 				}
 
 				$success = $this->failnet->authorize->confirm_del($hostmask, $text);
 				if(is_null($success))
 				{
-					$this->call_privmsg($sender, 'Cannot remove user -- no such user exists in database');
+					$this->call_privmsg($recipient, 'Cannot remove user -- no such user exists in database');
 					return;
 				}
 
-				$this->call_privmsg($sender, ($success) ? 'You have been removed from my users database.' : 'Cannot remove user -- invalid confirmation key entered');
+				$this->call_privmsg($recipient, ($success) ? 'You have been removed from my users database.' : 'Cannot remove user -- invalid confirmation key entered');
 			break;
 
 			// Change the password for this user
@@ -147,7 +148,7 @@ class failnet_plugin_authorize extends failnet_plugin_common
 			case 'setpass':
 				if(is_null($text))
 				{
-					$this->call_privmsg($sender, 'Invalid arguments specified for command');
+					$this->call_privmsg($recipient, 'Invalid arguments specified for command');
 					return;
 				}
 
@@ -155,23 +156,23 @@ class failnet_plugin_authorize extends failnet_plugin_common
 				$success = $this->failnet->authorize->set_pass($hostmask, $param[0], $param[1]);
 				if(is_null($success))
 				{
-					$this->call_privmsg($sender, 'Cannot change password for user -- no such user exists in database');
+					$this->call_privmsg($recipient, 'Cannot change password for user -- no such user exists in database');
 					return;
 				}
 
-				$this->call_privmsg($sender, ($success) ? 'Your password has been successfully changed.' : 'Cannot change password for user -- invalid original password entered');
+				$this->call_privmsg($recipient, ($success) ? 'Your password has been successfully changed.' : 'Cannot change password for user -- invalid original password entered');
 			break;
 
 			case 'userlevel':
 			case 'authlevel':
 				if(is_null($text))
 				{
-					$this->call_privmsg($sender, 'Invalid arguments specified for command');
+					$this->call_privmsg($recipient, 'Invalid arguments specified for command');
 					return;
 				}
 
 				$userlevel = $this->failnet->authorize->userlevel($text);
-				$this->call_privmsg($sender, 'User`s current authlevel is ' . $this->failnet->authorize->identify_authlevel(($userlevel) ? $userlevel : self::AUTH_UNKNOWNUSER) . '.');
+				$this->call_privmsg($recipient, 'User`s current authlevel is ' . $this->failnet->authorize->identify_authlevel(($userlevel) ? $userlevel : self::AUTH_UNKNOWNUSER) . '.');
 			break;
 
 			case 'setlevel':
@@ -179,7 +180,7 @@ class failnet_plugin_authorize extends failnet_plugin_common
 			case 'setauthlevel':
 				if(is_null($text))
 				{
-					$this->call_privmsg($sender, 'Invalid arguments specified for command');
+					$this->call_privmsg($recipient, 'Invalid arguments specified for command');
 					return;
 				}
 				$param = explode(' ', $text);
@@ -188,60 +189,60 @@ class failnet_plugin_authorize extends failnet_plugin_common
 				$level = $this->failnet->authorize->identify_authlevel($param[1]);
 				if(is_null($level))
 				{
-					$this->call_privmsg($sender, 'Invalid new level specified for command');
+					$this->call_privmsg($recipient, 'Invalid new level specified for command');
 					return;
 				}
 
 				// Check auths
 				if ($this->failnet->authorize->authlevel($hostmask) < $level)
 				{
-					$this->call_privmsg($sender, $this->failnet->deny());
+					$this->call_privmsg($recipient, $this->failnet->deny());
 					return;
 				}
 
 				$success = $this->failnet->authorize->set_authlevel($param[0], $level);
 				if(is_null($success))
 				{
-					$this->call_privmsg($sender, 'Invalid user specified for command');
+					$this->call_privmsg($recipient, 'Invalid user specified for command');
 				}
 
-				$this->call_privmsg($sender, ($success) ? 'New authlevel successfully set for specified user' : 'Authlevel was not changed for owner');
+				$this->call_privmsg($recipient, ($success) ? 'New authlevel successfully set for specified user' : 'Authlevel was not changed for owner');
 			break;
 
 			// Add current hostmask to the access list
 			case '+access':
 				if(is_null($text))
 				{
-					$this->call_privmsg($sender, 'Invalid arguments specified for command');
+					$this->call_privmsg($recipient, 'Invalid arguments specified for command');
 					return;
 				}
 
 				$success = $this->failnet->authorize->add_access($hostmask, $text);
 				if(is_null($success))
 				{
-					$this->call_privmsg($sender, 'Cannot add hostmask to access list for user -- no such user exists in database');
+					$this->call_privmsg($recipient, 'Cannot add hostmask to access list for user -- no such user exists in database');
 					return;
 				}
 
-				$this->call_privmsg($sender, ($success) ? 'Hostmask successfully added to access list for user.' : 'Cannot add hostmask to access list for user -- invalid password entered');
+				$this->call_privmsg($recipient, ($success) ? 'Hostmask successfully added to access list for user.' : 'Cannot add hostmask to access list for user -- invalid password entered');
 			break;
 
 			// Remove current hostmask from the access list
 			case '-access':
 				if(is_null($text))
 				{
-					$this->call_privmsg($sender, 'Invalid arguments specified for command');
+					$this->call_privmsg($recipient, 'Invalid arguments specified for command');
 					return;
 				}
 
 				$success = $this->failnet->authorize->delete_access($hostmask, $text);
 				if(is_null($success))
 				{
-					$this->call_privmsg($sender, 'Cannot remove hostmask from access list for user -- no such user exists in database');
+					$this->call_privmsg($recipient, 'Cannot remove hostmask from access list for user -- no such user exists in database');
 					return;
 				}
 
-				$this->call_privmsg($sender, ($success) ? 'Hostmask successfully removed access list for user.' : 'Cannot remove hostmask from access list for user -- invalid password entered');
+				$this->call_privmsg($recipient, ($success) ? 'Hostmask successfully removed access list for user.' : 'Cannot remove hostmask from access list for user -- invalid password entered');
 			break;
 
 			// Add a specific hostmask to the access list
@@ -249,18 +250,18 @@ class failnet_plugin_authorize extends failnet_plugin_common
 			case 'addaccess':
 				if(is_null($text))
 				{
-					$this->call_privmsg($sender, 'Invalid arguments specified for command');
+					$this->call_privmsg($recipient, 'Invalid arguments specified for command');
 					return;
 				}
 				$param = explode(' ', $text);
 				$success = $this->failnet->authorize->add_access($hostmask, $param[1], $param[0]);
 				if(is_null($success))
 				{
-					$this->call_privmsg($senderk, 'Cannot add hostmask to access list for user -- no such user exists in database');
+					$this->call_privmsg($recipient, 'Cannot add hostmask to access list for user -- no such user exists in database');
 					return;
 				}
 
-				$this->call_privmsg($sender, ($success) ? 'Hostmask successfully added to access list for user.' : 'Cannot add hostmask to access list for user -- invalid password entered');
+				$this->call_privmsg($recipient, ($success) ? 'Hostmask successfully added to access list for user.' : 'Cannot add hostmask to access list for user -- invalid password entered');
 			break;
 
 			// Remove a specific hostmask from the access list
@@ -268,7 +269,7 @@ class failnet_plugin_authorize extends failnet_plugin_common
 			case 'delaccess':
 				if(is_null($text))
 				{
-					$this->call_privmsg($sender, 'Invalid arguments specified for command');
+					$this->call_privmsg($recipient, 'Invalid arguments specified for command');
 					return;
 				}
 
@@ -276,11 +277,11 @@ class failnet_plugin_authorize extends failnet_plugin_common
 				$success = $this->failnet->authorize->delete_access($hostmask, $param[1], $param[0]);
 				if(is_null($success))
 				{
-					$this->call_privmsg($sender, 'Cannot remove hostmask from access list for user -- no such user exists in database');
+					$this->call_privmsg($recipient, 'Cannot remove hostmask from access list for user -- no such user exists in database');
 					return;
 				}
 
-				$this->call_privmsg($sender, ($success) ? 'Hostmask successfully removed access list for user.' : 'Cannot remove hostmask from access list for user -- invalid password entered');
+				$this->call_privmsg($recipient, ($success) ? 'Hostmask successfully removed access list for user.' : 'Cannot remove hostmask from access list for user -- invalid password entered');
 			break;
 		}
 	}
