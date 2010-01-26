@@ -177,7 +177,34 @@ class failnet_plugin_authorize extends failnet_plugin_common
 			case 'setlevel':
 			case 'setauth':
 			case 'setauthlevel':
+				if(is_null($text))
+				{
+					$this->call_privmsg($sender, 'Invalid arguments specified for command');
+					return;
+				}
+				$param = explode(' ', $text);
 
+				// Identify the level we want to use
+				$level = $this->identify_authlevel($param[1]);
+				if(is_null($level))
+				{
+					$this->call_privmsg($sender, 'Invalid new level specified for command');
+				}
+
+				// Check auths
+				if ($this->failnet->authorize->authlevel($hostmask) < $level)
+				{
+					$this->call_privmsg($sender, $this->failnet->deny());
+					return;
+				}
+
+				$success = $this->failnet->authorize->set_authlevel($param[0], $level);
+				if(is_null($success))
+				{
+					$this->call_privmsg($sender, 'Invalid user specified for command');
+				}
+
+				$this->call_privmsg($sender, 'New authlevel successfully set for specified user');
 			break;
 
 			// Add current hostmask to the access list
@@ -191,7 +218,7 @@ class failnet_plugin_authorize extends failnet_plugin_common
 				$success = $this->failnet->authorize->add_access($hostmask, $text);
 				if(is_null($success))
 				{
-					$this->call_privmsg($senderk, 'Cannot add hostmask to access list for user -- no such user exists in database');
+					$this->call_privmsg($sender, 'Cannot add hostmask to access list for user -- no such user exists in database');
 					return;
 				}
 
