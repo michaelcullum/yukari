@@ -11,7 +11,7 @@
  * License:		GNU General Public License - Version 2
  *
  *===================================================================
- * 
+ *
  */
 
 /**
@@ -31,8 +31,8 @@
 
 /**
  * Failnet - User authorization handling class,
- * 		Used as Failnet's authorization handler. 
- * 
+ * 		Used as Failnet's authorization handler.
+ *
  *
  * @package auth
  * @author Obsidian
@@ -50,7 +50,7 @@ class failnet_authorize extends failnet_common
 	 * @var array - Access list cache property
 	 */
 	public $access = array();
-	
+
 	public $authlevels = array();
 
 /**
@@ -88,7 +88,7 @@ class failnet_authorize extends failnet_common
 
 		// Now, let's do a query to grab the row for that user
 		$this->failnet->sql('users', 'get')->execute(array(':nick' => $nick));
-		$result = $this->failnet->sql('users', 'get')->fetch(PDO::FETCH_ASSOC); 
+		$result = $this->failnet->sql('users', 'get')->fetch(PDO::FETCH_ASSOC);
 
 		// No such user?  Derr...
 		if(!$result)
@@ -134,12 +134,12 @@ class failnet_authorize extends failnet_common
 		}
 		else
 		{
-			// Okay, they aren't on the access list for that user.  
+			// Okay, they aren't on the access list for that user.
 			// What we'll have to do instead is to check to see if they are logged in.
 			$sql = $this->failnet->db->query('SELECT u.authlevel, s.login_time
-			FROM sessions s, users u 
+			FROM sessions s, users u
 			WHERE u.user_id = s.user_id
-				AND LOWER(u.nick) = LOWER(' . $this->failnet->db->quote($nick) . ') 
+				AND LOWER(u.nick) = LOWER(' . $this->failnet->db->quote($nick) . ')
 			ORDER BY s.login_time DESC');
 
 			$result = $sql->fetch(PDO::FETCH_ASSOC);
@@ -165,7 +165,7 @@ class failnet_authorize extends failnet_common
 			return self::AUTH_OWNER;
 
 		$this->failnet->sql('users', 'get')->execute(array(':nick' => $nick));
-		$result = $this->failnet->sql('ignore', 'get')->fetch(PDO::FETCH_ASSOC);
+		$result = $this->failnet->sql('users', 'get')->fetch(PDO::FETCH_ASSOC);
 
 		return ($result) ? (int) $result['authlevel'] : false;
 	}
@@ -191,7 +191,7 @@ class failnet_authorize extends failnet_common
 	 * Deletes a user, but only after getting the user to confirm the deletion first.
 	 * @param $hostmask - The hostmask of the user that is requesting they be deleted
 	 * @param $password - The password for the user requesting they be deleted
-	 * @return mixed - False if bad password, string containing confirm key if password is correct, and NULL if no such user.  
+	 * @return mixed - False if bad password, string containing confirm key if password is correct, and NULL if no such user.
 	 */
 	public function del_user($hostmask, $password)
 	{
@@ -200,7 +200,7 @@ class failnet_authorize extends failnet_common
 
 		// Now, let's do a query to grab the row for that user
 		$this->failnet->sql('users', 'get')->execute(array(':nick' => $nick));
-		$result = $this->failnet->sql('users', 'get')->fetch(PDO::FETCH_ASSOC); 
+		$result = $this->failnet->sql('users', 'get')->fetch(PDO::FETCH_ASSOC);
 
 		// No such user?  Derr...
 		if(!$result)
@@ -216,7 +216,7 @@ class failnet_authorize extends failnet_common
 		}
 
 		// FAIL!  NOW GIT OUT OF MAH KITCHEN!
-		return false; 
+		return false;
 	}
 
 	/**
@@ -232,7 +232,7 @@ class failnet_authorize extends failnet_common
 
 		// Now, let's do a query to grab the row for that user
 		$this->failnet->sql('users', 'get')->execute(array(':nick' => $nick));
-		$result = $this->failnet->sql('users', 'get')->fetch(PDO::FETCH_ASSOC); 
+		$result = $this->failnet->sql('users', 'get')->fetch(PDO::FETCH_ASSOC);
 
 		// No such user?  Derr...
 		if(!$result)
@@ -267,7 +267,7 @@ class failnet_authorize extends failnet_common
 
 		// Now, let's do a query to grab the row for that user
 		$this->failnet->sql('users', 'get')->execute(array(':nick' => $nick));
-		$result = $this->failnet->sql('users', 'get')->fetch(PDO::FETCH_ASSOC); 
+		$result = $this->failnet->sql('users', 'get')->fetch(PDO::FETCH_ASSOC);
 
 		// No such user?  Derr...
 		if(!$result)
@@ -286,7 +286,7 @@ class failnet_authorize extends failnet_common
 
 	/**
 	 * Set a user's authorization level
-	 * @param string $nick - The username of the user to set the authorization level for 
+	 * @param string $nick - The username of the user to set the authorization level for
 	 * @param integer $level - The authlevel to give the user
 	 * @return mixed - NULL if no such user, true if set successfully
 	 */
@@ -294,7 +294,7 @@ class failnet_authorize extends failnet_common
 	{
 		// Now, let's do a query to grab the row for that user
 		$this->failnet->sql('users', 'get')->execute(array(':nick' => $nick));
-		$result = $this->failnet->sql('users', 'get')->fetch(PDO::FETCH_ASSOC); 
+		$result = $this->failnet->sql('users', 'get')->fetch(PDO::FETCH_ASSOC);
 
 		// No such user?  Derr...
 		if(!$result)
@@ -319,7 +319,7 @@ class failnet_authorize extends failnet_common
 		// Check to see if we've got this user's access list cached.
 		if(!isset($this->access[$user_id]))
 		{
-			// Guess not, so we run a query to see if we have a user with this ID in the access lists.  
+			// Guess not, so we run a query to see if we have a user with this ID in the access lists.
 			$this->failnet->sql('access', 'get')->execute(array(':user' => $user_id));
 			$result = $this->failnet->sql('access', 'get')->fetchAll(PDO::FETCH_COLUMN, 0);
 			$this->access[$user_id] = hostmasks_to_regex($result);
@@ -333,7 +333,7 @@ class failnet_authorize extends failnet_common
 	 * Adds a hostmask to the access list for a user
 	 * @param string $hostmask - The hostmask to add, with the nick of the hostmask being the user to add to.
 	 * @param string $password - User's password to confirm the change being made.
-	 * @return mixed - Boolean true on success, false on invalid password, NULL on no such user. 
+	 * @return mixed - Boolean true on success, false on invalid password, NULL on no such user.
 	 */
 	public function add_access($hostmask, $password, $mask = NULL)
 	{
@@ -346,7 +346,7 @@ class failnet_authorize extends failnet_common
 
 		// Now, let's do a query to grab the row for that user
 		$this->failnet->sql('users', 'get')->execute(array(':nick' => $nick));
-		$result = $this->failnet->sql('users', 'get')->fetch(PDO::FETCH_ASSOC); 
+		$result = $this->failnet->sql('users', 'get')->fetch(PDO::FETCH_ASSOC);
 
 		// No such user?  Derr...
 		if(!$result)
@@ -372,7 +372,7 @@ class failnet_authorize extends failnet_common
 	 * Deletes a hostmask from a user's access list.
 	 * @param string $hostmask - The hostmask to add, with the nick of the hostmask being the user to delete the hostmask access from.
 	 * @param string $password - User's password to confirm the change being made.
-	 * @return mixed - Boolean true on success, false on invalid password, NULL on no such user. 
+	 * @return mixed - Boolean true on success, false on invalid password, NULL on no such user.
 	 */
 	public function delete_access($hostmask, $password, $mask = NULL)
 	{
@@ -385,7 +385,7 @@ class failnet_authorize extends failnet_common
 
 		// Now, let's do a query to grab the row for that user
 		$this->failnet->sql('users', 'get')->execute(array(':nick' => $nick));
-		$result = $this->failnet->sql('users', 'get')->fetch(PDO::FETCH_ASSOC); 
+		$result = $this->failnet->sql('users', 'get')->fetch(PDO::FETCH_ASSOC);
 
 		// No such user?  Derr...
 		if(!$result)
@@ -416,11 +416,11 @@ class failnet_authorize extends failnet_common
 	{
 		if(is_int($authlevel))
 		{
-			return (isset($this->authlevel[$authlevel]) ? $this->authlevel[$authlevel] : NULL);
+			return (isset($this->authlevels[$authlevel]) ? $this->authlevels[$authlevel] : NULL);
 		}
 		else
 		{
-			$authlevels = array_flip($this->authlevel);
+			$authlevels = array_flip($this->authlevels);
 			return (isset($authlevels[$authlevel]) ? $authlevels[$authlevel] : NULL);
 		}
 	}
