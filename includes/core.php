@@ -97,6 +97,7 @@ class failnet_core
 	 */
 	public $chans = array();
 
+	//  @todo move the p_commands and p_help properties to the help node when it is created
     /**
      * @var array - Array of plugins and what commands they contain
      */
@@ -149,15 +150,15 @@ class failnet_core
     	if(!extension_loaded('pdo_sqlite'))
 			throw_fatal('Failnet requires the PDO_SQLite PHP extension to be loaded');
 
-		// Check to see if date.timezone is empty in the PHP.ini; if so, set the timezone to prevent strict errors.
+		// Check to see if date.timezone is empty in the PHP.ini; if so, set the timezone with some Hax to prevent strict errors.
 		if(!ini_get('date.timezone'))
-			@date_default_timezone_set('UTC');
+			@date_default_timezone_set(@date_default_timezone_get());
 
 		// Make sure our database directory actually exists and is manipulatable
 		if(!file_exists(FAILNET_DB_ROOT) || !is_readable(FAILNET_DB_ROOT) || !is_writeable(FAILNET_DB_ROOT) || !is_dir(FAILNET_DB_ROOT))
 			throw_fatal('Failnet requires the database directory to exist and be readable/writeable');
+
 		/**
-         *
          * Commented because we don't really need it
 		if(!file_exists(FAILNET_ROOT . 'data/weather/') || !is_readable(FAILNET_ROOT . 'data/weather/') || !is_writeable(FAILNET_ROOT . 'data/weather/') || !is_dir(FAILNET_ROOT . 'data/weather/'))
 			throw_fatal('Failnet requires the weather cache directory to exist and be readable/writeable');
@@ -294,8 +295,7 @@ class failnet_core
 
 		// Load plugins
 		display('- Loading Failnet plugins');
-		$plugins = $this->get('plugin_list');
-		$this->plugin('load', $plugins);
+		$this->plugin('load', $this->get('plugin_list'));
 
 		// Load our config settings
 		display('- Loading config settings');
@@ -483,6 +483,19 @@ class failnet_core
 	 */
 	public function get($setting, $config_only = false)
 	{
+		$trace = dump_backtrace();
+		trigger_error('Depreciated method failnet_core::get() called (the method failnet_core::config() should be used instead) in ' . $trace[0]['file'] .' on line ' . $trace[0]['line'] . '--', E_USER_NOTICE);
+		$this->config($setting, $config_only);
+	}
+
+	/**
+	 * Get a setting from Failnet's configuration settings
+	 * @param string $setting - The config setting that we want to pull the value for.
+	 * @param boolean $config_only - Is this an entry that only appears in the config file?
+	 * @return mixed - The setting's value, or null if no such setting.
+	 */
+	public function config($setting, $config_only = false)
+	{
 		if(property_exists($this, $setting))
 			return $this->$setting;
 		if(!$config_only && isset($this->settings[$setting]))
@@ -565,7 +578,7 @@ class failnet_core
 			break;
 		}
 	}
-	
+
 	/**
 	 * Undefined function handler
 	 * @param $funct - Function name
@@ -655,7 +668,7 @@ class failnet_core
 
 		return substr($val, 4, 16);
 	}
-	
+
 	// @todo move these methods out of the core
 
 	/**
@@ -691,27 +704,6 @@ class failnet_core
 	}
 
 	/**
-	 * Checks whether or not a user has a specified status (or if $type is NULL it checks if user is in a specified channel)
-	 * @param string $nick - The nick for the user that we are checking
-	 * @param string $chan - The channel that we are checking in
-	 * @param mixed $type - The type of check to perform, NULL checks for user being in a specified channel.  Use user type constants if not using NULL.
-	 * @return mixed - NULL if unhandled $type value, will return false if user is not in the channel or if Failnet is not in the channel, will return boolean true/false according to the check requested.
-	 */
-	public function user_is($nick, $chan, $type = NULL)
-	{
-		// Make sure we handle this check first
-		if(!in_array($type, array(self::FOUNDER, self::ADMIN, self::OP, self::HALFOP, self::VOICE, self::REGULAR, NULL)))
-			return NULL;
-
-		// If it is NULL, we are checking if the user is in the specified channel
-		if($type === NULL || $type === self::REGULAR)
-			return (isset($this->chans[trim(strtolower($chan))])) ? isset($this->chans[trim(strtolower($chan))][trim(strtolower($nick))]) : false;
-
-		// Okay, we are checking the user type.  Let's do that.
-		return isset($this->chans[trim(strtolower($chan))][trim(strtolower($nick))]) && ($this->chans[trim(strtolower($chan))][trim(strtolower($nick))] & $type) != 0;
-	}
-
-	/**
 	 * Are we directing this at our owner or ourself?
 	 * This is best to avoid humilation if we're using an agressive command.  ;)
 	 * @param string $user - The user to check.
@@ -723,33 +715,4 @@ class failnet_core
             return true;
 		return false;
 	}
-
-	/**
-	 * Get the userlist of a channel
-	 * @param string $chan - Channel name
-	 * @return mixed - The user list for the channel or false if we don't have the userlist.
-	 */
-	public function get_users($chan)
-	{
-		if (isset($this->chans[trim(strtolower($chan))]))
-			return array_keys($this->chans[trim(strtolower($chan))]);
-		return false;
-	}
-
-	/**
-	 * Get a random user in a specified channel
-	 * @param string $chan - Channel name
-	 * @return mixed - Random user's name, or false if we are not in that channel
-	 */
-	public function random_user($chan)
-	{
-		$chan = trim(strtolower($chan));
-		if (isset($this->chans[$chan]))
-		{
-			while(array_search(($nick = array_rand($this->chans[$chan], 1)), array('chanserv', 'q', 'l', 's')) !== false) {}
-			return $nick;
-		}
-		return false;
-	}
 }
-
