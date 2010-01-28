@@ -31,14 +31,14 @@
 
 
 /**
- * Failnet - IRC request event handling class 
- * 
+ * Failnet - IRC request event handling class
+ *
  *
  * @package connection
  * @author Obsidian
  * @copyright (c) 2009 - 2010 -- Failnet Project
  * @license GNU General Public License - Version 2
- * 
+ *
  * @see http://www.irchelp.org/irchelp/rfc/chapter4.html
  */
 class failnet_event_request implements ArrayAccess
@@ -70,7 +70,7 @@ class failnet_event_request implements ArrayAccess
 	const TYPE_TIME = 'time';
 	const TYPE_VERSION = 'version';
 	const TYPE_RAW = 'raw';
-	
+
 	/**
 	 * @var array - Mapping of event types to their named parameters
 	 */
@@ -137,8 +137,8 @@ class failnet_event_request implements ArrayAccess
 		),
 
 	);
-	
-	
+
+
 	/**
 	 * @var object failnet_hostmask - Hostmask for the originating server or user
 	 */
@@ -163,13 +163,13 @@ class failnet_event_request implements ArrayAccess
 	 * @var string - The raw buffer that was sent by the server
 	 */
 	public $buffer;
-	
+
 	/**
-	 * Constructor 
+	 * Constructor
 	 * @return void
 	 */
 	public function __construct() { }
-	
+
 	public function __call($name, array $arguments)
 	{
 		trigger_error('Call to undefined method "' . $name . '" in class "' . __CLASS__ . '"', E_USER_WARNING);
@@ -192,9 +192,11 @@ class failnet_event_request implements ArrayAccess
 	 */
 	public function fromchannel()
 	{
+		$trace = dump_backtrace();
+		trigger_error('Depreciated method failnet_event_request::fromchannel() called (the property failnet_event_request::fromchannel should be used instead) in ' . $trace[0]['file'] .' on line ' . $trace[0]['line'] . '--', E_USER_NOTICE);
 		return $this->fromchannel;
 	}
-	
+
 	/**
 	 * Returns a single specified argument for the request.
 	 *
@@ -209,20 +211,20 @@ class failnet_event_request implements ArrayAccess
 			return $this->arguments[$argument];
 		return NULL;
 	}
-	
+
 	/**
 	 * Resolves an argument specification to an integer position.
 	 *
 	 * @param mixed $argument Integer position (starting from 0) or the
 	 *        equivalent string name of the argument from self::$_map
-	 * @return int|NULL Integer position of the argument or NULL if no 
+	 * @return int|NULL Integer position of the argument or NULL if no
 	 *         corresponding argument was found
 	 */
 	private function resolve_arg($argument)
 	{
 		if (isset($this->arguments[$argument]))
 		{
-			return $argument; 
+			return $argument;
 		}
 		else
 		{
@@ -232,7 +234,7 @@ class failnet_event_request implements ArrayAccess
 		}
 		return NULL;
 	}
-	
+
 	/**
 	 * @see ArrayAccess::offsetExists()
 	 */
@@ -268,4 +270,3 @@ class failnet_event_request implements ArrayAccess
 			unset($this->arguments[$offset]);
 	}
 }
-
