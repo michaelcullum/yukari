@@ -210,7 +210,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 				}
 				elseif($text !== false)
 				{
-					if($this->failnet->user_is($this->failnet->nick, $text))
+					if($this->failnet->server->in_channel($this->failnet->nick, $text))
 					{
 						// Annouce the channel part if we're allowed to speak.
 						if($this->failnet->get('speak'))
@@ -264,7 +264,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 					$this->call_privmsg($this->event->source(), $this->failnet->deny());
 					return;
 				}
-				
+
 				// Check for empty text
 				if($text === false)
 				{
@@ -344,4 +344,3 @@ class failnet_plugin_admin extends failnet_plugin_common
 		$this->call_version($this->event->hostmask->nick, 'Failnet PHP IRC Bot v' . FAILNET_VERSION);
 	}
 }
-

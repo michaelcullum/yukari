@@ -50,148 +50,31 @@ class failnet_plugin_server extends failnet_plugin_common
 
 				// Only do the intro message if we're allowed to speak.
 				if($this->failnet->speak)
-					$this->call_privmsg($chanargs[0], $this->failnet->get('intro_msg'));
+					$this->call_privmsg($chanargs[0], $this->failnet->config('intro_msg'));
 			break;
 
 			case failnet_event_response::RPL_NAMREPLY:
 				$desc = preg_split('/[@*=]\s*/', $this->event->description, 2);
 				list($chan, $users) = array_pad(explode(' :', trim($desc[1])), 2, null);
 				$users = explode(' ', trim($users));
+				//$current_time = time();
 				foreach($users as $user)
 				{
 					if (empty($user))
 						continue;
 
-					$flag = self::IRC_REGULAR;
-					if (substr($user, 0, 1) === '~')
-					{
-						$user = substr($user, 1);
-						$flag |= self::IRC_FOUNDER;
-					}
-					if (substr($user, 0, 1) === '&')
-					{
-						$user = substr($user, 1);
-						$flag |= self::IRC_ADMIN;
-					}
-					if (substr($user, 0, 1) === '@')
-					{
-						$user = substr($user, 1);
-						$flag |= self::IRC_OP;
-					}
-					if (substr($user, 0, 1) === '%')
-					{
-						$user = substr($user, 1);
-						$flag |= self::IRC_HALFOP;
-					}
-					if (substr($user, 0, 1) === '+')
-					{
-						$user = substr($user, 1);
-						$flag |= self::IRC_VOICE;
-					}
-
 					$chan = trim(strtolower($chan));
-					$user = trim(strtolower($user));
+					$user = trim(trim(strtolower($user)), '~&@%+');
 
-					$this->failnet->chans[$chan][$user] = $flag;
+					$this->failnet->chans[$chan][$user] = true;
 				}
 			break;
 		}
 	}
 
-	/**
-	 * Tracks mode changes.
-	 *
-	 * @return void
-	 */
-	public function cmd_mode()
-	{
-		if (count($this->event->arguments) != 3)
-			return;
-
-		$chan = $this->event->get_arg('target');
-		$modes = $this->event->get_arg('mode');
-		$nick = $this->event->get_arg(2);
-
-		if (preg_match('/(?:\+|-)[qaohv+-]+/i', $modes))
-		{
-			$chan = trim(strtolower($chan));
-			$modes = str_split(trim(strtolower($modes)), 1);
-			$nick = trim(strtolower($nick));
-			while ($char = array_shift($modes))
-			{
-				switch ($char)
-				{
-					case '+':
-						$mode = '+';
-					break;
-
-					case '-':
-						$mode = '-';
-					break;
-
-					case 'q':
-						if ($mode == '+')
-						{
-							$this->failnet->chans[$chan][$chan] |= self::IRC_FOUNDER;
-						}
-						elseif ($mode == '-')
-						{
-							$this->failnet->chans[$chan][$chan] ^= self::IRC_FOUNDER;
-						}
-					break;
-
-					case 'a':
-						if ($mode == '+')
-						{
-							$this->failnet->chans[$chan][$nick] |= self::IRC_ADMIN;
-						}
-						elseif ($mode == '-')
-						{
-							$this->failnet->chans[$chan][$nick] ^= self::IRC_ADMIN;
-						}
-					break;
-
-					case 'o':
-						if ($mode == '+')
-						{
-							$this->failnet->chans[$chan][$nick] |= self::IRC_OP;
-						}
-						elseif ($mode == '-')
-						{
-							$this->failnet->chans[$chan][$nick] ^= self::IRC_OP;
-						}
-					break;
-
-					case 'h':
-						if ($mode == '+')
-						{
-							$this->failnet->chans[$chan][$nick] |= self::IRC_HALFOP;
-						}
-						elseif ($mode == '-')
-						{
-							$this->failnet->chans[$chan][$nick] ^= self::IRC_HALFOP;
-						}
-					break;
-
-					case 'v':
-						if ($mode == '+')
-						{
-							$this->failnet->chans[$chan][$nick] |= self::IRC_VOICE;
-						}
-						elseif ($mode == '-')
-						{
-							$this->failnet->chans[$chan][$nick] ^= self::IRC_VOICE;
-						}
-					break;
-				}
-			}
-		}
-	}
-
-
-
 	public function cmd_kick()
 	{
+		// Check to see if it was us that got kicked.
 		if($this->event->hostmask->nick != $this->failnet->get('nick'))
 		{
 			$chan = trim(strtolower($this->event->get_arg('channel')));
@@ -241,7 +124,7 @@ class failnet_plugin_server extends failnet_plugin_common
 		$chan = trim(strtolower($this->event->get_arg('channel')));
 		$nick = trim(strtolower($this->event->hostmask->nick));
 
-		$this->failnet->chans[$chan][$nick] = self::IRC_REGULAR;
+		$this->failnet->chans[$chan][$nick] = true;
 	}
 
 	public function cmd_quit()
@@ -280,58 +163,30 @@ class failnet_plugin_server extends failnet_plugin_common
 			return;
 
 		$cmd = $this->purify($text);
-
-		// Make sure this is one of the 'is' commands, otherwise we run into a bug.
-		if(!in_array($cmd, array('isfounder', 'isadmin', 'isop', 'ishalfop', 'isvoice', 'isin')))
-			return;
+		$this->set_msg_args(($this->failnet->get('speak')) ? $this->event->source() : $this->event->hostmask->nick);
 
 		$sender = $this->event->hostmask->nick;
 		$hostmask = $this->event->hostmask;
-
-		// Make sure we're asking this in channel, or that we have additional params for the channel.
-		$param = explode(' ', $text);
-
-		if(!$this->event->fromchannel() && !isset($param[1]))
+		switch($cmd)
 		{
-			$this->call_notice($sender, 'Please specify the channel name to check within.');
-			return;
-		}
-		elseif($this->event->fromchannel() && !isset($param[1]))
-		{
-			// If in channel and no channel param (we don't want to overwrite a specified channel),
-			// 		we assume it is for this channel
-			$param[1] = $this->event->source();
-		}
-
-		// And let's choose a command.
-		switch ($cmd)
-		{
-			case 'isfounder':
-				$this->call_privmsg($sender, $this->failnet->user_is($param[0], $param[1], self::IRC_FOUNDER) ? 'Yep, they\'re a founder.' : 'Nope, they aren\'t a founder.');
-			break;
-
-			case 'isadmin':
-				$this->call_privmsg($sender, $this->failnet->user_is($param[0], $param[1], self::IRC_ADMIN) ? 'Yep, they\'re an admin.' : 'Nope, they aren\'t an admin.');
-			break;
-
-			case 'isop':
-				$this->call_privmsg($sender, $this->failnet->user_is($param[0], $param[1], self::IRC_OP) ? 'Yep, they\'re an op.' : 'Nope, they aren\'t an op.');
-			break;
-
-			case 'ishalfop':
-				$this->call_privmsg($sender, $this->failnet->user_is($param[0], $param[1], self::IRC_HALFOP) ? 'Yep, they\'re a halfop.' : 'Nope, they aren\'t a halfop.');
-			break;
-
-			case 'isvoice':
-				$this->call_privmsg($sender, $this->failnet->user_is($param[0], $param[1], self::IRC_VOICE) ? 'Yep, they have voice.' : 'Nope, they don\'t have voice.');
-			break;
-
 			case 'isin':
-				$this->call_privmsg($sender, $this->failnet->user_is($param[0], $param[1], NULL) ? 'Yep, they\'re in here.' : 'Nope, they aren\'t in here.');
+				if($text === false && $this->event->fromchannel() === true)
+				{
+					list($victim, $channel) = array($text, $this->event->source());
+				}
+				elseif($text !== false)
+				{
+					list($victim, $channel) = explode(' ', $text);
+				}
+
+				$this->msg($this->failnet->server->in_channel($param[0], $channel) ? 'Yep, I see them.' : 'Nope, I don\'t see them.');
 			break;
 		}
 	}
 
+	/**
+	 * Critical method here...this replies to pings to the server, and keeps the connection alive.
+	 */
 	public function cmd_ping()
 	{
 		if(isset($this->event->arguments[1]))
@@ -344,4 +199,3 @@ class failnet_plugin_server extends failnet_plugin_common
 		}
 	}
 }
-
