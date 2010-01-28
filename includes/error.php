@@ -32,8 +32,8 @@
 
 /**
  * Failnet - Error handling class,
- * 		Used as Failnet's error handler. 
- * 
+ * 		Used as Failnet's error handler.
+ *
  *
  * @package logs
  * @author Obsidian
@@ -51,7 +51,7 @@ class failnet_error extends failnet_common
 
 	/**
 	 * Error handler function for Failnet.  Modified from the phpBB 3.0.x msg_handler() function.
-	 * @param integer $errno - Level of the error encountered 
+	 * @param integer $errno - Level of the error encountered
 	 * @param string $msg_text - The error message recieved
 	 * @param string $errfile - The file that the error was encountered at
 	 * @param integer $errline - The line that the error was encountered at
@@ -68,7 +68,7 @@ class failnet_error extends failnet_common
 		// Message handler is stripping text. In case we need it, we are possible to define long text...
 		if (isset($msg_long_text) && $msg_long_text && !$msg_text)
 			$msg_text = $msg_long_text;
-		
+
 		// Strip the current directory from the offending file
 		if (empty($errfile))
 		{
@@ -85,17 +85,17 @@ class failnet_error extends failnet_common
 			case E_NOTICE:
 			case E_WARNING:
 			case E_STRICT:
-			case E_DEPRECIATED:
+			case E_DEPRECATED:
 			case E_USER_WARNING:
 			case E_USER_NOTICE:
-			case E_USER_DEPRECIATED:
+			case E_USER_DEPRECATED:
 			default:
-				$error = '[Debug] PHP Notice: in file ' . $errfile . ' on line ' . $errline . ': ' . $msg_text . PHP_EOL; 
+				$error = '[Debug] PHP Notice: in file ' . $errfile . ' on line ' . $errline . ': ' . $msg_text . PHP_EOL;
 				$this->failnet->log->write(self::ERROR_LOG, time(), date('D m/d/Y - h:i:s A') . ' - ' . $error);
 				display($error);
 				return;
 				break;
-	
+
 			case E_USER_ERROR:
 				$error = '[ERROR] PHP Error: in file ' . $errfile . ' on line ' . $errline . ': ' . $msg_text . PHP_EOL;
 				$this->failnet->log->write(self::ERROR_LOG, time(), date('D m/d/Y - h:i:s A') . ' - ' . $error);
@@ -120,7 +120,7 @@ class failnet_error extends failnet_common
 	{
 		if(!$is_fatal)
 		{
-			$error = '[Debug] ' . $msg . PHP_EOL; 
+			$error = '[Debug] ' . $msg . PHP_EOL;
 			$this->failnet->log->write(self::ERROR_LOG, time(), date('D m/d/Y - h:i:s A') . ' - ' . $error);
 			display($error);
 		}
@@ -134,4 +134,3 @@ class failnet_error extends failnet_common
 		}
 	}
 }
-

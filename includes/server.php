@@ -43,6 +43,13 @@
 class failnet_server extends failnet_common
 {
 	/**
+	 * Specialized init function to allow class construction to be easier.
+	 * @see includes/failnet_common#init()
+	 * @return void
+	 */
+	public function init() { }
+
+	/**
 	 * Get the userlist of a channel
 	 * @param string $chan - Channel name
 	 * @return mixed - The user list for the channel or false if we don't have the userlist.

@@ -188,7 +188,7 @@ class failnet_core
 
 		// Load required classes and systems
 		display('- Loading Failnet nodes');
-		foreach($this->get('nodes_list') as $node)
+		foreach($this->config('nodes_list') as $node)
 		{
 			$name = 'failnet_' . $node;
 			$this->$node = new $name($this);
@@ -495,9 +495,9 @@ class failnet_core
 	 */
 	public function get($setting, $config_only = false)
 	{
-		$trace = dump_backtrace();
-		trigger_error('Depreciated method failnet_core::get() called (the method failnet_core::config() should be used instead) in ' . $trace[0]['file'] .' on line ' . $trace[0]['line'] . '--', E_USER_NOTICE);
-		$this->config($setting, $config_only);
+		$trace = debug_backtrace();
+		trigger_error('Depreciated method failnet_core::get() called (the method failnet_core::config() should be used instead) in ' . $trace[0]['file'] .' on line ' . $trace[0]['line'], E_USER_NOTICE);
+		return $this->config($setting, $config_only);
 	}
 
 	/**

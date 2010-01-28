@@ -31,7 +31,7 @@
 
 /**
  * Failnet Configuration File
- * 
+ *
  * Here be dragons!
  */
 
@@ -48,6 +48,7 @@ return array(
 // Nodes to load
 	'nodes_list'		=> array(
 		'socket',
+		'server',
 		'hash',
 		'irc',
 		'log',
@@ -56,7 +57,7 @@ return array(
 		'ignore',
 	),
 
-// Plugins to automatically load on startup. 
+// Plugins to automatically load on startup.
 	'plugin_list'		=> array(
 		'server',
         'ping',
@@ -73,7 +74,7 @@ return array(
 
 // What is the nickname service bot? If there isn't, leave this as an empty string.
 	'nickbot'			=> 'NickServ',
-	
+
 // Nickname service identify password. ;)
 	'pass'				=> 'somepasswordhere',
 
@@ -116,8 +117,7 @@ return array(
 	'restart_msg'		=> 'ZOMG, BRB!',
 	'dai_msg'			=> 'OH SHI--',
 	'quit_msg'			=> 'Failnet PHP IRC Bot',
-	
+
 // Should we be in debug mode?
 	'debug'				=> false,
 );
-

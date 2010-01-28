@@ -192,8 +192,8 @@ class failnet_event_request implements ArrayAccess
 	 */
 	public function fromchannel()
 	{
-		$trace = dump_backtrace();
-		trigger_error('Depreciated method failnet_event_request::fromchannel() called (the property failnet_event_request::fromchannel should be used instead) in ' . $trace[0]['file'] .' on line ' . $trace[0]['line'] . '--', E_USER_NOTICE);
+		$trace = debug_backtrace();
+		trigger_error('Depreciated method failnet_event_request::fromchannel() called (the property failnet_event_request::fromchannel should be used instead) in ' . $trace[1]['file'] .' on line ' . $trace[1]['line'], E_USER_NOTICE);
 		return $this->fromchannel;
 	}
 
