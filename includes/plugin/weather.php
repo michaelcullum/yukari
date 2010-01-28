@@ -7,7 +7,7 @@
  *-------------------------------------------------------------------
  *	Script info:
  * Version:		2.0.0 Alpha 1
- * Copyright:	(c) 2009 - Failnet Project
+ * Copyright:	(c) 2009 - 2010 -- Failnet Project
  * License:		GNU General Public License - Version 2
  *
  *===================================================================
@@ -37,7 +37,7 @@
  *
  * @package plugins
  * @author Obsidian
- * @copyright (c) 2009 - Failnet Project
+ * @copyright (c) 2009 - 2010 -- Failnet Project
  * @license GNU General Public License - Version 2
  */
 class failnet_plugin_weather extends failnet_plugin_common
@@ -183,7 +183,7 @@ class failnet_plugin_weather extends failnet_plugin_common
 		if($this->make_request())
 		{
 			// Clean up the XML because Google is stupid.
-			$data = iconv("UTF-8", "ASCII//TRANSLIT", str_replace(array('<?xml version="1.0"?>', '\''), array('<?xml version="1.0" encoding="UTF-8"?>', ''), utf8_encode($this->raw_data)));
+			$data = iconv("UTF-8", "ASCII//TRANSLIT", str_replace(array('<?xml version="1.0"', '\''), array('<?xml version="1.0" encoding="UTF-8"', ''), utf8_encode($this->raw_data)));
 			$xml = new SimpleXMLElement($data);
 
 			$return = array(
@@ -266,4 +266,3 @@ class failnet_plugin_weather extends failnet_plugin_common
 		}
 	}
 }
-?>

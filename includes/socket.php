@@ -7,7 +7,7 @@
  *-------------------------------------------------------------------
  *	Script info:
  * Version:		2.0.0 Alpha 1
- * Copyright:	(c) 2009 - Failnet Project
+ * Copyright:	(c) 2009 - 2010 -- Failnet Project
  * License:		GNU General Public License - Version 2
  *
  *===================================================================
@@ -32,12 +32,12 @@
 
 /**
  * Failnet - Socket connection handling class,
- * 		Used as Failnet's connection handler. 
- * 
+ * 		Used as Failnet's connection handler.
+ *
  *
  * @package connection
  * @author Obsidian
- * @copyright (c) 2009 - Failnet Project
+ * @copyright (c) 2009 - 2010 -- Failnet Project
  * @license GNU General Public License - Version 2
  */
 class failnet_socket extends failnet_common
@@ -46,17 +46,17 @@ class failnet_socket extends failnet_common
 	 * Some methods here (actually, quite a few) borrowed from Phergie.
 	 * See /README for details.
 	 */
-	
+
 	private $delay = 50000;
 	public $socket = NULL;
-	
+
 	/**
 	 * Specialized init function to allow class construction to be easier.
 	 * @see includes/failnet_common#init()
 	 * @return void
 	 */
 	public function init() { }
-	
+
 	/**
 	 * Initiates a connection with the server.
 	 * @return void
@@ -65,7 +65,7 @@ class failnet_socket extends failnet_common
 	{
 		// Listen for input indefinitely
 		set_time_limit(0);
-		
+
 		// Check to see if the transport method we are using is allowed
 		if(!in_array($this->failnet->get('transport'), stream_get_transports()))
 			trigger_error('Transport ' . $this->failnet->get('transport') . ' is not supported by this PHP installation.', E_USER_ERROR);
@@ -75,7 +75,7 @@ class failnet_socket extends failnet_common
 		$this->socket = @stream_socket_client($remote, $errno, $errstr);
 		if(!$this->socket)
 			trigger_error('Unable to connect to server: socket error ' . $errno . ' : ' . $errstr, E_USER_ERROR);
-		
+
 		@stream_set_timeout($this->socket, $this->delay);
 
 		// Send the password if one is specified
@@ -85,9 +85,9 @@ class failnet_socket extends failnet_common
 		// Send user information
 		$this->send('USER', array($this->failnet->get('user'), $this->failnet->get('server'), $this->failnet->get('server'), $this->failnet->get('name')));
 
-		$this->send('NICK', $this->failnet->get('nick')); 
+		$this->send('NICK', $this->failnet->get('nick'));
 	}
-	
+
 	/**
 	 * Listens for an event on the current connection.
 	 * @return failnet_event_(response|request)|NULL - Event instance if an event was received, NULL otherwise
@@ -181,17 +181,17 @@ class failnet_socket extends failnet_common
 			case 'oper':
 			case 'topic':
 			case 'mode':
-				$args = $this->args($args); 
+				$args = $this->args($args);
 			break;
 
 			case 'part':
 			case 'kill':
 			case 'invite':
-				$args = $this->args($args, 2); 
+				$args = $this->args($args, 2);
 			break;
 
 			case 'kick':
-				$args = $this->args($args, 3); 
+				$args = $this->args($args, 3);
 			break;
 
 			// Remove the target from responses
@@ -220,12 +220,12 @@ class failnet_socket extends failnet_common
 		}
 		return $event;
 	}
-	
+
 	/**
 	 * Handles construction of command strings and their transmission to the server.
 	 * @param string $command - Command to send
 	 * @param mixed $args - Optional string or array of sequential arguments
-	 * @return string - Command string that was sent 
+	 * @return string - Command string that was sent
 	 */
 	public function send($command, $args = '')
 	{
@@ -257,7 +257,7 @@ class failnet_socket extends failnet_common
 		// Return the command string that was transmitted
 		return $buffer;
 	}
-	
+
 	/**
 	 * Terminates the connection with the server.
 	 * @param string $reason - Reason for connection termination (optional)
@@ -272,7 +272,7 @@ class failnet_socket extends failnet_common
 		fclose($this->socket);
 		$this->socket = NULL;
 	}
-	
+
 	/**
 	 * Supporting method to parse event argument strings where the last argument may contain a colon.
 	 * @param string $args - Argument string to parse
@@ -284,5 +284,3 @@ class failnet_socket extends failnet_common
 		return preg_split('/ :?/S', $args, $count);
 	}
 }
-
-?>

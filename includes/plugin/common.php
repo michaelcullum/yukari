@@ -7,7 +7,7 @@
  *-------------------------------------------------------------------
  *	Script info:
  * Version:		2.0.0 Alpha 1
- * Copyright:	(c) 2009 - Failnet Project
+ * Copyright:	(c) 2009 - 2010 -- Failnet Project
  * License:		GNU General Public License - Version 2
  *
  *===================================================================
@@ -36,7 +36,7 @@
  *
  * @package plugins
  * @author Obsidian
- * @copyright (c) 2009 - Failnet Project
+ * @copyright (c) 2009 - 2010 -- Failnet Project
  * @license GNU General Public License - Version 2
  */
 abstract class failnet_plugin_common extends failnet_common
@@ -54,6 +54,8 @@ abstract class failnet_plugin_common extends failnet_common
 	 * @var array - Queue of events initiated by the plugin in response to the current event being processed
 	 */
 	public $events = array();
+
+	public $msg_recipient = '';
 
 /**
  * Commonly used plugin methods
@@ -79,6 +81,26 @@ abstract class failnet_plugin_common extends failnet_common
 		$cmd = $text = substr($text, 1);
 		$text = (strpos($text, ' ') !== false) ? substr($text, strpos($text, ' ') + 1) : false;
 		return ($text !== false) ? substr($cmd, 0, strpos($cmd, ' ')) : $cmd;
+	}
+
+	/**
+	 * Sets the arguments for any messages sent in response to events encountered via privmsg.
+	 * @param string $recipient - The destination of the messages.
+	 * @return void
+	 */
+	public function set_msg_args($recipient)
+	{
+		$this->msg_recipient = $recipient;
+	}
+
+	/**
+	 * A simple wrapper to clean up message sending.
+	 * @param string $message - The message to send.
+	 * @return void
+	 */
+	public function msg($message)
+	{
+		$this->call_privmsg($this->msg_recipient, $message);
 	}
 
 /**
@@ -310,4 +332,3 @@ abstract class failnet_plugin_common extends failnet_common
 	}
 }
 
-?>

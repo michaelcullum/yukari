@@ -29,35 +29,18 @@
  */
 
 
+
 /**
- * Failnet - Plugin command handler class,
- * 		Used to handle commands originating with Failnet's plugins 
- * 
+ * Failnet - Server syncronization class,
+ * 		Used as Failnet's server sync handler.
+ *
  *
  * @package connection
  * @author Obsidian
  * @copyright (c) 2009 - 2010 -- Failnet Project
  * @license GNU General Public License - Version 2
  */
-class failnet_event_command extends failnet_event_request
+class failnet_server extends failnet_common
 {
-	/**
-	 * @var object failnet_plugin_common - Reference to the plugin instance that created the event
-	 */
-	public $plugin;
 
-	/**
-	 * Method for simplifying the loading of data into the command event for execution.
-	 * @param object failnet_plugin_common $plugin - The plugin object that created the event (should be passed as $this)
-	 * @param string $type - The type of IRC event to generate
-	 * @param array $arguments - The arguments to load the IRC event with
-	 * @return void
-	 */
-	public function load_data($plugin, $type, array $arguments)
-	{
-		$this->plugin = $plugin;
-		$this->type = $type;
-		$this->arguments = $arguments;
-	}
 }
-

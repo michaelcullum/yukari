@@ -7,7 +7,7 @@
  *-------------------------------------------------------------------
  *	Script info:
  * Version:		2.0.0 Alpha 1
- * Copyright:	(c) 2009 - Failnet Project
+ * Copyright:	(c) 2009 - 2010 -- Failnet Project
  * License:		GNU General Public License - Version 2
  *
  *===================================================================
@@ -36,7 +36,7 @@
  *
  * @package plugins
  * @author Obsidian
- * @copyright (c) 2009 - Failnet Project
+ * @copyright (c) 2009 - 2010 -- Failnet Project
  * @license GNU General Public License - Version 2
  */
 class failnet_plugin_offense extends failnet_plugin_common
@@ -272,4 +272,3 @@ class failnet_plugin_offense extends failnet_plugin_common
 	}
 }
 
-?>

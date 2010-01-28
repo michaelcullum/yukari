@@ -7,7 +7,7 @@
  *-------------------------------------------------------------------
  *	Script info:
  * Version:		2.0.0 Alpha 1
- * Copyright:	(c) 2009 - Failnet Project
+ * Copyright:	(c) 2009 - 2010 -- Failnet Project
  * License:		GNU General Public License - Version 2
  *
  *===================================================================
@@ -36,7 +36,7 @@
  *
  * @package core
  * @author Obsidian
- * @copyright (c) 2009 - Failnet Project
+ * @copyright (c) 2009 - 2010 -- Failnet Project
  * @license GNU General Public License - Version 2
  */
 abstract class failnet_common
@@ -63,6 +63,16 @@ abstract class failnet_common
 	const AUTH_KNOWNUSER = 2;
 	const AUTH_REGISTEREDUSER = 1;
 	const AUTH_UNKNOWNUSER = 0;
+
+	/**
+	 * IRC mode flags
+	 */
+	const IRC_FOUNDER = 32;
+	const IRC_ADMIN = 16;
+	const IRC_OP = 8;
+	const IRC_HALFOP = 4;
+	const IRC_VOICE = 2;
+	const IRC_REGULAR = 1;
 
 	/**
 	 * Constructor method.
@@ -100,4 +110,3 @@ abstract class failnet_common
 	}
 }
 
-?>

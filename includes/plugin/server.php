@@ -7,11 +7,11 @@
  *-------------------------------------------------------------------
  *	Script info:
  * Version:		2.0.0 Alpha 1
- * Copyright:	(c) 2009 - Failnet Project
+ * Copyright:	(c) 2009 - 2010 -- Failnet Project
  * License:		GNU General Public License - Version 2
  *
  *===================================================================
- * 
+ *
  */
 
 /**
@@ -32,22 +32,15 @@
 /**
  * Failnet - Server communication plugin,
  * 		Used to track what channels Failnet is in, the users inhabiting them, along with various other default server interactions.
- * 
+ *
  *
  * @package plugins
  * @author Obsidian
- * @copyright (c) 2009 - Failnet Project
+ * @copyright (c) 2009 - 2010 -- Failnet Project
  * @license GNU General Public License - Version 2
  */
 class failnet_plugin_server extends failnet_plugin_common
 {
-	const FOUNDER = 32;
-	const ADMIN = 16;
-	const OP = 8;
-	const HALFOP = 4;
-	const VOICE = 2;
-	const REGULAR = 1;
-
 	public function cmd_response()
 	{
 		switch($this->event->code)
@@ -59,41 +52,41 @@ class failnet_plugin_server extends failnet_plugin_common
 				if($this->failnet->speak)
 					$this->call_privmsg($chanargs[0], $this->failnet->get('intro_msg'));
 			break;
-			
+
 			case failnet_event_response::RPL_NAMREPLY:
 				$desc = preg_split('/[@*=]\s*/', $this->event->description, 2);
 				list($chan, $users) = array_pad(explode(' :', trim($desc[1])), 2, null);
 				$users = explode(' ', trim($users));
 				foreach($users as $user)
 				{
-					if (empty($user)) 
+					if (empty($user))
 						continue;
-		
-					$flag = self::REGULAR;
+
+					$flag = self::IRC_REGULAR;
 					if (substr($user, 0, 1) === '~')
 					{
 						$user = substr($user, 1);
-						$flag |= self::FOUNDER;
+						$flag |= self::IRC_FOUNDER;
 					}
 					if (substr($user, 0, 1) === '&')
 					{
 						$user = substr($user, 1);
-						$flag |= self::ADMIN;
+						$flag |= self::IRC_ADMIN;
 					}
 					if (substr($user, 0, 1) === '@')
 					{
 						$user = substr($user, 1);
-						$flag |= self::OP;
+						$flag |= self::IRC_OP;
 					}
 					if (substr($user, 0, 1) === '%')
 					{
 						$user = substr($user, 1);
-						$flag |= self::HALFOP;
+						$flag |= self::IRC_HALFOP;
 					}
 					if (substr($user, 0, 1) === '+')
 					{
 						$user = substr($user, 1);
-						$flag |= self::VOICE;
+						$flag |= self::IRC_VOICE;
 					}
 
 					$chan = trim(strtolower($chan));
@@ -104,7 +97,7 @@ class failnet_plugin_server extends failnet_plugin_common
 			break;
 		}
 	}
-	
+
 	/**
 	 * Tracks mode changes.
 	 *
@@ -114,7 +107,7 @@ class failnet_plugin_server extends failnet_plugin_common
 	{
 		if (count($this->event->arguments) != 3)
 			return;
-		
+
 		$chan = $this->event->get_arg('target');
 		$modes = $this->event->get_arg('mode');
 		$nick = $this->event->get_arg(2);
@@ -139,55 +132,55 @@ class failnet_plugin_server extends failnet_plugin_common
 					case 'q':
 						if ($mode == '+')
 						{
-							$this->failnet->chans[$chan][$chan] |= self::FOUNDER;
+							$this->failnet->chans[$chan][$chan] |= self::IRC_FOUNDER;
 						}
 						elseif ($mode == '-')
 						{
-							$this->failnet->chans[$chan][$chan] ^= self::FOUNDER;
+							$this->failnet->chans[$chan][$chan] ^= self::IRC_FOUNDER;
 						}
 					break;
 
 					case 'a':
 						if ($mode == '+')
 						{
-							$this->failnet->chans[$chan][$nick] |= self::ADMIN;
+							$this->failnet->chans[$chan][$nick] |= self::IRC_ADMIN;
 						}
 						elseif ($mode == '-')
 						{
-							$this->failnet->chans[$chan][$nick] ^= self::ADMIN;
+							$this->failnet->chans[$chan][$nick] ^= self::IRC_ADMIN;
 						}
 					break;
 
 					case 'o':
 						if ($mode == '+')
 						{
-							$this->failnet->chans[$chan][$nick] |= self::OP;
+							$this->failnet->chans[$chan][$nick] |= self::IRC_OP;
 						}
 						elseif ($mode == '-')
 						{
-							$this->failnet->chans[$chan][$nick] ^= self::OP;
+							$this->failnet->chans[$chan][$nick] ^= self::IRC_OP;
 						}
 					break;
 
 					case 'h':
 						if ($mode == '+')
 						{
-							$this->failnet->chans[$chan][$nick] |= self::HALFOP;
+							$this->failnet->chans[$chan][$nick] |= self::IRC_HALFOP;
 						}
 						elseif ($mode == '-')
 						{
-							$this->failnet->chans[$chan][$nick] ^= self::HALFOP;
+							$this->failnet->chans[$chan][$nick] ^= self::IRC_HALFOP;
 						}
 					break;
 
 					case 'v':
 						if ($mode == '+')
 						{
-							$this->failnet->chans[$chan][$nick] |= self::VOICE;
+							$this->failnet->chans[$chan][$nick] |= self::IRC_VOICE;
 						}
 						elseif ($mode == '-')
 						{
-							$this->failnet->chans[$chan][$nick] ^= self::VOICE;
+							$this->failnet->chans[$chan][$nick] ^= self::IRC_VOICE;
 						}
 					break;
 				}
@@ -195,8 +188,8 @@ class failnet_plugin_server extends failnet_plugin_common
 		}
 	}
 
-	
-	
+
+
 	public function cmd_kick()
 	{
 		if($this->event->hostmask->nick != $this->failnet->get('nick'))
@@ -219,7 +212,7 @@ class failnet_plugin_server extends failnet_plugin_common
 			}
 		}
 	}
-	
+
 	public function cmd_part()
 	{
 		if($this->event->get_arg('user') != $this->failnet->get('nick'))
@@ -248,7 +241,7 @@ class failnet_plugin_server extends failnet_plugin_common
 		$chan = trim(strtolower($this->event->get_arg('channel')));
 		$nick = trim(strtolower($this->event->hostmask->nick));
 
-		$this->failnet->chans[$chan][$nick] = self::REGULAR;
+		$this->failnet->chans[$chan][$nick] = self::IRC_REGULAR;
 	}
 
 	public function cmd_quit()
@@ -291,10 +284,10 @@ class failnet_plugin_server extends failnet_plugin_common
 		// Make sure this is one of the 'is' commands, otherwise we run into a bug.
 		if(!in_array($cmd, array('isfounder', 'isadmin', 'isop', 'ishalfop', 'isvoice', 'isin')))
 			return;
-		
+
 		$sender = $this->event->hostmask->nick;
 		$hostmask = $this->event->hostmask;
-		
+
 		// Make sure we're asking this in channel, or that we have additional params for the channel.
 		$param = explode(' ', $text);
 
@@ -309,28 +302,28 @@ class failnet_plugin_server extends failnet_plugin_common
 			// 		we assume it is for this channel
 			$param[1] = $this->event->source();
 		}
-		
+
 		// And let's choose a command.
 		switch ($cmd)
 		{
 			case 'isfounder':
-				$this->call_privmsg($sender, $this->failnet->user_is($param[0], $param[1], self::FOUNDER) ? 'Yep, they\'re a founder.' : 'Nope, they aren\'t a founder.');
+				$this->call_privmsg($sender, $this->failnet->user_is($param[0], $param[1], self::IRC_FOUNDER) ? 'Yep, they\'re a founder.' : 'Nope, they aren\'t a founder.');
 			break;
 
 			case 'isadmin':
-				$this->call_privmsg($sender, $this->failnet->user_is($param[0], $param[1], self::ADMIN) ? 'Yep, they\'re an admin.' : 'Nope, they aren\'t an admin.');
+				$this->call_privmsg($sender, $this->failnet->user_is($param[0], $param[1], self::IRC_ADMIN) ? 'Yep, they\'re an admin.' : 'Nope, they aren\'t an admin.');
 			break;
 
 			case 'isop':
-				$this->call_privmsg($sender, $this->failnet->user_is($param[0], $param[1], self::OP) ? 'Yep, they\'re an op.' : 'Nope, they aren\'t an op.');
+				$this->call_privmsg($sender, $this->failnet->user_is($param[0], $param[1], self::IRC_OP) ? 'Yep, they\'re an op.' : 'Nope, they aren\'t an op.');
 			break;
 
 			case 'ishalfop':
-				$this->call_privmsg($sender, $this->failnet->user_is($param[0], $param[1], self::HALFOP) ? 'Yep, they\'re a halfop.' : 'Nope, they aren\'t a halfop.');
+				$this->call_privmsg($sender, $this->failnet->user_is($param[0], $param[1], self::IRC_HALFOP) ? 'Yep, they\'re a halfop.' : 'Nope, they aren\'t a halfop.');
 			break;
 
 			case 'isvoice':
-				$this->call_privmsg($sender, $this->failnet->user_is($param[0], $param[1], self::VOICE) ? 'Yep, they have voice.' : 'Nope, they don\'t have voice.');
+				$this->call_privmsg($sender, $this->failnet->user_is($param[0], $param[1], self::IRC_VOICE) ? 'Yep, they have voice.' : 'Nope, they don\'t have voice.');
 			break;
 
 			case 'isin':
@@ -352,4 +345,3 @@ class failnet_plugin_server extends failnet_plugin_common
 	}
 }
 
-?>
