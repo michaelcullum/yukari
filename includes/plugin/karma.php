@@ -11,7 +11,7 @@
  * License:		GNU General Public License - Version 2
  *
  *===================================================================
- * 
+ *
  */
 
 /**
@@ -27,12 +27,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://opensource.org/licenses/gpl-2.0.php>.
  */
- 
+
 
 /**
  * Failnet - Karma plugin,
- * 		This allows users to increase or decrease something's karma, and find out its karma. 
- * 
+ * 		This allows users to increase or decrease something's karma, and find out its karma.
+ *
  *
  * @package plugins
  * @author Obsidian
@@ -46,7 +46,7 @@ class failnet_plugin_karma extends failnet_plugin_common
 		// Check for karma changes first
 		$text = $this->event->get_arg('text');
 		$sender = $this->event->hostmask->nick;
-		if($this->event->fromchannel() === true && $this->failnet->karma->check_word($text))
+		if($this->event->fromchannel === true && $this->failnet->karma->check_word($text))
 		{
 			$term = strtolower(trim($text));
 			$karma_type = substr($term, -2, 2);
@@ -102,4 +102,3 @@ class failnet_plugin_karma extends failnet_plugin_common
 		}
 	}
 }
-

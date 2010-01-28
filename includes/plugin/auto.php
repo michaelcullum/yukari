@@ -27,12 +27,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://opensource.org/licenses/gpl-2.0.php>.
  */
- 
+
 
 /**
  * Failnet - Automatic action plugin,
- * 		Performs autojoin on end-of-MOTD, autorejoin on kick, and join on invite capabilities. 
- * 
+ * 		Performs autojoin on end-of-MOTD, autorejoin on kick, and join on invite capabilities.
+ *
  *
  * @package plugins
  * @author Obsidian
@@ -47,7 +47,7 @@ class failnet_plugin_auto extends failnet_plugin_common
 		{
 			case failnet_event_response::RPL_ENDOFMOTD:
 			case failnet_event_response::ERR_NOMOTD:
-				$channels = $this->failnet->get('autojoins');
+				$channels = $this->failnet->config('autojoins');
 				if (!empty($channels))
 				{
 					foreach($channels as $channel)
@@ -61,10 +61,10 @@ class failnet_plugin_auto extends failnet_plugin_common
 	public function cmd_kick()
 	{
 		// Make sure it was Failnet that was kicked.
-		if($this->event->get_arg('user') == $this->failnet->get('nick'))
+		if($this->event->get_arg('user') == $this->failnet->config('nick'))
 		{
 			// Are we supposed to automatically rejoin on kick?
-			if(!$this->failnet->get('autorejoin'))
+			if(!$this->failnet->config('autorejoin'))
 				return;
 
 			// Guess we are.  Let's setup for that.
@@ -75,10 +75,10 @@ class failnet_plugin_auto extends failnet_plugin_common
 	public function cmd_invite()
 	{
 		// Check to see if it was us that is being invited to the channel.
-		if($this->event->get_arg('user') == $this->failnet->get('nick'))
+		if($this->event->get_arg('user') == $this->failnet->config('nick'))
 		{
 			// Are we supposed to automatically join on invite?
-			if(!$this->failnet->get('join_on_invite'))
+			if(!$this->failnet->config('join_on_invite'))
 				return;
 
 			// Guess we are.  Let's do that then.
@@ -86,4 +86,3 @@ class failnet_plugin_auto extends failnet_plugin_common
 		}
 	}
 }
-

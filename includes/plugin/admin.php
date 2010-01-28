@@ -110,11 +110,11 @@ class failnet_plugin_admin extends failnet_plugin_common
 				else
 				{
 					// Okay, we've confirmed it.  Time to go to sleep.
-					if($this->failnet->get('speak'))
+					if($this->failnet->config('speak'))
 					{
 						foreach($this->failnet->chans as $channame => $chan)
 						{
-							$this->call_privmsg($channame, $this->failnet->get('dai_msg'));
+							$this->call_privmsg($channame, $this->failnet->config('dai_msg'));
 						}
 					}
 					$this->call_quit(false);
@@ -132,11 +132,11 @@ class failnet_plugin_admin extends failnet_plugin_common
 				}
 
 				// Let's announce the restart if we've permission to speak.
-				if($this->failnet->get('speak'))
+				if($this->failnet->config('speak'))
 				{
 					foreach($this->failnet->chans as $channame => $chan)
 					{
-						$this->call_privmsg($channame, $this->failnet->get('restart_msg'));
+						$this->call_privmsg($channame, $this->failnet->config('restart_msg'));
 					}
 				}
 				$this->call_quit(true);
@@ -204,18 +204,18 @@ class failnet_plugin_admin extends failnet_plugin_common
 				if($text === false && $this->event->fromchannel() === true)
 				{
 					// Annouce the channel part if we're allowed to speak.
-					if($this->failnet->get('speak'))
-						$this->call_privmsg($this->event->source(), $this->failnet->get('part_msg'));
-					$this->call_part($this->event->source(), $this->failnet->get('quit_msg'));
+					if($this->failnet->config('speak'))
+						$this->call_privmsg($this->event->source(), $this->failnet->config('part_msg'));
+					$this->call_part($this->event->source(), $this->failnet->config('quit_msg'));
 				}
 				elseif($text !== false)
 				{
 					if($this->failnet->server->in_channel($this->failnet->nick, $text))
 					{
 						// Annouce the channel part if we're allowed to speak.
-						if($this->failnet->get('speak'))
-							$this->call_privmsg($text, $this->failnet->get('part_msg'));
-						$this->call_part($text, $this->failnet->get('quit_msg'));
+						if($this->failnet->config('speak'))
+							$this->call_privmsg($text, $this->failnet->config('part_msg'));
+						$this->call_part($text, $this->failnet->config('quit_msg'));
 					}
 					else
 					{

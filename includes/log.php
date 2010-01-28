@@ -32,8 +32,8 @@
 
 /**
  * Failnet - Logging handling class,
- * 		Used as Failnet's logging handler. 
- * 
+ * 		Used as Failnet's logging handler.
+ *
  *
  * @package logs
  * @author Obsidian
@@ -47,7 +47,7 @@ class failnet_log extends failnet_common
 	 * @var array
 	 */
 	private $log = array();
-	
+
 	/**
 	 * Initiator method
 	 * @see includes/failnet_common#init()
@@ -57,7 +57,7 @@ class failnet_log extends failnet_common
 		// Make sure our logs directory actually exists and is manipulatable
 		if(!file_exists(FAILNET_ROOT . '/logs') || !is_readable(FAILNET_ROOT . '/logs') || !is_writeable(FAILNET_ROOT . '/logs'))
     	{
-    		if(file_exists(FAILNET_ROOT . 'data/restart.inc')) 
+    		if(file_exists(FAILNET_ROOT . 'data/restart.inc'))
 				unlink(FAILNET_ROOT . 'data/restart.inc');
             display('[Fatal Error] Failnet requires the logs directory to exist and be readable/writeable');
 			sleep(3);
@@ -65,11 +65,11 @@ class failnet_log extends failnet_common
     	}
 		$this->add('--- Starting Failnet ---', true);
 	}
-	
+
 	/**
 	 * Build a log message...
 	 * @param string $log - The message/action to log
-	 * @param string $who - Who sent the message? 
+	 * @param string $who - Who sent the message?
 	 * @param mixed $where - What was the recipient? A channel, or ourselves (as in, /msg)
 	 * @param boolean $is_action - Is this an action?
 	 * @return void
@@ -87,17 +87,17 @@ class failnet_log extends failnet_common
 			$this->add(date('D m/d/Y - h:i:s A') . " - <{$who}" . (($where) ? '/' . $where : false) . "> *** {$who} {$log}");
 		}
 	}
-	
+
 	/**
 	 * Add an entry to the queue of user logs...
 	 * @param string $msg - The entry to add
-	 * @param boolean $dump - Should we immediately dump all log entries into the log file after adding this to the quue? 
+	 * @param boolean $dump - Should we immediately dump all log entries into the log file after adding this to the quue?
 	 * @return void
 	 */
 	public function add($msg, $dump = false)
 	{
 		$this->log[] = $msg;
-		if($dump === true || sizeof($this->log) > $this->failnet->get('log_queue'))
+		if($dump === true || sizeof($this->log) > $this->failnet->config('log_queue'))
 		{
 			$log_msg = '';
 			$log_msg = implode(PHP_EOL, $this->log). PHP_EOL;
@@ -105,7 +105,7 @@ class failnet_log extends failnet_common
 			$this->write(self::USER_LOG, time(), $log_msg);
 		}
 	}
-	
+
 	/**
 	 * Directly add an entry to the logs.  Useful for if we want to write to the error logs. ;)
 	 * @param string $type - The type of log to write to
@@ -122,11 +122,10 @@ class failnet_log extends failnet_common
 	 * Nuke the log file!
 	 * @param string $type - The type of log file to remove
 	 * @param integer $time - The timestamp for the day of the log file
-	 * @return boolean - Was the delete successful? 
+	 * @return boolean - Was the delete successful?
 	 */
 	public function wipe($type, $time)
 	{
 		return @unlink(FAILNET_ROOT . "logs/{$type}_log_" . date('m-d-Y', $time) . '.log');
 	}
 }
-

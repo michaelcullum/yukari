@@ -68,7 +68,7 @@ abstract class failnet_plugin_common extends failnet_common
 	 */
 	public function prefix($text)
 	{
-		return (substr($text, 0, strlen($this->failnet->get('cmd_prefix'))) == $this->failnet->get('cmd_prefix'));
+		return (substr($text, 0, strlen($this->failnet->config('cmd_prefix'))) == $this->failnet->config('cmd_prefix'));
 	}
 
 	/**
@@ -331,4 +331,3 @@ abstract class failnet_plugin_common extends failnet_common
 		}
 	}
 }
-

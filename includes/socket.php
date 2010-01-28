@@ -67,11 +67,11 @@ class failnet_socket extends failnet_common
 		set_time_limit(0);
 
 		// Check to see if the transport method we are using is allowed
-		if(!in_array($this->failnet->get('transport'), stream_get_transports()))
-			trigger_error('Transport ' . $this->failnet->get('transport') . ' is not supported by this PHP installation.', E_USER_ERROR);
+		if(!in_array($this->failnet->config('transport'), stream_get_transports()))
+			trigger_error('Transport ' . $this->failnet->config('transport') . ' is not supported by this PHP installation.', E_USER_ERROR);
 
 		// Establish and configure the socket connection
-		$remote = $this->failnet->get('transport') . '://' . $this->failnet->get('server') . ':' . $this->failnet->get('port');
+		$remote = $this->failnet->config('transport') . '://' . $this->failnet->config('server') . ':' . $this->failnet->config('port');
 		$this->socket = @stream_socket_client($remote, $errno, $errstr);
 		if(!$this->socket)
 			trigger_error('Unable to connect to server: socket error ' . $errno . ' : ' . $errstr, E_USER_ERROR);
@@ -79,13 +79,13 @@ class failnet_socket extends failnet_common
 		@stream_set_timeout($this->socket, $this->delay);
 
 		// Send the password if one is specified
-		if(is_null($this->failnet->get('server_pass')) || !$this->failnet->get('server_pass'))
-			$this->send('PASS', $this->failnet->get('server_pass'));
+		if(is_null($this->failnet->config('server_pass')) || !$this->failnet->config('server_pass'))
+			$this->send('PASS', $this->failnet->config('server_pass'));
 
 		// Send user information
-		$this->send('USER', array($this->failnet->get('user'), $this->failnet->get('server'), $this->failnet->get('server'), $this->failnet->get('name')));
+		$this->send('USER', array($this->failnet->config('user'), $this->failnet->config('server'), $this->failnet->config('server'), $this->failnet->config('name')));
 
-		$this->send('NICK', $this->failnet->get('nick'));
+		$this->send('NICK', $this->failnet->config('nick'));
 	}
 
 	/**
@@ -126,7 +126,7 @@ class failnet_socket extends failnet_common
 		{
 			// Parse the command and arguments
 			list($cmd, $args) = array_pad(explode(' ', $buffer, 2), 2, NULL);
-			$hostmask = failnet_hostmask::load('server!server@' . $this->failnet->get('server'));
+			$hostmask = failnet_hostmask::load('server!server@' . $this->failnet->config('server'));
 		}
 
 		// Parse the event arguments depending on the event type
@@ -265,8 +265,8 @@ class failnet_socket extends failnet_common
 	 */
 	public function close()
 	{
-		display('-!- Quitting from server "' . $this->failnet->get('server') . '"');
-		$this->failnet->log->add('--- Quitting from server "' . $this->failnet->get('server') . '" ---');
+		display('-!- Quitting from server "' . $this->failnet->config('server') . '"');
+		$this->failnet->log->add('--- Quitting from server "' . $this->failnet->config('server') . '" ---');
 
 		// Terminate the socket connection
 		fclose($this->socket);

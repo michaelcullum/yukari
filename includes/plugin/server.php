@@ -75,7 +75,7 @@ class failnet_plugin_server extends failnet_plugin_common
 	public function cmd_kick()
 	{
 		// Check to see if it was us that got kicked.
-		if($this->event->hostmask->nick != $this->failnet->get('nick'))
+		if($this->event->hostmask->nick != $this->failnet->config('nick'))
 		{
 			$chan = trim(strtolower($this->event->get_arg('channel')));
 			$nick = trim(strtolower($this->event->hostmask->nick));
@@ -98,7 +98,7 @@ class failnet_plugin_server extends failnet_plugin_common
 
 	public function cmd_part()
 	{
-		if($this->event->get_arg('user') != $this->failnet->get('nick'))
+		if($this->event->get_arg('user') != $this->failnet->config('nick'))
 		{
 			$chan = trim(strtolower($this->event->get_arg('channel')));
 			$nick = trim(strtolower($this->event->hostmask->nick));
@@ -163,7 +163,7 @@ class failnet_plugin_server extends failnet_plugin_common
 			return;
 
 		$cmd = $this->purify($text);
-		$this->set_msg_args(($this->failnet->get('speak')) ? $this->event->source() : $this->event->hostmask->nick);
+		$this->set_msg_args(($this->failnet->config('speak')) ? $this->event->source() : $this->event->hostmask->nick);
 
 		$sender = $this->event->hostmask->nick;
 		$hostmask = $this->event->hostmask;

@@ -11,7 +11,7 @@
  * License:		GNU General Public License - Version 2
  *
  *===================================================================
- * 
+ *
  */
 
 /**
@@ -27,12 +27,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://opensource.org/licenses/gpl-2.0.php>.
  */
- 
+
 
 /**
  * Failnet - Nickserv automatic identification plugin,
- * 		If enabled in the config, on end of MOTD we send an identify message to the nickname services bot to identify. 
- * 
+ * 		If enabled in the config, on end of MOTD we send an identify message to the nickname services bot to identify.
+ *
  *
  * @package plugins
  * @author Obsidian
@@ -47,34 +47,33 @@ class failnet_plugin_nickserv extends failnet_plugin_common
 			return;
 
 		// If someone else is using our nick, let's GHOST them out of it.  :)
-		if($this->failnet->get('nickbot'))
+		if($this->failnet->config('nickbot'))
 		{
-			$this->call_privmsg($this->failnet->get('nickbot'), 'GHOST ' . $this->failnet->get('nick') . ' ' . $this->failnet->get('pass'));
+			$this->call_privmsg($this->failnet->config('nickbot'), 'GHOST ' . $this->failnet->config('nick') . ' ' . $this->failnet->config('pass'));
 		}
 	}
-	
+
 	public function cmd_notice()
 	{
 		// Check to see if nickserv is asking for authentication, and if so then we'll give it
-		if(strtolower($this->event->hostmask->nick) != strtolower($this->failnet->get('nickbot')))
+		if(strtolower($this->event->hostmask->nick) != strtolower($this->failnet->config('nickbot')))
 			return;
 
 		if(preg_match('#^.*nickname is (registered|owned)#i', $this->event->get_arg(1)))
 		{
-			if(!is_null($this->failnet->get('pass')) && $this->failnet->get('pass'))
-				$this->call_privmsg($this->failnet->get('nickbot'), 'IDENTIFY ' . $this->failnet->get('pass'));
+			if(!is_null($this->failnet->config('pass')) && $this->failnet->config('pass'))
+				$this->call_privmsg($this->failnet->config('nickbot'), 'IDENTIFY ' . $this->failnet->config('pass'));
 		}
-		elseif(preg_match('#^.*' . $this->failnet->get('nick') . '.* has been killed#i', $this->event->get_arg(1)))
+		elseif(preg_match('#^.*' . $this->failnet->config('nick') . '.* has been killed#i', $this->event->get_arg(1)))
 		{
-			$this->call_nick($this->failnet->get('nick'));
+			$this->call_nick($this->failnet->config('nick'));
 		}
 	}
-	
+
 	public function cmd_nick()
 	{
 		// If this is our nick being changed, we should react and change it internally.
-		if($this->event->hostmask->nick == $this->failnet->get('nick'))
+		if($this->event->hostmask->nick == $this->failnet->config('nick'))
 			$this->failnet->nick = $this->event->get_arg('nick');
 	}
 }
-

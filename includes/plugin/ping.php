@@ -11,7 +11,7 @@
  * License:		GNU General Public License - Version 2
  *
  *===================================================================
- * 
+ *
  */
 
 /**
@@ -31,8 +31,8 @@
 
 /**
  * Failnet - Connection status detection plugin,
- * 		Used to ping the server periodically to ensure that the client connection has not been dropped. 
- * 
+ * 		Used to ping the server periodically to ensure that the client connection has not been dropped.
+ *
  *
  * @package plugins
  * @author Obsidian
@@ -67,7 +67,7 @@ class failnet_plugin_ping extends failnet_plugin_common
 	}
 
 	/**
-	* Updates the timestamp since the last received event when a new event 
+	* Updates the timestamp since the last received event when a new event
 	* arrives.
 	*
 	* @return void
@@ -88,24 +88,24 @@ class failnet_plugin_ping extends failnet_plugin_common
 	}
 
 	/**
-	* Performs a self ping if the event threshold has been exceeded or 
-	* issues a termination command if the ping theshold has been exceeded. 
+	* Performs a self ping if the event threshold has been exceeded or
+	* issues a termination command if the ping theshold has been exceeded.
 	*
 	* @return void
 	*/
 	public function tick()
 	{
 		$time = time();
-		
-		if(!empty($this->last_ping) && $time - $this->last_ping > $this->failnet->get('ping_timeout'))
+
+		if(!empty($this->last_ping) && $time - $this->last_ping > $this->failnet->config('ping_timeout'))
 		{
 			$this->failnet->log->add('--- Ping timeout, restarting Failnet ---');
 			$this->failnet->terminate(true);
 		}
-		elseif($time - $this->last_event > $this->failnet->get('ping_wait'))
+		elseif($time - $this->last_event > $this->failnet->config('ping_wait'))
 		{
 			$this->last_ping = time();
-			$this->call_ping($this->failnet->get('nick'), $this->last_ping);
+			$this->call_ping($this->failnet->config('nick'), $this->last_ping);
 		}
 	}
 }

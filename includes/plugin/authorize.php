@@ -69,7 +69,7 @@ class failnet_plugin_authorize extends failnet_plugin_common
 
 		$cmd = $this->purify($text);
 		$sender = $this->event->hostmask->nick;
-		$recipient = ($this->failnet->get('speak')) ? $this->event->source() : $this->event->hostmask->nick;
+		$recipient = ($this->failnet->config('speak')) ? $this->event->source() : $this->event->hostmask->nick;
 		$hostmask = $this->event->hostmask;
 		switch($cmd)
 		{

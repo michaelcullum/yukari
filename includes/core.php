@@ -210,7 +210,7 @@ class failnet_core
 
 				// @todo move to authorize plugin/node
 				// Add the default user if Failnet was just installed
-				$this->sql('users', 'create')->execute(array(':nick' => $this->get('owner'), ':authlevel' => 100, ':hash' => $this->hash->hash($this->get('user'))));
+				$this->sql('users', 'create')->execute(array(':nick' => $this->config('owner'), ':authlevel' => 100, ':hash' => $this->hash->hash($this->config('user'))));
 
 				// Now let's add some default data to the database tables
 				$this->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/schema_data.sql'));
@@ -227,7 +227,7 @@ class failnet_core
 
 		// Load plugins
 		display('- Loading Failnet plugins');
-		$this->plugin('load', $this->get('plugin_list'));
+		$this->plugin('load', $this->config('plugin_list'));
 
 		// Load our config settings
 		display('- Loading config settings');
@@ -258,7 +258,7 @@ class failnet_core
 		try
 		{
 			// Initialize the database connection
-			$this->db = new PDO('sqlite:' . FAILNET_ROOT . 'data/db/' . basename(md5($this->get('server') . '::' . $this->get('user'))) . '.db');
+			$this->db = new PDO('sqlite:' . FAILNET_ROOT . 'data/db/' . basename(md5($this->config('server') . '::' . $this->config('user'))) . '.db');
 			$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 			// We want this as a transaction in case anything goes wrong.
@@ -428,7 +428,7 @@ class failnet_core
 		{
 			$plugin->cmd_disconnect();
 		}
-		$this->irc->quit($this->get('quit_msg'));
+		$this->irc->quit($this->config('quit_msg'));
 		$this->terminate($quit->arguments[0]);
 	}
 
@@ -465,7 +465,7 @@ class failnet_core
 	public function terminate($restart = true)
 	{
 		if($this->socket->socket !== NULL)
-			$this->irc->quit($this->get('quit_msg'));
+			$this->irc->quit($this->config('quit_msg'));
 		if($restart)
 		{
 			// Just a hack to get it to restart through batch, and not terminate.
@@ -662,8 +662,8 @@ class failnet_core
 	{
 		static $dss_seeded = false;
 
-		$rand_seed = $this->get('rand_seed');
-		$last_rand_seed = $this->get('last_rand_seed');
+		$rand_seed = $this->config('rand_seed');
+		$last_rand_seed = $this->config('last_rand_seed');
 
 		$val = md5($rand_seed . microtime());
 		$rand_seed = md5($rand_seed . $val . $extra);
@@ -723,7 +723,7 @@ class failnet_core
 	 */
 	public function checkuser($user)
 	{
-        if(preg_match('#' . preg_quote($this->get('owner'), '#') . '|' . preg_quote($this->get('nick'), '#') . '|self#i', $user))
+        if(preg_match('#' . preg_quote($this->config('owner'), '#') . '|' . preg_quote($this->config('nick'), '#') . '|self#i', $user))
             return true;
 		return false;
 	}
