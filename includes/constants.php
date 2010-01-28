@@ -1,4 +1,3 @@
-#!/usr/bin/php
 <?php
 /**
  *
@@ -29,25 +28,16 @@
  * along with this program.  If not, see <http://opensource.org/licenses/gpl-2.0.php>.
  */
 
-// Define the root path constant first.  :D
-define('FAILNET_ROOT', './');
+// Version
+define('FAILNET_VERSION', '2.0.0A1');
 
-// Now let's grab /every/ constant
-require FAILNET_ROOT . 'includes/constants.php';
+define('DEBUG_SILENT', 0);
+define('DEBUG_OFF', 1);
+define('DEBUG_ON', 2);
+define('DEBUG_FULL', 3);
+define('DEBUG_EXTRA', 4);
+//define('DEBUG_SPAM', 4); // ;D
 
-// Include our general functions file now -- We require it as it is always essential.
-// It also has our autoloader function, so we kinda need that.  ;)
-require FAILNET_ROOT . 'includes/functions.php';
-
-// Set our autoload function.
-spl_autoload_register('failnet_load_file');
-
-// Check to see if we are even on the minimum PHP version necessary.
-if(version_compare('5.2.3', PHP_VERSION, '>'))
-	throw_fatal('Failnet requires PHP version 5.2.3 or better, while the currently installed PHP version is ' . PHP_VERSION);
-
-// Load Failnet up!
-$failnet = new failnet_core();
-
-// Run Failnet
-$failnet->run();
+define('MSG_NORMAL', 0);
+define('MSG_DEBUG', 2);
+define('MSG_DEBUG_EXTRA', 3);

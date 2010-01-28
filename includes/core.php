@@ -155,7 +155,7 @@ class failnet_core
 			@date_default_timezone_set(@date_default_timezone_get());
 
 		// Make sure our database directory actually exists and is manipulatable
-		if(!file_exists(FAILNET_DB_ROOT) || !is_readable(FAILNET_DB_ROOT) || !is_writeable(FAILNET_DB_ROOT) || !is_dir(FAILNET_DB_ROOT))
+		if(!file_exists(FAILNET_ROOT . 'data/db/') || !is_readable(FAILNET_ROOT . 'data/db/') || !is_writeable(FAILNET_ROOT . 'data/db/') || !is_dir(FAILNET_ROOT . 'data/db/'))
 			throw_fatal('Failnet requires the database directory to exist and be readable/writeable');
 
 		/**
@@ -183,77 +183,8 @@ class failnet_core
 		display("- Loading configuration file '$cfg_file' for specified IRC server");
 		$this->load($cfg_file);
 
-		// Load/setup the database
-		display('- Connecting to the database');
-		try
-		{
-			// Initialize the database connection
-			$this->db = new PDO('sqlite:' . FAILNET_DB_ROOT . basename(md5($this->get('server') . '::' . $this->get('user'))) . '.db');
-			$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-			// We want this as a transaction in case anything goes wrong.
-			$this->db->beginTransaction();
-
-			display('- Initializing the database');
-
-			// Load up the list of files that we've got, and do stuff with them.
-			$schemas = scandir(FAILNET_ROOT . 'includes/schemas');
-			foreach($schemas as $schema)
-			{
-				if(substr($schema, 0, 1) == '.' || substr(strrchr($schema, '.'), 1) != 'sql' || $schema == 'schema_data.sql')
-					continue;
-
-				$tablename = substr($schema, 0, strrpos($schema, '.'));
-				$results = $this->db->query('SELECT COUNT(*) FROM sqlite_master WHERE name = ' . $this->db->quote($tablename))->fetchColumn();
-				if(!$results)
-				{
-					display(' -  Installing the ' . $tablename . ' database table...');
-					$this->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/' . $schema));
-				}
-			}
-
-			display('- Preparing database queries...');
-
-			// Now, we need to build our default statements.
-			// Config table
-			$this->sql('config', 'create', 'INSERT INTO config ( name, value ) VALUES ( :name, :value )');
-			$this->sql('config', 'get_all', 'SELECT * FROM config');
-			$this->sql('config', 'get', 'SELECT * FROM config WHERE LOWER(name) = LOWER(:name) LIMIT 1');
-			$this->sql('config', 'update', 'UPDATE config SET value = :value WHERE LOWER(name) = LOWER(:name)');
-			$this->sql('config', 'delete', 'DELETE FROM config WHERE LOWER(name) = LOWER(:name)');
-
-			// Users table
-			$this->sql('users', 'create', 'INSERT INTO users ( nick, authlevel, password ) VALUES ( :nick, :authlevel, :hash )');
-			$this->sql('users', 'set_pass', 'UPDATE users SET password = :hash WHERE user_id = :user');
-			$this->sql('users', 'set_level', 'UPDATE users SET authlevel = :authlevel WHERE user_id = :user');
-			$this->sql('users', 'set_confirm', 'UPDATE users SET confirm_key = :key WHERE user_id = :user');
-			$this->sql('users', 'get', 'SELECT * FROM users WHERE LOWER(nick) = LOWER(:nick) LIMIT 1');
-			$this->sql('users', 'get_level', 'SELECT authlevel FROM users WHERE LOWER(nick) = LOWER(:nick) LIMIT 1');
-			$this->sql('users', 'get_confirm', 'SELECT confirm_key FROM users WHERE user_id = :user LIMIT 1');
-			$this->sql('users', 'delete', 'DELETE FROM users WHERE user_id = :user');
-
-			// Sessions table
-			$this->sql('sessions', 'create', 'INSERT INTO sessions ( key_id, user_id, login_time, hostmask ) VALUES ( :key, :user, :time, :hostmask )');
-			$this->sql('sessions', 'delete_key', 'DELETE FROM sessions WHERE key_id = :key');
-			$this->sql('sessions', 'delete_user', 'DELETE FROM sessions WHERE user_id = :user');
-			$this->sql('sessions', 'delete_old', 'DELETE FROM sessions WHERE login_time < :time');
-			$this->sql('sessions', 'delete', 'DELETE FROM sessions WHERE LOWER(hostmask) = LOWER(:hostmask)');
-
-			// Access list table
-			$this->sql('access', 'create', 'INSERT INTO access ( user_id, hostmask ) VALUES ( :user, :hostmask )');
-			$this->sql('access', 'delete', 'DELETE FROM access WHERE (user_id = :user AND LOWER(hostmask) = LOWER(:hostmask) )');
-			$this->sql('access', 'delete_user', 'DELETE FROM access WHERE user_id = :user');
-			$this->sql('access', 'get', 'SELECT hostmask FROM access WHERE user_id = :user');
-
-			// Commit the stuffs
-			$this->db->commit();
-		}
-		catch (PDOException $e)
-		{
-			// Something went boom.  Time to panic!
-			$this->db->rollBack();
-			throw_fatal($e);
-		}
+		// Setup the DB connection.
+		$this->setup_db();
 
 		// Load required classes and systems
 		display('- Loading Failnet nodes');
@@ -266,17 +197,18 @@ class failnet_core
 
 		// Set the error handler
 		display('=== Setting main error handler');
-		@set_error_handler(array(&$this->error, 'fail'));
+		@set_error_handler(array($this->error, 'fail'));
 
-		// If Failnet was just installed, we need to do something now that the auth class is loaded
-		$this->sql('config', 'get')->execute(array(':name' => 'rand_seed')); //check for rand_seed existing
+		// Check to see if our rand_seed exists, and if not we need to execute our schema file (as long as it exists of course). :)
+		$this->sql('config', 'get')->execute(array(':name' => 'rand_seed'));
 		$rand_seed_exists = $this->sql('config', 'get')->fetch(PDO::FETCH_ASSOC);
-		if(!$rand_seed_exists)
+		if(!$rand_seed_exists && file_exists(FAILNET_ROOT . 'includes/schemas/schema_data.sql'))
 		{
 			try
 			{
 				$this->db->beginTransaction();
 
+				// @todo move to authorize plugin/node
 				// Add the default user if Failnet was just installed
 				$this->sql('users', 'create')->execute(array(':nick' => $this->get('owner'), ':authlevel' => 100, ':hash' => $this->hash->hash($this->get('user'))));
 
@@ -313,6 +245,86 @@ class failnet_core
 
 		// In case of restart/reload, to prevent 'Nick already in use' (which asplodes everything)
 		usleep(500); display(array(self::HR, 'Failnet loaded and ready!', self::HR));
+	}
+
+	/**
+	 * Setup the database connection and load up our prepared SQL statements
+	 * @return void
+	 */
+	public function setup_db()
+	{
+		// Load/setup the database
+		display('- Connecting to the database');
+		try
+		{
+			// Initialize the database connection
+			$this->db = new PDO('sqlite:' . FAILNET_ROOT . 'data/db/' . basename(md5($this->get('server') . '::' . $this->get('user'))) . '.db');
+			$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+			// We want this as a transaction in case anything goes wrong.
+			$this->db->beginTransaction();
+
+			display('- Initializing the database');
+
+			// Load up the list of files that we've got, and do stuff with them.
+			$schemas = scandir(FAILNET_ROOT . 'includes/schemas');
+			foreach($schemas as $schema)
+			{
+				if(substr($schema, 0, 1) == '.' || substr(strrchr($schema, '.'), 1) != 'sql' || $schema == 'schema_data.sql')
+					continue;
+
+				$tablename = substr($schema, 0, strrpos($schema, '.'));
+				$results = $this->db->query('SELECT COUNT(*) FROM sqlite_master WHERE name = ' . $this->db->quote($tablename))->fetchColumn();
+				if(!$results)
+				{
+					display(' -  Installing the ' . $tablename . ' database table...');
+					$this->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/' . $schema));
+				}
+			}
+
+			display('- Preparing database queries...');
+
+			// Let's prepare the default prepared statements.
+			// Config table
+			$this->sql('config', 'create', 'INSERT INTO config ( name, value ) VALUES ( :name, :value )');
+			$this->sql('config', 'get_all', 'SELECT * FROM config');
+			$this->sql('config', 'get', 'SELECT * FROM config WHERE LOWER(name) = LOWER(:name) LIMIT 1');
+			$this->sql('config', 'update', 'UPDATE config SET value = :value WHERE LOWER(name) = LOWER(:name)');
+			$this->sql('config', 'delete', 'DELETE FROM config WHERE LOWER(name) = LOWER(:name)');
+
+			// @todo move to authorize
+			// Users table
+			$this->sql('users', 'create', 'INSERT INTO users ( nick, authlevel, password ) VALUES ( :nick, :authlevel, :hash )');
+			$this->sql('users', 'set_pass', 'UPDATE users SET password = :hash WHERE user_id = :user');
+			$this->sql('users', 'set_level', 'UPDATE users SET authlevel = :authlevel WHERE user_id = :user');
+			$this->sql('users', 'set_confirm', 'UPDATE users SET confirm_key = :key WHERE user_id = :user');
+			$this->sql('users', 'get', 'SELECT * FROM users WHERE LOWER(nick) = LOWER(:nick) LIMIT 1');
+			$this->sql('users', 'get_level', 'SELECT authlevel FROM users WHERE LOWER(nick) = LOWER(:nick) LIMIT 1');
+			$this->sql('users', 'get_confirm', 'SELECT confirm_key FROM users WHERE user_id = :user LIMIT 1');
+			$this->sql('users', 'delete', 'DELETE FROM users WHERE user_id = :user');
+
+			// Sessions table
+			$this->sql('sessions', 'create', 'INSERT INTO sessions ( key_id, user_id, login_time, hostmask ) VALUES ( :key, :user, :time, :hostmask )');
+			$this->sql('sessions', 'delete_key', 'DELETE FROM sessions WHERE key_id = :key');
+			$this->sql('sessions', 'delete_user', 'DELETE FROM sessions WHERE user_id = :user');
+			$this->sql('sessions', 'delete_old', 'DELETE FROM sessions WHERE login_time < :time');
+			$this->sql('sessions', 'delete', 'DELETE FROM sessions WHERE LOWER(hostmask) = LOWER(:hostmask)');
+
+			// Access list table
+			$this->sql('access', 'create', 'INSERT INTO access ( user_id, hostmask ) VALUES ( :user, :hostmask )');
+			$this->sql('access', 'delete', 'DELETE FROM access WHERE (user_id = :user AND LOWER(hostmask) = LOWER(:hostmask) )');
+			$this->sql('access', 'delete_user', 'DELETE FROM access WHERE user_id = :user');
+			$this->sql('access', 'get', 'SELECT hostmask FROM access WHERE user_id = :user');
+
+			// Commit the stuffs
+			$this->db->commit();
+		}
+		catch (PDOException $e)
+		{
+			// Something went boom.  Time to panic!
+			$this->db->rollBack();
+			throw_fatal($e);
+		}
 	}
 
 	/**
