@@ -118,6 +118,11 @@ return array(
 	'dai_msg'			=> 'OH SHI--',
 	'quit_msg'			=> 'Failnet PHP IRC Bot',
 
-// Should we be in debug mode?
-	'debug'				=> false,
+// What output level should we be in?
+//		OUTPUT_SILENT		- Do not output anything.
+//		OUTPUT_NORMAL		- Only output standard in/out data (IRC messages and actions)
+//		OUTPUT_DEBUG		- Output warnings and notices in addition to standard data
+//		OUTPUT_DEBUG_FULL	- Output warnings, notices, standard data, and also show event triggers
+//		OUTPUT_RAW			- Output raw IRC data going in and out.
+	'output'			=> OUTPUT_NORMAL,
 );

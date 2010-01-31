@@ -74,6 +74,7 @@ class failnet_core
 
 	/**
 	 * @var boolean - Should we be in debug mode?
+	 * @todo overhaul, maybe with a real constant instead
 	 */
 	public $debug = false;
 
@@ -96,6 +97,11 @@ class failnet_core
 	 * @var array - What channels are we in, and what users are in them?
 	 */
 	public $chans = array();
+
+	/**
+	 * @var object - UI object for displaying Failnet's local output
+	 */
+	public $ui = NULL;
 
 	//  @todo move the p_commands and p_help properties to the help node when it is created
     /**
@@ -492,6 +498,8 @@ class failnet_core
 	 * @param string $setting - The config setting that we want to pull the value for.
 	 * @param boolean $config_only - Is this an entry that only appears in the config file?
 	 * @return mixed - The setting's value, or null if no such setting.
+	 *
+	 * @depreciated
 	 */
 	public function get($setting, $config_only = false)
 	{

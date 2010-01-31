@@ -189,6 +189,8 @@ class failnet_event_request implements ArrayAccess
 	 * Returns whether or not the event occurred within a channel.
 	 *
 	 * @return TRUE if the event is in a channel, FALSE otherwise
+	 *
+	 * @deprecated
 	 */
 	public function fromchannel()
 	{
