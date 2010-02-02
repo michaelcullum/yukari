@@ -43,11 +43,6 @@
 class failnet_ui_common extends failnet_common
 {
 	/**
-	 * @var string - Buffer of the stuff we are going to process
-	 */
-	public $buffer = '';
-
-	/**
 	 * Specialized init function to allow class construction to be easier.
 	 * @see includes/failnet_common#init()
 	 * @return void
@@ -67,13 +62,47 @@ class failnet_ui_common extends failnet_common
 	 * Method called on init that dumps the startup text for Failnet to output
 	 * @return void
 	 */
-	public function ui_header() { }
+	public function ui_startup()
+	{
+		if($this->ui_level(OUTPUT_NORMAL))
+		{
+			$this->output(self::HR);
+			$this->output('Failnet -- PHP-based IRC Bot version ' . FAILNET_VERSION);
+			$this->output('Copyright: (c) 2009 - 2010 -- Obsidian');
+			$this->output('License: GNU General Public License - Version 2');
+			$this->output(self::HR);
+			$this->output('Failnet is starting up. Go get yourself a coffee.');
+			$this->output(self::HR);
+		}
+	}
+
+	/**
+	 * Method called that dumps Failnet's ready-notice text to output
+	 * @return void
+	 */
+	public function ui_ready()
+	{
+		if($this->ui_level(OUTPUT_NORMAL))
+		{
+			$this->output(self::HR);
+			$this->output('Failnet loaded and ready!');
+			$this->output(self::HR);
+		}
+	}
 
 	/**
 	 * Method called on shutdown that dumps the shutdown text for Failnet to output
 	 * @return void
 	 */
-	public function ui_shutdown() { }
+	public function ui_shutdown()
+	{
+		if($this->ui_level(OUTPUT_NORMAL))
+		{
+			$this->output(self::HR);
+			$this->output('Failnet shutting down...');
+			$this->output(self::HR);
+		}
+	}
 
 	/**
 	 * Method called on message being recieved/sent
@@ -81,7 +110,7 @@ class failnet_ui_common extends failnet_common
 	 */
 	public function ui_message($data)
 	{
-		if($this->ui_level(OUTPUT_SILENT))
+		if($this->ui_level(OUTPUT_NORMAL))
 		{
 			$this->output('[msg] ' . $data);
 		}
@@ -93,7 +122,10 @@ class failnet_ui_common extends failnet_common
 	 */
 	public function ui_action($data)
 	{
-		$this->output('[act] ' . $data);
+		if($this->ui_level(OUTPUT_NORMAL))
+		{
+			$this->output('[action] ' . $data);
+		}
 	}
 
 	/**
@@ -102,32 +134,71 @@ class failnet_ui_common extends failnet_common
 	 */
 	public function ui_system($data)
 	{
-		$this->output('[event] ' . $data);
+		if($this->ui_level(OUTPUT_DEBUG))
+		{
+			$this->output('[system] ' . $data);
+		}
+	}
+
+	/**
+	 * Method called when a system event is triggered or occurs in Failnet
+	 * @return void
+	 */
+	public function ui_event($data)
+	{
+		if($this->ui_level(OUTPUT_DEBUG_FULL))
+		{
+			$this->output('[event] ' . $data);
+		}
 	}
 
 	/**
 	 * Method being called on a PHP notice being thrown
 	 * @return void
 	 */
-	public function ui_notice($data) { }
+	public function ui_notice($data)
+	{
+		if($this->ui_level(OUTPUT_DEBUG))
+		{
+			$this->output('[php notice] ' . $data);
+		}
+	}
 
 	/**
 	 * Method being called on a PHP warning being thrown
 	 * @return void
 	 */
-	public function ui_warning($data) { }
+	public function ui_warning($data)
+	{
+		if($this->ui_level(OUTPUT_DEBUG))
+		{
+			$this->output('[php warning] ' . $data);
+		}
+	}
 
 	/**
 	 * Method being called on a PHP error being thrown
 	 * @return void
 	 */
-	public function ui_error($data) { }
+	public function ui_error($data)
+	{
+		if($this->ui_level(OUTPUT_DEBUG))
+		{
+			$this->output('[php error] ' . $data);
+		}
+	}
 
 	/**
 	 * Method being called on debug information being output in Failnet
 	 * @return void
 	 */
-	public function ui_debug($data) { }
+	public function ui_debug($data)
+	{
+		if($this->ui_level(OUTPUT_DEBUG_FULL))
+		{
+			$this->output('[debug] ' . $data);
+		}
+	}
 
 	/**
 	 * Method being called on raw IRC protocol information being output in Failnet
@@ -135,6 +206,9 @@ class failnet_ui_common extends failnet_common
 	 */
 	public function ui_raw($data)
 	{
-		$this->output('[IRC] ' . $data);
+		if($this->ui_level(OUTPUT_RAW))
+		{
+			$this->output('[IRC] ' . $data);
+		}
 	}
 }

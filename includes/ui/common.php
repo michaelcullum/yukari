@@ -48,13 +48,6 @@ class failnet_ui_common extends failnet_common
 	public $buffer = '';
 
 	/**
-	 * Specialized init function to allow class construction to be easier.
-	 * @see includes/failnet_common#init()
-	 * @return void
-	 */
-	public function init() { }
-
-	/**
 	 * Determine if this message type should be sent with the current output level.
 	 * @param const $level - The OUTPUT level constant that we are checking the current output level against.
 	 * @return boolean - Whether we should output or not...boolean true if so, boolean false if not.
@@ -63,7 +56,7 @@ class failnet_ui_common extends failnet_common
 	{
 		if($level != OUTPUT_RAW)
 		{
-			return (OUTPUT_LEVEL > $level && OUTPUT_LEVEL !== OUTPUT_RAW);
+			return (OUTPUT_LEVEL >= $level && OUTPUT_LEVEL !== OUTPUT_RAW);
 		}
 		else
 		{
