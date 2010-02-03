@@ -68,6 +68,16 @@ class failnet_core
 	public $start = 0;
 
 	/**
+	 * @var integer - Base memory usage, used for comparisons
+	 */
+	public $base_mem = 0;
+
+	/**
+	 * @var integer - Base memory usage peak, used for comparisons
+	 */
+	public $base_mem_peak = 0;
+
+	/**
 	 * @var string - Our current usernick for the bot
 	 */
 	public $nick = '';
@@ -172,11 +182,13 @@ class failnet_core
 
 		// Set the time that Failnet was started.
 		$this->start = time();
+		$this->base_mem = memory_get_usage();
+		$this->base_mem_peak = memory_get_peak_usage();
 
 		// Load the config file
 		$cfg_file = ($_SERVER['argc'] > 1) ? $_SERVER['argv'][1] : 'config';
 		$this->load($cfg_file);
-		
+
 		// Prepare the UI...
 		define('OUTPUT_LEVEL', $this->config('output'));
 		$ui = 'failnet_ui_' . $this->config('ui');

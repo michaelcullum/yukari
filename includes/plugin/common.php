@@ -60,6 +60,11 @@ abstract class failnet_plugin_common extends failnet_common
 /**
  * Commonly used plugin methods
  */
+	/**
+	 * Handler method for plugin load
+	 * @return void
+	 */
+	public function init() { }
 
 	/**
 	 * Checks to see if this is has the proper command prefix for this message
@@ -106,12 +111,6 @@ abstract class failnet_plugin_common extends failnet_common
 /**
  * Handler methods (methods that are intended to be overridden by plugins)
  */
-
-	/**
-	 * Handler method for plugin load
-	 * @return void
-	 */
-	public function init() { }
 
 	/**
 	 * Handler method for building the dynamic help information

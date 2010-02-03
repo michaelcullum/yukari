@@ -11,7 +11,7 @@
  * License:		GNU General Public License - Version 2
  *
  *===================================================================
- * 
+ *
  */
 
 /**
@@ -27,12 +27,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://opensource.org/licenses/gpl-2.0.php>.
  */
- 
+
 
 /**
  * Failnet - Offense plugin,
- * 		This lets Failnet be just plain evil. 
- * 
+ * 		This lets Failnet be just plain evil.
+ *
  *
  * @package plugins
  * @author Obsidian
@@ -46,7 +46,7 @@ class failnet_plugin_offense extends failnet_plugin_common
 	 * @var array - Data for The Game.
 	 */
 	public $thegame = array();
-	
+
 	public function tick()
 	{
 		foreach($this->thegame as $channel_name => $channel)
@@ -144,7 +144,7 @@ class failnet_plugin_offense extends failnet_plugin_common
 			case '+g':
 			case 'gameon':
 				// Check to see if there was a param passed...if not, we check to see if this is from a channel.
-				if($text === false && $this->event->fromchannel() === true)
+				if($text === false && $this->event->fromchannel === true)
 				{
 					$this->thegame[$this->event->source()] = array(
 						'enabled'		=> true,
@@ -174,7 +174,7 @@ class failnet_plugin_offense extends failnet_plugin_common
 			case '-g':
 			case 'gameoff':
 				// Check to see if there was a param passed...if so, we check to see if this is from a channel.
-				if($text === false && $this->event->fromchannel() === true)
+				if($text === false && $this->event->fromchannel === true)
 				{
 					$this->thegame[$this->event->source()] = array(
 						'enabled'		=> false,
@@ -201,7 +201,7 @@ class failnet_plugin_offense extends failnet_plugin_common
 			case 'gamewho':
 			case 'gamewhen':
 				// Check to see if there was a param passed...if so, we check to see if this is from a channel.
-				if($text === false && $this->event->fromchannel() === true)
+				if($text === false && $this->event->fromchannel === true)
 				{
 					if(!isset($this->thegame[$this->event->source()]) || $this->thegame[$this->event->source()]['enabled'] !== true)
 					{
@@ -232,7 +232,7 @@ class failnet_plugin_offense extends failnet_plugin_common
 
 			case 'game':
 				// Check to see if there was a param passed...if so, we check to see if this is from a channel.
-				if($text === false && $this->event->fromchannel() === true)
+				if($text === false && $this->event->fromchannel === true)
 				{
 					if(!isset($this->thegame[$this->event->source()]) || $this->thegame[$this->event->source()]['enabled'] !== true)
 					{
@@ -271,4 +271,3 @@ class failnet_plugin_offense extends failnet_plugin_common
 		}
 	}
 }
-

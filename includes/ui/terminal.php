@@ -72,7 +72,6 @@ class failnet_ui_terminal extends failnet_ui_common
 			$this->output('License: GNU General Public License - Version 2');
 			$this->output(self::HR);
 			$this->output('Failnet is starting up. Go get yourself a coffee.');
-			$this->output(self::HR);
 		}
 	}
 
@@ -113,18 +112,6 @@ class failnet_ui_terminal extends failnet_ui_common
 		if($this->ui_level(OUTPUT_NORMAL))
 		{
 			$this->output('[irc] ' . $data);
-		}
-	}
-
-	/**
-	 * Method called on action being recieved/sent
-	 * @return void
-	 */
-	public function ui_action($data)
-	{
-		if($this->ui_level(OUTPUT_NORMAL))
-		{
-			$this->output('[action] ' . $data);
 		}
 	}
 

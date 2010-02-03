@@ -40,13 +40,13 @@
  * @copyright (c) 2009 - 2010 -- Failnet Project
  * @license GNU General Public License - Version 2
  */
-class failnet_ui_common extends failnet_common
+abstract class failnet_ui_common extends failnet_common
 {
 	/**
 	 * @var string - Buffer of the stuff we are going to process
 	 */
 	public $buffer = '';
-	
+
 	/**
 	 * Specialized init function to allow class construction to be easier.
 	 * @see includes/failnet_common#init()
@@ -102,17 +102,11 @@ class failnet_ui_common extends failnet_common
 	public function ui_message($data) { }
 
 	/**
-	 * Method called on action being recieved/sent
-	 * @return void
-	 */
-	public function ui_action($data) { }
-
-	/**
 	 * Method called when a system event is triggered or occurs in Failnet
 	 * @return void
 	 */
 	public function ui_system($data) { }
-	
+
 	/**
 	 * Method called when a system event is triggered or occurs in Failnet
 	 * @return void

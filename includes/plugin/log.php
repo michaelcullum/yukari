@@ -43,49 +43,49 @@ class failnet_plugin_log extends failnet_plugin_common
 {
 	public function cmd_join()
 	{
-		$this->failnet->ui->output(date('h:i') . ' ' . $this->event->hostmask->nick . ' has joined ' . $this->event->get_arg('channel'));
+		$this->failnet->ui->ui_message(date('h:i') . ' ' . $this->event->hostmask->nick . ' has joined ' . $this->event->get_arg('channel'));
 		$this->failnet->log->add(date('D m/d/Y - h:i:s A') . ' - === ' . $this->event->hostmask->nick . ' has joined ' . $this->event->get_arg('channel'));
 	}
 
 	public function cmd_part()
 	{
-		$this->failnet->ui->output(date('h:i') . ' ' . $this->event->hostmask->nick . ' has left ' . $this->event->get_arg('channel'));
+		$this->failnet->ui->ui_message(date('h:i') . ' ' . $this->event->hostmask->nick . ' has left ' . $this->event->get_arg('channel'));
 		$this->failnet->log->add(date('D m/d/Y - h:i:s A') . ' - === ' . $this->event->hostmask->nick . ' has left ' . $this->event->get_arg('channel') . (($this->event->get_arg('message')) ? ' : ' . $this->event->get_arg('message') : ''));
 	}
 
 	public function cmd_kick()
 	{
-		$this->failnet->ui->output(date('h:i') . ' ' . $this->event->hostmask->nick . ' has kicked user ' . $this->event->get_arg('user') . ' from ' . $this->event->get_arg('channel') . (($this->event->get_arg('comment')) ? ' : ' . '[' . $this->event->get_arg('comment') . ']' : ''));
+		$this->failnet->ui->ui_message(date('h:i') . ' ' . $this->event->hostmask->nick . ' has kicked user ' . $this->event->get_arg('user') . ' from ' . $this->event->get_arg('channel') . (($this->event->get_arg('comment')) ? ' : ' . '[' . $this->event->get_arg('comment') . ']' : ''));
 		$this->failnet->log->add(date('D m/d/Y - h:i:s A') . ' - === ' . $this->event->hostmask->nick . ' has kicked user ' . $this->event->get_arg('user') . ' from ' . $this->event->get_arg('channel') . (($this->event->get_arg('comment')) ? ' : ' . '[' . $this->event->get_arg('comment') . ']' : ''));
 	}
 
 	public function cmd_invite()
 	{
-		$this->failnet->ui->output(date('h:i') . ' ' . $this->event->hostmask->nick . ' has extended an invitation to  ' . $this->event->get_arg('channel'));
+		$this->failnet->ui->ui_message(date('h:i') . ' ' . $this->event->hostmask->nick . ' has extended an invitation to  ' . $this->event->get_arg('channel'));
 		$this->failnet->log->add(date('D m/d/Y - h:i:s A') . ' - === ' . $this->event->hostmask->nick . ' has extended an invitation to ' . $this->event->get_arg('channel'));
 	}
 
 	public function cmd_quit()
 	{
-		$this->failnet->ui->output(date('h:i') . ' ' . $this->event->hostmask->nick . ' has quit' . (($this->event->get_arg('message')) ? ' : ' . $this->event->get_arg('message') : ''));
+		$this->failnet->ui->ui_message(date('h:i') . ' ' . $this->event->hostmask->nick . ' has quit' . (($this->event->get_arg('message')) ? ' : ' . $this->event->get_arg('message') : ''));
 		$this->failnet->log->add(date('D m/d/Y - h:i:s A') . ' - === ' . $this->event->hostmask->nick . ' has quit' . (($this->event->get_arg('message')) ? ' : ' . $this->event->get_arg('message') : ''));
 	}
 
 	public function cmd_topic()
 	{
-		$this->failnet->ui->output(date('h:i') . ' ' . $this->event->hostmask->nick . ' has changed the topic in ' . $this->event->get_arg('channel') . ' to ' . $this->event->get_arg('topic'));
+		$this->failnet->ui->ui_message(date('h:i') . ' ' . $this->event->hostmask->nick . ' has changed the topic in ' . $this->event->get_arg('channel') . ' to ' . $this->event->get_arg('topic'));
 		$this->failnet->log->add(date('D m/d/Y - h:i:s A') . ' - === ' . $this->event->hostmask->nick . ' has changed the topic in ' . $this->event->get_arg('channel') . ' to ' . $this->event->get_arg('topic'));
 	}
 
 	public function cmd_mode()
 	{
-		$this->failnet->ui->output(date('h:i') . ' ' . $this->event->hostmask->nick . ' has set mode ' . $this->event->get_arg('mode') . ' ' . $this->event->get_arg('target') . ' ' . $this->event->get_arg('limit') . ' ' . $this->event->get_arg('user') . ' ' . $this->event->get_arg('banmask'));
+		$this->failnet->ui->ui_message(date('h:i') . ' ' . $this->event->hostmask->nick . ' has set mode ' . $this->event->get_arg('mode') . ' ' . $this->event->get_arg('target') . ' ' . $this->event->get_arg('limit') . ' ' . $this->event->get_arg('user') . ' ' . $this->event->get_arg('banmask'));
 		$this->failnet->log->add(date('D m/d/Y - h:i:s A') . ' - === ' . $this->event->hostmask->nick . ' has set mode ' . $this->event->get_arg('mode') . ' ' . $this->event->get_arg('target') . ' ' . $this->event->get_arg('limit') . ' ' . $this->event->get_arg('user') . ' ' . $this->event->get_arg('banmask'));
 	}
 
 	public function cmd_notice()
 	{
-		$this->failnet->ui->output(date('h:i') . ' [Notice] ' . $this->event->hostmask->nick . ': ' . $this->event->get_arg('text'));
+		$this->failnet->ui->ui_message(date('h:i') . ' [Notice] ' . $this->event->hostmask->nick . ': ' . $this->event->get_arg('text'));
 		$this->failnet->log->add(date('D m/d/Y - h:i:s A') . ' - === Notice from ' . $this->event->hostmask->nick . ' : ' . $this->event->get_arg('text'));
 	}
 
@@ -99,14 +99,14 @@ class failnet_plugin_log extends failnet_plugin_common
 		}
 		else
 		{
-			$this->failnet->ui->ui_message(date('h:i') . ' <' . $this->event->hostmask->nick . (($this->event->fromchannel()) ? '/' . $this->event->get_arg('receiver') : '') . '> ' . '***Censored event***');
+			$this->failnet->ui->ui_message(date('h:i') . ' <' . $this->event->hostmask->nick . (($this->event->fromchannel) ? '/' . $this->event->get_arg('receiver') : '') . '> ' . '***Censored event***');
 			$this->failnet->log->log('***Censored event***', $this->event->hostmask->nick, $this->event->get_arg('receiver'));
 		}
 	}
 
 	public function cmd_action()
 	{
-		$this->failnet->ui->ui_action(date('h:i') . (($this->event->fromchannel()) ? '[' . $this->event->get_arg('receiver') . ']' : '') . ' *** ' . $this->event->hostmask->nick . ' ' . $this->event->get_arg('action'));
+		$this->failnet->ui->ui_message(date('h:i') . (($this->event->fromchannel) ? '[' . $this->event->get_arg('receiver') . ']' : '') . ' *** ' . $this->event->hostmask->nick . ' ' . $this->event->get_arg('action'));
 		$this->failnet->log->log($this->event->get_arg('action'), $this->event->hostmask->nick, $this->event->get_arg('target'), true);
 	}
 
@@ -171,7 +171,7 @@ class failnet_plugin_log extends failnet_plugin_common
 
 				case 'action':
 					$display = 'log';
-					$message = date('h:i') . (($event->fromchannel()) ? '[' . $event->get_arg('target') . ']' : '') . ' *** ' . $this->failnet->config('nick') . ' ' . $event->get_arg('action');
+					$message = date('h:i') . (($event->fromchannel) ? '[' . $event->get_arg('target') . ']' : '') . ' *** ' . $this->failnet->config('nick') . ' ' . $event->get_arg('action');
 					$log = $event->get_arg('action');
 					$nick = $this->failnet->config('nick');
 					$dest = $event->get_arg('target');
@@ -181,7 +181,7 @@ class failnet_plugin_log extends failnet_plugin_common
 			// ...Then we display stuffs and log it all.
 			if($display !== false)
 			{
-				$this->failnet->ui->output($message);
+				$this->failnet->ui->ui_message($message);
 				if($display = 'log')
 				{
 					$this->failnet->log->log($log, $nick, $dest);

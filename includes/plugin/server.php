@@ -170,7 +170,7 @@ class failnet_plugin_server extends failnet_plugin_common
 		switch($cmd)
 		{
 			case 'isin':
-				if($text === false && $this->event->fromchannel() === true)
+				if($text === false && $this->event->fromchannel === true)
 				{
 					list($victim, $channel) = array($text, $this->event->source());
 				}

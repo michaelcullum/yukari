@@ -56,6 +56,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 		$name = 'admin';
 		$commands = array(
 			'chans'			=> 'chans - (authlevel REGISTEREDUSER) - Outputs the channels Failnet is currently inhabiting',
+			'start'			=> 'start - (authlevel REGISTEREDUSER) - Outputs when Failnet was launched',
 			'uptime'		=> 'uptime - (authlevel REGISTEREDUSER) - Outputs how long Failnet has been running for',
 			'memuse'		=> 'memuse - (authlevel REGISTEREDUSER) - Outputs Failnet`s memory usage data',
 			'plugins'		=> 'plugins - (authlevel TRUSTEDUSER) - Outputs a list of plugins currently loaded',
@@ -87,6 +88,8 @@ class failnet_plugin_admin extends failnet_plugin_common
 			return;
 
 		$cmd = $this->purify($text);
+		$this->set_msg_args(($this->failnet->config('speak')) ? $this->event->source() : $this->event->hostmask->nick);
+
 		$sender = $this->event->hostmask->nick;
 		$hostmask = $this->event->hostmask;
 		switch ($cmd)
@@ -98,14 +101,14 @@ class failnet_plugin_admin extends failnet_plugin_common
 				// Check auths
 				if ($this->failnet->authorize->authlevel($hostmask) < self::AUTH_ADMIN)
 				{
-					$this->call_privmsg($this->event->source(), $this->failnet->deny());
+					$this->msg($this->failnet->deny());
 					return;
 				}
 
 				if(($this->dai + 60) < time())
 				{
 					$this->dai = time();
-					$this->call_privmsg($this->event->source(), 'Are you sure? If so, please repeat |dai.');
+					$this->msg('Are you sure? If so, please repeat |dai.');
 				}
 				else
 				{
@@ -127,7 +130,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 				// Check auths
 				if ($this->failnet->authorize->authlevel($hostmask) < self::AUTH_ADMIN)
 				{
-					$this->call_privmsg($this->event->source(), $this->failnet->deny());
+					$this->msg($this->failnet->deny());
 					return;
 				}
 
@@ -146,7 +149,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 				// Check auths
 				if ($this->failnet->authorize->authlevel($hostmask) < self::AUTH_ADMIN)
 				{
-					$this->call_privmsg($this->event->source(), $this->failnet->deny());
+					$this->msg($this->failnet->deny());
 					return;
 				}
 
@@ -157,7 +160,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 				}
 				else
 				{
-					$this->call_privmsg($this->event->source(), 'I\'m sorry, but that is an invalid usernick.');
+					$this->msg('I\'m sorry, but that is an invalid usernick.');
 				}
 			break;
 
@@ -166,7 +169,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 				// Check auths
 				if ($this->failnet->authorize->authlevel($hostmask) < self::AUTH_TRUSTEDUSER)
 				{
-					$this->call_privmsg($this->event->source(), $this->failnet->deny());
+					$this->msg($this->failnet->deny());
 					return;
 				}
 
@@ -186,7 +189,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 				}
 				else
 				{
-					$this->call_privmsg($this->event->source(), 'Please specify a channel to join.');
+					$this->msg('Please specify a channel to join.');
 				}
 			break;
 
@@ -195,17 +198,17 @@ class failnet_plugin_admin extends failnet_plugin_common
 				// Check auths
 				if ($this->failnet->authorize->authlevel($hostmask) < self::AUTH_TRUSTEDUSER)
 				{
-					$this->call_privmsg($this->event->source(), $this->failnet->deny());
+					$this->msg($this->failnet->deny());
 					return;
 				}
 
 				// Check to see if there was a param passed...if so, we check to see if this is from a channel.
 				// If it is, then we part the channel it was said in.
-				if($text === false && $this->event->fromchannel() === true)
+				if($text === false && $this->event->fromchannel === true)
 				{
 					// Annouce the channel part if we're allowed to speak.
 					if($this->failnet->config('speak'))
-						$this->call_privmsg($this->event->source(), $this->failnet->config('part_msg'));
+						$this->msg($this->failnet->config('part_msg'));
 					$this->call_part($this->event->source(), $this->failnet->config('quit_msg'));
 				}
 				elseif($text !== false)
@@ -220,13 +223,13 @@ class failnet_plugin_admin extends failnet_plugin_common
 					else
 					{
 						// I guess we're not in the channel specified.
-						$this->call_privmsg($this->event->source(), 'I\'m sorry, but I cannot part a channel I am not in.');
+						$this->msg('I\'m sorry, but I cannot part a channel I am not in.');
 					}
 				}
 				else
 				{
 					// We sent this via a private message and did not supply the channel to part.  That was smart.
-					$this->call_privmsg($sender, 'Please specify a channel to part from.');
+					$this->msg('Please specify a channel to part from.');
 				}
 			break;
 
@@ -235,25 +238,25 @@ class failnet_plugin_admin extends failnet_plugin_common
 				// Check auths
 				if ($this->failnet->authorize->authlevel($hostmask) < self::AUTH_SUPERADMIN)
 				{
-					$this->call_privmsg($this->event->source(), $this->failnet->deny());
+					$this->msg($this->failnet->deny());
 					return;
 				}
 
 				// Check for empty text
 				if($text === false)
 				{
-					$this->call_privmsg($this->event->source(), 'Please specify the plugin to load.');
+					$this->msg('Please specify the plugin to load.');
 					return;
 				}
 
 				// Check to see if we've loaded that plugin already, and if not load it
 				if($this->failnet->plugin('load', $text))
 				{
-					$this->call_privmsg($this->event->source(), 'Plugin loaded successfully.');
+					$this->msg('Plugin loaded successfully.');
 				}
 				else
 				{
-					$this->call_privmsg($this->event->source(), 'Plugin does not exist or is already loaded.');
+					$this->msg('Plugin does not exist or is already loaded.');
 				}
 			break;
 
@@ -261,38 +264,43 @@ class failnet_plugin_admin extends failnet_plugin_common
 				// Check auths
 				if ($this->failnet->authorize->authlevel($hostmask) < self::AUTH_TRUSTEDUSER)
 				{
-					$this->call_privmsg($this->event->source(), $this->failnet->deny());
+					$this->msg($this->failnet->deny());
 					return;
 				}
 
 				// Check for empty text
 				if($text === false)
 				{
-					$this->call_privmsg($this->event->source(), 'Please specify the plugin to check.');
+					$this->msg('Please specify the plugin to check.');
 					return;
 				}
 
-				if($this->failnet->plugin('loaded', $text))
-				{
-					$this->call_privmsg($this->event->source(), 'Plugin is loaded.');
-				}
-				else
-				{
-					$this->call_privmsg($this->event->source(), 'Plugin is not currently loaded.');
-				}
+				$this->msg(($this->failnet->plugin('loaded', $text)) ? 'Plugin is loaded.' : 'Plugin is not currently loaded.');
 			break;
 
 			case 'plugins':
 				// Check auths
 				if ($this->failnet->authorize->authlevel($hostmask) < self::AUTH_TRUSTEDUSER)
 				{
-					$this->call_privmsg($this->event->source(), $this->failnet->deny());
+					$this->msg($this->failnet->deny());
 					return;
 				}
 
 				// Let's build a list of plugins.
 				$plugins = implode(', ', $this->failnet->plugins_loaded);
-				$this->call_privmsg($this->event->source(), 'Plugins: ' . $plugins . '.');
+				$this->msg('Plugins: ' . $plugins);
+			break;
+
+			// Returns how long Failnet has been running for
+			case 'start':
+				// Check auths
+				if ($this->failnet->authorize->authlevel($hostmask) < self::AUTH_REGISTEREDUSER)
+				{
+					$this->msg($this->failnet->deny());
+					return;
+				}
+
+				$this->msg('I\'ve been running since ' . date('l jS, Y [h:i:s A]', $this->failnet->start));
 			break;
 
 			// Returns how long Failnet has been running for
@@ -300,11 +308,11 @@ class failnet_plugin_admin extends failnet_plugin_common
 				// Check auths
 				if ($this->failnet->authorize->authlevel($hostmask) < self::AUTH_REGISTEREDUSER)
 				{
-					$this->call_privmsg($this->event->source(), $this->failnet->deny());
+					$this->msg($this->failnet->deny());
 					return;
 				}
 
-				$this->call_privmsg($this->event->source(), 'I\'ve been running for ' . timespan(time() - $this->failnet->start, true));
+				$this->msg('I\'ve been running for ' . timespan(time() - $this->failnet->start, true));
 			break;
 
 			// How much memory is Failnet using?
@@ -312,29 +320,29 @@ class failnet_plugin_admin extends failnet_plugin_common
 				// Check auths
 				if ($this->failnet->authorize->authlevel($hostmask) < self::AUTH_REGISTEREDUSER)
 				{
-					$this->call_privmsg($this->event->source(), $this->failnet->deny());
+					$this->msg($this->failnet->deny());
 					return;
 				}
 
-				$this->call_privmsg($this->event->source(), 'Memory use is ' . get_formatted_filesize(memory_get_usage()) . ', and memory peak is ' . get_formatted_filesize(memory_get_peak_usage()));
+				$this->msg('Memory use is ' . get_formatted_filesize(memory_get_usage() - $this->failnet->base_mem) . ', and memory peak is ' . get_formatted_filesize(memory_get_peak_usage() -  $this->failnet->base_mem_peak));
 			break;
 
 			case 'chans':
 				// Check auths
 				if ($this->failnet->authorize->authlevel($hostmask) < self::AUTH_REGISTEREDUSER)
 				{
-					$this->call_privmsg($this->event->source(), $this->failnet->deny());
+					$this->msg($this->failnet->deny());
 					return;
 				}
 
 				$chans = implode(', ', array_keys($this->failnet->chans));
-				$this->call_privmsg($this->event->source(), 'Current channels joined are ' . $chans);
+				$this->msg('Current channels joined are ' . $chans);
 			break;
 
 			case 'cake':
 			case 'caek':
 				cake();
-				$this->call_privmsg($this->event->source(), 'This was a triumph...');
+				$this->msg('This was a triumph...');
 			break;
 		}
 	}
