@@ -112,7 +112,7 @@ class failnet_ui_terminal extends failnet_ui_common
 	{
 		if($this->ui_level(OUTPUT_NORMAL))
 		{
-			$this->output('[msg] ' . $data);
+			$this->output('[irc] ' . $data);
 		}
 	}
 
@@ -208,7 +208,7 @@ class failnet_ui_terminal extends failnet_ui_common
 	{
 		if($this->ui_level(OUTPUT_RAW))
 		{
-			$this->output('[IRC] ' . $data);
+			$this->output('[SOCKET] ' . $data);
 		}
 	}
 }
