@@ -68,13 +68,13 @@ class failnet_socket extends failnet_common
 
 		// Check to see if the transport method we are using is allowed
 		if(!in_array($this->failnet->config('transport'), stream_get_transports()))
-			trigger_error('Transport ' . $this->failnet->config('transport') . ' is not supported by this PHP installation.', E_USER_ERROR);
+			throw_fatal('Transport ' . $this->failnet->config('transport') . ' is not supported by this PHP installation.', E_USER_ERROR);
 
 		// Establish and configure the socket connection
 		$remote = $this->failnet->config('transport') . '://' . $this->failnet->config('server') . ':' . $this->failnet->config('port');
 		$this->socket = @stream_socket_client($remote, $errno, $errstr);
 		if(!$this->socket)
-			trigger_error('Unable to connect to server: socket error ' . $errno . ' : ' . $errstr, E_USER_ERROR);
+			throw_fatal('Unable to connect to server: socket error ' . $errno . ' : ' . $errstr, E_USER_ERROR);
 
 		@stream_set_timeout($this->socket, $this->delay);
 
@@ -265,7 +265,7 @@ class failnet_socket extends failnet_common
 	 */
 	public function close()
 	{
-		display('-!- Quitting from server "' . $this->failnet->config('server') . '"');
+		$this->failnet->ui->ui_system('-!- Quitting from server "' . $this->failnet->config('server') . '"');
 		$this->failnet->log->add('--- Quitting from server "' . $this->failnet->config('server') . '" ---');
 
 		// Terminate the socket connection

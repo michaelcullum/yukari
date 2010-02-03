@@ -60,7 +60,7 @@ class failnet_ignore extends failnet_common
 	 */
 	public function init()
 	{
-		display('=== Loading ignored users list...');
+		$this->failnet->ui->ui_system('--- Loading ignored users list...');
 		$this->sql('ignore', 'create', 'INSERT INTO ignore ( ignore_date, hostmask ) VALUES ( :timestamp, :hostmask )');
 		$this->sql('ignore', 'delete', 'DELETE FROM ignore WHERE LOWER(hostmask) = LOWER(:hostmask)');
 		$this->sql('ignore', 'get_single', 'SELECT * FROM ignore WHERE LOWER(hostmask) = LOWER(:hostmask) LIMIT 1');

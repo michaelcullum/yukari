@@ -173,36 +173,32 @@ class failnet_core
 		// Set the time that Failnet was started.
 		$this->start = time();
 
-		// Begin printing info to the terminal window with some general information about Failnet.
-		display(array(
-			self::HR,
-			'Failnet -- PHP-based IRC Bot version ' . FAILNET_VERSION,
-			'Copyright: (c) 2009 - Obsidian',
-			'License: GNU General Public License - Version 2',
-			self::HR,
-			'Failnet is starting up. Go get yourself a coffee.',
-			self::HR,
-		));
-
 		// Load the config file
 		$cfg_file = ($_SERVER['argc'] > 1) ? $_SERVER['argv'][1] : 'config';
-		display("- Loading configuration file '$cfg_file' for specified IRC server");
 		$this->load($cfg_file);
+		
+		// Prepare the UI...
+		define('OUTPUT_LEVEL', $this->config['output']);
+		$ui = 'failnet_ui_' . $this->config['ui'];
+		$this->ui = new $ui($this);
+
+		// Fire off the startup text.
+		$this->ui->ui_startup();
 
 		// Setup the DB connection.
 		$this->setup_db();
 
 		// Load required classes and systems
-		display('- Loading Failnet nodes');
+		$this->ui->ui_system('- Loading Failnet nodes');
 		foreach($this->config('nodes_list') as $node)
 		{
 			$name = 'failnet_' . $node;
 			$this->$node = new $name($this);
-			display('=-= Loaded ' . $node . ' node');
+			$this->ui->ui_system('--- Loaded ' . $node . ' node');
 		}
 
 		// Set the error handler
-		display('=== Setting main error handler');
+		$this->ui->ui_system('--- Setting main error handler');
 		@set_error_handler(array($this->error, 'fail'));
 
 		// Check to see if our rand_seed exists, and if not we need to execute our schema file (as long as it exists of course). :)
@@ -232,11 +228,11 @@ class failnet_core
 		}
 
 		// Load plugins
-		display('- Loading Failnet plugins');
+		$this->ui->ui_system('- Loading Failnet plugins');
 		$this->plugin('load', $this->config('plugin_list'));
 
 		// Load our config settings
-		display('- Loading config settings');
+		$this->ui->ui_system('- Loading config settings');
 		$this->sql('config', 'get_all')->execute();
 		$result = $this->sql('config', 'get_all')->fetchAll();
 		foreach($result as $row)
@@ -245,12 +241,38 @@ class failnet_core
 		}
 
 		// This is a hack to allow us to restart Failnet if we're running the script through a batch file.
-		display('- Removing termination indicator file');
+		$this->ui->ui_system('- Removing termination indicator file');
 		if(file_exists(FAILNET_ROOT . 'data/restart.inc'))
 			unlink(FAILNET_ROOT . 'data/restart.inc');
 
 		// In case of restart/reload, to prevent 'Nick already in use' (which asplodes everything)
-		usleep(500); display(array(self::HR, 'Failnet loaded and ready!', self::HR));
+		usleep(500);
+		$this->ui->ui_ready();
+	}
+
+	/**
+	 * Failnet configuration file settings load method
+	 * @param string $file - The configuration file to load
+	 * @return void
+	 */
+	private function load($file)
+	{
+		if(!@file_exists(FAILNET_ROOT . $file . '.php') || !@is_readable(FAILNET_ROOT . $file . '.php'))
+			throw_fatal("Required Failnet configuration file '$file.php' not found");
+
+		$settings = require FAILNET_ROOT . $file . '.php';
+
+		foreach($settings as $setting => $value)
+		{
+			if(property_exists($this, $setting))
+			{
+				$this->$setting = $value;
+			}
+			else
+			{
+				$this->config[$setting] = $value;
+			}
+		}
 	}
 
 	/**
@@ -270,7 +292,7 @@ class failnet_core
 			// We want this as a transaction in case anything goes wrong.
 			$this->db->beginTransaction();
 
-			display('- Initializing the database');
+			$this->ui->ui_system('- Initializing the database');
 
 			// Load up the list of files that we've got, and do stuff with them.
 			$schemas = scandir(FAILNET_ROOT . 'includes/schemas');
@@ -288,7 +310,7 @@ class failnet_core
 				}
 			}
 
-			display('- Preparing database queries...');
+			$this->ui->ui_system('--- Preparing database queries...');
 
 			// Let's prepare the default prepared statements.
 			// Config table
@@ -373,6 +395,7 @@ class failnet_core
 				else
 				{
 					$eventtype = $event->type;
+					$this->ui->ui_raw($event->buffer);
 				}
 			}
 
@@ -413,7 +436,7 @@ class failnet_core
 				{
 					call_user_func_array(array($this->irc, $item->type), $item->arguments);
 				}
-				elseif (empty($quit))
+				elseif(empty($quit))
 				{
 					$quit = $item;
 				}
@@ -439,31 +462,6 @@ class failnet_core
 	}
 
 	/**
-	 * Failnet configuration file settings load method
-	 * @param string $file - The configuration file to load
-	 * @return void
-	 */
-	private function load($file)
-	{
-		if(!@file_exists(FAILNET_ROOT . $file . '.php') || !@is_readable(FAILNET_ROOT . $file . '.php'))
-			throw_fatal("Required Failnet configuration file '$file.php' not found");
-
-		$settings = require FAILNET_ROOT . $file . '.php';
-
-		foreach($settings as $setting => $value)
-		{
-			if(property_exists($this, $setting))
-			{
-				$this->$setting = $value;
-			}
-			else
-			{
-				$this->config[$setting] = $value;
-			}
-		}
-	}
-
-	/**
 	 * Terminates Failnet, and restarts if ordered to.
 	 * @param boolean $restart - Should Failnet try to restart?
 	 * @return void
@@ -478,7 +476,8 @@ class failnet_core
 			file_put_contents(FAILNET_ROOT . 'data/restart.inc', 'yesh');
 			// Dump the log cache to the file.
 			$this->log->add('--- Restarting Failnet ---', true);
-			display('-!- Restarting Failnet');
+			$this->ui->ui_system('-!- Restarting Failnet');
+			$this->ui->ui_shutdown();
 			exit(0);
 		}
 		else
@@ -488,7 +487,8 @@ class failnet_core
 				unlink(FAILNET_ROOT . 'data/restart.inc');
 			// Dump the log cache to the file.
 			$this->log->add('--- Terminating Failnet ---', true);
-			display('-!- Terminating Failnet');
+			$this->ui->ui_system('-!- Terminating Failnet');
+			$this->ui->ui_shutdown();
 			exit(1);
 		}
 	}
@@ -504,7 +504,7 @@ class failnet_core
 	public function get($setting, $config_only = false)
 	{
 		$trace = debug_backtrace();
-		trigger_error('Depreciated method failnet_core::get() called (the method failnet_core::config() should be used instead) in ' . $trace[0]['file'] .' on line ' . $trace[0]['line'], E_USER_NOTICE);
+		$this->ui->ui_debug('Depreciated method failnet_core::get() called (the method failnet_core::config() should be used instead) in ' . $trace[0]['file'] .' on line ' . $trace[0]['line'], E_USER_NOTICE);
 		return $this->config($setting, $config_only);
 	}
 
@@ -572,6 +572,7 @@ class failnet_core
 						$this->plugins_loaded[] = $param;
 						$plugin = 'failnet_plugin_' . $param;
 						$this->plugins[] = new $plugin($this);
+						$this->ui->ui_system('--- Plugin "' . $param . '" loaded');
 						return true;
 					}
 					return false; // No double-loading of plugins.

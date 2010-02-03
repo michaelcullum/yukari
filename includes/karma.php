@@ -72,6 +72,7 @@ class failnet_karma extends failnet_common
 		// Set our fixed karma entries
 		$this->fixed = array(
 			'failnet'			=> '%s is too awesome for karma',
+			'failnet2'			=> '%s is too awesome for karma',
 			'pi'				=> '%s has a karma of ' . M_PI,
 			'Π'					=> '%s has a karma of ' . M_PI,
 			'π'					=> '%s has a karma of ' . M_PI,
@@ -83,10 +84,10 @@ class failnet_karma extends failnet_common
 			'mole'				=> '%s has a karma of 6.02214e23 molecules',
 			'avogadro'			=> '%s has a karma of 6.02214e23 molecules',
 			'spoon'				=> '%s has a no karma, because there is no spoon',
-			'4chan'				=> '%s has a karma of over NINE THOUSAAAAAAAAAAAAAAAAAAAAAAND',
-			'mc^2'				=> '%s has a karma of e',
-			'mc2'				=> '%s has a karma of e',
-			'mc²'				=> '%s has a karma of e',
+			'4chan'				=> '%s has a karma of over NINE THOUSAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+			'mc^2'				=> '%s has a karma of E',
+			'mc2'				=> '%s has a karma of E',
+			'mc²'				=> '%s has a karma of E',
 			'i'					=> '%s can haz big karma',
 		);
 

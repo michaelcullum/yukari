@@ -80,34 +80,45 @@ class failnet_error extends failnet_common
 			$errfile = substr($errfile, 1);
 		}
 
+		$error = 'in file ' . $errfile . ' on line ' . $errline . ': ' . $msg_text . PHP_EOL;
+		$handled = false;
+
 		switch ($errno)
 		{
 			case E_NOTICE:
-			case E_WARNING:
 			case E_STRICT:
 			case E_DEPRECATED:
-			case E_USER_WARNING:
 			case E_USER_NOTICE:
 			case E_USER_DEPRECATED:
-			default:
-				$error = '[Debug] PHP Notice: in file ' . $errfile . ' on line ' . $errline . ': ' . $msg_text . PHP_EOL;
-				$this->failnet->log->write(self::ERROR_LOG, time(), date('D m/d/Y - h:i:s A') . ' - ' . $error);
-				display($error);
-				return;
-				break;
+				$handled = true;
+				$this->failnet->ui->ui_notice($error);
+				$this->failnet->log->write(self::ERROR_LOG, time(), date('D m/d/Y - h:i:s A') . ' - [PHP Notice] ' . $error);
+			break;
 
+			case E_WARNING:
+			case E_USER_WARNING:
+				$handled = true;
+				$this->failnet->ui->ui_warning($error);
+				$this->failnet->log->write(self::ERROR_LOG, time(), date('D m/d/Y - h:i:s A') . ' - [PHP Warning] ' . $error);
+			break;
+
+			case E_ERROR:
 			case E_USER_ERROR:
-				$error = '[ERROR] PHP Error: in file ' . $errfile . ' on line ' . $errline . ': ' . $msg_text . PHP_EOL;
-				$this->failnet->log->write(self::ERROR_LOG, time(), date('D m/d/Y - h:i:s A') . ' - ' . $error);
-				display($error);
-				// Fatal error, so DAI.
-				$this->failnet->terminate(false);
-				break;
+				$handled = true;
+				$this->failnet->ui->ui_error($error);
+				$this->failnet->log->write(self::ERROR_LOG, time(), date('D m/d/Y - h:i:s A') . ' - [PHP Error] ' . $error);
+			break;
+		}
+
+		if($errno == E_USER_ERROR)
+		{
+			// Fatal error, so DAI.
+			$this->failnet->terminate(false);
 		}
 
 		// If we notice an error not handled here we pass this back to PHP by returning false
 		// This may not work for all php versions
-		return false;
+		return ($handled) ? true : false;
 	}
 
 	/**
@@ -120,15 +131,15 @@ class failnet_error extends failnet_common
 	{
 		if(!$is_fatal)
 		{
-			$error = '[Debug] ' . $msg . PHP_EOL;
-			$this->failnet->log->write(self::ERROR_LOG, time(), date('D m/d/Y - h:i:s A') . ' - ' . $error);
-			display($error);
+			$error = $msg . PHP_EOL;
+			$this->failnet->log->write(self::ERROR_LOG, time(), date('D m/d/Y - h:i:s A') . ' - [Internal notice] ' . $error);
+			$this->failnet->ui->ui_system('[Internal error] ' . $error);
 		}
 		else
 		{
-			$error = '[ERROR] ' . $msg . PHP_EOL;
-			$this->failnet->log->write(self::ERROR_LOG, time(), date('D m/d/Y - h:i:s A') . ' - ' . $error);
-			display($error);
+			$error = $msg . PHP_EOL;
+			$this->failnet->log->write(self::ERROR_LOG, time(), date('D m/d/Y - h:i:s A') . ' - [Internal error] ' . $error);
+			$this->failnet->ui->ui_system('[Internal error] ' . $error);
 			// Fatal error, so DAI.
 			$this->failnet->terminate(false);
 		}
