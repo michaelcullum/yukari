@@ -41,11 +41,20 @@
  */
 class failnet_plugin_karma extends failnet_plugin_common
 {
+	public function help(&$name, &$commands)
+	{
+		$name = 'karma';
+		$commands = array(
+			'karma'			=> 'karma {$name} - (no auth) - Returns the karma level for the specified user/object/whatever',
+		);
+	}
+
 	public function cmd_privmsg()
 	{
 		// Check for karma changes first
 		$text = $this->event->get_arg('text');
 		$sender = $this->event->hostmask->nick;
+		$this->set_msg_args(($this->failnet->config('speak')) ? $this->event->source() : $this->event->hostmask->nick);
 		if($this->event->fromchannel === true && $this->failnet->karma->check_word($text))
 		{
 			$term = strtolower(trim($text));
@@ -74,7 +83,7 @@ class failnet_plugin_karma extends failnet_plugin_common
 				// Make sure we're getting the karma for SOMETHING.
 				if(empty($text))
 				{
-					$this->call_privmsg($this->event->source(), $this->event->hostmask->nick . ': You know you DO need to specify something, right?');
+					$this->msg($this->event->hostmask->nick . ': You know you DO need to specify something, right?');
 					return;
 				}
 
@@ -88,15 +97,15 @@ class failnet_plugin_karma extends failnet_plugin_common
 				$karma = $this->failnet->karma->get_karma($term);
 				if(is_null($karma))
 				{
-					$this->call_privmsg($this->event->source(), sprintf('%s has a karma of 0.', $term));
+					$this->msg(sprintf('%s has a karma of 0.', $term));
 				}
 				elseif(is_int($karma))
 				{
-					$this->call_privmsg($this->event->source(), sprintf('%s has a karma of ' . $karma . '.', $term));
+					$this->msg(sprintf('%s has a karma of ' . $karma . '.', $term));
 				}
 				else
 				{
-					$this->call_privmsg($this->event->source(), $karma);
+					$this->msg($karma);
 				}
 			break;
 		}
