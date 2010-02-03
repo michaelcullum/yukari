@@ -11,7 +11,7 @@
  * License:		GNU General Public License - Version 2
  *
  *===================================================================
- * 
+ *
  */
 
 /**
@@ -27,12 +27,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://opensource.org/licenses/gpl-2.0.php>.
  */
- 
+
 
 /**
  * Failnet - Firefly plugin,
- * 		This allows users to pull up a random episode of Firefly, or even pull up the description for a specified episode. 
- * 
+ * 		This allows users to pull up a random episode of Firefly, or even pull up the description for a specified episode.
+ *
  *
  * @package plugins
  * @author Obsidian
@@ -64,12 +64,20 @@ class failnet_plugin_firefly extends failnet_plugin_common
 		),
 		/**
 		 * One day....one day...
-		 * 
+		 *
 		2	=> array(
-			
+
 		),
 		*/
 	);
+
+	public function help(&$name, &$commands)
+	{
+		$name = 'firefly';
+		$commands = array(
+			'firefly'		=> 'firefly s{$season}e{$episode} - (no auth) - Returns an episodes info if an episode is specified; if no season/episode is specified, returns data for a random episode',
+		);
+	}
 
 	public function cmd_privmsg()
 	{
@@ -79,6 +87,8 @@ class failnet_plugin_firefly extends failnet_plugin_common
 			return;
 
 		$cmd = $this->purify($text);
+		$this->set_msg_args(($this->failnet->config('speak')) ? $this->event->source() : $this->event->hostmask->nick);
+
 		$sender = $this->event->hostmask->nick;
 		$hostmask = $this->event->hostmask;
 		switch ($cmd)
@@ -102,7 +112,7 @@ class failnet_plugin_firefly extends failnet_plugin_common
 					{
 						$results = 'Invalid data provided';
 					}
-					
+
 				}
 				else
 				{
@@ -110,9 +120,8 @@ class failnet_plugin_firefly extends failnet_plugin_common
 					$results = $this->episodes[$rand][array_rand($this->episodes[$rand])];
 				}
 
-				$this->call_privmsg($this->event->source(), $results);
+				$this->msg($results);
 			break;
 		}
 	}
 }
-
