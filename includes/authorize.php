@@ -51,6 +51,9 @@ class failnet_authorize extends failnet_common
 	 */
 	public $access = array();
 
+	/**
+	 * @var array - List of authlevels and their text translations
+	 */
 	public $authlevels = array();
 
 /**

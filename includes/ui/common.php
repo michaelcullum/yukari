@@ -74,7 +74,13 @@ class failnet_ui_common extends failnet_common
 	 * Method called on init that dumps the startup text for Failnet to output
 	 * @return void
 	 */
-	public function ui_header() { }
+	public function ui_startup() { }
+
+	/**
+	 * Method called that dumps Failnet's ready-notice text to output
+	 * @return void
+	 */
+	public function ui_ready() { }
 
 	/**
 	 * Method called on shutdown that dumps the shutdown text for Failnet to output
@@ -99,6 +105,12 @@ class failnet_ui_common extends failnet_common
 	 * @return void
 	 */
 	public function ui_system($data) { }
+	
+	/**
+	 * Method called when a system event is triggered or occurs in Failnet
+	 * @return void
+	 */
+	public function ui_event($data) { }
 
 	/**
 	 * Method being called on a PHP notice being thrown
