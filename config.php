@@ -72,6 +72,9 @@ return array(
 		'offense',
 	),
 
+// UI system to use...most of the time this should be "terminal"
+	'ui'				=> 'terminal',
+
 // What is the nickname service bot? If there isn't, leave this as an empty string.
 	'nickbot'			=> 'NickServ',
 
