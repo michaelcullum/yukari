@@ -43,7 +43,7 @@ class failnet_plugin_ignore extends failnet_plugin_common
 {
 	public function help(&$name, &$commands)
 	{
-		$name = 'admin';
+		$name = 'ignore';
 		$commands = array(
 			'ignore'			=> 'ignore {$hostmask} - (authlevel ADMIN) - Orders Failnet to ignore messages from the specified hostmask',
 			'unignore'			=> 'unignore {$hostmask} - (authlevel ADMIN) - Orders Failnet to no longer ignore messages from the specified hostmask',
