@@ -11,7 +11,7 @@
  * License:		GNU General Public License - Version 2
  *
  *===================================================================
- * 
+ *
  */
 
 /**
@@ -31,8 +31,8 @@
 
 /**
  * Failnet - Ignore handling plugin,
- * 		Used as the shell for Failnet's user ignore system. 
- * 
+ * 		Used as the shell for Failnet's user ignore system.
+ *
  *
  * @package plugins
  * @author Obsidian
@@ -59,6 +59,8 @@ class failnet_plugin_ignore extends failnet_plugin_common
 			return;
 
 		$cmd = $this->purify($text);
+		$this->set_msg_args(($this->failnet->config('speak')) ? $this->event->source() : $this->event->hostmask->nick);
+
 		$sender = $this->event->hostmask->nick;
 		$hostmask = $this->event->hostmask;
 		switch ($cmd)
@@ -69,20 +71,20 @@ class failnet_plugin_ignore extends failnet_plugin_common
 				// Check auths
 				if($this->failnet->authorize->authlevel($hostmask) < self::AUTH_ADMIN)
 				{
-					$this->call_privmsg($this->event->source(), $this->failnet->deny());
+					$this->msg($this->failnet->deny());
 					return;
 				}
 
 				// Check for no params
 				if(empty($text))
 				{
-					$this->call_privmsg($this->event->source(), 'Invalid arguments specified for command');
+					$this->msg($this->event->source(), 'Invalid arguments specified for command');
 					return;
 				}
 
 				$success = $this->failnet->ignore->add_ignore($hostmask, $text);
 
-				$this->call_privmsg($this->event->source(), ($success) ? 'User successfully ignored' : 'Unable to ignore user -- user hostmask already ignored');
+				$this->msg(($success) ? 'User successfully ignored' : 'Unable to ignore user -- user hostmask already ignored');
 			break;
 
 			case 'delignore':
@@ -90,27 +92,39 @@ class failnet_plugin_ignore extends failnet_plugin_common
 			case '-ignore':
 				if($this->failnet->authorize->authlevel($hostmask) < self::AUTH_ADMIN)
 				{
-					$this->call_privmsg($this->event->source(), $this->failnet->deny());
+					$this->msg($this->failnet->deny());
 					return;
 				}
 
 				// Check for no params
 				if(empty($text))
 				{
-					$this->call_privmsg($this->event->source(), 'Invalid arguments specified for command');
+					$this->msg('Invalid arguments specified for command');
 					return;
 				}
 
 				$success = $this->failnet->ignore->del_ignore($hostmask, $text);
 
-				$this->call_privmsg($this->event->source(), ($success) ? 'User successfully unignored' : 'Unable to ignore user -- user hostmask not ignored');
+				$this->msg(($success) ? 'User successfully unignored' : 'Unable to ignore user -- user hostmask not ignored');
 			break;
-		
+
 			case 'ignored':
+				if($this->failnet->authorize->authlevel($hostmask) < self::AUTH_ADMIN)
+				{
+					$this->msg($this->failnet->deny());
+					return;
+				}
+
+				// Check for no params
+				if(empty($text))
+				{
+					$this->msg('Invalid arguments specified for command');
+					return;
+				}
+
 				$result = $this->failnet->ignore->ignored($hostmask, $text);
-				$this->call_privmsg($this->event->source(),'The specified hostmask is ' . (($result) ? '' : 'not') . ' currently ignored.');
+				$this->msg('The specified hostmask is ' . (($result) ? '' : 'not') . ' currently ignored.');
 			break;
 		}
 	}
 }
-
