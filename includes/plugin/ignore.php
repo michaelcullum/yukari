@@ -47,7 +47,7 @@ class failnet_plugin_ignore extends failnet_plugin_common
 		$commands = array(
 			'ignore'			=> 'ignore {$hostmask} - (authlevel ADMIN) - Orders Failnet to ignore messages from the specified hostmask',
 			'unignore'			=> 'unignore {$hostmask} - (authlevel ADMIN) - Orders Failnet to no longer ignore messages from the specified hostmask',
-			'ignored'			=> 'ignored {$hostmask} - (no auth) - Checks to see if the specified hostmask $hostmask is currently being ignored',
+			'ignored'			=> 'ignored {$hostmask} - (authlevel ADMIN) - Checks to see if the specified hostmask $hostmask is currently being ignored',
 		);
 	}
 
