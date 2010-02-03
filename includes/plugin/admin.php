@@ -300,7 +300,7 @@ class failnet_plugin_admin extends failnet_plugin_common
 					return;
 				}
 
-				$this->msg('I\'ve been running since ' . date('l jS, Y [h:i:s A]', $this->failnet->start));
+				$this->msg('I\'ve been running since ' . date('l F jS, Y [h:i:s A]', $this->failnet->start));
 			break;
 
 			// Returns how long Failnet has been running for
