@@ -6,7 +6,7 @@
 	Script info:
 -------------------------------------------------------------------
  Version:		2.0.0 Alpha 1
- Copyright:		(c) 2009 - Failnet Project
+ Copyright:		(c) 2009 - 2010 -- Failnet Project
  License:		http://opensource.org/licenses/gpl-2.0.php  |  GNU Public License v2
 
 ===================================================================
@@ -28,6 +28,7 @@
 -------------------------------------------------------------------
  Copyright:		(c) 2009 - tobias382
  License:		http://www.gnu.org/licenses/lgpl.html  |  GNU Lesser General Public License version 3.0
+ (Note: Code is now licensed until New BSD License...all code was pulled before the relicense however)
  Source:		Available at http://www.assembla.com/spaces/files/phergie
 
 ===================================================================
@@ -51,8 +52,8 @@ What is Failnet?
 -------------------------------------------------------------------
 
 Failnet is an IRC bot built in PHP, coded by Obsidian for something 
-to do.  He's coded in PHP5 Object Oriented Programming, and mainly 
-designed for infobot use along with channel moderation.
+to do.  He's coded in PHP5 Object Oriented Programming, and mainly
+designed for aiding in channel monitoring.
 
 ===================================================================
 
