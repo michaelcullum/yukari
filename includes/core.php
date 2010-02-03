@@ -178,8 +178,8 @@ class failnet_core
 		$this->load($cfg_file);
 		
 		// Prepare the UI...
-		define('OUTPUT_LEVEL', $this->config['output']);
-		$ui = 'failnet_ui_' . $this->config['ui'];
+		define('OUTPUT_LEVEL', $this->config('output'));
+		$ui = 'failnet_ui_' . $this->config('ui');
 		$this->ui = new $ui($this);
 
 		// Fire off the startup text.
@@ -282,7 +282,7 @@ class failnet_core
 	public function setup_db()
 	{
 		// Load/setup the database
-		display('- Connecting to the database');
+		$this->ui->ui_system('- Connecting to the database');
 		try
 		{
 			// Initialize the database connection

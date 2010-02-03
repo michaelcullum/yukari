@@ -40,7 +40,7 @@
  * @copyright (c) 2009 - 2010 -- Failnet Project
  * @license GNU General Public License - Version 2
  */
-class failnet_ui_common extends failnet_common
+class failnet_ui_terminal extends failnet_ui_common
 {
 	/**
 	 * Specialized init function to allow class construction to be easier.

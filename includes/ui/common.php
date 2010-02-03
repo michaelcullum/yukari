@@ -46,6 +46,13 @@ class failnet_ui_common extends failnet_common
 	 * @var string - Buffer of the stuff we are going to process
 	 */
 	public $buffer = '';
+	
+	/**
+	 * Specialized init function to allow class construction to be easier.
+	 * @see includes/failnet_common#init()
+	 * @return void
+	 */
+	public function init() { }
 
 	/**
 	 * Determine if this message type should be sent with the current output level.
