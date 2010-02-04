@@ -105,6 +105,7 @@ class failnet_plugin_ping extends failnet_plugin_common
 		elseif($time - $this->last_event > $this->failnet->config('ping_wait'))
 		{
 			$this->last_ping = time();
+			$this->failnet->ui->ui_system('Pinging server to maintain connection...');
 			$this->call_ping($this->failnet->config('nick'), $this->last_ping);
 		}
 	}
