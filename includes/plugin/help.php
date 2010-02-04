@@ -83,7 +83,7 @@ class failnet_plugin_help extends failnet_plugin_common
 			case 'help':
 				if($text !== false)
 				{
-					$this->msg((isset($this->failnet->help->commands[$text])) ? 'Command documentation: ' . $this->failnet->help->commands[$text] : 'Invalid command specified.');
+					$this->msg((isset($this->failnet->help->commands[$text])) ? 'Command documentation: ' . $this->failnet->config('cmd_prefix') . $this->failnet->help->commands[$text] : 'Invalid command specified.');
 				}
 				else
 				{
