@@ -91,4 +91,5 @@ class failnet_plugin_help extends failnet_plugin_common
 				}
 			break;
 		}
+	}
 }
