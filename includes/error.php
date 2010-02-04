@@ -35,7 +35,7 @@
  * 		Used as Failnet's error handler.
  *
  *
- * @package logs
+ * @package nodes
  * @author Obsidian
  * @copyright (c) 2009 - 2010 -- Failnet Project
  * @license GNU General Public License - Version 2

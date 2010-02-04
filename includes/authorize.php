@@ -34,7 +34,7 @@
  * 		Used as Failnet's authorization handler.
  *
  *
- * @package auth
+ * @package nodes
  * @author Obsidian
  * @copyright (c) 2009 - 2010 -- Failnet Project
  * @license GNU General Public License - Version 2
@@ -433,4 +433,3 @@ class failnet_authorize extends failnet_common
 		}
 	}
 }
-

@@ -83,12 +83,6 @@ class failnet_core
 	public $nick = '';
 
 	/**
-	 * @var boolean - Should we be in debug mode?
-	 * @todo overhaul, maybe with a real constant instead
-	 */
-	public $debug = false;
-
-	/**
 	 * @var boolean - Should we be in silent mode?
 	 */
 	public $speak = true;
@@ -113,24 +107,13 @@ class failnet_core
 	 */
 	public $ui = NULL;
 
-	//  @todo move the p_commands and p_help properties to the help node when it is created
-    /**
-     * @var array - Array of plugins and what commands they contain
-     */
-    public $p_commands = array();
-
-    /**
-     * @var array - Array of help entries for individual commands
-     */
-    public $p_help = array();
-
 	/**
 	 * @var array - Prepared PDO statements for use throughout Failnet
 	 */
 	public $statements = array();
 
 	/**
-	 * @var boolean - DO NOT _EVER_ CHANGE THIS, FOR THE SAKE OF HUMANITY.  {@link http://xkcd.com/534/ }
+	 * @var boolean - DO NOT _EVER_ CHANGE THIS, FOR THE SAKE OF HUMANITY.  {@see http://xkcd.com/534/ }
 	 */
 	private $can_become_skynet = FALSE;
 
@@ -140,12 +123,28 @@ class failnet_core
 	const HR = '---------------------------------------------------------------------';
 	const ERROR_LOG = 'error';
 	const USER_LOG = 'user';
-	const FOUNDER = 32;
-	const ADMIN = 16;
-	const OP = 8;
-	const HALFOP = 4;
-	const VOICE = 2;
-	const REGULAR = 1;
+
+	/**
+	 * IRC mode flags
+	 * @deprecated
+	 */
+	const IRC_FOUNDER = 32;
+	const IRC_ADMIN = 16;
+	const IRC_OP = 8;
+	const IRC_HALFOP = 4;
+	const IRC_VOICE = 2;
+	const IRC_REGULAR = 1;
+
+	/**
+	 * Auth levels for Failnet
+	 */
+	const AUTH_OWNER = 6;
+	const AUTH_SUPERADMIN = 5;
+	const AUTH_ADMIN = 4;
+	const AUTH_TRUSTEDUSER = 3;
+	const AUTH_KNOWNUSER = 2;
+	const AUTH_REGISTEREDUSER = 1;
+	const AUTH_UNKNOWNUSER = 0;
 
 /**
  * Failnet core methods

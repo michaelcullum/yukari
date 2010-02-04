@@ -31,10 +31,10 @@
 
 /**
  * Failnet - Ignore handling class,
- * 		Used as Failnet's handler for ignoring users based on hostmasks. 
- * 
+ * 		Used as Failnet's handler for ignoring users based on hostmasks.
  *
- * @package ignore
+ *
+ * @package nodes
  * @author Obsidian
  * @copyright (c) 2009 - 2010 -- Failnet Project
  * @license GNU General Public License - Version 2
@@ -42,17 +42,17 @@
 class failnet_ignore extends failnet_common
 {
 	/**
-	 * preg_match pattern cache used to check for an ignored user 
+	 * preg_match pattern cache used to check for an ignored user
 	 * @var string
 	 */
 	private $cache = '';
 
 	/**
-	 * List of ignored user hostmasks, used to rebuild the preg_match ignore pattern when necessary 
+	 * List of ignored user hostmasks, used to rebuild the preg_match ignore pattern when necessary
 	 * @var array
 	 */
 	private $users = array();
-	
+
 	/**
 	 * Specialized init function to allow class construction to be easier.
 	 * @see includes/failnet_common#init()
@@ -81,7 +81,7 @@ class failnet_ignore extends failnet_common
 		// Are _any_ hostmasks ignored?
 		if(empty($this->users))
 			return false;
-		return preg_match($this->cache, $target); 
+		return preg_match($this->cache, $target);
 	}
 
 	/**
@@ -101,7 +101,7 @@ class failnet_ignore extends failnet_common
 			// Now we need to rebuild the cached PCRE pattern
 			$this->users[] = $target;
 			$this->cache = hostmasks_to_regex($this->users);
-			return true; 
+			return true;
 		}
 		else
 		{
@@ -138,4 +138,3 @@ class failnet_ignore extends failnet_common
 		}
 	}
 }
-

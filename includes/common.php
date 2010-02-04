@@ -66,6 +66,7 @@ abstract class failnet_common
 
 	/**
 	 * IRC mode flags
+	 * @deprecated
 	 */
 	const IRC_FOUNDER = 32;
 	const IRC_ADMIN = 16;

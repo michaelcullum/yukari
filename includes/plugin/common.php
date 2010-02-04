@@ -55,6 +55,9 @@ abstract class failnet_plugin_common extends failnet_common
 	 */
 	public $events = array();
 
+	/**
+	 * @var string - Who shall recieve our messages, if we're using $this->msg ?
+	 */
 	public $msg_recipient = '';
 
 /**
@@ -64,7 +67,15 @@ abstract class failnet_plugin_common extends failnet_common
 	 * Handler method for plugin load
 	 * @return void
 	 */
-	public function init() { }
+	public function init()
+	{
+		if(isset($this->failnet->help))
+		{
+			$this->help($name, $commands);
+			if(!empty($name) && !empty($commands))
+				$this->failnet->help->collect($name, $commands);
+		}
+	}
 
 	/**
 	 * Checks to see if this is has the proper command prefix for this message

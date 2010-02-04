@@ -11,7 +11,7 @@
  * License:		GNU General Public License - Version 2
  *
  *===================================================================
- * 
+ *
  */
 
 /**
@@ -33,9 +33,9 @@
 /**
  * Failnet - IRC class,
  * 		Used as Failnet's IRC command class, for issuing IRC commands correctly as per RFC guidelines.
- * 
  *
- * @package connection
+ *
+ * @package nodes
  * @author Obsidian
  * @copyright (c) 2009 - 2010 -- Failnet Project
  * @license GNU General Public License - Version 2
@@ -46,17 +46,17 @@ class failnet_irc extends failnet_common
 	 * Some methods here (actually, quite a few) borrowed from Phergie.
 	 * See /README for more information.
 	 */
-	
+
 	/**
 	 * Specialized init function to allow class construction to be easier.
 	 * @see includes/failnet_common#init()
 	 * @return void
 	 */
 	public function init() { }
-	
+
 	/**
 	 * Joins a channel.
-	 * @param string $channels - Comma-delimited list of channels to join 
+	 * @param string $channels - Comma-delimited list of channels to join
 	 * @param string $keys - Optional comma-delimited list of channel keys
 	 * @return void
 	 */
@@ -73,7 +73,7 @@ class failnet_irc extends failnet_common
 	/**
 	 * Leaves a channel.
 	 * @param string $channels - Comma-delimited list of channels to leave
-	 * @return void 
+	 * @return void
 	 */
 	public function part($channel, $reason = NULL)
 	{
@@ -221,9 +221,9 @@ class failnet_irc extends failnet_common
 
 	/**
 	 * Sends a CTCP response to a user.
-	 * @param string $nick - User nick 
+	 * @param string $nick - User nick
 	 * @param string $command - Command to send
-	 * @param string|array $args - String or array of sequential arguments 
+	 * @param string|array $args - String or array of sequential arguments
 	 *        (optional)
 	 * @return void
 	 */
@@ -234,7 +234,7 @@ class failnet_irc extends failnet_common
 
 		$buffer = rtrim(strtoupper($command) . ' ' . $args);
 
-		$this->notice($nick, chr(1) . $buffer . chr(1)); 
+		$this->notice($nick, chr(1) . $buffer . chr(1));
 	}
 
 	/**
@@ -302,4 +302,3 @@ class failnet_irc extends failnet_common
 		$this->failnet->socket->close();
 	}
 }
-
