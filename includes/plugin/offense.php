@@ -47,6 +47,20 @@ class failnet_plugin_offense extends failnet_plugin_common
 	 */
 	public $thegame = array();
 
+	public function help(&$name, &$commands)
+	{
+		$name = 'offense';
+		$commands = array(
+			'slap'			=> 'slap {$target} - (no auth) - Causes Failnet to beat the specified target in a random way',
+			'facepalm'		=> 'alias of slap',
+			'beat'			=> 'alias of slap',
+			'stab'			=> 'alias of slap',
+			'attack'		=> 'alias of slap',
+			'kill'			=> 'alias of slap',
+			'nub'			=> 'nub {$target} - (no auth) - Marks the target as a nub',
+		);
+	}
+
 	public function tick()
 	{
 		foreach($this->thegame as $channel_name => $channel)
@@ -54,10 +68,10 @@ class failnet_plugin_offense extends failnet_plugin_common
 			if($channel['enabled'] === false || !isset($this->failnet->chans[$channel_name]))
 				continue;
 
-			if(($channel['last'] + 450) < time())
+			if(($channel['last'] + 500) < time())
 			{
 				$channel['last'] = time();
-				if(rand(1, 15) == 1)
+				if(rand(1, 30) == 1)
 				{
 					$game_fail = array(
 						'Hey everyone, did you just win the game?',
@@ -84,6 +98,8 @@ class failnet_plugin_offense extends failnet_plugin_common
 			return;
 
 		$cmd = $this->purify($text);
+		$this->set_msg_args(($this->failnet->config('speak')) ? $this->event->source() : $this->event->hostmask->nick);
+
 		$sender = $this->event->hostmask->nick;
 		$hostmask = $this->event->hostmask;
 		switch ($cmd)
@@ -98,14 +114,14 @@ class failnet_plugin_offense extends failnet_plugin_common
 				// Self-defense!
 				if($this->failnet->checkuser($text))
 				{
-					$this->call_privmsg($this->event->source(), $this->failnet->deny());
+					$this->msg($this->failnet->deny());
 					return;
 				}
 
 				// No null-victims
 				if(empty($text))
 				{
-					$this->call_privmsg($this->event->source(), $this->event->hostmask->nick . ': That was full of fail.');
+					$this->msg($this->event->hostmask->nick . ': That was full of fail.');
 					return;
 				}
 
@@ -120,21 +136,21 @@ class failnet_plugin_offense extends failnet_plugin_common
 					'feeds %1$s to the Ravenous Bugblatter Beast of Traal',
 					'stuffs %1$s into a garbage compactor and activates it',
 				);
-				$this->call_action($this->event->source(), sprintf($violence[array_rand($violence)], $text));
+				$this->call_action(($this->failnet->config('speak')) ? $this->event->source() : $this->event->hostmask->nick, sprintf($violence[array_rand($violence)], $text));
 			break;
 
 			case 'nub':
 				// Self-defense!
 				if($this->failnet->checkuser($text))
 				{
-					$this->call_privmsg($this->event->source(), $this->failnet->deny());
+					$this->msg($this->failnet->deny());
 					return;
 				}
 
 				// No null-victims
 				if(empty($text))
 				{
-					$this->call_privmsg($this->event->source(), $this->event->hostmask->nick . ': That was full of fail.');
+					$this->msg('Well, that was full of fail.');
 					return;
 				}
 
@@ -152,7 +168,7 @@ class failnet_plugin_offense extends failnet_plugin_common
 						'start'			=> date('D m/d/Y - h:i:s A'),
 						'who'			=> $this->event->hostmask->nick . ' [' . $this->event->hostmask . ']',
 					);
-					$this->call_privmsg($this->event->source(), 'Alrighty, game mode enabled.');
+					$this->msg('Alrighty, game mode enabled.');
 				}
 				elseif($text !== false)
 				{
@@ -162,12 +178,12 @@ class failnet_plugin_offense extends failnet_plugin_common
 						'start'			=> date('D m/d/Y - h:i:s A'),
 						'who'			=> $this->event->hostmask->nick . ' [' . $this->event->hostmask . ']',
 					);
-					$this->call_privmsg($sender, 'Alrighty, game mode enabled.');
+					$this->msg('Alrighty, game mode enabled.');
 				}
 				else
 				{
 					// We sent this via a private message and did not supply the channel.  That was smart.
-					$this->call_privmsg($sender, 'Please specify a channel.');
+					$this->msg('Please specify a channel.');
 				}
 			break;
 
@@ -180,7 +196,7 @@ class failnet_plugin_offense extends failnet_plugin_common
 						'enabled'		=> false,
 						'last'			=> time(),
 					);
-					$this->call_privmsg($this->event->source(), 'Okay, game mode disabled.');
+					$this->msg('Okay, game mode disabled.');
 				}
 				elseif($text !== false)
 				{
@@ -188,12 +204,12 @@ class failnet_plugin_offense extends failnet_plugin_common
 						'enabled'		=> false,
 						'last'			=> time(),
 					);
-					$this->call_privmsg($sender, 'Okay, game mode disabled.');
+					$this->msg('Okay, game mode disabled.');
 				}
 				else
 				{
 					// We sent this via a private message and did not supply the channel.  That was smart.
-					$this->call_privmsg($sender, 'Please specify a channel.');
+					$this->msg('Please specify a channel.');
 				}
 			break;
 
@@ -205,28 +221,28 @@ class failnet_plugin_offense extends failnet_plugin_common
 				{
 					if(!isset($this->thegame[$this->event->source()]) || $this->thegame[$this->event->source()]['enabled'] !== true)
 					{
-						$this->call_privmsg($this->event->source(), 'The Game is not afoot anyways.');
+						$this->msg('The Game is not afoot anyways.');
 					}
 					else
 					{
-						$this->call_privmsg($this->event->source(), 'The Game was begun by ' . $this->thegame[$this->event->source()]['who'] . ' on ' . $this->thegame[$this->event->source()]['start']);
+						$this->msg('The Game was begun by ' . $this->thegame[$this->event->source()]['who'] . ' on ' . $this->thegame[$this->event->source()]['start']);
 					}
 				}
 				elseif($text !== false)
 				{
 					if(!isset($this->thegame[$text]) || $this->thegame[$text]['enabled'] !== true)
 					{
-						$this->call_privmsg($sender, 'The Game is not afoot in that channel anyways.');
+						$this->msg('The Game is not afoot in that channel anyways.');
 					}
 					else
 					{
-						$this->call_privmsg($sender, 'The Game was begun by ' . $this->thegame[$text]['who'] . ' on ' . $this->thegame[$text]['start']);
+						$this->msg('The Game was begun by ' . $this->thegame[$text]['who'] . ' on ' . $this->thegame[$text]['start']);
 					}
 				}
 				else
 				{
 					// We sent this via a private message and did not supply the channel.  That was smart.
-					$this->call_privmsg($sender, 'Please specify a channel.');
+					$this->msg('Please specify a channel.');
 				}
 			break;
 
@@ -236,37 +252,37 @@ class failnet_plugin_offense extends failnet_plugin_common
 				{
 					if(!isset($this->thegame[$this->event->source()]) || $this->thegame[$this->event->source()]['enabled'] !== true)
 					{
-						$this->call_privmsg($this->event->source(), 'The Game is not ongoing.');
+						$this->msg('The Game is not ongoing.');
 					}
 					else
 					{
-						$this->call_privmsg($this->event->source(), 'The Game is afoot.');
+						$this->msg('The Game is afoot.');
 					}
 				}
 				elseif($text !== false)
 				{
 					if(!isset($this->thegame[$text]) || $this->thegame[$text]['enabled'] !== true)
 					{
-						$this->call_privmsg($sender, 'The Game is not ongoing in that channel.');
+						$this->msg('The Game is not ongoing in that channel.');
 					}
 					else
 					{
-						$this->call_privmsg($sender, 'The Game is afoot in that channel.');
+						$this->msg('The Game is afoot in that channel.');
 					}
 				}
 				else
 				{
 					// We sent this via a private message and did not supply the channel.  That was smart.
-					$this->call_privmsg($sender, 'Please specify a channel.');
+					$this->msg('Please specify a channel.');
 				}
 			break;
 
 			case 'whatisthegame':
-				$this->call_privmsg($this->event->source(), (($text === false) ? $this->event->hostmask->nick : $text) . ': Let me tell you about The Game.');
-				$this->call_privmsg($this->event->source(), 'The Game is a simple Game, and there are three rules.');
-				$this->call_privmsg($this->event->source(), 'Rule 1) You are always playing The Game.');
-				$this->call_privmsg($this->event->source(), 'Rule 2) Every time you think about The Game, you lose.');
-				$this->call_privmsg($this->event->source(), 'Rule 3) Loss of The Game must be announced to someone else.');
+				$this->msg((($text === false) ? $this->event->hostmask->nick : $text) . ': Let me tell you about The Game.');
+				$this->msg('The Game is a simple Game, and there are three rules.');
+				$this->msg('Rule 1) You are always playing The Game.');
+				$this->msg('Rule 2) Every time you think about The Game, you lose.');
+				$this->msg('Rule 3) Loss of The Game must be announced to someone else.');
 			break;
 		}
 	}
