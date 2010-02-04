@@ -104,10 +104,6 @@ class failnet_socket extends failnet_common
 		// Strip the trailing newline from the buffer
 		$buffer = rtrim($buffer);
 
-		// If debugging mode is enabled, output the received event
-		if($this->failnet->debug)
-			display($buffer);
-
 		// If the event is from a user...
 		if(substr($buffer, 0, 1) == ':')
 		{
@@ -249,10 +245,6 @@ class failnet_socket extends failnet_common
 
 		// Transmit the command over the socket connection
 		fwrite($this->socket, $buffer . "\r\n");
-
-		// If debugging mode is enabled, output the transmitted command
-		if($this->failnet->debug)
-			display($buffer);
 
 		// Return the command string that was transmitted
 		return $buffer;

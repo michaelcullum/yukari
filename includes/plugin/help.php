@@ -72,7 +72,7 @@ class failnet_plugin_help extends failnet_plugin_common
 			case 'help-c':
 				if($text !== false)
 				{
-					$this->msg((isset($this->failnet->help->index[$text])) ? 'Commands available in plugin: ' . implode(', ' . $this->failnet->help->index[$text]) : 'Invalid plugin specified.');
+					$this->msg((isset($this->failnet->help->index[$text])) ? 'Commands available in plugin: ' . implode(', ', $this->failnet->help->index[$text]) : 'Invalid plugin specified.');
 				}
 				else
 				{
@@ -83,11 +83,12 @@ class failnet_plugin_help extends failnet_plugin_common
 			case 'help':
 				if($text !== false)
 				{
-					$this->msg((isset($this->failnet->help->commands[$text])) ? 'Command documentation: ' . implode(', ' . $this->failnet->help->commands[$text]) : 'Invalid command specified.');
+					$this->msg((isset($this->failnet->help->commands[$text])) ? 'Command documentation: ' . $this->failnet->help->commands[$text] : 'Invalid command specified.');
 				}
 				else
 				{
 					$this->msg('Please specify a command for retrieval of command help documentation');
+					$this->msg('For general help, please try ' . $this->failnet->config('cmd_prefix') . 'help help, ' . $this->failnet->config('cmd_prefix') . 'help help-p, and ' . $this->failnet->config('cmd_prefix') . 'help help-c');
 				}
 			break;
 		}

@@ -41,9 +41,9 @@
  */
 class failnet_help extends failnet_common
 {
-	private $index = array();
+	public $index = array();
 
-	private $commands = array();
+	public $commands = array();
 
 	/**
 	 * Specialized init function to allow class construction to be easier.
@@ -62,7 +62,7 @@ class failnet_help extends failnet_common
 			{
 				$this->failnet->ui->ui_debug('Duplicate command name within dynamic help system detected');
 			}
-			$this->commands[$c_name][] = $c_value;
+			$this->commands[$c_name] = $c_value;
 		}
 		$this->index[$name] = $commands_index;
 	}
