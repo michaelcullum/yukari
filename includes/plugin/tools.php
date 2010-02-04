@@ -11,7 +11,7 @@
  * License:		GNU General Public License - Version 2
  *
  *===================================================================
- * 
+ *
  */
 
 /**
@@ -27,12 +27,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://opensource.org/licenses/gpl-2.0.php>.
  */
- 
+
 
 /**
  * Failnet - Tools plugin,
- * 		This allows users to use some tools provided by PHP via Failnet. 
- * 
+ * 		This allows users to use some tools provided by PHP via Failnet.
+ *
  *
  * @package plugins
  * @author Obsidian
@@ -41,6 +41,24 @@
  */
 class failnet_plugin_tools extends failnet_plugin_common
 {
+	public function help(&$name, &$commands)
+	{
+		$name = 'tools';
+		$commands = array(
+			'+b64'			=> '+b64 {$text} - (no auth) - Returns the specified text encoded in base64',
+			'-b64'			=> '-b64 {$text} - (no auth) - Returns the specified text decoded from base64',
+			'+url'			=> '+url {$text} - (no auth) - Returns the specified text URL encoded',
+			'-url'			=> '-url {$text} - (no auth) - Returns the specified text URL decoded',
+			'+html'			=> '+html {$text} - (no auth) - Returns the specified text with HTML entities properly encoded',
+			'-html'			=> '-html {$text} - (no auth) - Returns the specified text with HTML entities decoded',
+			'rot13'			=> 'rot13 {$text} - (no auth) - Returns the specified text encoded with ROT13',
+			'md5'			=> 'md5 {$text} - (no auth) - Returns the MD5 checksum for the specified text',
+			'count'			=> 'count {$text} - (no auth) - Returns the number of characters in the specified text',
+			'bytes'			=> 'bytes {$bytes} - (no auth) - Converts the specified number of bytes (or KB, MB, GB, TB) into the lowest common denominator; be sure to specify the size of the measurement in B/KB/MB/GB/TB, otherwise the conversion will fail.',
+			'f2c'			=> 'f2c {$temperature} - (no auth) - Returns the temperature in Celsius based on the Fahrenheit temperature specified',
+			'c2f'			=> 'c2f {$temperature} - (no auth) - Returns the temperature in Fahrenheit based on the Celsius temperature specified',
+		);
+	}
 
 	public function cmd_privmsg()
 	{
@@ -50,6 +68,8 @@ class failnet_plugin_tools extends failnet_plugin_common
 			return;
 
 		$cmd = $this->purify($text);
+		$this->set_msg_args(($this->failnet->config('speak')) ? $this->event->source() : $this->event->hostmask->nick);
+
 		$sender = $this->event->hostmask->nick;
 		$hostmask = $this->event->hostmask;
 		switch ($cmd)
@@ -59,51 +79,51 @@ class failnet_plugin_tools extends failnet_plugin_common
 			case '+64':
 			case '+base64':
 			case 'base64encode':
-				$this->call_privmsg($this->event->source(), 'Result: ' . base64_encode($text));
+				$this->msg('Result: ' . base64_encode($text));
 			break;
 
 			case '-b64':
 			case '-64':
 			case '-base64':
 			case 'base64decode':
-				$this->call_privmsg($this->event->source(), 'Result: ' . base64_decode($text));
+				$this->msg('Result: ' . base64_decode($text));
 			break;
 
 			// URL encoding
 			case '+url':
 			case 'urlencode':
-				$this->call_privmsg($this->event->source(), 'Result: ' . rawurlencode($text));
+				$this->msg('Result: ' . rawurlencode($text));
 			break;
 
 			case '-url':
 			case 'urldecode':
-				$this->call_privmsg($this->event->source(), 'Result: ' . rawurldecode($text));
+				$this->msg('Result: ' . rawurldecode($text));
 			break;
 
 			// HTML entity encoding
 			case '+html':
 			case 'htmlencode':
-				$this->call_privmsg($this->event->source(), 'Result: ' . htmlentities($text));
+				$this->msg('Result: ' . htmlentities($text));
 			break;
 
 			case '-html':
 			case 'htmldecode':
-				$this->call_privmsg($this->event->source(), 'Result: ' . html_entity_decode($text));
+				$this->msg('Result: ' . html_entity_decode($text));
 			break;
 
 			// rot13 encoding
 			case 'rot13':
-				$this->call_privmsg($this->event->source(), 'Result: ' . str_rot13($text));
+				$this->msg('Result: ' . str_rot13($text));
 			break;
 
 			// md5 checksum
 			case 'md5':
-				$this->call_privmsg($this->event->source(), 'Result: ' . md5($text));
+				$this->msg('Result: ' . md5($text));
 			break;
 
 			// Character counting
 			case 'count':
-				$this->call_privmsg($this->event->source(), 'Character count: ' . strlen($text));
+				$this->msg('Character count: ' . strlen($text));
 			break;
 
 			// Byte multiple conversion
@@ -152,18 +172,17 @@ class failnet_plugin_tools extends failnet_plugin_common
 					$results = (!is_numeric($text)) ? 'Result: Invalid data provided' : 'Result: ' . get_formatted_filesize((int) $text);
 				}
 
-				$this->call_privmsg($this->event->source(), $results);
+				$this->msg($results);
 			break;
 
 			// Temperature conversion
 			case 'f2c':
-				$this->call_privmsg($this->event->source(), 'Result: ' . round((5/9) * ((int) $text - 32), 1));
+				$this->msg('Result: ' . round((5/9) * ((int) $text - 32), 1));
 			break;
 
 			case 'c2f':
-				$this->call_privmsg($this->event->source(), 'Result: ' . round((9/5) * (int) $text + 32, 1));
+				$this->msg('Result: ' . round((9/5) * (int) $text + 32, 1));
 			break;
 		}
 	}
 }
-
