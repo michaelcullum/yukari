@@ -11,7 +11,7 @@
  * License:		GNU General Public License - Version 2
  *
  *===================================================================
- * 
+ *
  */
 
 /**
@@ -27,13 +27,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://opensource.org/licenses/gpl-2.0.php>.
  */
- 
+
 
 /**
  * Failnet - Weather plugin,
  * 		This allows a user to check the weather for a specified location.
  * 		Based off of the googleWeather PHP class by Ashwin Surajbali of Redink Design
- * 
+ *
  *
  * @package plugins
  * @author Obsidian
@@ -99,6 +99,15 @@ class failnet_plugin_weather extends failnet_plugin_common
 	 */
 	private $raw_data;
 
+	public function help(&$name, &$commands)
+	{
+		$name = 'weather';
+		$commands = array(
+			'weather'		=> 'chans {$location} - (no auth) - Gets the current weather from Google Weather for the location specified',
+			'forecast'		=> 'forecast {$location} - (no auth) - Gets the current forecast from Google Weather for the location specified',
+		);
+	}
+
 	public function cmd_privmsg()
 	{
 		// Process the command
@@ -107,6 +116,8 @@ class failnet_plugin_weather extends failnet_plugin_common
 			return;
 
 		$cmd = $this->purify($text);
+		$this->set_msg_args(($this->failnet->config('speak')) ? $this->event->source() : $this->event->hostmask->nick);
+
 		$sender = $this->event->hostmask->nick;
 		$hostmask = $this->event->hostmask;
 		switch ($cmd)
@@ -123,11 +134,11 @@ class failnet_plugin_weather extends failnet_plugin_common
 						$weather_data['current_conditions']['wind'][0]
 					);
 					$current_weather = implode(' / ', $current_weather);
-					$this->call_privmsg($this->event->source(), $current_weather);
+					$this->msg($current_weather);
 				}
 				else
 				{
-					$this->call_privmsg($this->event->source(), $this->event->hostmask->nick . ': Sorry, but I wasn\'t able to retrieve the current weather conditions for the area you specified.');
+					$this->msg($this->event->hostmask->nick . ': Sorry, but I wasn\'t able to retrieve the current weather conditions for the area you specified.');
 				}
 			break;
 
@@ -137,24 +148,24 @@ class failnet_plugin_weather extends failnet_plugin_common
 					$weather_data = $this->weather($text);
 					if($weather_data && $weather_data['forecast_info']['zip'][0] != '' && isset($weather_data['forecast']))
 					{
-						$this->call_privmsg($this->event->source(), $this->event->hostmask->nick . ': Here\'s the current forecast for ' . $weather_data['forecast_info']['city'] . ':');
+						$this->msg($this->event->hostmask->nick . ': Here\'s the current forecast for ' . $weather_data['forecast_info']['city'] . ':');
 						foreach($weather_data['forecast'] as $forecast)
 						{
 							$data = $forecast['day_of_week'] . ' / High ' . $forecast['high'] . 'F ' . $this->temp_conv('F-C', $forecast['high']) . 'C / Low ' . $forecast['low'] . 'F ' . $this->temp_conv('F-C', $forecast['low']) . 'C / Condition: ' . $forecast['condition'];
-							$this->call_privmsg($this->event->source(), $data);
+							$this->msg($data);
 							usleep(500);
 						}
 						$this->last_forecast = time();
 					}
 					else
 					{
-						$this->call_privmsg($this->event->source(), $this->event->hostmask->nick . ': Sorry, but I wasn\'t able to retrieve a forecast for the area you specified.');
+						$this->msg($this->event->hostmask->nick . ': Sorry, but I wasn\'t able to retrieve a forecast for the area you specified.');
 					}
-					
+
 				}
 				else
 				{
-					$this->call_privmsg($this->event->source(), 'I just gave out a forecast already.');
+					$this->msg('I just gave out a forecast already.');
 				}
 			break;
 		}
@@ -259,7 +270,7 @@ class failnet_plugin_weather extends failnet_plugin_common
 			case 'F-C':
 				return round((5/9) * ($temp - 32), 1);
 			break;
-		
+
 			case 'C-F':
 				return round((9/5) * $temp + 32, 1);
 			break;
