@@ -31,8 +31,8 @@
 
 /**
  * Failnet - Karma class,
- * 		Used as Failnet's karma system. 
- * 
+ * 		Used as Failnet's karma system.
+ *
  *
  * @package karma
  * @author Obsidian
@@ -52,7 +52,7 @@ class failnet_karma extends failnet_common
 	 * @var array
 	 */
 	private $blacklist = array();
-	
+
 	/**
 	 * Karma constants
 	 */
@@ -83,7 +83,7 @@ class failnet_karma extends failnet_common
 			'euler'				=> '%s has a karma of ' . M_EULER,
 			'mole'				=> '%s has a karma of 6.02214e23 molecules',
 			'avogadro'			=> '%s has a karma of 6.02214e23 molecules',
-			'spoon'				=> '%s has a no karma, because there is no spoon',
+			'spoon'				=> '%s has no karma, because there is no spoon',
 			'4chan'				=> '%s has a karma of over NINE THOUSAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
 			'mc^2'				=> '%s has a karma of E',
 			'mc2'				=> '%s has a karma of E',
@@ -158,12 +158,11 @@ class failnet_karma extends failnet_common
 
 	/**
 	 * Checks to see if a phrase is a karma request
-	 * @param string $term - The term to check for eligibility 
-	 * @return boolean - Whether or not the term meets our pattern for karma 
+	 * @param string $term - The term to check for eligibility
+	 * @return boolean - Whether or not the term meets our pattern for karma
 	 */
 	public function check_word($term)
 	{
 		return preg_match('#^[a-zA-Z0-9\+\-\_\[\]\|`]+[\+\+|\-\-]$#i', $term);
 	}
 }
-
