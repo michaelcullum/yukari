@@ -381,6 +381,7 @@ class failnet_core
 		// Toss a connection call to plugins for initial setup
 		foreach($this->plugins as $name => $plugin)
 		{
+			$this->ui->ui_event('connection established call: plugin "' . $name . '"');
 			$plugin->cmd_connect();
 		}
 
@@ -392,6 +393,7 @@ class failnet_core
 			// Upon each 'tick' of the loop, we call these functions
 			foreach($this->plugins as $name => $plugin)
 			{
+				$this->ui->ui_event('tick call: plugin "' . $name . '"');
 				$plugin->tick();
 			}
 
@@ -412,7 +414,10 @@ class failnet_core
 
 			// Check to see if the user that generated the event is ignored.
 			if($eventtype != 'response' && isset($this->ignore) && $this->ignore->ignored($event->hostmask))
+			{
+				$this->ui->ui_event('ignored event from hostmask: ' . $event->hostmask);
 				continue;
+			}
 
 			// For each plugin, we provide the event encountered so that the plugins can react to them for us
 			foreach($this->plugins as $name => $plugin)
@@ -421,6 +426,7 @@ class failnet_core
 				{
 					$plugin->event = $event;
 					$plugin->pre_event();
+					$this->ui->ui_event('command event call (' . $eventtype . '): plugin "' . $name . '"');
 					$plugin->{'cmd_' . $eventtype}();
 					$plugin->post_event();
 				}
@@ -436,6 +442,7 @@ class failnet_core
 			//Execute pre-dispatch callback for plugin events
 			foreach($this->plugins as $name => $plugin)
 			{
+				$this->ui->ui_event('pre-dispatch call: plugin "' . $name . '" - events: ' . sizeof($queue));
 				$plugin->pre_dispatch($queue);
 			}
 
@@ -445,6 +452,7 @@ class failnet_core
 			{
 				if(strcasecmp($item->type, 'quit') != 0)
 				{
+					$this->ui->ui_event('event dispatch call: type "' . $item->type . '"');
 					call_user_func_array(array($this->irc, $item->type), $item->arguments);
 				}
 				elseif(empty($quit))
@@ -456,6 +464,7 @@ class failnet_core
 			// Post-dispatch events
 			foreach($this->plugins as $name => $plugin)
 			{
+				$this->ui->ui_event('post-dispatch call: plugin "' . $name . '"');
 				$plugin->post_dispatch($queue);
 			}
 
@@ -466,6 +475,7 @@ class failnet_core
 
 		foreach($this->plugins as $name => $plugin)
 		{
+			$this->ui->ui_event('disconnect call: plugin "' . $name . '"');
 			$plugin->cmd_disconnect();
 		}
 		$this->irc->quit($this->config('quit_msg'));
