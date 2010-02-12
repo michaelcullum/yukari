@@ -28,7 +28,7 @@
 -------------------------------------------------------------------
  Copyright:		(c) 2009 - tobias382
  License:		http://www.gnu.org/licenses/lgpl.html  |  GNU Lesser General Public License version 3.0
- (Note: Code is now licensed until New BSD License...all code was pulled before the relicense however)
+ (Note: Code is now licensed under New BSD License...all code was pulled before the relicense however)
  Source:		Available at http://www.assembla.com/spaces/files/phergie
 
 ===================================================================
@@ -62,4 +62,4 @@ How do I use Failnet?
 
 For complete and up-to-date instructions, please refer to Failnet's
 wiki at http://www.assembla.com/wiki/show/failnet/ and read through
-the "Setup Failnet" page, and subpages.
+the "Setup Failnet" page, and any applicable subpages.
