@@ -1,2 +1,2 @@
 2.0.0A1
-http://www.assembla.com/wiki/show/failnet/Failnet_2
+http://failnet.assembla.com/wiki/show/failnet
