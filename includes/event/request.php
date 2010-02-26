@@ -179,21 +179,6 @@ class failnet_event_request implements ArrayAccess
 	}
 
 	/**
-	 * Returns whether or not the event occurred within a channel.
-	 *
-	 * @return TRUE if the event is in a channel, FALSE otherwise
-	 *
-	 * @deprecated
-	 */
-	public function fromchannel()
-	{
-		global $failnet;
-		$trace = debug_backtrace();
-		$failnet->ui->ui_debug('Depreciated method failnet_event_request::fromchannel() called (the property failnet_event_request::fromchannel should be used instead) in ' . $trace[0]['file'] .' on line ' . $trace[0]['line'], E_USER_NOTICE);
-		return $this->fromchannel;
-	}
-
-	/**
 	 * Returns a single specified argument for the request.
 	 *
 	 * @param mixed $argument Integer position (starting from 0) or the

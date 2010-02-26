@@ -516,21 +516,6 @@ class failnet_core
 	 * @param string $setting - The config setting that we want to pull the value for.
 	 * @param boolean $config_only - Is this an entry that only appears in the config file?
 	 * @return mixed - The setting's value, or null if no such setting.
-	 *
-	 * @depreciated
-	 */
-	public function get($setting, $config_only = false)
-	{
-		$trace = debug_backtrace();
-		$this->ui->ui_debug('Depreciated method failnet_core::get() called (the method failnet_core::config() should be used instead) in ' . $trace[0]['file'] .' on line ' . $trace[0]['line'], E_USER_NOTICE);
-		return $this->config($setting, $config_only);
-	}
-
-	/**
-	 * Get a setting from Failnet's configuration settings
-	 * @param string $setting - The config setting that we want to pull the value for.
-	 * @param boolean $config_only - Is this an entry that only appears in the config file?
-	 * @return mixed - The setting's value, or null if no such setting.
 	 */
 	public function config($setting, $config_only = false)
 	{
