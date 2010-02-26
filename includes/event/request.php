@@ -44,13 +44,6 @@
 class failnet_event_request implements ArrayAccess
 {
 	/**
-	 * Constants for Failnet.
-	 */
-	const HR = '---------------------------------------------------------------------';
-	const ERROR_LOG = 'error';
-	const USER_LOG = 'user';
-
-	/**
 	 * Event types
 	 */
 	const TYPE_NICK = 'nick';

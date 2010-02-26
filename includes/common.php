@@ -49,9 +49,6 @@ abstract class failnet_common
 	/**
 	 * Constants for Failnet.
 	 */
-	const HR = '---------------------------------------------------------------------';
-	const ERROR_LOG = 'error';
-	const USER_LOG = 'user';
 
 	/**
 	 * Auth levels for Failnet

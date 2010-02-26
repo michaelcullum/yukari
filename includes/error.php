@@ -92,21 +92,21 @@ class failnet_error extends failnet_common
 			case E_USER_DEPRECATED:
 				$handled = true;
 				$this->failnet->ui->ui_notice($error);
-				$this->failnet->log->write(self::ERROR_LOG, time(), date('D m/d/Y - h:i:s A') . ' - [PHP Notice] ' . $error);
+				$this->failnet->log->write('error', time(), date('D m/d/Y - h:i:s A') . ' - [PHP Notice] ' . $error);
 			break;
 
 			case E_WARNING:
 			case E_USER_WARNING:
 				$handled = true;
 				$this->failnet->ui->ui_warning($error);
-				$this->failnet->log->write(self::ERROR_LOG, time(), date('D m/d/Y - h:i:s A') . ' - [PHP Warning] ' . $error);
+				$this->failnet->log->write('error', time(), date('D m/d/Y - h:i:s A') . ' - [PHP Warning] ' . $error);
 			break;
 
 			case E_ERROR:
 			case E_USER_ERROR:
 				$handled = true;
 				$this->failnet->ui->ui_error($error);
-				$this->failnet->log->write(self::ERROR_LOG, time(), date('D m/d/Y - h:i:s A') . ' - [PHP Error] ' . $error);
+				$this->failnet->log->write('error', time(), date('D m/d/Y - h:i:s A') . ' - [PHP Error] ' . $error);
 			break;
 		}
 
@@ -132,13 +132,13 @@ class failnet_error extends failnet_common
 		if(!$is_fatal)
 		{
 			$error = $msg . PHP_EOL;
-			$this->failnet->log->write(self::ERROR_LOG, time(), date('D m/d/Y - h:i:s A') . ' - [Internal notice] ' . $error);
+			$this->failnet->log->write('error', time(), date('D m/d/Y - h:i:s A') . ' - [Internal notice] ' . $error);
 			$this->failnet->ui->ui_system('[Internal error] ' . $error);
 		}
 		else
 		{
 			$error = $msg . PHP_EOL;
-			$this->failnet->log->write(self::ERROR_LOG, time(), date('D m/d/Y - h:i:s A') . ' - [Internal error] ' . $error);
+			$this->failnet->log->write('error', time(), date('D m/d/Y - h:i:s A') . ' - [Internal error] ' . $error);
 			$this->failnet->ui->ui_system('[Internal error] ' . $error);
 			// Fatal error, so DAI.
 			$this->failnet->terminate(false);

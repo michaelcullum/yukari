@@ -102,7 +102,7 @@ class failnet_log extends failnet_common
 			$log_msg = '';
 			$log_msg = implode(PHP_EOL, $this->log). PHP_EOL;
 			$this->log = array();
-			$this->write(self::USER_LOG, time(), $log_msg);
+			$this->write('user', time(), $log_msg);
 		}
 	}
 

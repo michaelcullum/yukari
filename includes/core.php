@@ -120,9 +120,6 @@ class failnet_core
 /**
  * Failnet core constants
  */
-	const HR = '---------------------------------------------------------------------';
-	const ERROR_LOG = 'error';
-	const USER_LOG = 'user';
 
 	/**
 	 * IRC mode flags

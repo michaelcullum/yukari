@@ -32,24 +32,17 @@
 
 /**
  * Failnet - IRC response event handling class
- * 
+ *
  *
  * @package connection
  * @author Obsidian
  * @copyright (c) 2009 - 2010 -- Failnet Project
  * @license GNU General Public License - Version 2
- * 
+ *
  * @see http://www.irchelp.org/irchelp/rfc/chapter6.html
  */
 class failnet_event_response
 {
-	/**
-	 * Constants for Failnet.
-	 */
-	const HR = '---------------------------------------------------------------------';
-	const ERROR_LOG = 'error';
-	const USER_LOG = 'user';
-	
 	/**
 	 * <nickname> :No such nick/channel
 	 *
@@ -892,13 +885,13 @@ class failnet_event_response
 	 * @var string
 	 */
 	public $buffer;
-	
+
 	/**
-	 * Constructor 
+	 * Constructor
 	 * @return void
 	 */
 	public function __construct() { }
-	
+
 	public function __call($funct, $params)
 	{
 		trigger_error('Call to undefined method "' . $name . '" in class "' . __CLASS__ . '"', E_USER_WARNING);

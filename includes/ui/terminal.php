@@ -66,11 +66,11 @@ class failnet_ui_terminal extends failnet_ui_common
 	{
 		if($this->ui_level(OUTPUT_NORMAL))
 		{
-			$this->output(self::HR);
+			$this->output('---------------------------------------------------------------------');
 			$this->output('Failnet -- PHP-based IRC Bot version ' . FAILNET_VERSION);
 			$this->output('Copyright: (c) 2009 - 2010 -- Obsidian');
 			$this->output('License: GNU General Public License - Version 2');
-			$this->output(self::HR);
+			$this->output('---------------------------------------------------------------------');
 			$this->output('Failnet is starting up. Go get yourself a coffee.');
 		}
 	}
@@ -83,9 +83,9 @@ class failnet_ui_terminal extends failnet_ui_common
 	{
 		if($this->ui_level(OUTPUT_NORMAL))
 		{
-			$this->output(self::HR);
+			$this->output('---------------------------------------------------------------------');
 			$this->output('Failnet loaded and ready!');
-			$this->output(self::HR);
+			$this->output('---------------------------------------------------------------------');
 		}
 	}
 
@@ -97,9 +97,9 @@ class failnet_ui_terminal extends failnet_ui_common
 	{
 		if($this->ui_level(OUTPUT_NORMAL))
 		{
-			$this->output(self::HR);
+			$this->output('---------------------------------------------------------------------');
 			$this->output('Failnet shutting down...');
-			$this->output(self::HR);
+			$this->output('---------------------------------------------------------------------');
 		}
 	}
 
