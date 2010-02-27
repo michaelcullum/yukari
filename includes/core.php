@@ -212,7 +212,7 @@ class failnet_core
 		// Check to see if our rand_seed exists, and if not we need to execute our schema file (as long as it exists of course). :)
 		$this->sql('config', 'get')->execute(array(':name' => 'rand_seed'));
 		$rand_seed_exists = $this->sql('config', 'get')->fetch(PDO::FETCH_ASSOC);
-		if(!$rand_seed_exists && file_exists(FAILNET_ROOT . 'includes/schemas/schema_data.sql'))
+		if(!$rand_seed_exists && file_exists(FAILNET_ROOT . 'schemas/schema_data.sql'))
 		{
 			try
 			{
@@ -223,7 +223,7 @@ class failnet_core
 				$this->sql('users', 'create')->execute(array(':nick' => $this->config('owner'), ':authlevel' => 100, ':hash' => $this->hash->hash($this->config('user'))));
 
 				// Now let's add some default data to the database tables
-				$this->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/schema_data.sql'));
+				$this->db->exec(file_get_contents(FAILNET_ROOT . 'schemas/schema_data.sql'));
 
 				$this->db->commit();
 			}
@@ -303,7 +303,7 @@ class failnet_core
 			$this->ui->ui_system('- Initializing the database');
 
 			// Load up the list of files that we've got, and do stuff with them.
-			$schemas = scandir(FAILNET_ROOT . 'includes/schemas');
+			$schemas = scandir(FAILNET_ROOT . 'schemas');
 			foreach($schemas as $schema)
 			{
 				if(substr($schema, 0, 1) == '.' || substr(strrchr($schema, '.'), 1) != 'sql' || $schema == 'schema_data.sql')
@@ -314,7 +314,7 @@ class failnet_core
 				if(!$results)
 				{
 					display(' -  Installing the ' . $tablename . ' database table...');
-					$this->db->exec(file_get_contents(FAILNET_ROOT . 'includes/schemas/' . $schema));
+					$this->db->exec(file_get_contents(FAILNET_ROOT . 'schemas/' . $schema));
 				}
 			}
 
@@ -405,8 +405,8 @@ class failnet_core
 				else
 				{
 					$eventtype = $event->type;
-					$this->ui->ui_raw($event->buffer);
 				}
+				$this->ui->ui_raw($event->buffer);
 			}
 
 			// Check to see if the user that generated the event is ignored.
