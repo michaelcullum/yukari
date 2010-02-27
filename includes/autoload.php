@@ -68,7 +68,7 @@ class failnet_autoload extends failnet_common
 	public function load($class)
 	{
 		// Begin by cleaning the class name of any possible ../. hacks
-		$name = basename($class);
+		$name = basename(sanitize_filepath($class));
 
 		// Now, drop the failnet_ prefix if it is there, and replace any underscores with slashes.
 		$name = str_replace('_', '/', ((substr($name, 0, 8) == 'failnet_') ? substr($name, 8) : $name));
@@ -97,7 +97,7 @@ class failnet_autoload extends failnet_common
 	 */
 	public static function set_path($include_path)
 	{
-		self::$paths[] = FAILNET_ROOT . $include_path;
+		self::$paths[] = sanitize_filepath(FAILNET_ROOT . $include_path);
 	}
 
 	/**
