@@ -36,7 +36,7 @@
  * 		Example being if you load in "failnet_plugin_admin", it will attempt to load the file at /includes/plugins/admin.php
  * @param string $name - Class name to load
  * @return void
- */
+ *
 function failnet_load_file($name)
 {
 	// Begin by cleaning the class name of any possible ../. hacks
@@ -47,15 +47,16 @@ function failnet_load_file($name)
 
 	// Replace any underscores with slashes...
 	$name = str_replace('_', '/', $name);
-	
+
 	// Now, we try to get the file.
 	require FAILNET_ROOT . "includes/{$name}.php";
 }
+ */
 
 /**
  * Echos a message, and cleans out any extra NL's after the message.
  * 		Also will echo an array of messages properly as well.
- * @param mixed $message - The message or array of messages we want to echo to the terminal. 
+ * @param mixed $message - The message or array of messages we want to echo to the terminal.
  * @return void
  */
 function display($message)
@@ -64,7 +65,7 @@ function display($message)
 	{
 		foreach($message as $line)
 		{
-			echo ((strrpos($line, PHP_EOL . PHP_EOL) !== false) ? substr($line, 0, strlen($line) - 1) : $line) . PHP_EOL;	
+			echo ((strrpos($line, PHP_EOL . PHP_EOL) !== false) ? substr($line, 0, strlen($line) - 1) : $line) . PHP_EOL;
 		}
 	}
 	else
@@ -80,7 +81,7 @@ function display($message)
  */
 function throw_fatal($msg)
 {
-	if(file_exists(FAILNET_ROOT . 'data/restart.inc')) 
+	if(file_exists(FAILNET_ROOT . 'data/restart.inc'))
 		unlink(FAILNET_ROOT . 'data/restart.inc');
 	display('[Fatal Error] ' . $msg);
 	display(dump_backtrace());
@@ -92,8 +93,8 @@ function throw_fatal($msg)
  * Return formatted string for filesizes
  * @param integer $bytes - The number of bytes to convert.
  * @return string - The filesize converted into KiB, MiB, or GiB.
- * 
- * @author (c) 2007 phpBB Group 
+ *
+ * @author (c) 2007 phpBB Group
  */
 function get_formatted_filesize($bytes)
 {
@@ -115,7 +116,7 @@ function get_formatted_filesize($bytes)
 /**
  * Converts a given integer/timestamp into days, minutes and seconds
  * @param integer $time - The time/integer to calulate the values from
- * @param boolean $last_comma - Should we have a comma between the second to last item of the list and the last, if more than 3 items for time? 
+ * @param boolean $last_comma - Should we have a comma between the second to last item of the list and the last, if more than 3 items for time?
  * 									This WAS actually something of debate, for grammar reasons. :P
  * @return string
  */
@@ -186,14 +187,14 @@ function timespan($time, $last_comma = false)
  * @param string $mode - The mode for the benchmark check
  * @param integer &$start - The start time for the benchmarking
  * @return mixed - void if mode is start or print, integer if mode is return
- * 
+ *
  * @author Deadpool
  */
 function benchmark($mode, &$start)
 {
 	/**
 	 * Usage:
-	 * 
+	 *
 	 * For benchmarking PHP code
 	 * <code>
 	 * benchmark('start', $start_time);
@@ -223,7 +224,7 @@ function benchmark($mode, &$start)
 }
 
 /**
- * Generate a backtrace and return it for use elsewhere. 
+ * Generate a backtrace and return it for use elsewhere.
  * @return array - The backtrace results.
  */
 function dump_backtrace()
@@ -469,7 +470,7 @@ function _realpath($path)
 /**
  * Realpath function set for generating a clean realpath.
  * Borrowed from phpBB 3.0.x
- * 
+ *
  * @author (c) 2007 phpBB Group
  */
 if (!function_exists('realpath'))
@@ -511,7 +512,7 @@ else
 
 /**
  * Retrieve contents from remotely stored file
- * 
+ *
  * @author (c) 2007 phpBB Group
  */
 function get_remote_file($host, $directory, $filename, &$errstr, &$errno, $port = 80, $timeout = 10)
@@ -567,7 +568,7 @@ function get_remote_file($host, $directory, $filename, &$errstr, &$errno, $port 
 /**
  * Checks to see if the installed version is current.
  * @link http://code.assembla.com/failnet/git/node/blob/master/develop/version.txt The version check file
- * 
+ *
  * @author (c) 2007 phpBB Group
  */
 function check_version(&$up_to_date, &$latest_version, &$announcement_url)
@@ -591,7 +592,7 @@ function check_version(&$up_to_date, &$latest_version, &$announcement_url)
  * Converts a delimited string of hostmasks into a regular expression that will match any hostmask in the original string.
  * @param array $list - Array of hostmasks
  * @return string - Regular expression
- * 
+ *
  * @author Phergie Development Team {@link http://code.assembla.com/phergie/subversion/nodes}
  */
 function hostmasks_to_regex($list)
@@ -634,7 +635,7 @@ function hostmasks_to_regex($list)
  * @param string &$user - Container for the username
  * @param string &$host - Container for the hostname
  * @return void
- * 
+ *
  * @author Phergie Development Team {@link http://code.assembla.com/phergie/subversion/nodes}
  */
 function parse_hostmask($hostmask, &$nick, &$user, &$host)
@@ -700,4 +701,3 @@ function cake()
 	);
 	display($cake);
 }
-

@@ -32,15 +32,14 @@
 // Define the root path constant first.  :D
 define('FAILNET_ROOT', './');
 
-// Now let's grab /every/ constant
+// Now let's grab some essential files, first
 require FAILNET_ROOT . 'includes/constants.php';
-
-// Include our general functions file now -- We require it as it is always essential.
-// It also has our autoloader function, so we kinda need that.  ;)
+require FAILNET_ROOT . 'includes/common.php';
+require FAILNET_ROOT . 'includes/autoload.php';
 require FAILNET_ROOT . 'includes/functions.php';
 
 // Set our autoload function.
-spl_autoload_register('failnet_load_file');
+failnet_autoload::register();
 
 // Check to see if we are even on the minimum PHP version necessary.
 if(version_compare('5.2.3', PHP_VERSION, '>'))

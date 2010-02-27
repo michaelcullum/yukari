@@ -44,7 +44,7 @@ class failnet_autoload extends failnet_common
 	/**
 	 * @var array - The paths that Failnet will attempt to load class files from.
 	 */
-	private $paths = array();
+	private static $paths = array();
 
 	/**
 	 * Specialized init function to allow class construction to be easier.
@@ -74,7 +74,7 @@ class failnet_autoload extends failnet_common
 		$name = str_replace('_', '/', ((substr($name, 0, 8) == 'failnet_') ? substr($name, 8) : $name));
 
 		$found = false;
-		foreach($this->paths as $path)
+		foreach(self::$paths as $path)
 		{
 			if(file_exists($path . $name . '.php'))
 			{
@@ -95,9 +95,9 @@ class failnet_autoload extends failnet_common
 	 * @param string $include_path - The include path to add to the autoloader
 	 * @return void
 	 */
-	public function set_path($include_path)
+	public static function set_path($include_path)
 	{
-		$this->paths[] = FAILNET_ROOT . $include_path;
+		self::$paths[] = FAILNET_ROOT . $include_path;
 	}
 
 	/**
