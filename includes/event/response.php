@@ -865,24 +865,17 @@ class failnet_event_response
 	const RPL_ADMINEMAIL = '259';
 
 	/**
-	 * Reply code sent by the server, which can be compared to the ERR_ * and
-	 * RPL_ * constants
-	 *
-	 * @var string
+	 * @var string - Reply code sent by the server, which can be compared to the ERR_ * and RPL_ * constants
 	 */
 	public $code;
 
 	/**
-	 * Reply code description sent by the server.
-	 *
-	 * @var string
+	 * @var string - Reply code description sent by the server.
 	 */
 	public $description;
 
 	/**
-	 * The raw buffer that was sent by the server
-	 *
-	 * @var string
+	 * @var string - The raw buffer that was sent by the server
 	 */
 	public $buffer;
 
