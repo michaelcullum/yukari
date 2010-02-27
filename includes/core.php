@@ -187,8 +187,8 @@ class failnet_core
 
 		// Prepare the UI...
 		define('OUTPUT_LEVEL', $this->config('output'));
-		$ui = 'failnet_ui_' . $this->config('ui');
-		$this->ui = new $ui($this);
+		// Manually load our UI first.
+		$this->ui = new failnet_ui($this);
 
 		// Fire off the startup text.
 		$this->ui->ui_startup();
