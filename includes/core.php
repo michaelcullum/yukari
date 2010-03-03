@@ -51,18 +51,6 @@ class failnet_core
 	private $nodes = array();
 
 	/**
-	 * @var array - Loaded Failnet plugins
-	 */
-	private $plugins = array();
-
-	/**
-	 * @var array - List of loaded plugins
-	 */
-	public $plugins_loaded = array();
-
-
-
-	/**
 	 * @var integer - The UNIX timestamp for when Failnet was started
 	 */
 	public $start = 0;
