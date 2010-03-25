@@ -74,7 +74,7 @@ class failnet_socket extends failnet_common
 		$remote = $this->failnet->config('transport') . '://' . $this->failnet->config('server') . ':' . $this->failnet->config('port');
 		$this->socket = @stream_socket_client($remote, $errno, $errstr);
 		if(!$this->socket)
-			throw_fatal('Unable to connect to server: socket error ' . $errno . ' : ' . $errstr, E_USER_ERROR);
+			throw_fatal('Unable to connect to server: socket error ' . $errno . ' : ' . $errstr);
 
 		@stream_set_timeout($this->socket, $this->delay);
 
@@ -244,7 +244,9 @@ class failnet_socket extends failnet_common
 		}
 
 		// Transmit the command over the socket connection
-		fwrite($this->socket, $buffer . "\r\n");
+		$success = fwrite($this->socket, $buffer . "\r\n");
+		if($success === false)
+			throw_fatal('fwrite() failed, socket connection lost');
 
 		// Return the command string that was transmitted
 		return $buffer;
