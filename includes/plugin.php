@@ -51,19 +51,53 @@ class failnet_plugin extends failnet_common
 	 */
 	public $plugins_loaded = array();
 
+	/**
+	 * Loads a specified plugin if possible
+	 * @param string $name - The name of the plugin to load
+	 * @return boolean - Was the plugin load successful?
+	 */
 	public function load($name)
 	{
-		// meh
+		if(is_array($sub))
+		{
+			foreach($name as $sub)
+			{
+				$this->load($sub);
+			}
+		}
+		else
+		{
+			if(!$this->loaded($name) && $this->exists($name))
+			{
+				$this->plugins_loaded[] = $name;
+				$plugin = 'failnet_plugin_' . $name;
+				$this->plugins[] = new $plugin($this);
+				$this->failnet->ui->ui_system('--- Plugin "' . $name. '" loaded');
+				return true;
+			}
+			$this->failnet->ui->ui_system('--- Plugin "' . $name . '" not loaded, plugin does not already exist or is loaded already');
+			return false; // No double-loading of plugins.
+		}
 	}
 
+	/**
+	 * Check to see if a plugin has already been loaded, for sanity's sake.
+	 * @param string $name - The name of the plugin we are checking
+	 * @return boolean - Whether or not the plugin has been loaded
+	 */
 	public function loaded($name)
 	{
-		// meh
+		return in_array($name, $this->plugins_loaded);
 	}
 
+	/**
+	 * Check if a plugin exists or not, and check every load path available
+	 * @param string $name - The name of the plugin that we are checking
+	 * @return boolean - Does the plugin exist?
+	 */
 	public function exists($name)
 	{
-		// meh
+		return (bool) failnet_autoload::exists('failnet_plugin_' . $name);
 	}
 
 // the plugin method chain-calls
