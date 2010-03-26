@@ -106,14 +106,50 @@ class failnet_plugin extends failnet_common
 		// meh
 	}
 
+	/**
+	 * Plugin tick call, fires off tick calls to any plugins that handle them.
+	 * @return array - Returns the array of events to fire off
+	 */
 	public function tick()
 	{
-		// meh
+		// Upon each iteration of the loop, we let plugins run if they want tow
+		foreach($this->plugins as $name => $plugin)
+		{
+			if(method_exists($plugin, 'tick'))
+			{
+				$this->ui->ui_event('tick call: plugin "' . $name . '"');
+				$plugin->tick();
+				if(!empty($plugin->events))
+				{
+					$queue = $plugin->events;
+					$plugin->events = array();
+					return $queue;
+				}
+			}
+		}
 	}
 
+	/**
+	 * Plugin connect call, fires off connect calls to any plugins that handle them.
+	 * @return void
+	 */
 	public function connect()
 	{
-		// meh
+		// Toss a connection call to plugins for initial setup
+		foreach($this->plugins as $name => $plugin)
+		{
+			if(method_exists($plugin, 'connect'))
+			{
+				$this->ui->ui_event('connection established call: plugin "' . $name . '"');
+				$plugin->cmd_connect();
+				if(!empty($plugin->events))
+				{
+					$queue = $plugin->events;
+					$plugin->events = array();
+					return $queue;
+				}
+			}
+		}
 	}
 
 	public function event(&$event)
@@ -126,8 +162,19 @@ class failnet_plugin extends failnet_common
 		// meh
 	}
 
-	public function disconnect(&$queue)
+	/**
+	 * Plugin disconnect call, fires off disconnect calls to any plugins that handle them.
+	 * @return void
+	 */
+	public function disconnect()
 	{
-		// meh
+		foreach($this->plugins as $name => $plugin)
+		{
+			if(method_exists($plugin, 'disconnect'))
+			{
+				$this->ui->ui_event('disconnect call: plugin "' . $name . '"');
+				$plugin->cmd_disconnect();
+			}
+		}
 	}
 }
