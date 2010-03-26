@@ -101,6 +101,29 @@ class failnet_autoload extends failnet_common
 	}
 
 	/**
+	 * Checks to see whether or not the class file we're looking for exists (and also checks every loading dir)
+	 * @param string $class - The class file we're looking for.
+	 * @return boolean - Whether or not the source file we're looking for exists
+	 */
+	public static function exists($class)
+	{
+		// Begin by cleaning the class name of any possible ../. hacks
+		$name = basename(sanitize_filepath($class));
+
+		// Now, drop the failnet_ prefix if it is there, and replace any underscores with slashes.
+		$name = str_replace('_', '/', ((substr($name, 0, 8) == 'failnet_') ? substr($name, 8) : $name));
+
+		foreach(self::$paths as $path)
+		{
+			if(file_exists($path . $name . '.php'))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Registers an instance of this class as an autoloader.
 	 * @return void
 	 */
