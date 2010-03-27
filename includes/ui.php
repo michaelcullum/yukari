@@ -68,25 +68,18 @@ class failnet_ui extends failnet_common
 	 * @param const $level - The OUTPUT level constant that we are checking the current output level against.
 	 * @return boolean - Whether we should output or not...boolean true if so, boolean false if not.
 	 */
-	public function ui_level($level)
+	public function level($level)
 	{
-		if($level != OUTPUT_RAW)
-		{
-			return (OUTPUT_LEVEL >= $level && OUTPUT_LEVEL !== OUTPUT_RAW);
-		}
-		else
-		{
-			return (OUTPUT_LEVEL === OUTPUT_RAW);
-		}
+		return (($level != OUTPUT_RAW) ? (OUTPUT_LEVEL >= $level && OUTPUT_LEVEL !== OUTPUT_RAW) : (OUTPUT_LEVEL === OUTPUT_RAW));
 	}
 
 	/**
 	 * Method called on init that dumps the startup text for Failnet to output
 	 * @return void
 	 */
-	public function ui_startup()
+	public function startup()
 	{
-		if($this->ui_level(OUTPUT_NORMAL))
+		if($this->level(OUTPUT_NORMAL))
 		{
 			$this->output('---------------------------------------------------------------------');
 			$this->output('Failnet -- PHP-based IRC Bot version ' . FAILNET_VERSION);
@@ -101,9 +94,9 @@ class failnet_ui extends failnet_common
 	 * Method called that dumps Failnet's ready-notice text to output
 	 * @return void
 	 */
-	public function ui_ready()
+	public function ready()
 	{
-		if($this->ui_level(OUTPUT_NORMAL))
+		if($this->level(OUTPUT_NORMAL))
 		{
 			$this->output('---------------------------------------------------------------------');
 			$this->output('Failnet loaded and ready!');
@@ -129,9 +122,9 @@ class failnet_ui extends failnet_common
 	 * Method called on message being recieved/sent
 	 * @return void
 	 */
-	public function ui_message($data)
+	public function message($data)
 	{
-		if($this->ui_level(OUTPUT_NORMAL))
+		if($this->level(OUTPUT_NORMAL))
 		{
 			$this->output('[irc] ' . $data);
 		}
@@ -141,9 +134,9 @@ class failnet_ui extends failnet_common
 	 * Method called when a system event is triggered or occurs in Failnet
 	 * @return void
 	 */
-	public function ui_system($data)
+	public function system($data)
 	{
-		if($this->ui_level(OUTPUT_DEBUG))
+		if($this->level(OUTPUT_DEBUG))
 		{
 			$this->output('[system] ' . $data);
 		}
@@ -151,11 +144,12 @@ class failnet_ui extends failnet_common
 
 	/**
 	 * Method called when a system event is triggered or occurs in Failnet
+	 * @param string $data - The data to display
 	 * @return void
 	 */
-	public function ui_event($data)
+	public function event($data)
 	{
-		if($this->ui_level(OUTPUT_DEBUG_FULL))
+		if($this->level(OUTPUT_DEBUG_FULL))
 		{
 			$this->output('[event] ' . $data);
 		}
@@ -163,11 +157,12 @@ class failnet_ui extends failnet_common
 
 	/**
 	 * Method being called on a PHP notice being thrown
+	 * @param string $data - The data to display
 	 * @return void
 	 */
-	public function ui_notice($data)
+	public function notice($data)
 	{
-		if($this->ui_level(OUTPUT_DEBUG))
+		if($this->level(OUTPUT_DEBUG))
 		{
 			$this->output('[php notice] ' . $data);
 		}
@@ -175,11 +170,12 @@ class failnet_ui extends failnet_common
 
 	/**
 	 * Method being called on a PHP warning being thrown
+	 * @param string $data - The data to display
 	 * @return void
 	 */
-	public function ui_warning($data)
+	public function warning($data)
 	{
-		if($this->ui_level(OUTPUT_DEBUG))
+		if($this->level(OUTPUT_DEBUG))
 		{
 			$this->output('[php warning] ' . $data);
 		}
@@ -189,9 +185,9 @@ class failnet_ui extends failnet_common
 	 * Method being called on a PHP error being thrown
 	 * @return void
 	 */
-	public function ui_error($data)
+	public function error($data)
 	{
-		if($this->ui_level(OUTPUT_DEBUG))
+		if($this->level(OUTPUT_DEBUG))
 		{
 			$this->output('[php error] ' . $data);
 		}
@@ -201,9 +197,9 @@ class failnet_ui extends failnet_common
 	 * Method being called on debug information being output in Failnet
 	 * @return void
 	 */
-	public function ui_debug($data)
+	public function debug($data)
 	{
-		if($this->ui_level(OUTPUT_DEBUG_FULL))
+		if($this->level(OUTPUT_DEBUG_FULL))
 		{
 			$this->output('[debug] ' . $data);
 		}
@@ -213,9 +209,9 @@ class failnet_ui extends failnet_common
 	 * Method being called on raw IRC protocol information being output in Failnet
 	 * @return void
 	 */
-	public function ui_raw($data)
+	public function raw($data)
 	{
-		if($this->ui_level(OUTPUT_RAW))
+		if($this->level(OUTPUT_RAW))
 		{
 			$this->output('[SOCKET] ' . $data);
 		}

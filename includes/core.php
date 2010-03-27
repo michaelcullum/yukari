@@ -357,6 +357,43 @@ class failnet_core
 	 */
 	public function run()
 	{
+		$this->socket->connect();
+		$this->plugins->connect();
+
+		// Begin looping.
+		while(true)
+		{
+			// Real quick, we gotta clean out the event queue just in case there's junk in there.
+			$this->plugins->event_queue = array();
+
+			// First off, fire off our tick.
+			$this->plugins->tick();
+
+			// Grab our event, if we have one.
+			$event = $this->socket->get();
+
+			if($event)
+				$this->plugins->event($event);
+
+			// Do we have anything to do?
+			if(!empty($this->plugins->event_queue))
+			{
+				$result = $this->plugins->dispatch();
+				if($result !== true)
+					break;
+			}
+		}
+		$this->plugins->disconnect();
+		$this->irc->quit($this->config('quit_msg'));
+		$this->terminate($quit->arguments[0]);
+	}
+
+	/**
+	 * Run Failnet! :D
+	 * @return void
+	 *
+	public function run()
+	{
 		// Set time limit, we don't want Failnet to time out, at all.
 		set_time_limit(0);
 
@@ -466,6 +503,7 @@ class failnet_core
 		$this->irc->quit($this->config('quit_msg'));
 		$this->terminate($quit->arguments[0]);
 	}
+	*/
 
 	/**
 	 * Terminates Failnet, and restarts if ordered to.
@@ -530,65 +568,6 @@ class failnet_core
 			return $this->statements[$table][$type];
 
 		$this->statements[$table][$type] = $this->db->prepare($statement);
-	}
-
-	/**
-	 * Unified interface for plugins
-	 * @param string $mode - The method mode to use
-	 * @param string $param - The parameters for the mode, see mode documentation
-	 * @return mixed - See mode documentation
-	 */
-	public function plugin($mode, $param)
-	{
-		switch ($mode)
-		{
-			/**
-			 * Plugin load mode
-			 * @param string $param - The name of the plugin to load, omitting the failnet_plugin_ class prefix
-			 * @return boolean - Whether or not the plugin loading was successful
-			 */
-			case 'load':
-				if(is_array($param))
-				{
-					foreach($param as $plugin)
-					{
-						$this->plugin('load', $plugin);
-					}
-				}
-				else
-				{
-					$param = (string) $param;
-					if(!$this->plugin('loaded', $param) && $this->plugin('exists', $param))
-					{
-						$this->plugins_loaded[] = $param;
-						$plugin = 'failnet_plugin_' . $param;
-						$this->plugins[] = new $plugin($this);
-						$this->ui->ui_system('--- Plugin "' . $param . '" loaded');
-						return true;
-					}
-					return false; // No double-loading of plugins.
-				}
-			break;
-
-			/**
-			 * Checks to see if a plugin has been loaded already
-			 * @param string $param - The name of the plugin to check, omitting the failnet_plugin_ class prefix
-			 * @return boolean - Was the plugin already loaded?
-			 */
-			case 'loaded':
-				return in_array((string) $param, $this->plugins_loaded);
-			break;
-
-			/**
-			 * Checks to see if a plugin exists
-			 * @param string $plugin - The name of the plugin to check, omitting the failnet_plugin_ class prefix
-			 * @return boolean - Does the plugin exist?
-			 */
-			case 'exists':
-				$file = FAILNET_ROOT . 'includes/plugin/' . basename(sanitize_filepath($param)) . '.php';
-				return (file_exists($file) && is_readable($file));
-			break;
-		}
 	}
 
 	/**

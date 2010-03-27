@@ -151,7 +151,7 @@ class failnet_plugin extends failnet_common
 		}
 	}
 
-	public function dispatch(&$queue)
+	public function dispatch()
 	{
 		//Execute pre-dispatch callback for plugin events
 		foreach($this->plugins as $name => $plugin)
