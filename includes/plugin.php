@@ -52,6 +52,22 @@ class failnet_plugin extends failnet_common
 	public $plugins_loaded = array();
 
 	/**
+	 * @var array - Array of plugin-generated events that we want to dispatch
+	 */
+	public $event_queue = array();
+
+	/**
+	 * Quick method to make event queue management easier
+	 * @param array $events - Array of events that we're merging into the event queue.
+	 * @return array - Empty array used to clear out event queue within plugins
+	 */
+	public function queue(array $events)
+	{
+		$this->event_queue = array_merge($this->event_queue, $events);
+		return array();
+	}
+
+	/**
 	 * Loads a specified plugin if possible
 	 * @param string $name - The name of the plugin to load
 	 * @return boolean - Was the plugin load successful?
@@ -72,10 +88,10 @@ class failnet_plugin extends failnet_common
 				$this->plugins_loaded[] = $name;
 				$plugin = 'failnet_plugin_' . $name;
 				$this->plugins[] = new $plugin($this);
-				$this->failnet->ui->ui_system('--- Plugin "' . $name. '" loaded');
+				$this->failnet->ui->system('--- Plugin "' . $name. '" loaded');
 				return true;
 			}
-			$this->failnet->ui->ui_system('--- Plugin "' . $name . '" not loaded, plugin does not already exist or is loaded already');
+			$this->failnet->ui->system('--- Plugin "' . $name . '" not loaded, plugin does not already exist or is loaded already');
 			return false; // No double-loading of plugins.
 		}
 	}
@@ -100,12 +116,6 @@ class failnet_plugin extends failnet_common
 		return (bool) failnet_autoload::exists('failnet_plugin_' . $name);
 	}
 
-// the plugin method chain-calls
-	private function call($method, $params)
-	{
-		// meh
-	}
-
 	/**
 	 * Plugin tick call, fires off tick calls to any plugins that handle them.
 	 * @return array - Returns the array of events to fire off
@@ -117,16 +127,64 @@ class failnet_plugin extends failnet_common
 		{
 			if(method_exists($plugin, 'tick'))
 			{
-				$this->ui->ui_event('tick call: plugin "' . $name . '"');
+				$this->ui->event('tick call: plugin "' . $name . '"');
 				$plugin->tick();
 				if(!empty($plugin->events))
-				{
-					$queue = $plugin->events;
-					$plugin->events = array();
-					return $queue;
-				}
+					$plugin->events = $this->queue($plugin->events);
 			}
 		}
+	}
+
+	public function event(&$event)
+	{
+		$event_type = ($event instanceof failnet_event_response) ? 'response' : $event_type;
+		foreach($this->plugins as $name => $plugin)
+		{
+			if(method_exists($plugin, 'cmd_' . $event_type))
+			{
+				$this->ui->event('command event call (' . $event_type . '): plugin "' . $name . '"');
+				$plugin->event = $event;
+				$plugin->{'cmd_' . $event_type}();
+				if(!empty($plugin->events))
+					$plugin->events = $this->queue($plugin->events);
+			}
+		}
+	}
+
+	public function dispatch(&$queue)
+	{
+		//Execute pre-dispatch callback for plugin events
+		foreach($this->plugins as $name => $plugin)
+		{
+			$this->ui->event('pre-dispatch call: plugin "' . $name . '" - events: ' . sizeof($this->event_queue));
+			$plugin->pre_dispatch($this->event_queue);
+		}
+
+		// Time to fire off our events
+		$quit = NULL;
+		foreach($this->event_queue as $event)
+		{
+			if(strcasecmp($event->type, 'quit') != 0)
+			{
+				$this->failnet->ui->event('event dispatch call: type "' . $event->type . '"');
+				call_user_func_array(array($this->failnet->irc, $event->type), $event->arguments);
+			}
+			elseif(empty($quit))
+			{
+				$quit = $event;
+			}
+		}
+
+		// Post-dispatch events
+		foreach($this->plugins as $name => $plugin)
+		{
+			$this->ui->event('post-dispatch call: plugin "' . $name . '" - events: ' . sizeof($this->event_queue));
+			$plugin->post_dispatch($this->event_queue);
+		}
+
+		if($quit)
+			return $quit;
+		return true;
 	}
 
 	/**
@@ -135,31 +193,16 @@ class failnet_plugin extends failnet_common
 	 */
 	public function connect()
 	{
-		// Toss a connection call to plugins for initial setup
 		foreach($this->plugins as $name => $plugin)
 		{
 			if(method_exists($plugin, 'connect'))
 			{
-				$this->ui->ui_event('connection established call: plugin "' . $name . '"');
+				$this->ui->event('connection established call: plugin "' . $name . '"');
 				$plugin->cmd_connect();
 				if(!empty($plugin->events))
-				{
-					$queue = $plugin->events;
-					$plugin->events = array();
-					return $queue;
-				}
+					$plugin->events = $this->queue($plugin->events);
 			}
 		}
-	}
-
-	public function event(&$event)
-	{
-		// meh
-	}
-
-	public function dispatch(&$queue)
-	{
-		// meh
 	}
 
 	/**
@@ -172,7 +215,7 @@ class failnet_plugin extends failnet_common
 		{
 			if(method_exists($plugin, 'disconnect'))
 			{
-				$this->ui->ui_event('disconnect call: plugin "' . $name . '"');
+				$this->ui->event('disconnect call: plugin "' . $name . '"');
 				$plugin->cmd_disconnect();
 			}
 		}
