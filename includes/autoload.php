@@ -65,7 +65,7 @@ class failnet_autoload extends failnet_common
 	 * @param string $class - Class to load
 	 * @return void
 	 */
-	public function load($class)
+	public function loadFile($class)
 	{
 		// Begin by cleaning the class name of any possible ../. hacks
 		$name = basename(sanitize_filepath($class));
@@ -95,7 +95,7 @@ class failnet_autoload extends failnet_common
 	 * @param string $include_path - The include path to add to the autoloader
 	 * @return void
 	 */
-	public static function set_path($include_path)
+	public static function setPath($include_path)
 	{
 		self::$paths[] = sanitize_filepath(FAILNET_ROOT . $include_path);
 	}
@@ -105,7 +105,7 @@ class failnet_autoload extends failnet_common
 	 * @param string $class - The class file we're looking for.
 	 * @return boolean - Whether or not the source file we're looking for exists
 	 */
-	public static function exists($class)
+	public static function fileExists($class)
 	{
 		// Begin by cleaning the class name of any possible ../. hacks
 		$name = basename(sanitize_filepath($class));

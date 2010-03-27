@@ -47,15 +47,15 @@ return array(
 
 // Nodes to load
 	'nodes_list'		=> array(
-		'socket',
-		'server',
-		'hash',
-		'irc',
-		'log',
-		'error',
-		'help',
-		'authorize',
-		'ignore',
+		'socket', // core
+		'server', // node
+		'hash', // core
+		'irc', // core
+		'log', // core
+		'error', // core
+		'help', // node
+		'authorize', // node
+		'ignore', // node
 	),
 
 // Plugins to automatically load on startup.

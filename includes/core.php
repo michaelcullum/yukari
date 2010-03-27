@@ -6,15 +6,12 @@
  *  Failnet -- PHP-based IRC Bot
  *-------------------------------------------------------------------
  *	Script info:
- * Version:		2.0.0 Alpha 2
- * Copyright:	(c) 2009 - 2010 -- Failnet Project
- * License:		GNU General Public License - Version 2
+ * @version:	2.0.0 Alpha 2
+ * @copyright:	(c) 2009 - 2010 -- Failnet Project
+ * @license:	http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
  *
  *===================================================================
  *
- */
-
-/**
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation.
@@ -26,6 +23,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://opensource.org/licenses/gpl-2.0.php>.
+ *
  */
 
 
@@ -91,34 +89,25 @@ class failnet_core
 	public $chans = array();
 
 	/**
-	 * @var object - UI object for displaying Failnet's local output
-	 */
-	public $ui = NULL;
-
-	/**
 	 * @var array - Prepared PDO statements for use throughout Failnet
 	 */
 	public $statements = array();
 
 	/**
-	 * @var boolean - DO NOT _EVER_ CHANGE THIS, FOR THE SAKE OF HUMANITY.  {@see http://xkcd.com/534/ }
+	 * @var boolean - DO NOT _EVER_ CHANGE THIS, FOR THE SAKE OF HUMANITY.
+	 * @link http://xkcd.com/534/
 	 */
 	private $can_become_skynet = FALSE;
+
+	/**
+	 * @var integer - DO NOT _EVER_ CHANGE THIS, FOR THE SAKE OF HUMANITY.
+	 * @link http://xkcd.com/534/
+	 */
+	private $cost_to_become_skynet = 999999999999;
 
 /**
  * Failnet core constants
  */
-
-	/**
-	 * IRC mode flags
-	 * @deprecated
-	 */
-	const IRC_FOUNDER = 32;
-	const IRC_ADMIN = 16;
-	const IRC_OP = 8;
-	const IRC_HALFOP = 4;
-	const IRC_VOICE = 2;
-	const IRC_REGULAR = 1;
 
 	/**
 	 * Auth levels for Failnet
@@ -175,30 +164,46 @@ class failnet_core
 
 		// Prepare the UI...
 		define('OUTPUT_LEVEL', $this->config('output'));
-		// Manually load our UI first.
-		$this->ui = new failnet_ui($this);
+
+		failnet::setCore('ui', 'failnet_ui');
 
 		// Fire off the startup text.
-		$this->ui->ui_startup();
+		failnet::core('ui')->startup();
+
+		// Begin loading our core objects
+		$core_objects = array(
+			'socket'	=> 'failnet_socket',
+			'log'		=> 'failnet_log',
+			'error'		=> 'failnet_error',
+			'hash'		=> 'failnet_hash',
+			'irc'		=> 'failnet_irc',
+		);
+		foreach($core_objects as $core_object_name => $core_object_class)
+		{
+			failnet::setCore($core_object_name, $core_object_class);
+			failnet::core('ui')->system("--- Loaded core object $core_object_class");
+		}
+		unset($core_objects);
 
 		// Setup the DB connection.
-		$this->setup_db();
+		$this->setupDB();
 
 		// Load required classes and systems
-		$this->ui->ui_system('- Loading Failnet nodes');
+		failnet::core('ui')->system('- Loading Failnet nodes');
+		/*
 		foreach($this->config('nodes_list') as $node)
 		{
 			$name = 'failnet_' . $node;
 			$this->$node = new $name($this);
-			$this->ui->ui_system('--- Loaded ' . $node . ' node');
+			failnet::core('ui')->system('--- Loaded ' . $node . ' node');
 		}
 
 		// Set the error handler
-		$this->ui->ui_system('--- Setting main error handler');
+		failnet::core('ui')->system('--- Setting main error handler');
 		@set_error_handler(array($this->error, 'fail'));
 
 		// Check to see if our rand_seed exists, and if not we need to execute our schema file (as long as it exists of course). :)
-		$this->sql('config', 'get')->execute(array(':name' => 'rand_seed'));
+		failnet::core()->sql('config', 'get')->execute(array(':name' => 'rand_seed'));
 		$rand_seed_exists = $this->sql('config', 'get')->fetch(PDO::FETCH_ASSOC);
 		if(!$rand_seed_exists && file_exists(FAILNET_ROOT . 'schemas/schema_data.sql'))
 		{
@@ -244,6 +249,7 @@ class failnet_core
 		// In case of restart/reload, to prevent 'Nick already in use' (which asplodes everything)
 		usleep(500);
 		$this->ui->ui_ready();
+		*/
 	}
 
 	/**
@@ -275,7 +281,7 @@ class failnet_core
 	 * Setup the database connection and load up our prepared SQL statements
 	 * @return void
 	 */
-	public function setup_db()
+	public function setupDB()
 	{
 		// Load/setup the database
 		$this->ui->ui_system('- Connecting to the database');
@@ -357,35 +363,35 @@ class failnet_core
 	 */
 	public function run()
 	{
-		$this->socket->connect();
-		$this->plugins->connect();
+		failnet::core('socket')->connect();
+		failnet::core('plugins')->connect();
 
 		// Begin looping.
 		while(true)
 		{
 			// Real quick, we gotta clean out the event queue just in case there's junk in there.
-			$this->plugins->event_queue = array();
+			failnet::core('plugins')->event_queue = array();
 
 			// First off, fire off our tick.
-			$this->plugins->tick();
+			failnet::core('plugins')->tick();
 
 			// Grab our event, if we have one.
-			$event = $this->socket->get();
+			$event = failnet::core('socket')->get();
 
 			if($event)
-				$this->plugins->event($event);
+				failnet::core('plugins')->event($event);
 
 			// Do we have anything to do?
-			if(!empty($this->plugins->event_queue))
+			if(!empty(failnet::core('plugins')->event_queue))
 			{
-				$result = $this->plugins->dispatch();
+				$result = failnet::core('plugins')->dispatch();
 				if($result !== true)
 					break;
 			}
 		}
-		$this->plugins->disconnect();
-		$this->irc->quit($this->config('quit_msg'));
-		$this->terminate($quit->arguments[0]);
+		failnet::core('plugins')->disconnect();
+		failnet::core('irc')->quit($this->config('quit_msg'));
+		$this->terminate($result->arguments[0]);
 	}
 
 	/**
