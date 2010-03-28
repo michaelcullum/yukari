@@ -43,7 +43,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program.  If not, 
+along with this program.  If not,
 see <http://opensource.org/licenses/gpl-2.0.php>.
 
 ===================================================================
@@ -51,7 +51,7 @@ see <http://opensource.org/licenses/gpl-2.0.php>.
 What is Failnet?
 -------------------------------------------------------------------
 
-Failnet is an IRC bot built in PHP, coded by Obsidian for something 
+Failnet is an IRC bot built in PHP, coded by Obsidian for something
 to do.  He's coded in PHP5 Object Oriented Programming, and mainly
 designed for aiding in channel monitoring.
 
@@ -61,5 +61,5 @@ How do I use Failnet?
 -------------------------------------------------------------------
 
 For complete and up-to-date instructions, please refer to Failnet's
-wiki at http://www.assembla.com/wiki/show/failnet/ and read through
-the "Setup Failnet" page, and any applicable subpages.
+wiki at http://wiki.github.com/Obsidian1510/Failnet-PHP-IRC-Bot/ and read through
+the "Failnet Setup" page, and any applicable subpages.
