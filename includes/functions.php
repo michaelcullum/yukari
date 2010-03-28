@@ -574,7 +574,7 @@ function check_version(&$up_to_date, &$latest_version, &$announcement_url)
 	// Check the version, load out remote version check file!
 	$errstr = '';
 	$errno = 0;
-	$info = get_remote_file('code.assembla.com', '/failnet/git/node/blob/master/develop', 'version.txt', $errstr, $errno);
+	$info = get_remote_file('github.com', '/Obsidian1510/Failnet-PHP-IRC-Bot/raw/master/develop', 'version.txt', $errstr, $errno);
 	if ($info === false)
 	{
 		trigger_error($errstr, E_USER_WARNING);
