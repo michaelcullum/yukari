@@ -6,15 +6,12 @@
  *  Failnet -- PHP-based IRC Bot
  *-------------------------------------------------------------------
  *	Script info:
- * Version:		2.0.0 Alpha 2
- * Copyright:	(c) 2009 - 2010 -- Failnet Project
- * License:		GNU General Public License - Version 2
+ * @version:	2.0.0 Alpha 2
+ * @copyright:	(c) 2009 - 2010 -- Failnet Project
+ * @license:	http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
  *
  *===================================================================
  *
- */
-
-/**
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation.
@@ -26,6 +23,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://opensource.org/licenses/gpl-2.0.php>.
+ *
  */
 
 
@@ -34,6 +32,7 @@
  * Failnet - Password hashing framework,
  * 		Used as Failnet's password hashing system.
  *
+ * @package utilities
  * @version Version 0.1 / slightly modified for Failnet (using $F$ as hash type identifier)
  *
  * Portable PHP password hashing framework.
@@ -58,7 +57,7 @@
  * Obviously, since this code is in the public domain, the above are not
  * requirements (there can be none), but merely suggestions.
  */
-class failnet_hash 
+class failnet_hash
 {
 	public $itoa64 = './0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 	public $iteration_count_log2;
@@ -126,7 +125,7 @@ class failnet_hash
 
 	public function gensalt_private($input)
 	{
-		$output = '$P$';
+		$output = '$F$';
 		$output .= $this->itoa64[min($this->iteration_count_log2 + 5, 30)];
 		$output .= $this->encode64($input, 6);
 
@@ -139,7 +138,7 @@ class failnet_hash
 		if (substr($setting, 0, 2) == $output)
 			$output = '*1';
 
-		if (substr($setting, 0, 3) != '$P$')
+		if (substr($setting, 0, 3) != '$F$')
 			return $output;
 
 		$count_log2 = strpos($this->itoa64, $setting[3]);

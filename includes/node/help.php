@@ -6,15 +6,12 @@
  *  Failnet -- PHP-based IRC Bot
  *-------------------------------------------------------------------
  *	Script info:
- * Version:		2.0.0 Alpha 2
- * Copyright:	(c) 2009 - 2010 -- Failnet Project
- * License:		GNU General Public License - Version 2
+ * @version:	2.0.0 Alpha 2
+ * @copyright:	(c) 2009 - 2010 -- Failnet Project
+ * @license:	http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
  *
  *===================================================================
  *
- */
-
-/**
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation.
@@ -26,6 +23,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://opensource.org/licenses/gpl-2.0.php>.
+ *
  */
 
 
@@ -39,7 +37,7 @@
  * @copyright (c) 2009 - 2010 -- Failnet Project
  * @license GNU General Public License - Version 2
  */
-class failnet_help extends failnet_common
+class failnet_node_help extends failnet_common
 {
 	public $index = array();
 
