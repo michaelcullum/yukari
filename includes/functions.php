@@ -587,6 +587,80 @@ function check_version(&$up_to_date, &$latest_version, &$announcement_url)
 	$up_to_date = (!version_compare(str_replace('rc', 'RC', strtolower(FAILNET_VERSION)), str_replace('rc', 'RC', strtolower($latest_version)), '<'));
 }
 
+/**
+ * Deny function...
+ * @return string - The deny message to use. :3
+ */
+function deny_message()
+{
+	$rand = rand(0, 9);
+	switch($rand)
+	{
+		case 0:
+		case 1:
+			return 'No.';
+		break;
+		case 2:
+		case 3:
+			return 'Uhm, no.';
+		break;
+		case 4:
+		case 5:
+			return 'Hells no!';
+			break;
+		case 6:
+		case 7:
+		case 8:
+			return 'HELL NOEHS!';
+		break;
+		case 9:
+			return 'The number you are dialing is not available at this time.';
+		break;
+	}
+}
+
+/**
+ * Are we directing this at our owner or ourself?
+ * This is best to avoid humilation if we're using an agressive command.  ;)
+ * @param string $user - The user to check.
+ * @return boolean - Are we targeting the owner or ourself?
+ */
+function checkuser($user)
+{
+   if(preg_match('#' . preg_quote(failnet::core()->config('owner'), '#') . '|' . preg_quote(failnet::core()->config('nick'), '#') . '|self#i', $user))
+	   return true;
+   return false;
+}
+
+/**
+* Return unique id
+* @param string $extra additional entropy
+* @return string - The unique ID
+*
+* @author (c) 2007 phpBB Group
+*/
+function unique_id($extra = 'c')
+{
+	static $dss_seeded = false;
+
+	$rand_seed = failnet::core()->config('rand_seed');
+	$last_rand_seed = failnet::core()->config('last_rand_seed');
+
+	$val = md5($rand_seed . microtime());
+	$rand_seed = md5($rand_seed . $val . $extra);
+
+	if($dss_seeded !== true && ($last_rand_seed < time() - rand(1,10)))
+	{
+		failnet::core()->sql('config', 'update')->execute(array(':name' => 'rand_seed', ':value' => $rand_seed));
+		failnet::core()->settings['rand_seed'] = $rand_seed;
+		$last_rand_seed = time();
+		failnet::core()->sql('config', 'update')->execute(array(':name' => 'last_rand_seed', ':value' => $last_rand_seed));
+		failnet::core()->settings['last_rand_seed'] = $last_rand_seed;
+		$dss_seeded = true;
+	}
+
+	return substr($val, 4, 16);
+}
 
 /**
  * Converts a delimited string of hostmasks into a regular expression that will match any hostmask in the original string.

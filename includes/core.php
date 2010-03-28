@@ -404,15 +404,15 @@ class failnet_core
 	public function terminate($restart = true)
 	{
 		if($this->socket->socket !== NULL)
-			$this->irc->quit($this->config('quit_msg'));
+			failnet::core('irc')->quit($this->config('quit_msg'));
 		if($restart)
 		{
 			// Just a hack to get it to restart through batch, and not terminate.
 			file_put_contents(FAILNET_ROOT . 'data/restart.inc', 'yesh');
 			// Dump the log cache to the file.
-			$this->log->add('--- Restarting Failnet ---', true);
-			$this->ui->ui_system('-!- Restarting Failnet');
-			$this->ui->ui_shutdown();
+			failnet::core('log')->add('--- Restarting Failnet ---', true);
+			failnet::core('ui')->system('-!- Restarting Failnet');
+			failnet::core('ui')->shutdown();
 			exit(0);
 		}
 		else
@@ -421,9 +421,9 @@ class failnet_core
 			if(file_exists(FAILNET_ROOT . 'data/restart.inc'))
 				unlink(FAILNET_ROOT . 'data/restart.inc');
 			// Dump the log cache to the file.
-			$this->log->add('--- Terminating Failnet ---', true);
-			$this->ui->ui_system('-!- Terminating Failnet');
-			$this->ui->ui_shutdown();
+			failnet::core('log')->add('--- Terminating Failnet ---', true);
+			failnet::core('ui')->system('-!- Terminating Failnet');
+			failnet::core('ui')->shutdown();
 			exit(1);
 		}
 	}
@@ -458,7 +458,7 @@ class failnet_core
 		if($statement === false)
 			return $this->statements[$table][$type];
 
-		$this->statements[$table][$type] = $this->db->prepare($statement);
+		$this->statements[$table][$type] = failnet::core('db')->prepare($statement);
 	}
 
 	/**
@@ -519,82 +519,5 @@ class failnet_core
 	public function __unset($name)
 	{
 		unset($this->nodes[$name]);
-	}
-
-	/**
-	* Return unique id
-	* @param string $extra additional entropy
-	* @return string - The unique ID
-	*
-	* @author (c) 2007 phpBB Group
-	*/
-	public function unique_id($extra = 'c')
-	{
-		static $dss_seeded = false;
-
-		$rand_seed = $this->config('rand_seed');
-		$last_rand_seed = $this->config('last_rand_seed');
-
-		$val = md5($rand_seed . microtime());
-		$rand_seed = md5($rand_seed . $val . $extra);
-
-		if($dss_seeded !== true && ($last_rand_seed < time() - rand(1,10)))
-		{
-			$this->sql('config', 'update')->execute(array(':name' => 'rand_seed', ':value' => $rand_seed));
-			$this->settings['rand_seed'] = $rand_seed;
-			$last_rand_seed = time();
-			$this->sql('config', 'update')->execute(array(':name' => 'last_rand_seed', ':value' => $last_rand_seed));
-			$this->settings['last_rand_seed'] = $last_rand_seed;
-			$dss_seeded = true;
-		}
-
-		return substr($val, 4, 16);
-	}
-
-	// @todo move these methods out of the core
-
-	/**
-	 * Deny function...
-	 * @return string - The deny message to use. :3
-	 */
-	public function deny()
-	{
-		$rand = rand(0, 9);
-		switch($rand)
-		{
-			case 0:
-			case 1:
-				return 'No.';
-			break;
-			case 2:
-			case 3:
-				return 'Uhm, no.';
-			break;
-			case 4:
-			case 5:
-				return 'Hells no!';
-				break;
-			case 6:
-			case 7:
-			case 8:
-				return 'HELL NOEHS!';
-			break;
-			case 9:
-				return 'The number you are dialing is not available at this time.';
-			break;
-		}
-	}
-
-	/**
-	 * Are we directing this at our owner or ourself?
-	 * This is best to avoid humilation if we're using an agressive command.  ;)
-	 * @param string $user - The user to check.
-	 * @return boolean - Are we targeting the owner or ourself?
-	 */
-	public function checkuser($user)
-	{
-        if(preg_match('#' . preg_quote($this->config('owner'), '#') . '|' . preg_quote($this->config('nick'), '#') . '|self#i', $user))
-            return true;
-		return false;
 	}
 }
