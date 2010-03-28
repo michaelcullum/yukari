@@ -48,6 +48,11 @@ class failnet_ui extends failnet_common
 	public $buffer = '';
 
 	/**
+	 * @var integer - Our current output level
+	 */
+	public $output_level = 0;
+
+	/**
 	 * Specialized init function to allow class construction to be easier.
 	 * @see includes/failnet_common#init()
 	 * @return void
@@ -70,7 +75,7 @@ class failnet_ui extends failnet_common
 	 */
 	public function level($level)
 	{
-		return (($level != OUTPUT_RAW) ? (OUTPUT_LEVEL >= $level && OUTPUT_LEVEL !== OUTPUT_RAW) : (OUTPUT_LEVEL === OUTPUT_RAW));
+		return (($level != OUTPUT_RAW) ? ($this->output_level >= $level && $this->output_level !== OUTPUT_RAW) : ($this->output_level === OUTPUT_RAW));
 	}
 
 	/**

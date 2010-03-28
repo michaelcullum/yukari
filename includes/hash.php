@@ -32,7 +32,7 @@
 
 /**
  * Failnet - Password hashing framework,
- * 		Used as Failnet's password hashing system. 
+ * 		Used as Failnet's password hashing system.
  *
  * @version Version 0.1 / slightly modified for Failnet (using $F$ as hash type identifier)
  *
@@ -65,12 +65,7 @@ class failnet_hash
 	public $portable_hashes;
 	public $random_state;
 
-	public function __construct(failnet_core $failnet)
-	{
-		$this->init(8, true);
-	}
-
-	public function init($iteration_count_log2, $portable_hashes)
+	public function __construct($iteration_count_log2 = 8, $portable_hashes = true)
 	{
 		if ($iteration_count_log2 < 4 || $iteration_count_log2 > 31)
 			$iteration_count_log2 = 8;
@@ -280,4 +275,3 @@ class failnet_hash
 		return $hash == $stored_hash;
 	}
 }
-

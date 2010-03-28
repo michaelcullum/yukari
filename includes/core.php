@@ -162,10 +162,8 @@ class failnet_core
 		$cfg_file = ($_SERVER['argc'] > 1) ? $_SERVER['argv'][1] : 'config';
 		$this->load($cfg_file);
 
-		// Prepare the UI...
-		define('OUTPUT_LEVEL', $this->config('output'));
-
 		failnet::setCore('ui', 'failnet_ui');
+		failnet::core('ui')->output_level = $this->config('output');
 
 		// Fire off the startup text.
 		failnet::core('ui')->startup();
@@ -177,7 +175,9 @@ class failnet_core
 			'error'		=> 'failnet_error',
 			'hash'		=> 'failnet_hash',
 			'irc'		=> 'failnet_irc',
+			'plugin'	=> 'failnet_plugin',
 		);
+		failnet::core('ui')->system('- Loading Failnet core objects');
 		foreach($core_objects as $core_object_name => $core_object_class)
 		{
 			failnet::setCore($core_object_name, $core_object_class);
@@ -185,55 +185,29 @@ class failnet_core
 		}
 		unset($core_objects);
 
+		// Set the error handler
+		failnet::core('ui')->system('--- Setting main error handler');
+		@set_error_handler(array(failnet::core('error'), 'fail'));
+
 		// Setup the DB connection.
 		$this->setupDB();
 
-		// Load required classes and systems
-		failnet::core('ui')->system('- Loading Failnet nodes');
-		/*
+		// Load our node files
+		failnet::core('ui')->system('- Loading Failnet node objects');
 		foreach($this->config('nodes_list') as $node)
 		{
-			$name = 'failnet_' . $node;
-			$this->$node = new $name($this);
-			failnet::core('ui')->system('--- Loaded ' . $node . ' node');
+			failnet::setNode($node, "failnet_$node");
+			failnet::core('ui')->system("--- Loaded node object $node");
 		}
 
-		// Set the error handler
-		failnet::core('ui')->system('--- Setting main error handler');
-		@set_error_handler(array($this->error, 'fail'));
-
-		// Check to see if our rand_seed exists, and if not we need to execute our schema file (as long as it exists of course). :)
-		failnet::core()->sql('config', 'get')->execute(array(':name' => 'rand_seed'));
-		$rand_seed_exists = $this->sql('config', 'get')->fetch(PDO::FETCH_ASSOC);
-		if(!$rand_seed_exists && file_exists(FAILNET_ROOT . 'schemas/schema_data.sql'))
-		{
-			try
-			{
-				$this->db->beginTransaction();
-
-				// @todo move to authorize plugin/node
-				// Add the default user if Failnet was just installed
-				$this->sql('users', 'create')->execute(array(':nick' => $this->config('owner'), ':authlevel' => 100, ':hash' => $this->hash->hash($this->config('user'))));
-
-				// Now let's add some default data to the database tables
-				$this->db->exec(file_get_contents(FAILNET_ROOT . 'schemas/schema_data.sql'));
-
-				$this->db->commit();
-			}
-			catch (PDOException $e)
-			{
-				// Roll back ANY CHANGES MADE, something went boom.
-				$this->db->rollBack();
-				throw_fatal($e);
-			}
-		}
+		$this->checkInstall();
 
 		// Load plugins
-		$this->ui->ui_system('- Loading Failnet plugins');
-		$this->plugin('load', $this->config('plugin_list'));
+		failnet::core('ui')->system('- Loading Failnet plugins');
+		failnet::core('plugin')->pluginLoad($this->config('plugin_list'));
 
 		// Load our config settings
-		$this->ui->ui_system('- Loading config settings');
+		failnet::core('ui')->system('- Loading config settings');
 		$this->sql('config', 'get_all')->execute();
 		$result = $this->sql('config', 'get_all')->fetchAll();
 		foreach($result as $row)
@@ -242,14 +216,13 @@ class failnet_core
 		}
 
 		// This is a hack to allow us to restart Failnet if we're running the script through a batch file.
-		$this->ui->ui_system('- Removing termination indicator file');
+		failnet::core('ui')->system('- Removing termination indicator file');
 		if(file_exists(FAILNET_ROOT . 'data/restart.inc'))
 			unlink(FAILNET_ROOT . 'data/restart.inc');
 
 		// In case of restart/reload, to prevent 'Nick already in use' (which asplodes everything)
 		usleep(500);
-		$this->ui->ui_ready();
-		*/
+		failnet::core('ui')->ready();
 	}
 
 	/**
@@ -284,17 +257,17 @@ class failnet_core
 	public function setupDB()
 	{
 		// Load/setup the database
-		$this->ui->ui_system('- Connecting to the database');
+		failnet::core('ui')->system('- Connecting to the database');
 		try
 		{
 			// Initialize the database connection
-			$this->db = new PDO('sqlite:' . FAILNET_ROOT . 'data/db/' . basename(md5($this->config('server') . '::' . $this->config('user'))) . '.db');
-			$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			failnet::$core['db'] = new PDO('sqlite:' . FAILNET_ROOT . 'data/db/' . basename(md5($this->config('server') . '::' . $this->config('user'))) . '.db');
+			failnet::core('db')->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 			// We want this as a transaction in case anything goes wrong.
-			$this->db->beginTransaction();
+			failnet::core('db')->beginTransaction();
 
-			$this->ui->ui_system('- Initializing the database');
+			failnet::core('ui')->system('- Initializing the database');
 
 			// Load up the list of files that we've got, and do stuff with them.
 			$schemas = scandir(FAILNET_ROOT . 'schemas');
@@ -304,15 +277,15 @@ class failnet_core
 					continue;
 
 				$tablename = substr($schema, 0, strrpos($schema, '.'));
-				$results = $this->db->query('SELECT COUNT(*) FROM sqlite_master WHERE name = ' . $this->db->quote($tablename))->fetchColumn();
+				$results = failnet::core('db')->query('SELECT COUNT(*) FROM sqlite_master WHERE name = ' . $this->db->quote($tablename))->fetchColumn();
 				if(!$results)
 				{
 					display(' -  Installing the ' . $tablename . ' database table...');
-					$this->db->exec(file_get_contents(FAILNET_ROOT . 'schemas/' . $schema));
+					failnet::core('db')->exec(file_get_contents(FAILNET_ROOT . 'schemas/' . $schema));
 				}
 			}
 
-			$this->ui->ui_system('--- Preparing database queries...');
+			failnet::core('ui')->system('--- Preparing database queries...');
 
 			// Let's prepare the default prepared statements.
 			// Config table
@@ -347,13 +320,42 @@ class failnet_core
 			$this->sql('access', 'get', 'SELECT hostmask FROM access WHERE user_id = :user');
 
 			// Commit the stuffs
-			$this->db->commit();
+			failnet::core('db')->commit();
 		}
 		catch (PDOException $e)
 		{
 			// Something went boom.  Time to panic!
-			$this->db->rollBack();
+			failnet::core('db')->rollBack();
 			throw_fatal($e);
+		}
+	}
+
+	public function checkInstall()
+	{
+		// Check to see if our rand_seed exists, and if not we need to execute our schema file (as long as it exists of course). :)
+		$this->sql('config', 'get')->execute(array(':name' => 'rand_seed'));
+		$rand_seed_exists = $this->sql('config', 'get')->fetch(PDO::FETCH_ASSOC);
+		if(!$rand_seed_exists && file_exists(FAILNET_ROOT . 'schemas/schema_data.sql'))
+		{
+			try
+			{
+				failnet::core('db')->beginTransaction();
+
+				// @todo move to authorize plugin/node
+				// Add the default user if Failnet was just installed
+				$this->sql('users', 'create')->execute(array(':nick' => $this->config('owner'), ':authlevel' => self::AUTH_OWNER, ':hash' => $this->hash->hash($this->config('user'))));
+
+				// Now let's add some default data to the database tables
+				failnet::core('db')->exec(file_get_contents(FAILNET_ROOT . 'schemas/schema_data.sql'));
+
+				failnet::core('db')->commit();
+			}
+			catch (PDOException $e)
+			{
+				// Roll back ANY CHANGES MADE, something went boom.
+				failnet::core('db')->rollBack();
+				throw_fatal($e);
+			}
 		}
 	}
 
@@ -393,123 +395,6 @@ class failnet_core
 		failnet::core('irc')->quit($this->config('quit_msg'));
 		$this->terminate($result->arguments[0]);
 	}
-
-	/**
-	 * Run Failnet! :D
-	 * @return void
-	 *
-	public function run()
-	{
-		// Set time limit, we don't want Failnet to time out, at all.
-		set_time_limit(0);
-
-		// Now connect to the server
-		$this->socket->connect();
-
-		// Toss a connection call to plugins for initial setup
-		foreach($this->plugins as $name => $plugin)
-		{
-			$this->ui->ui_event('connection established call: plugin "' . $name . '"');
-			$plugin->cmd_connect();
-		}
-
-		// Begin zer loopage!
-		while(true)
-		{
-			$queue = array();
-
-			// Upon each 'tick' of the loop, we call these functions
-			foreach($this->plugins as $name => $plugin)
-			{
-				$this->ui->ui_event('tick call: plugin "' . $name . '"');
-				$plugin->tick();
-			}
-
-			// Check for events
-			$event = $this->socket->get();
-			if($event)
-			{
-				if($event instanceof failnet_event_response)
-				{
-					$eventtype = 'response';
-				}
-				else
-				{
-					$eventtype = $event->type;
-				}
-				$this->ui->ui_raw($event->buffer);
-			}
-
-			// Check to see if the user that generated the event is ignored.
-			if($eventtype != 'response' && isset($this->ignore) && $this->ignore->ignored($event->hostmask))
-			{
-				$this->ui->ui_event('ignored event from hostmask: ' . $event->hostmask);
-				continue;
-			}
-
-			// For each plugin, we provide the event encountered so that the plugins can react to them for us
-			foreach($this->plugins as $name => $plugin)
-			{
-				if($event)
-				{
-					$plugin->event = $event;
-					$plugin->pre_event();
-					$this->ui->ui_event('command event call (' . $eventtype . '): plugin "' . $name . '"');
-					$plugin->{'cmd_' . $eventtype}();
-					$plugin->post_event();
-				}
-
-				$queue = array_merge($queue, $plugin->events);
-				$plugin->events = array();
-			}
-
-			// Do we have any events to perform?
-			if(!$queue)
-				continue;
-
-			//Execute pre-dispatch callback for plugin events
-			foreach($this->plugins as $name => $plugin)
-			{
-				$this->ui->ui_event('pre-dispatch call: plugin "' . $name . '" - events: ' . sizeof($queue));
-				$plugin->pre_dispatch($queue);
-			}
-
-			// Time to fire off our events
-			$quit = NULL;
-			foreach($queue as $item)
-			{
-				if(strcasecmp($item->type, 'quit') != 0)
-				{
-					$this->ui->ui_event('event dispatch call: type "' . $item->type . '"');
-					call_user_func_array(array($this->irc, $item->type), $item->arguments);
-				}
-				elseif(empty($quit))
-				{
-					$quit = $item;
-				}
-			}
-
-			// Post-dispatch events
-			foreach($this->plugins as $name => $plugin)
-			{
-				$this->ui->ui_event('post-dispatch call: plugin "' . $name . '"');
-				$plugin->post_dispatch($queue);
-			}
-
-			// If quit was called, we break out of the cycle and prepare to quit.
-			if($quit)
-				break;
-		}
-
-		foreach($this->plugins as $name => $plugin)
-		{
-			$this->ui->ui_event('disconnect call: plugin "' . $name . '"');
-			$plugin->cmd_disconnect();
-		}
-		$this->irc->quit($this->config('quit_msg'));
-		$this->terminate($quit->arguments[0]);
-	}
-	*/
 
 	/**
 	 * Terminates Failnet, and restarts if ordered to.

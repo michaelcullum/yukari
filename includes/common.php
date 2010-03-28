@@ -107,9 +107,10 @@ class failnet
 	}
 }
 
+// work in progress, will take care of the hooks stuff.
 abstract class failnet_base
 {
-	public function __call($name, array $arguments)
+	public function __call($name, $arguments)
 	{
 		// @todo write the hook handling code here
 	}
