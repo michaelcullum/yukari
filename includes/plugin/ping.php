@@ -99,10 +99,11 @@ class failnet_plugin_ping extends failnet_plugin_common
 
 		if(!empty($this->last_ping) && $time - $this->last_ping > $this->failnet->config('ping_timeout'))
 		{
+			$this->failnet->ui->ui_system('-!- Ping timeout, restarting Failnet');
 			$this->failnet->log->add('--- Ping timeout, restarting Failnet ---');
 			$this->failnet->terminate(true);
 		}
-		elseif($time - $this->last_event > $this->failnet->config('ping_wait'))
+		elseif($this->last_event && (($time - $this->last_event) > $this->failnet->config('ping_wait')))
 		{
 			$this->last_ping = time();
 			$this->failnet->ui->ui_system('Pinging server to maintain connection...');
