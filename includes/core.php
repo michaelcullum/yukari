@@ -29,7 +29,7 @@
 
 /**
  * Failnet - Core class,
- * 		Failnet 2.0 in a nutshell.  Faster, smarter, better, and with a sexier voice.
+ * 		Failnet 2.x in a nutshell.  Faster, smarter, better, and with a sexier voice.
  *
  *
  * @package core

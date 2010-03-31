@@ -1,2 +1,2 @@
-2.0.0A2
+2.1.0-DEV
 http://wiki.github.com/Obsidian1510/Failnet-PHP-IRC-Bot/
