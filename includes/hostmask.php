@@ -31,8 +31,8 @@
 
 /**
  * Failnet - Hostmask class,
- * 		Used as a class for housing hostmask data 
- * 
+ * 		Used as a class for housing hostmask data
+ *
  *
  * @package utilities
  * @author Obsidian
@@ -55,7 +55,7 @@ class failnet_hostmask
 	 * @var string - The username of the hostmask
 	 */
 	public $username = '';
-	
+
 	/**
 	 * Parses a string containing the entire hostmask into a new instance of this class.
 	 *
@@ -66,13 +66,23 @@ class failnet_hostmask
 	{
 		if(preg_match('/^([^!@]+)!(?:[ni]=)?([^@]+)@([^ ]+)/', $hostmask, $match))
 		{
-			list(, $nick, $username, $host) = $match; 
+			list(, $nick, $username, $host) = $match;
 			return new failnet_hostmask($nick, $username, $host);
 		}
 		else
 		{
 			trigger_error('Invalid hostmask specified: "' . $hostmask . '"', E_USER_WARNING);
 		}
+	}
+
+	/**
+	 * Checks for a match against this hostmask
+	 * @param string $regex - The regex pattern to check.
+	 * @return boolean - Does this hostmask match our pattern?
+	 */
+	public function checkMatch($regex)
+	{
+		return (preg_match('#^' . str_replace('*', '.*', $regex) . '$#i', (string) $this) > 0);
 	}
 
 	/**
@@ -98,4 +108,3 @@ class failnet_hostmask
 		return $this->nick . '!' . $this->username . '@' . $this->host;
 	}
 }
-
