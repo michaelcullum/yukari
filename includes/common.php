@@ -5,10 +5,13 @@
  *
  *  Failnet -- PHP-based IRC Bot
  *-------------------------------------------------------------------
- *	Script info:
- * @version:	2.1.0 DEV
- * @copyright:	(c) 2009 - 2010 -- Failnet Project
- * @license:	http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
+ * @version		2.1.0 DEV
+ * @category	Failnet
+ * @package		core
+ * @author		Failnet Project
+ * @copyright	(c) 2009 - 2010 -- Failnet Project
+ * @license		http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
+ * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  *
  *===================================================================
  *
@@ -30,13 +33,14 @@
 
 /**
  * Failnet - Master class,
- * 		Used as the master static class that will contain all nodes, lib objects, etc.
+ * 		Used as the master static class that will contain all node objects, core objects, etc.
  *
  *
- * @package core
- * @author Obsidian
- * @copyright (c) 2009 - 2010 -- Failnet Project
- * @license GNU General Public License - Version 2
+ * @category	Failnet
+ * @package		core
+ * @author		Failnet Project
+ * @license		http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
+ * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
 class failnet
 {
@@ -104,18 +108,86 @@ class failnet
 		self::$nodes[$node_name] = new $node_class();
 	}
 
-	public function registerHook($hooked_call, $hook_call)
+	/**
+	 * Register a hook function to be called before
+	 * @param array $hooked_method_call - The callback info for the method we're hooking onto.
+	 * @param mixed $hook_call - The function/method to hook on top of the method we're hooking.
+	 * @param constant $hook_type - The type of hook we're using.
+	 * @return boolean - Were we successful?
+	 */
+	public function registerHook($hooked_method_class, $hooked_method_name, $hook_call, $hook_type = HOOK_NULL)
 	{
-		// some code goes here.
+		// We're deliberately ignoring HOOK_NULL here.
+		if(!in_array($hook_call, array(HOOK_STACK, HOOK_OVERRIDE)))
+		   return false;
+
+		/**
+		 * Hooks are placed into the hook info array using a pattern:
+		 *
+		 <code>
+			self::$hooks[$hooked_method_class][$hooked_method_name] = array(
+				array(
+					'hook_call'		=> $hook_call,
+					'type'			=> HOOK_STACK,
+				),
+				array(
+					'hook_call'		=> $hook_call,
+					'type'			=> HOOK_OVERRIDE,
+				),
+			);
+		 </code>
+		 *
+		 */
+
+		// Check for unsupported classes
+		if(substr($hooked_method_class, 0, 8) != 'failnet_')
+			return false;
+
+		/**
+		 * At some point in the future, we may want to check to see if the method we are hooking onto exists,
+		 * but for now we will not, as the class may not yet be loaded.
+		 * We'll just have to take their word for it.
+		 */
+		self::$hooks[$hooked_method_class][$hooked_method_name][] = array($hook_call, $hook_type);
+		return true;
+	}
+
+	public function retrieveHook($hooked_method_class, $hooked_method_name)
+	{
+		// some code goes here
 	}
 }
 
-// work in progress, will take care of the hooks stuff.
+/**
+ * Failnet - Master class,
+ * 		Used as the master static class that will contain all node objects, core objects, etc.
+ *
+ *
+ * @category	Failnet
+ * @package		core
+ * @author		Failnet Project
+ * @license		http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
+ * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
+ */
 abstract class failnet_base
 {
+	/**
+	 * Hook enabler
+	 * @param $funct - Function name
+	 * @param $params - Function parameters
+	 * @return void
+	 */
 	public function __call($name, $arguments)
 	{
-		// @todo write the hook handling code here
+		$method_name = '_' . $name;
+		if(method_exists($this, $method_name))
+		{
+			// and hook code goes here
+		}
+		else
+		{
+			trigger_error("Call to undefined method '$funct' in class '" . get_class($this) . "'");
+		}
 	}
 }
 
@@ -124,24 +196,16 @@ abstract class failnet_base
  * 		Used as the common base class for all of Failnet's class files (at least the ones that need one)
  *
  *
- * @package core
- * @author Obsidian
- * @copyright (c) 2009 - 2010 -- Failnet Project
- * @license GNU General Public License - Version 2
+ * @category	Failnet
+ * @package		core
+ * @author		Failnet Project
+ * @license		http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
+ * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-abstract class failnet_common
+abstract class failnet_common extends failnet_base
 {
 	/**
-	 * @var object failnet_core - The mothership itself.
-	 */
-	protected $failnet;
-
-	/**
-	 * Constants for Failnet.
-	 */
-
-	/**
-	 * Auth levels for Failnet
+	 * Auth level constants for Failnet
 	 */
 	const AUTH_OWNER = 6;
 	const AUTH_SUPERADMIN = 5;
@@ -150,39 +214,4 @@ abstract class failnet_common
 	const AUTH_KNOWNUSER = 2;
 	const AUTH_REGISTEREDUSER = 1;
 	const AUTH_UNKNOWNUSER = 0;
-
-	/**
-	 * Constructor method.
-	 * @param object failnet_core $failnet - The Failnet core object.
-	 * @return void
-	 */
-	public function __construct(failnet_core $failnet)
-	{
-		$this->failnet = $failnet;
-		$this->init();
-	}
-
-	/**
-	 * Handler method for class load
-	 * @return void
-	 */
-	abstract public function init();
-
-	/**
-	 * Magic method __call, implements hook calls for specialized method hooking.
-	 * @param string $name - The name of the method that is being called
-	 * @param array $arguments - The arguments that are being passed to the specified method
-	 * @return mixed
-	 */
-	public function __call($name, array $arguments)
-	{
-		if(!method_exists($this->failnet, $name))
-		{
-			trigger_error('Call to undefined method "' . $name . '" in class "' . __CLASS__ . '"', E_USER_WARNING);
-		}
-		else
-		{
-			return call_user_func_array(array($this->failnet, $name), $arguments);
-		}
-	}
 }

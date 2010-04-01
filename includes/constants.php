@@ -36,3 +36,8 @@ define('OUTPUT_DEBUG', 2);
 define('OUTPUT_DEBUG_FULL', 3);
 define('OUTPUT_RAW', 4);
 define('OUTPUT_SPAM', 4); // ;D
+
+// Hook types
+define('HOOK_NULL', 0);
+define('HOOK_STACK', 1);
+define('HOOK_OVERRIDE', 2);
