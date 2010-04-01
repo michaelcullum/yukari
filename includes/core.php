@@ -5,10 +5,13 @@
  *
  *  Failnet -- PHP-based IRC Bot
  *-------------------------------------------------------------------
- *	Script info:
- * @version:	2.1.0 DEV
- * @copyright:	(c) 2009 - 2010 -- Failnet Project
- * @license:	http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
+ * @version		2.1.0 DEV
+ * @category	Failnet
+ * @package		core
+ * @author		Failnet Project
+ * @copyright	(c) 2009 - 2010 -- Failnet Project
+ * @license		http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
+ * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  *
  *===================================================================
  *
@@ -32,10 +35,11 @@
  * 		Failnet 2.x in a nutshell.  Faster, smarter, better, and with a sexier voice.
  *
  *
- * @package core
- * @author Obsidian
- * @copyright (c) 2009 - 2010 -- Failnet Project
- * @license GNU General Public License - Version 2
+ * @category	Failnet
+ * @package		core
+ * @author		Failnet Project
+ * @license		http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
+ * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
 class failnet_core
 {
@@ -44,34 +48,9 @@ class failnet_core
  */
 
 	/**
-	 * @var array - Loaded class nodes
+	 * @var array - Automagical property for use with magic methods
 	 */
-	private $nodes = array();
-
-	/**
-	 * @var integer - The UNIX timestamp for when Failnet was started
-	 */
-	public $start = 0;
-
-	/**
-	 * @var integer - Base memory usage, used for comparisons
-	 */
-	public $base_mem = 0;
-
-	/**
-	 * @var integer - Base memory usage peak, used for comparisons
-	 */
-	public $base_mem_peak = 0;
-
-	/**
-	 * @var string - Our current usernick for the bot
-	 */
-	public $nick = '';
-
-	/**
-	 * @var boolean - Should we be in silent mode?
-	 */
-	public $speak = true;
+	private $virtual_storage = array();
 
 	/**
 	 * @var array - Various config settings et al.
@@ -82,16 +61,6 @@ class failnet_core
 	 * @var array - Config file settings
 	 */
 	public $config = array();
-
-	/**
-	 * @var array - What channels are we in, and what users are in them?
-	 */
-	public $chans = array();
-
-	/**
-	 * @var array - Prepared PDO statements for use throughout Failnet
-	 */
-	public $statements = array();
 
 	/**
 	 * @var boolean - DO NOT _EVER_ CHANGE THIS, FOR THE SAKE OF HUMANITY.
@@ -366,7 +335,7 @@ class failnet_core
 	public function run()
 	{
 		failnet::core('socket')->connect();
-		failnet::core('plugins')->connect();
+		failnet::core('plugins')->handleConnect();
 
 		// Begin looping.
 		while(true)
@@ -375,23 +344,23 @@ class failnet_core
 			failnet::core('plugins')->event_queue = array();
 
 			// First off, fire off our tick.
-			failnet::core('plugins')->tick();
+			failnet::core('plugins')->handleTick();
 
 			// Grab our event, if we have one.
 			$event = failnet::core('socket')->get();
 
 			if($event)
-				failnet::core('plugins')->event($event);
+				failnet::core('plugins')->handleEvent($event);
 
 			// Do we have anything to do?
 			if(!empty(failnet::core('plugins')->event_queue))
 			{
-				$result = failnet::core('plugins')->dispatch();
+				$result = failnet::core('plugins')->handleDispatch();
 				if($result !== true)
 					break;
 			}
 		}
-		failnet::core('plugins')->disconnect();
+		failnet::core('plugins')->handleDisconnect();
 		failnet::core('irc')->quit($this->config('quit_msg'));
 		$this->terminate($result->arguments[0]);
 	}
@@ -446,6 +415,28 @@ class failnet_core
 	}
 
 	/**
+	 * Create or update a database config setting for Failnet
+	 * @param string $setting - The name of the setting
+	 * @param mixed $value - What should the setting be...set...to?
+	 * @return boolean - Whether or not the setting change was successful.
+	 */
+	public function setConfig($setting, $value)
+	{
+		if($this->config($setting) !== NULL)
+		{
+			$success = $this->sql('config', 'update')->execute(array(':name' => $setting, ':value' => $value));
+			$this->settings[$setting] = $value;
+			return $success;
+		}
+		else
+		{
+			$success = $this->sql('config', 'update')->execute(array(':name' => $setting, ':value' => $value));
+			$this->settings[$setting] = $value;
+			return $success;
+		}
+	}
+
+	/**
 	 * Unified interface for prepared PDO statements
 	 * @param string $table - The table that we are looking at
 	 * @param string $type - The type of statement we are looking at
@@ -454,7 +445,6 @@ class failnet_core
 	 */
 	public function sql($table, $type, $statement = false)
 	{
-		// Retrieve a prepared PDO statement or create one, depending on the value of $statement
 		if($statement === false)
 			return $this->statements[$table][$type];
 
@@ -466,6 +456,8 @@ class failnet_core
 	 * @param $funct - Function name
 	 * @param $params - Function parameters
 	 * @return void
+	 *
+	 * @todo replace/remove
 	 */
 	public function __call($funct, $params)
 	{
@@ -479,9 +471,9 @@ class failnet_core
 	 */
 	public function __get($name)
 	{
-		if(array_key_exists($name, $this->nodes))
+		if(array_key_exists($name, $this->virtual_storage))
 		{
-			return $this->nodes[$name];
+			return $this->virtual_storage[$name];
 		}
 		else
 		{
@@ -498,7 +490,7 @@ class failnet_core
 	 */
 	public function __set($name, $value)
 	{
-		$this->nodes[$name] = $value;
+		$this->virtual_storage[$name] = $value;
 	}
 
 	/**
@@ -508,7 +500,7 @@ class failnet_core
 	 */
 	public function __isset($name)
 	{
-		 return isset($this->nodes[$name]);
+		 return isset($this->virtual_storage[$name]);
 	}
 
 	/**
@@ -518,6 +510,6 @@ class failnet_core
 	 */
 	public function __unset($name)
 	{
-		unset($this->nodes[$name]);
+		unset($this->virtual_storage[$name]);
 	}
 }

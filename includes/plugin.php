@@ -83,21 +83,21 @@ class failnet_plugin extends failnet_common
 		{
 			if(!$this->pluginLoaded($name) && $this->pluginExists($name))
 			{
-				$this->plugins_loaded[] = $name;
 				$plugin_class = 'failnet_plugin_' . $name;
-				$plugin = new $plugin_class($this);
+				$this->plugins_loaded[$name] = $plugin_class;
+				$this->plugins[$name] = new $plugin_class($this);
 
 				if(!$plugin->checkDependencies())
 				{
 					failnet::core('ui')->system("--- Plugin '$name' not loaded, dependency check failed");
+					$this->pluginRemove($name);
 					return false;
 				}
-				$this->plugins[] = $plugin;
 				failnet::core('ui')->system("--- Plugin '$name' loaded");
 				return true;
 			}
-			failnet::core('ui')->system("--- Plugin '$name' not loaded, plugin does not already exist or is loaded already");
-			return false; // No double-loading of plugins.
+			failnet::core('ui')->system("--- Plugin '$name' not loaded, plugin does not already exist or has been loaded already");
+			return false; // If a plugin was removed, we don't want to reinstantiate it...
 		}
 	}
 
@@ -108,7 +108,7 @@ class failnet_plugin extends failnet_common
 	 */
 	public function pluginLoaded($name)
 	{
-		return in_array($name, $this->plugins_loaded);
+		return isset($this->plugins_loaded[$name]);
 	}
 
 	/**
@@ -122,10 +122,21 @@ class failnet_plugin extends failnet_common
 	}
 
 	/**
+	 * Removes a plugin from the list of loaded plugins.
+	 * @param string $name - The name of the plugin to remove.
+	 * @return void
+	 */
+	public function pluginRemove($name)
+	{
+		if($this->pluginLoaded($name) && isset($this->plugins[$name]))
+			unset($this->plugins[$name]);
+	}
+
+	/**
 	 * Plugin tick call, fires off tick calls to any plugins that handle them.
 	 * @return array - Returns the array of events to fire off
 	 */
-	public function tick()
+	public function handleTick()
 	{
 		// Upon each iteration of the loop, we let plugins run if they want tow
 		foreach($this->plugins as $name => $plugin)
@@ -140,7 +151,30 @@ class failnet_plugin extends failnet_common
 		}
 	}
 
-	public function event(&$event)
+	/**
+	 * Plugin connect call, fires off connect calls to any plugins that handle them.
+	 * @return void
+	 */
+	public function handleConnect()
+	{
+		foreach($this->plugins as $name => $plugin)
+		{
+			if(method_exists($plugin, 'connect'))
+			{
+				failnet::core('ui')->event('connection established call: plugin "' . $name . '"');
+				$plugin->cmd_connect();
+				if(!empty($plugin->events))
+					$plugin->events = $this->queue($plugin->events);
+			}
+		}
+	}
+
+	/**
+	 * Event chain-handler
+	 * @param failnet_event_response|failnet_event_request $event - The event to hand down to the other plugins.
+	 * @return void
+	 */
+	public function handleEvent(failnet_event_common $event)
 	{
 		$event_type = ($event instanceof failnet_event_response) ? 'response' : $event_type;
 		foreach($this->plugins as $name => $plugin)
@@ -156,7 +190,7 @@ class failnet_plugin extends failnet_common
 		}
 	}
 
-	public function dispatch()
+	public function handleDispatch()
 	{
 		//Execute pre-dispatch callback for plugin events
 		foreach($this->plugins as $name => $plugin)
@@ -193,28 +227,10 @@ class failnet_plugin extends failnet_common
 	}
 
 	/**
-	 * Plugin connect call, fires off connect calls to any plugins that handle them.
-	 * @return void
-	 */
-	public function connect()
-	{
-		foreach($this->plugins as $name => $plugin)
-		{
-			if(method_exists($plugin, 'connect'))
-			{
-				failnet::core('ui')->event('connection established call: plugin "' . $name . '"');
-				$plugin->cmd_connect();
-				if(!empty($plugin->events))
-					$plugin->events = $this->queue($plugin->events);
-			}
-		}
-	}
-
-	/**
 	 * Plugin disconnect call, fires off disconnect calls to any plugins that handle them.
 	 * @return void
 	 */
-	public function disconnect()
+	public function handleDisconnect()
 	{
 		foreach($this->plugins as $name => $plugin)
 		{
