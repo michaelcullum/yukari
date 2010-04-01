@@ -200,7 +200,7 @@ abstract class failnet_base
 		}
 		else
 		{
-			trigger_error("Call to undefined method '$funct' in class '" . get_class($this) . "'");
+			trigger_error("Call to undefined method '$name' in class '" . get_class($this) . "'");
 		}
 	}
 
