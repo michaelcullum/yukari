@@ -12,6 +12,8 @@
  *
  *===================================================================
  *
+ * @todo figure out way to get plugin's name if necessary
+ *
  */
 
 /**
