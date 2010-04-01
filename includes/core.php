@@ -452,19 +452,6 @@ class failnet_core
 	}
 
 	/**
-	 * Undefined function handler
-	 * @param $funct - Function name
-	 * @param $params - Function parameters
-	 * @return void
-	 *
-	 * @todo replace/remove
-	 */
-	public function __call($funct, $params)
-	{
-		trigger_error('Call to undefined method "' . $funct . '" in class "' . __CLASS__ . '"', E_USER_WARNING);
-	}
-
-	/**
 	 * Magic method __get() to use for referencing specific module classes, used to return the property desired
 	 * @param string $name - The name of the module class to use
 	 * @return object - The object we want to use, or void.
