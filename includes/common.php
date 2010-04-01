@@ -152,9 +152,15 @@ class failnet
 		return true;
 	}
 
+	/**
+	 *
+	 * @return mixed - Returns either false if there's no such hooks associated, or returns the array containing that method's hook data.
+	 */
 	public function retrieveHook($hooked_method_class, $hooked_method_name)
 	{
-		// some code goes here
+		if(!isset(self::$hooks[$hooked_method_class][$hooked_method_name]))
+			return false;
+		return self::$hooks[$hooked_method_class][$hooked_method_name];
 	}
 }
 
@@ -173,8 +179,8 @@ abstract class failnet_base
 {
 	/**
 	 * Hook enabler
-	 * @param $funct - Function name
-	 * @param $params - Function parameters
+	 * @param string $name - Function name
+	 * @param array $arguments - Function parameters
 	 * @return void
 	 */
 	public function __call($name, $arguments)
@@ -182,13 +188,23 @@ abstract class failnet_base
 		$method_name = '_' . $name;
 		if(method_exists($this, $method_name))
 		{
-			// and hook code goes here
+			$hook_ary = failnet::retrieveHook(get_class($this), $name);
+			if(!empty($hook_ary))
+			{
+				foreach($hook_ary as $hook)
+				{
+					// process the hook data here
+				}
+			}
+			return call_user_func_array(array($this, $method_name), $arguments);
 		}
 		else
 		{
 			trigger_error("Call to undefined method '$funct' in class '" . get_class($this) . "'");
 		}
 	}
+
+	// @todo __callStatic()
 }
 
 /**
