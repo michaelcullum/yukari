@@ -46,13 +46,6 @@
 class failnet_error extends failnet_common
 {
 	/**
-	 * Specialized init function to allow class construction to be easier.
-	 * @see includes/failnet_common#init()
-	 * @return void
-	 */
-	public function init() { }
-
-	/**
 	 * Error handler function for Failnet.  Modified from the phpBB 3.0.x msg_handler() function.
 	 * @param integer $errno - Level of the error encountered
 	 * @param string $msg_text - The error message recieved

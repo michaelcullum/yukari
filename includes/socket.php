@@ -53,13 +53,6 @@ class failnet_socket extends failnet_common
 	public $socket = NULL;
 
 	/**
-	 * Specialized init function to allow class construction to be easier.
-	 * @see includes/failnet_common#init()
-	 * @return void
-	 */
-	public function init() { }
-
-	/**
 	 * Initiates a connection with the server.
 	 * @return void
 	 */
