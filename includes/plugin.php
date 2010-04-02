@@ -5,10 +5,13 @@
  *
  *  Failnet -- PHP-based IRC Bot
  *-------------------------------------------------------------------
- *	Script info:
- * @version:	2.1.0 DEV
- * @copyright:	(c) 2009 - 2010 -- Failnet Project
- * @license:	http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
+ * @version		2.1.0 DEV
+ * @category	Failnet
+ * @package		core
+ * @author		Failnet Project
+ * @copyright	(c) 2009 - 2010 -- Failnet Project
+ * @license		http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
+ * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  *
  *===================================================================
  *
@@ -32,10 +35,11 @@
  * 		Handles plugins, loading of plugins, calling plugin methods, and so on.
  *
  *
- * @package core
- * @author Obsidian
- * @copyright (c) 2009 - 2010 -- Failnet Project
- * @license GNU General Public License - Version 2
+ * @category	Failnet
+ * @package		core
+ * @author		Failnet Project
+ * @license		http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
+ * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
 class failnet_plugin extends failnet_common
 {
@@ -190,6 +194,10 @@ class failnet_plugin extends failnet_common
 		}
 	}
 
+	/**
+	 * Handles the dispatch of created events from individual plugins
+	 * @return mixed - True if successful, event that contains a quit call if not.
+	 */
 	public function handleDispatch()
 	{
 		//Execute pre-dispatch callback for plugin events

@@ -6,10 +6,13 @@
  *
  *  Failnet -- PHP-based IRC Bot
  *-------------------------------------------------------------------
- *	Script info:
- * Version:		2.1.0 DEV
- * Copyright:	(c) 2009 - 2010 -- Failnet Project
- * License:		GNU General Public License - Version 2
+ * @version		2.1.0 DEV
+ * @category	Failnet
+ * @package		core
+ * @author		Failnet Project
+ * @copyright	(c) 2009 - 2010 -- Failnet Project
+ * @license		http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
+ * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  *
  *===================================================================
  *
@@ -24,6 +27,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://opensource.org/licenses/gpl-2.0.php>.
+ *
  */
 
 // Define the root path constant first.  :D

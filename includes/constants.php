@@ -5,10 +5,13 @@
  *
  *  Failnet -- PHP-based IRC Bot
  *-------------------------------------------------------------------
- *	Script info:
- * @version:	2.1.0 DEV
- * @copyright:	(c) 2009 - 2010 -- Failnet Project
- * @license:	http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
+ * @version		2.1.0 DEV
+ * @category	Failnet
+ * @package		core
+ * @author		Failnet Project
+ * @copyright	(c) 2009 - 2010 -- Failnet Project
+ * @license		http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
+ * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  *
  *===================================================================
  *
@@ -25,6 +28,7 @@
  * along with this program.  If not, see <http://opensource.org/licenses/gpl-2.0.php>.
  *
  */
+
 
 // Version
 define('FAILNET_VERSION', '2.1.0-DEV');

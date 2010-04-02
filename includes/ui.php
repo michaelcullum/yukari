@@ -5,10 +5,13 @@
  *
  *  Failnet -- PHP-based IRC Bot
  *-------------------------------------------------------------------
- *	Script info:
- * @version:	2.1.0 DEV
- * @copyright:	(c) 2009 - 2010 -- Failnet Project
- * @license:	http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
+ * @version		2.1.0 DEV
+ * @category	Failnet
+ * @package		core
+ * @author		Failnet Project
+ * @copyright	(c) 2009 - 2010 -- Failnet Project
+ * @license		http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
+ * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  *
  *===================================================================
  *
@@ -27,16 +30,16 @@
  */
 
 
-
 /**
  * Failnet - Terminal UI class,
  * 		Used to handle displaying Failnet's output to a terminal/command prompt.
  *
  *
- * @package core
- * @author Obsidian
- * @copyright (c) 2009 - 2010 -- Failnet Project
- * @license GNU General Public License - Version 2
+ * @category	Failnet
+ * @package		core
+ * @author		Failnet Project
+ * @license		http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
+ * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
 class failnet_ui extends failnet_common
 {
@@ -49,13 +52,6 @@ class failnet_ui extends failnet_common
 	 * @var integer - Our current output level
 	 */
 	public $output_level = 0;
-
-	/**
-	 * Specialized init function to allow class construction to be easier.
-	 * @see includes/failnet_common#init()
-	 * @return void
-	 */
-	public function init() { }
 
 	/**
 	 * Method that handles output of all data for the UI.
