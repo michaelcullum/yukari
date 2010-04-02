@@ -61,7 +61,7 @@ class failnet_irc extends failnet_common
 		if (!empty($key))
 			$args[] = $key;
 
-		$this->failnet->socket->send('JOIN', $args);
+		failnet::core('socket')->send('JOIN', $args);
 	}
 
 	/**
@@ -76,7 +76,7 @@ class failnet_irc extends failnet_common
 		if (!empty($reason))
 			$args[] = $reason;
 
-		$this->failnet->socket->send('PART', $args);
+		failnet::core('socket')->send('PART', $args);
 	}
 
 	/**
@@ -87,7 +87,7 @@ class failnet_irc extends failnet_common
 	 */
 	public function invite($nick, $channel)
 	{
-		$this->failnet->socket->send('INVITE', array($nick, $channel));
+		failnet::core('socket')->send('INVITE', array($nick, $channel));
 	}
 
 	/**
@@ -97,7 +97,7 @@ class failnet_irc extends failnet_common
 	 */
 	public function names($channels)
 	{
-		$this->failnet->socket->send('NAMES', $channels);
+		failnet::core('socket')->send('NAMES', $channels);
 	}
 
 	/**
@@ -109,7 +109,7 @@ class failnet_irc extends failnet_common
 	 */
 	public function channels($channels = NULL)
 	{
-		$this->failnet->socket->send('LIST', $channels);
+		failnet::core('socket')->send('LIST', $channels);
 	}
 
 	/**
@@ -125,7 +125,7 @@ class failnet_irc extends failnet_common
 		if (!empty($topic))
 			$args[] = $topic;
 
-		$this->failnet->socket->send('TOPIC', $args);
+		failnet::core('socket')->send('TOPIC', $args);
 	}
 
 	/**
@@ -141,7 +141,7 @@ class failnet_irc extends failnet_common
 		if (!empty($mode))
 			$args[] = $mode;
 
-		$this->failnet->socket->send('MODE', $args);
+		failnet::core('socket')->send('MODE', $args);
 	}
 
 	/**
@@ -151,7 +151,7 @@ class failnet_irc extends failnet_common
 	 */
 	public function nick($nick)
 	{
-		$this->failnet->socket->send('NICK', $nick);
+		failnet::core('socket')->send('NICK', $nick);
 	}
 
 	/**
@@ -161,7 +161,7 @@ class failnet_irc extends failnet_common
 	 */
 	public function whois($nick)
 	{
-		$this->failnet->socket->send('WHOIS', $nick);
+		failnet::core('socket')->send('WHOIS', $nick);
 	}
 
 	/**
@@ -172,7 +172,7 @@ class failnet_irc extends failnet_common
 	 */
 	public function privmsg($target, $text)
 	{
-		$this->failnet->socket->send('PRIVMSG', array($target, $text));
+		failnet::core('socket')->send('PRIVMSG', array($target, $text));
 	}
 
 	/**
@@ -183,7 +183,7 @@ class failnet_irc extends failnet_common
 	 */
 	public function notice($target, $text)
 	{
-		$this->failnet->socket->send('NOTICE', array($target, $text));
+		failnet::core('socket')->send('NOTICE', array($target, $text));
 	}
 
 	/**
@@ -200,7 +200,7 @@ class failnet_irc extends failnet_common
 		if (!empty($reason))
 			$args[] = $reason;
 
-		$this->failnet->socket->send('KICK', $args);
+		failnet::core('socket')->send('KICK', $args);
 	}
 
 	/**
@@ -210,7 +210,7 @@ class failnet_irc extends failnet_common
 	 */
 	public function pong($daemon)
 	{
-		$this->failnet->socket->send('PONG', $daemon);
+		failnet::core('socket')->send('PONG', $daemon);
 	}
 
 	/**
@@ -221,14 +221,12 @@ class failnet_irc extends failnet_common
 	 *        (optional)
 	 * @return void
 	 */
-	private function ctcp_response($nick, $command, $args = NULL)
+	private function ctcp($nick, $command, $args = NULL)
 	{
 		if (is_array($args))
 			$args = implode(' ', $args);
 
-		$buffer = rtrim(strtoupper($command) . ' ' . $args);
-
-		$this->notice($nick, chr(1) . $buffer . chr(1));
+		$this->notice($nick, chr(1) . rtrim(strtoupper($command) . ' ' . $args) . chr(1));
 	}
 
 	/**
@@ -250,29 +248,40 @@ class failnet_irc extends failnet_common
 	 */
 	public function ping($nick, $hash)
 	{
-		$this->ctcp_response($nick, 'PING', $hash);
+		$this->ctcp($nick, 'PING', $hash);
 	}
 
 	/**
-	 * Sends a CTCP VERSION response to a user.
+	 * Sends a CTCP VERSION request or response to a user.
 	 * @param string $nick - User nick
 	 * @param string $version - Version string to send
 	 * @return void
 	 */
-	public function version($nick, $version)
+	public function version($nick, $version = null)
 	{
-		$this->ctcp_response($nick, 'VERSION', $version);
+		$this->ctcp($nick, 'VERSION', $version);
 	}
 
 	/**
-	 * Sends a CTCP TIME response to a user.
+	 * Sends a CTCP TIME request or response to a user.
 	 * @param string $user - User nick
 	 * @param string $time - Time string to send
 	 * @return void
 	 */
-	public function time($nick, $time)
+	public function time($nick, $time = null)
 	{
-		$this->ctcp_response($nick, 'TIME', $time);
+		$this->ctcp($nick, 'TIME', $time);
+	}
+
+	/**
+	 * Sends a CTCP FINGER request or response to a user.
+	 * @param string $user - User nick
+	 * @param string $time - Finger string to send for a response
+	 * @return void
+	 */
+	public function finger($nick, $finger = null)
+	{
+		$this->ctcp($nick, 'FINGER', $finger);
 	}
 
 	/**
@@ -282,7 +291,7 @@ class failnet_irc extends failnet_common
 	 */
 	public function raw($command)
 	{
-		$this->failnet->socket->send('RAW', $command);
+		failnet::core('socket')->send('RAW', $command);
 	}
 
 	/**
@@ -292,7 +301,7 @@ class failnet_irc extends failnet_common
 	 */
 	public function quit($reason = NULL)
 	{
-		$this->failnet->socket->send('QUIT', array($reason));
-		$this->failnet->socket->close();
+		failnet::core('socket')->send('QUIT', array($reason));
+		failnet::core('socket')->close();
 	}
 }

@@ -99,7 +99,7 @@ class failnet_log extends failnet_common
 	public function add($msg, $dump = false)
 	{
 		$this->log[] = $msg;
-		if($dump === true || sizeof($this->log) > $this->failnet->config('log_queue'))
+		if($dump === true || sizeof($this->log) > failnet::core()->config('log_queue'))
 		{
 			$log_msg = '';
 			$log_msg = implode(PHP_EOL, $this->log). PHP_EOL;
