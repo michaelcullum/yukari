@@ -43,8 +43,8 @@ require FAILNET_ROOT . 'includes/functions.php';
 failnet_autoload::register();
 
 // Check to see if we are even on the minimum PHP version necessary.
-if(version_compare('5.2.3', PHP_VERSION, '>'))
-	throw_fatal('Failnet requires PHP version 5.2.3 or better, while the currently installed PHP version is ' . PHP_VERSION);
+if(version_compare('5.3.0', PHP_VERSION, '>'))
+	throw_fatal('Failnet ' . FAILNET_VERSION . ' requires PHP version 5.3.0 or better, while the currently installed PHP version is ' . PHP_VERSION);
 
 // Load Failnet up!
 failnet::setCore('core', 'failnet_core');
