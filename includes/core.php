@@ -165,7 +165,7 @@ class failnet_core
 		failnet::core('ui')->system('- Loading Failnet node objects');
 		foreach($this->config('nodes_list') as $node)
 		{
-			failnet::setNode($node, "failnet_$node");
+			failnet::setNode($node, "failnet_node_$node");
 			failnet::core('ui')->system("--- Loaded node object $node");
 		}
 
