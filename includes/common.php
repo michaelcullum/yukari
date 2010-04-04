@@ -148,12 +148,14 @@ class failnet
 		 * but for now we will not, as the class may not yet be loaded.
 		 * We'll just have to take their word for it.
 		 */
-		self::$hooks[$hooked_method_class][$hooked_method_name][] = array($hook_call, $hook_type);
+		self::$hooks[$hooked_method_class][$hooked_method_name][] = array('hook_call' => $hook_call, 'type' => $hook_type);
 		return true;
 	}
 
 	/**
-	 *
+	 * Checks to see if any hooks have been assigned to a designated class/method, and returns their info.
+	 * @param string $hooked_method_class - The name of the class to check a method of for hooks
+	 * @param string $hooked_method_name - The name of the previously specified class's method to check for hooks
 	 * @return mixed - Returns either false if there's no such hooks associated, or returns the array containing that method's hook data.
 	 */
 	public function retrieveHook($hooked_method_class, $hooked_method_name)
@@ -179,8 +181,8 @@ abstract class failnet_base
 {
 	/**
 	 * Hook enabler
-	 * @param string $name - Function name
-	 * @param array $arguments - Function parameters
+	 * @param string $name - Method name
+	 * @param array $arguments - Method parameters
 	 * @return void
 	 */
 	public function __call($name, $arguments)
@@ -194,6 +196,14 @@ abstract class failnet_base
 				foreach($hook_ary as $hook)
 				{
 					// process the hook data here
+					if($hook['type'] === HOOK_OVERRIDE)
+					{
+						return call_user_func_array($hook['hook_call'], $arguments);
+					}
+					elseif($hook['type'] === HOOK_STACK)
+					{
+						call_user_func_array($hook['hook_call'], $arguments);
+					}
 				}
 			}
 			return call_user_func_array(array($this, $method_name), $arguments);
@@ -204,7 +214,16 @@ abstract class failnet_base
 		}
 	}
 
-	// @todo __callStatic()
+	/**
+	 * Hook enabler
+	 * @param string $name - Method name
+	 * @param array $arguments - Method parameters
+	 * @return void
+	 */
+	public function __callStatic($name, $arguments)
+	{
+		// meh
+	}
 }
 
 /**
