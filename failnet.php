@@ -8,7 +8,7 @@
  *-------------------------------------------------------------------
  * @version		2.1.0 DEV
  * @category	Failnet
- * @package		core
+ * @package		Failnet
  * @author		Failnet Project
  * @copyright	(c) 2009 - 2010 -- Failnet Project
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
@@ -30,16 +30,19 @@
  *
  */
 
-// Define the root path constant first.  :D
+
+/**
+ * @ignore
+ */
 define('FAILNET_ROOT', './');
 
-// Now let's grab some essential files, first
+// Let's grab some essential files, first
 require FAILNET_ROOT . 'includes/constants.php';
 require FAILNET_ROOT . 'includes/common.php';
 require FAILNET_ROOT . 'includes/autoload.php';
 require FAILNET_ROOT . 'includes/functions.php';
 
-// Set our autoload function.
+// Setup the JIT class autoloading.
 failnet_autoload::register();
 
 // Check to see if we are even on the minimum PHP version necessary.
