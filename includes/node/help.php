@@ -32,23 +32,23 @@
  * 		Failnet's handler for the dynamic help system
  *
  *
- * @package nodes
- * @author Obsidian
- * @copyright (c) 2009 - 2010 -- Failnet Project
- * @license GNU General Public License - Version 2
+ * @category	Failnet
+ * @package		nodes
+ * @author		Failnet Project
+ * @license		http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
+ * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
 class failnet_node_help extends failnet_common
 {
+	/**
+	 * @var array - Index list of plugins with commands
+	 */
 	public $index = array();
 
-	public $commands = array();
-
 	/**
-	 * Specialized init function to allow class construction to be easier.
-	 * @see includes/failnet_common#init()
-	 * @return void
+	 * @var array - Index list of commands available within a specified plugin
 	 */
-	public function init() { }
+	public $commands = array();
 
 	public function collect($name, $commands)
 	{
@@ -58,7 +58,7 @@ class failnet_node_help extends failnet_common
 			$commands_index[] = $c_name;
 			if(isset($this->commands[$c_name]))
 			{
-				$this->failnet->ui->ui_debug('Duplicate command name within dynamic help system detected');
+				failnet::core('ui')->debug('Duplicate command name within dynamic help system detected');
 			}
 			$this->commands[$c_name] = $c_value;
 		}
