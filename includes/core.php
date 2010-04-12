@@ -372,7 +372,7 @@ class failnet_core
 	 */
 	public function terminate($restart = true)
 	{
-		if($this->socket->socket !== NULL)
+		if(failnet::core('socket')->socket !== NULL)
 			failnet::core('irc')->quit($this->config('quit_msg'));
 		if($restart)
 		{

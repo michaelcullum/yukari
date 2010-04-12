@@ -107,7 +107,7 @@ class failnet_ui extends failnet_common
 	 * Method called on shutdown that dumps the shutdown text for Failnet to output
 	 * @return void
 	 */
-	public function ui_shutdown()
+	public function shutdown()
 	{
 		if($this->ui_level(OUTPUT_NORMAL))
 		{
