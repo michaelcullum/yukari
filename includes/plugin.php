@@ -93,14 +93,14 @@ class failnet_plugin extends failnet_common
 
 				if(!$plugin->checkDependencies())
 				{
-					failnet::core('ui')->system("--- Plugin '$name' not loaded, dependency check failed");
+					failnet::core('ui')->system("--- Plugin '$name' load failed, unmet dependencies found");
 					$this->pluginRemove($name);
 					return false;
 				}
 				failnet::core('ui')->system("--- Plugin '$name' loaded");
 				return true;
 			}
-			failnet::core('ui')->system("--- Plugin '$name' not loaded, plugin does not already exist or has been loaded already");
+			failnet::core('ui')->system("--- Plugin '$name' load failed, plugin does not exist or has been loaded already");
 			return false; // If a plugin was removed, we don't want to reinstantiate it...
 		}
 	}
