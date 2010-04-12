@@ -54,7 +54,7 @@ class failnet_autoload extends failnet_common
 	 * @see includes/failnet_common#init()
 	 * @return void
 	 */
-	public function init()
+	public function __construct()
 	{
 		$this->paths = array(
 			FAILNET_ROOT . 'addons/autoload/',
