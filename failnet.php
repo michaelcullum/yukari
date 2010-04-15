@@ -49,7 +49,7 @@ failnet_autoload::register();
 if(version_compare('5.3.0', PHP_VERSION, '>'))
 	throw_fatal('Failnet ' . FAILNET_VERSION . ' requires PHP version 5.3.0 or better, while the currently installed PHP version is ' . PHP_VERSION);
 
-// Load Failnet up!
+// Load the Failnet core
 failnet::setCore('core', 'failnet_core');
 
 // Run Failnet
