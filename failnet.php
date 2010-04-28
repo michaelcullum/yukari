@@ -34,20 +34,32 @@
 /**
  * @ignore
  */
-define('FAILNET_ROOT', './');
+define('FAILNET_ROOT', __DIR__);
 
-// Let's grab some essential files, first
+// Let's grab the config file first
 require FAILNET_ROOT . 'includes/constants.php';
+
+// Check to see if we are even on the minimum PHP version necessary.
+if(version_compare(FAILNET_MIN_PHP, PHP_VERSION, '>'))
+	throw new Exception('Failnet ' . FAILNET_VERSION . ' requires PHP ' . FAILNET_MIN_PHP . ' or better, while the currently installed PHP version is ' . PHP_VERSION);
+
+// Check to make sure the CLI SAPI is being used...
+if(strtolower(PHP_SAPI) != 'cli')
+	throw_fatal('Failnet must be run in the CLI SAPI');
+
+// Make sure that PDO and the SQLite PDO extensions are loaded, we need them.
+if(!extension_loaded('PDO'))
+	throw_fatal('Failnet requires the PDO PHP extension to be loaded');
+if(!extension_loaded('pdo_sqlite'))
+	throw_fatal('Failnet requires the PDO_SQLite PHP extension to be loaded');
+
+// Load up the common files and get going then.
 require FAILNET_ROOT . 'includes/common.php';
 require FAILNET_ROOT . 'includes/autoload.php';
 require FAILNET_ROOT . 'includes/functions.php';
 
 // Setup the JIT class autoloading.
 failnet_autoload::register();
-
-// Check to see if we are even on the minimum PHP version necessary.
-if(version_compare('5.3.0', PHP_VERSION, '>'))
-	throw_fatal('Failnet ' . FAILNET_VERSION . ' requires PHP version 5.3.0 or better, while the currently installed PHP version is ' . PHP_VERSION);
 
 // Load the Failnet core
 failnet::setCore('core', 'failnet_core');

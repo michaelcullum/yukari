@@ -98,16 +98,6 @@ class failnet_core
 	 */
 	public function __construct()
 	{
-		// Check to make sure the CLI SAPI is being used...
-		if(strtolower(PHP_SAPI) != 'cli')
-			throw_fatal('Failnet must be run in the CLI SAPI');
-
-		// Make sure that PDO and the SQLite PDO extensions are loaded, we need them.
-		if(!extension_loaded('PDO'))
-			throw_fatal('Failnet requires the PDO PHP extension to be loaded');
-    	if(!extension_loaded('pdo_sqlite'))
-			throw_fatal('Failnet requires the PDO_SQLite PHP extension to be loaded');
-
 		// Check to see if date.timezone is empty in the PHP.ini; if so, set the timezone with some Hax to prevent strict errors.
 		if(!ini_get('date.timezone'))
 			@date_default_timezone_set(@date_default_timezone_get());
@@ -115,12 +105,6 @@ class failnet_core
 		// Make sure our database directory actually exists and is manipulatable
 		if(!file_exists(FAILNET_ROOT . 'data/db/') || !is_readable(FAILNET_ROOT . 'data/db/') || !is_writeable(FAILNET_ROOT . 'data/db/') || !is_dir(FAILNET_ROOT . 'data/db/'))
 			throw_fatal('Failnet requires the database directory to exist and be readable/writeable');
-
-		/**
-         * Commented because we don't really need it
-		if(!file_exists(FAILNET_ROOT . 'data/weather/') || !is_readable(FAILNET_ROOT . 'data/weather/') || !is_writeable(FAILNET_ROOT . 'data/weather/') || !is_dir(FAILNET_ROOT . 'data/weather/'))
-			throw_fatal('Failnet requires the weather cache directory to exist and be readable/writeable');
-		 */
 
 		// Set the time that Failnet was started.
 		$this->start = time();
