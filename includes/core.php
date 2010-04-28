@@ -41,7 +41,7 @@
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class failnet_core extends failnet_base
+class failnet_core extends failnet_common
 {
 /**
  * Failnet core class properties
@@ -75,21 +75,6 @@ class failnet_core extends failnet_base
 	private $cost_to_become_skynet = 999999999999;
 
 /**
- * Failnet core constants
- */
-
-	/**
-	 * Auth levels for Failnet
-	 */
-	const AUTH_OWNER = 6;
-	const AUTH_SUPERADMIN = 5;
-	const AUTH_ADMIN = 4;
-	const AUTH_TRUSTEDUSER = 3;
-	const AUTH_KNOWNUSER = 2;
-	const AUTH_REGISTEREDUSER = 1;
-	const AUTH_UNKNOWNUSER = 0;
-
-/**
  * Failnet core methods
  */
 	/**
@@ -101,10 +86,6 @@ class failnet_core extends failnet_base
 		// Check to see if date.timezone is empty in the PHP.ini; if so, set the timezone with some Hax to prevent strict errors.
 		if(!ini_get('date.timezone'))
 			@date_default_timezone_set(@date_default_timezone_get());
-
-		// Make sure our database directory actually exists and is manipulatable
-		if(!file_exists(FAILNET_ROOT . 'data/db/') || !is_readable(FAILNET_ROOT . 'data/db/') || !is_writeable(FAILNET_ROOT . 'data/db/') || !is_dir(FAILNET_ROOT . 'data/db/'))
-			throw_fatal('Failnet requires the database directory to exist and be readable/writeable');
 
 		// Set the time that Failnet was started.
 		$this->start = time();

@@ -45,13 +45,17 @@ if(version_compare(FAILNET_MIN_PHP, PHP_VERSION, '>'))
 
 // Check to make sure the CLI SAPI is being used...
 if(strtolower(PHP_SAPI) != 'cli')
-	throw_fatal('Failnet must be run in the CLI SAPI');
+	throw new Exception('Failnet must be run in the CLI SAPI');
 
 // Make sure that PDO and the SQLite PDO extensions are loaded, we need them.
 if(!extension_loaded('PDO'))
-	throw_fatal('Failnet requires the PDO PHP extension to be loaded');
+	throw new Exception('Failnet requires the PDO PHP extension to be loaded');
 if(!extension_loaded('pdo_sqlite'))
-	throw_fatal('Failnet requires the PDO_SQLite PHP extension to be loaded');
+	throw new Exception('Failnet requires the PDO_SQLite PHP extension to be loaded');
+
+// Make sure our database directory actually exists and is manipulatable
+if(!file_exists(FAILNET_ROOT . 'data/db/') || !is_readable(FAILNET_ROOT . 'data/db/') || !is_writeable(FAILNET_ROOT . 'data/db/') || !is_dir(FAILNET_ROOT . 'data/db/'))
+	throw new Exception('Failnet requires the database directory to exist and be readable/writeable');
 
 // Load up the common files and get going then.
 require FAILNET_ROOT . 'includes/common.php';
