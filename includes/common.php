@@ -42,7 +42,7 @@
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class failnet
+abstract class failnet
 {
 	/**
 	 * @var array - The core objects, which will also include the core class.
@@ -119,10 +119,14 @@ class failnet
 	{
 		// We're deliberately ignoring HOOK_NULL here.
 		if(!in_array($hook_call, array(HOOK_STACK, HOOK_OVERRIDE)))
-		   return false;
+			return false;
+
+		// Check for unsupported classes
+		if(substr($hooked_method_class, 0, 8) != 'failnet_')
+			return false;
 
 		/**
-		 * Hooks are placed into the hook info array using a pattern:
+		 * Hooks are placed into the hook info array using the following array structure:
 		 *
 		 <code>
 			self::$hooks[$hooked_method_class][$hooked_method_name] = array(
@@ -138,10 +142,6 @@ class failnet
 		 </code>
 		 *
 		 */
-
-		// Check for unsupported classes
-		if(substr($hooked_method_class, 0, 8) != 'failnet_')
-			return false;
 
 		/**
 		 * At some point in the future, we may want to check to see if the method we are hooking onto exists,
@@ -167,8 +167,8 @@ class failnet
 }
 
 /**
- * Failnet - Master class,
- * 		Used as the master static class that will contain all node objects, core objects, etc.
+ * Failnet - Base class,
+ * 		Used as the base class that will handle method hooking.
  *
  *
  * @category	Failnet
@@ -182,7 +182,7 @@ abstract class failnet_base
 	public static $__CLASS__ = __CLASS__;
 
 	/**
-	 * Hook enabler
+	 * __call hook enabler, intercepts calls to methods and checks for hooks, then forwards the call to the actual method.
 	 * @param string $name - Method name
 	 * @param array $arguments - Method parameters
 	 * @return void
@@ -216,7 +216,7 @@ abstract class failnet_base
 	}
 
 	/**
-	 * Hook enabler
+	 * __callStatic hook enabler, intercepts static calls to methods and checks for hooks, then forwards the static call to the actual method.
 	 * @param string $name - Method name
 	 * @param array $arguments - Method parameters
 	 * @return void
@@ -251,8 +251,8 @@ abstract class failnet_base
 }
 
 /**
- * Failnet - Base class,
- * 		Used as the common base class for all of Failnet's class files (at least the ones that need one)
+ * Failnet - Common class,
+ * 		Used as the common class for most of Failnet's classes
  *
  *
  * @category	Failnet

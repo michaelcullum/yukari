@@ -41,7 +41,7 @@
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class failnet_core
+class failnet_core extends failnet_base
 {
 /**
  * Failnet core class properties
