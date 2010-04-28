@@ -88,15 +88,14 @@ class failnet_plugin extends failnet_common
 			if(!$this->pluginLoaded($name) && $this->pluginExists($name))
 			{
 				$plugin_class = 'failnet_plugin_' . $name;
-				$this->plugins_loaded[$name] = $plugin_class;
-				$this->plugins[$name] = new $plugin_class($this);
-
-				if(!$plugin->checkDependencies())
+				if(!$plugin_class::checkDependencies())
 				{
 					failnet::core('ui')->system("--- Plugin '$name' load failed, unmet dependencies found");
 					$this->pluginRemove($name);
 					return false;
 				}
+				$this->plugins_loaded[$name] = $plugin_class;
+				$this->plugins[$name] = new $plugin_class($this);
 				failnet::core('ui')->system("--- Plugin '$name' loaded");
 				return true;
 			}
