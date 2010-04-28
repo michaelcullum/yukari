@@ -27,7 +27,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://opensource.org/licenses/gpl-2.0.php>.
  *
- * @todo rebuild so that this pops up before pre-event
+ * @todo rebuild so that this pops up before pre-event and kills the event somehow, or prevents reactions within dispatch
  * @todo __construct and not init
  * @todo failnet::core() and not $this->failnet
  * @todo camelCase method names
