@@ -179,6 +179,8 @@ class failnet
  */
 abstract class failnet_base
 {
+	public static $__CLASS__ = __CLASS__;
+
 	/**
 	 * Hook enabler
 	 * @param string $name - Method name
@@ -187,8 +189,7 @@ abstract class failnet_base
 	 */
 	public function __call($name, $arguments)
 	{
-		$method_name = '_' . $name;
-		if(method_exists($this, $method_name))
+		if(method_exists($this, "_$name"))
 		{
 			$hook_ary = failnet::retrieveHook(get_class($this), $name);
 			if(!empty($hook_ary))
@@ -206,7 +207,7 @@ abstract class failnet_base
 					}
 				}
 			}
-			return call_user_func_array(array($this, $method_name), $arguments);
+			return call_user_func_array(array($this, "_$name"), $arguments);
 		}
 		else
 		{
@@ -222,7 +223,30 @@ abstract class failnet_base
 	 */
 	public function __callStatic($name, $arguments)
 	{
-		// meh
+		if(method_exists(static::$__CLASS__, "_$name"))
+		{
+			$hook_ary = failnet::retrieveHook(static::$__CLASS__, $name);
+			if(!empty($hook_ary))
+			{
+				foreach($hook_ary as $hook)
+				{
+					// process the hook data here
+					if($hook['type'] === HOOK_OVERRIDE)
+					{
+						return call_user_func_array($hook['hook_call'], $arguments);
+					}
+					elseif($hook['type'] === HOOK_STACK)
+					{
+						call_user_func_array($hook['hook_call'], $arguments);
+					}
+				}
+			}
+			return call_user_func_array(array(static::$__CLASS__, "static::_$name"), $arguments);
+		}
+		else
+		{
+			trigger_error("Call to undefined method '$name' in class '" . static::$__CLASS__ . "'");
+		}
 	}
 }
 
