@@ -49,6 +49,16 @@ class failnet_database extends PDO
 	private $statements = array();
 
 	/**
+	 * Overriding the __construct
+	 */
+	public function __construct() {	}
+
+	public function connect($dsn, $username = NULL, $password = NULL, $driver_options = NULL)
+	{
+		parent::__construct($dsn, $username, $password, $driver_options);
+	}
+
+	/**
 	 * Prepared query object generation and storage
 	 * @param string $table - The table that we are looking at
 	 * @param string $type - The type of statement we are looking at

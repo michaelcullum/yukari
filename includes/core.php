@@ -196,8 +196,10 @@ class failnet_core extends failnet_common
 		try
 		{
 			// Initialize the database connection
-			failnet::$core['db'] = new PDO('sqlite:' . FAILNET_ROOT . 'data/db/' . basename(md5($this->config('server') . '::' . $this->config('user'))) . '.db');
+			failnet::setCore('db', 'failnet_database');
 			failnet::core('db')->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			failnet::core('db')->connect('sqlite:' . FAILNET_ROOT . 'data/db/' . basename(md5($this->config('server') . '::' . $this->config('user'))) . '.db');
+
 
 			// We want this as a transaction in case anything goes wrong.
 			failnet::core('db')->beginTransaction();
