@@ -163,11 +163,12 @@ class failnet_core extends failnet_common
 	 * Failnet configuration file settings load method
 	 * @param string $file - The configuration file to load
 	 * @return void
+	 * @throws failnet_exception
 	 */
 	private function load($file)
 	{
 		if(!@file_exists(FAILNET_ROOT . $file . '.php') || !@is_readable(FAILNET_ROOT . $file . '.php'))
-			throw_fatal("Required Failnet configuration file '$file.php' not found");
+			throw new failnet_exception(failnet_exception::ERR_NO_CONFIG);
 
 		$settings = require FAILNET_ROOT . $file . '.php';
 
