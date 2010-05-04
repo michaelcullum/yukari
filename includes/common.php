@@ -63,27 +63,28 @@ abstract class failnet
 	 * Grab the core object.
 	 * @param string $core_name - The name of the core object that we want, or an empty string if we want THE core.
 	 * @return mixed - Either the desired core object, or NULL if no such object.
+	 * @throws failnet_exception
 	 */
 	public static function core($core_name = '')
 	{
 		if(empty($core_name))
 			return self::$core['core'];
-		if(isset(self::$core[$core_name]))
+		if(self::checkCoreLoaded($core_name))
 			return self::$core[$core_name];
-		return NULL;
+		throw new failnet_exception(failnet_exception::ERR_NO_SUCH_CORE_OBJ, $core_name);
 	}
 
 	/**
 	 * Grab a node object.
 	 * @param string $node_name - The name of the node object that we want.
 	 * @return mixed - Either the desired node object, or NULL if no such object.
+	 * @throws failnet_exception
 	 */
 	public static function node($node_name)
 	{
-		if(isset(self::$nodes[$node_name]))
-			return self::$nodes[$node_name];
-		// @todo throw new exception, when implemented
-		return NULL;
+		if(!self::checkNodeLoaded($node_name))
+			throw new failnet_exception(failnet_exception::ERR_NO_SUCH_NODE_OBJ, $node_name);
+		return self::$nodes[$node_name];
 	}
 
 	/**
@@ -109,6 +110,27 @@ abstract class failnet
 	}
 
 	/**
+	 * Checks to see if the specified core slot has been occupied
+	 * @param string $core_name - The name of the core slot to check
+	 * @return boolean - Whether or not a core object has been loaded yet into the specified slot
+	 */
+	public static function checkCoreLoaded($core_name)
+	{
+		return isset(self::$core[$core_name]);
+	}
+
+	/**
+	 * Checks to see if the specified node slot has been occupied
+	 * @param string $node_name - The name of the node slot to check
+	 * @return boolean - Whether or not a node object has been loaded yet into the specified slot
+	 */
+	public static function checkNodeLoaded($node_name)
+	{
+		return isset(self::$nodes[$core_name]);
+	}
+
+
+	/**
 	 * Register a hook function to be called before
 	 * @param array $hooked_method_call - The callback info for the method we're hooking onto.
 	 * @param mixed $hook_call - The function/method to hook on top of the method we're hooking.
@@ -119,10 +141,12 @@ abstract class failnet
 	{
 		// We're deliberately ignoring HOOK_NULL here.
 		if(!in_array($hook_call, array(HOOK_STACK, HOOK_OVERRIDE)))
+			// throw an exception instead
 			return false;
 
 		// Check for unsupported classes
 		if(substr($hooked_method_class, 0, 8) != 'failnet_')
+			// throw an exception instead
 			return false;
 
 		/**
@@ -211,6 +235,7 @@ abstract class failnet_base
 		}
 		else
 		{
+			// replace with exception
 			trigger_error("Call to undefined method '$name' in class '" . get_class($this) . "'");
 		}
 	}
@@ -245,6 +270,7 @@ abstract class failnet_base
 		}
 		else
 		{
+			// replace with exception
 			trigger_error("Call to undefined method '$name' in class '" . static::$__CLASS__ . "'");
 		}
 	}

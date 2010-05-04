@@ -43,6 +43,9 @@
  */
 class failnet_exception extends Exception
 {
+	/**
+	 * @var array - Array of "translations" for our various error codes.
+	 */
 	private $translations = array();
 
 	const ERR_STARTUP_MIN_PHP = 1001;
@@ -51,10 +54,14 @@ class failnet_exception extends Exception
 	const ERR_STARTUP_NO_PDO_SQLITE = 1004;
 	const ERR_STARTUP_NO_ACCESS_DB_DIR = 1005;
 
+	const ERR_NO_SUCH_CORE_OBJ = 1101;
+	const ERR_NO_SUCH_NODE_OBJ = 1102;
+
 	const ERR_NO_CONFIG = 2001;
-	const ERR_PDO_EXCEPTION = 2002;
-	const ERR_INVALID_VIRTUAL_STORAGE_SLOT = 2003;
-	const ERR_INVALID_PREP_QUERY = 2004;
+	const ERR_INVALID_VIRTUAL_STORAGE_SLOT = 2002;
+
+	const ERR_PDO_EXCEPTION = 2101;
+	const ERR_INVALID_PREP_QUERY = 2102;
 
 	/**
 	 * Exception setup method, loads the error messages up for translation and also performs additional setup if necessary
@@ -69,9 +76,13 @@ class failnet_exception extends Exception
 			self::ERR_STARTUP_NO_PDO_SQLITE => 'Failnet requires the PDO_SQLite PHP extension to be loaded',
 			self::ERR_STARTUP_NO_ACCESS_DB_DIR => 'Failnet requires the database directory to exist and be readable/writeable',
 
+			self::ERR_NO_SUCH_CORE_OBJ => 'An invalid core object was specified for access: %s',
+			self::ERR_NO_SUCH_CORE_OBJ => 'An invalid core object was specified for access: %s',
+
 			self::ERR_NO_CONFIG => 'Specified Failnet configuration file not found',
-			self::ERR_PDO_EXCEPTION => 'Database exception thrown:',
-			self::ERR_INVALID_VIRTUAL_STORAGE_SLOT => 'Undefined virtual-storage property accessed:',
+			self::ERR_INVALID_VIRTUAL_STORAGE_SLOT => 'Undefined virtual-storage property accessed: %s',
+
+			self::ERR_PDO_EXCEPTION => 'Database exception thrown: %s',
 			self::ERR_INVALID_PREP_QUERY => 'The specified prepared PDO query was not found',
 		);
 		// if we extend this class and want to define additional exception messages
