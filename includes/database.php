@@ -75,6 +75,7 @@ class failnet_database extends PDO
 	 * @param string $table - The table that we are looking at
 	 * @param string $type - The type of statement we are looking at
 	 * @return PDO_Statement - An instance of PDO_Statement.
+	 * @throws failnet_exception
 	 */
 	public function useQuery($table, $type)
 	{
