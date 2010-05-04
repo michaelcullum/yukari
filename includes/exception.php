@@ -46,7 +46,9 @@ class failnet_exception extends Exception
 	private $translations = array();
 
 	const ERR_NO_CONFIG = 1;
-	const ERR_INVALID_PREP_QUERY = 2;
+	const ERR_PDO_EXCEPTION = 2;
+	const ERR_INVALID_VIRTUAL_STORAGE_SLOT = 3;
+	const ERR_INVALID_PREP_QUERY = 4;
 
 	/**
 	 * Exception setup method, loads the error messages up for translation and also performs additional setup if necessary
@@ -56,6 +58,8 @@ class failnet_exception extends Exception
 	{
 		$this->translations = array(
 			self::ERR_NO_CONFIG => 'Specified Failnet configuration file not found',
+			self::ERR_PDO_EXCEPTION => 'Database exception thrown:',
+			self::ERR_INVALID_VIRTUAL_STORAGE_SLOT => 'Undefined virtual-storage property accessed:',
 			self::ERR_INVALID_PREP_QUERY => 'The specified prepared PDO query was not found',
 		);
 		// if we extend this class and want to define additional exception messages

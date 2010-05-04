@@ -96,6 +96,7 @@ class failnet_core extends failnet_common
 		$cfg_file = ($_SERVER['argc'] > 1) ? $_SERVER['argv'][1] : 'config';
 		$this->load($cfg_file);
 
+		// Load the UI out of cycle so we can do this the right way
 		failnet::setCore('ui', 'failnet_ui');
 		failnet::core('ui')->output_level = $this->config('output');
 
@@ -105,6 +106,7 @@ class failnet_core extends failnet_common
 		// Begin loading our core objects
 		$core_objects = array(
 			'socket'	=> 'failnet_socket',
+			'db'		=> 'failnet_database',
 			'log'		=> 'failnet_log',
 			'error'		=> 'failnet_error',
 			'hash'		=> 'failnet_hash',
@@ -142,8 +144,8 @@ class failnet_core extends failnet_common
 
 		// Load our config settings
 		failnet::core('ui')->system('- Loading config settings');
-		$this->sql('config', 'get_all')->execute();
-		$result = $this->sql('config', 'get_all')->fetchAll();
+		failnet::core('db')->useQuery('config', 'get_all')->execute();
+		$result = failnet::core('db')->useQuery('config', 'get_all')->fetchAll();
 		foreach($result as $row)
 		{
 			$this->settings[$row['name']] = $row['value'];
@@ -188,6 +190,7 @@ class failnet_core extends failnet_common
 	/**
 	 * Setup the database connection and load up our prepared SQL statements
 	 * @return void
+	 * @throws failnet_exception
 	 */
 	public function setupDB()
 	{
@@ -196,15 +199,13 @@ class failnet_core extends failnet_common
 		try
 		{
 			// Initialize the database connection
-			failnet::setCore('db', 'failnet_database');
 			failnet::core('db')->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			failnet::core('db')->connect('sqlite:' . FAILNET_ROOT . 'data/db/' . basename(md5($this->config('server') . '::' . $this->config('user'))) . '.db');
 
 
 			// We want this as a transaction in case anything goes wrong.
-			failnet::core('db')->beginTransaction();
-
 			failnet::core('ui')->system('- Initializing the database');
+			failnet::core('db')->beginTransaction();
 
 			// Load up the list of files that we've got, and do stuff with them.
 			$schemas = scandir(FAILNET_ROOT . 'schemas');
@@ -217,7 +218,7 @@ class failnet_core extends failnet_common
 				$results = failnet::core('db')->query('SELECT COUNT(*) FROM sqlite_master WHERE name = ' . $this->db->quote($tablename))->fetchColumn();
 				if(!$results)
 				{
-					display(' -  Installing the ' . $tablename . ' database table...');
+					failnet::core('ui')->system('-  Installing the ' . $tablename . ' database table...');
 					failnet::core('db')->exec(file_get_contents(FAILNET_ROOT . 'schemas/' . $schema));
 				}
 			}
@@ -226,35 +227,35 @@ class failnet_core extends failnet_common
 
 			// Let's prepare the default prepared statements.
 			// Config table
-			$this->sql('config', 'create', 'INSERT INTO config ( name, value ) VALUES ( :name, :value )');
-			$this->sql('config', 'get_all', 'SELECT * FROM config');
-			$this->sql('config', 'get', 'SELECT * FROM config WHERE LOWER(name) = LOWER(:name) LIMIT 1');
-			$this->sql('config', 'update', 'UPDATE config SET value = :value WHERE LOWER(name) = LOWER(:name)');
-			$this->sql('config', 'delete', 'DELETE FROM config WHERE LOWER(name) = LOWER(:name)');
+			failnet::core('db')->armQuery('config', 'create', 'INSERT INTO config ( name, value ) VALUES ( :name, :value )');
+			failnet::core('db')->armQuery('config', 'get_all', 'SELECT * FROM config');
+			failnet::core('db')->armQuery('config', 'get', 'SELECT * FROM config WHERE LOWER(name) = LOWER(:name) LIMIT 1');
+			failnet::core('db')->armQuery('config', 'update', 'UPDATE config SET value = :value WHERE LOWER(name) = LOWER(:name)');
+			failnet::core('db')->armQuery('config', 'delete', 'DELETE FROM config WHERE LOWER(name) = LOWER(:name)');
 
 			// @todo move to authorize
 			// Users table
-			$this->sql('users', 'create', 'INSERT INTO users ( nick, authlevel, password ) VALUES ( :nick, :authlevel, :hash )');
-			$this->sql('users', 'set_pass', 'UPDATE users SET password = :hash WHERE user_id = :user');
-			$this->sql('users', 'set_level', 'UPDATE users SET authlevel = :authlevel WHERE user_id = :user');
-			$this->sql('users', 'set_confirm', 'UPDATE users SET confirm_key = :key WHERE user_id = :user');
-			$this->sql('users', 'get', 'SELECT * FROM users WHERE LOWER(nick) = LOWER(:nick) LIMIT 1');
-			$this->sql('users', 'get_level', 'SELECT authlevel FROM users WHERE LOWER(nick) = LOWER(:nick) LIMIT 1');
-			$this->sql('users', 'get_confirm', 'SELECT confirm_key FROM users WHERE user_id = :user LIMIT 1');
-			$this->sql('users', 'delete', 'DELETE FROM users WHERE user_id = :user');
+			failnet::core('db')->armQuery('users', 'create', 'INSERT INTO users ( nick, authlevel, password ) VALUES ( :nick, :authlevel, :hash )');
+			failnet::core('db')->armQuery('users', 'set_pass', 'UPDATE users SET password = :hash WHERE user_id = :user');
+			failnet::core('db')->armQuery('users', 'set_level', 'UPDATE users SET authlevel = :authlevel WHERE user_id = :user');
+			failnet::core('db')->armQuery('users', 'set_confirm', 'UPDATE users SET confirm_key = :key WHERE user_id = :user');
+			failnet::core('db')->armQuery('users', 'get', 'SELECT * FROM users WHERE LOWER(nick) = LOWER(:nick) LIMIT 1');
+			failnet::core('db')->armQuery('users', 'get_level', 'SELECT authlevel FROM users WHERE LOWER(nick) = LOWER(:nick) LIMIT 1');
+			failnet::core('db')->armQuery('users', 'get_confirm', 'SELECT confirm_key FROM users WHERE user_id = :user LIMIT 1');
+			failnet::core('db')->armQuery('users', 'delete', 'DELETE FROM users WHERE user_id = :user');
 
 			// Sessions table
-			$this->sql('sessions', 'create', 'INSERT INTO sessions ( key_id, user_id, login_time, hostmask ) VALUES ( :key, :user, :time, :hostmask )');
-			$this->sql('sessions', 'delete_key', 'DELETE FROM sessions WHERE key_id = :key');
-			$this->sql('sessions', 'delete_user', 'DELETE FROM sessions WHERE user_id = :user');
-			$this->sql('sessions', 'delete_old', 'DELETE FROM sessions WHERE login_time < :time');
-			$this->sql('sessions', 'delete', 'DELETE FROM sessions WHERE LOWER(hostmask) = LOWER(:hostmask)');
+			failnet::core('db')->armQuery('sessions', 'create', 'INSERT INTO sessions ( key_id, user_id, login_time, hostmask ) VALUES ( :key, :user, :time, :hostmask )');
+			failnet::core('db')->armQuery('sessions', 'delete_key', 'DELETE FROM sessions WHERE key_id = :key');
+			failnet::core('db')->armQuery('sessions', 'delete_user', 'DELETE FROM sessions WHERE user_id = :user');
+			failnet::core('db')->armQuery('sessions', 'delete_old', 'DELETE FROM sessions WHERE login_time < :time');
+			failnet::core('db')->armQuery('sessions', 'delete', 'DELETE FROM sessions WHERE LOWER(hostmask) = LOWER(:hostmask)');
 
 			// Access list table
-			$this->sql('access', 'create', 'INSERT INTO access ( user_id, hostmask ) VALUES ( :user, :hostmask )');
-			$this->sql('access', 'delete', 'DELETE FROM access WHERE (user_id = :user AND LOWER(hostmask) = LOWER(:hostmask) )');
-			$this->sql('access', 'delete_user', 'DELETE FROM access WHERE user_id = :user');
-			$this->sql('access', 'get', 'SELECT hostmask FROM access WHERE user_id = :user');
+			failnet::core('db')->armQuery('access', 'create', 'INSERT INTO access ( user_id, hostmask ) VALUES ( :user, :hostmask )');
+			failnet::core('db')->armQuery('access', 'delete', 'DELETE FROM access WHERE (user_id = :user AND LOWER(hostmask) = LOWER(:hostmask) )');
+			failnet::core('db')->armQuery('access', 'delete_user', 'DELETE FROM access WHERE user_id = :user');
+			failnet::core('db')->armQuery('access', 'get', 'SELECT hostmask FROM access WHERE user_id = :user');
 
 			// Commit the stuffs
 			failnet::core('db')->commit();
@@ -263,15 +264,18 @@ class failnet_core extends failnet_common
 		{
 			// Something went boom.  Time to panic!
 			failnet::core('db')->rollBack();
-			throw_fatal($e);
+
+			// Chain the exception
+			throw new failnet_exception(failnet_exception::ERR_PDO_EXCEPTION, $e);
 		}
 	}
 
+	// @todo document
 	public function checkInstall()
 	{
 		// Check to see if our rand_seed exists, and if not we need to execute our schema file (as long as it exists of course). :)
-		$this->sql('config', 'get')->execute(array(':name' => 'rand_seed'));
-		$rand_seed_exists = $this->sql('config', 'get')->fetch(PDO::FETCH_ASSOC);
+		failnet::core('db')->useQuery('config', 'get')->execute(array(':name' => 'rand_seed'));
+		$rand_seed_exists = failnet::core('db')->useQuery('config', 'get')->fetch(PDO::FETCH_ASSOC);
 		if(!$rand_seed_exists && file_exists(FAILNET_ROOT . 'schemas/schema_data.sql'))
 		{
 			try
@@ -280,7 +284,7 @@ class failnet_core extends failnet_common
 
 				// @todo move to authorize plugin/node
 				// Add the default user if Failnet was just installed
-				$this->sql('users', 'create')->execute(array(':nick' => $this->config('owner'), ':authlevel' => self::AUTH_OWNER, ':hash' => $this->hash->hash($this->config('user'))));
+				failnet::core('db')->useQuery('users', 'create')->execute(array(':nick' => $this->config('owner'), ':authlevel' => self::AUTH_OWNER, ':hash' => $this->hash->hash($this->config('user'))));
 
 				// Now let's add some default data to the database tables
 				failnet::core('db')->exec(file_get_contents(FAILNET_ROOT . 'schemas/schema_data.sql'));
@@ -291,7 +295,9 @@ class failnet_core extends failnet_common
 			{
 				// Roll back ANY CHANGES MADE, something went boom.
 				failnet::core('db')->rollBack();
-				throw_fatal($e);
+
+				// Chain the exception
+				throw new failnet_exception(failnet_exception::ERR_PDO_EXCEPTION, $e);
 			}
 		}
 	}
@@ -366,6 +372,15 @@ class failnet_core extends failnet_common
 	}
 
 	/**
+	 * @ignore
+	 * ;D
+	 */
+	public function sigsegv($restart = true)
+	{
+		$this->terminate($restart);
+	}
+
+	/**
 	 * Get a setting from Failnet's configuration settings
 	 * @param string $setting - The config setting that we want to pull the value for.
 	 * @param boolean $config_only - Is this an entry that only appears in the config file?
@@ -392,16 +407,15 @@ class failnet_core extends failnet_common
 	{
 		if($this->config($setting) !== NULL)
 		{
-			$success = $this->sql('config', 'update')->execute(array(':name' => $setting, ':value' => $value));
+			$success = failnet::core('db')->useQuery('config', 'update')->execute(array(':name' => $setting, ':value' => $value));
 			$this->settings[$setting] = $value;
-			return $success;
 		}
 		else
 		{
-			$success = $this->sql('config', 'update')->execute(array(':name' => $setting, ':value' => $value));
+			$success = failnet::core('db')->useQuery('config', 'create')->execute(array(':name' => $setting, ':value' => $value));
 			$this->settings[$setting] = $value;
-			return $success;
 		}
+		return $success;
 	}
 
 	/**
@@ -410,31 +424,30 @@ class failnet_core extends failnet_common
 	 * @param string $type - The type of statement we are looking at
 	 * @param mixed $statement - The actual PDO statement that is to be prepared (if we are preparing a statement)
 	 * @return mixed - Either an instance of PDO_Statement class (if $statement is false) or void
+	 * @deprecated since 2.1.0
+	 * @see failnet_database::armQuery()
+	 * @see failnet_database::useQuery()
 	 */
 	public function sql($table, $type, $statement = false)
 	{
+		failnet::core('ui')->debug('Depreciated method failnet_core::sql() called');
 		if($statement === false)
-			return $this->statements[$table][$type];
+			return failnet::core('db')->useQuery($table, $type);
 
-		$this->statements[$table][$type] = failnet::core('db')->prepare($statement);
+		return failnet::core('db')->armQuery($table, $type, $statement);
 	}
 
 	/**
 	 * Magic method __get() to use for referencing specific module classes, used to return the property desired
 	 * @param string $name - The name of the module class to use
 	 * @return object - The object we want to use, or void.
+	 * @throws failnet_exception
 	 */
 	public function __get($name)
 	{
-		if(array_key_exists($name, $this->virtual_storage))
-		{
-			return $this->virtual_storage[$name];
-		}
-		else
-		{
-			$trace = debug_backtrace();
-			trigger_error('Undefined property via __get(): ' . $name . ' in ' . $trace[0]['file'] .' on line ' . $trace[0]['line'] . '--', E_USER_WARNING);
-		}
+		if(!array_key_exists($name, $this->virtual_storage))
+			throw new failnet_exception(failnet_exception::ERR_INVALID_VIRTUAL_STORAGE_SLOT, $name);
+		return $this->virtual_storage[$name];
 	}
 
 	/**
