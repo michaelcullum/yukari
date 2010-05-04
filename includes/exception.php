@@ -48,6 +48,10 @@ class failnet_exception extends Exception
 	const ERR_NO_CONFIG = 1;
 	const ERR_INVALID_PREP_QUERY = 2;
 
+	/**
+	 * Exception setup method, loads the error messages up for translation and also performs additional setup if necessary
+	 * @return void
+	 */
 	public function setup()
 	{
 		$this->translations = array(
@@ -56,19 +60,25 @@ class failnet_exception extends Exception
 		);
 		// if we extend this class and want to define additional exception messages
 		if(method_exists($this, 'extraSetup'))
-		{
 			$this->extraSetup();
-		}
 	}
 
+	/**
+	 * Error translation method, takes them pesky error numbers and gives you something you can actually use!
+	 * @return object returns itself (i.e. $this) for use with the method Exception::__toString()
+	 */
 	public function translate()
 	{
 		if(!sizeof($this->translations))
-		{
 			$this->setup();
-		}
+
+		if(isset($this->code))
+			$message = $this->code;
 		$this->code = (int) $this->message;
-		$this->message = $this->translations[$this->message];
+		$this->message = (isset($message)) ? sprintf($this->translations[$this->message], $message) : $this->translations[$message];
+
+		// We return $this so that one may make use of Exception::__toString() directly after calling this method
+		// so, pretty much... echo failnet_exception::translate() should work nicely
 		return $this;
 	}
 }
