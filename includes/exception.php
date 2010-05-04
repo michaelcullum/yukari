@@ -45,10 +45,16 @@ class failnet_exception extends Exception
 {
 	private $translations = array();
 
-	const ERR_NO_CONFIG = 1;
-	const ERR_PDO_EXCEPTION = 2;
-	const ERR_INVALID_VIRTUAL_STORAGE_SLOT = 3;
-	const ERR_INVALID_PREP_QUERY = 4;
+	const ERR_STARTUP_MIN_PHP = 1001;
+	const ERR_STARTUP_PHP_SAPI = 1002;
+	const ERR_STARTUP_NO_PDO = 1003;
+	const ERR_STARTUP_NO_PDO_SQLITE = 1004;
+	const ERR_STARTUP_NO_ACCESS_DB_DIR = 1005;
+
+	const ERR_NO_CONFIG = 2001;
+	const ERR_PDO_EXCEPTION = 2002;
+	const ERR_INVALID_VIRTUAL_STORAGE_SLOT = 2003;
+	const ERR_INVALID_PREP_QUERY = 2004;
 
 	/**
 	 * Exception setup method, loads the error messages up for translation and also performs additional setup if necessary
@@ -57,6 +63,12 @@ class failnet_exception extends Exception
 	public function setup()
 	{
 		$this->translations = array(
+			self::ERR_STARTUP_MIN_PHP => 'Failnet ' . FAILNET_VERSION . ' requires PHP ' . FAILNET_MIN_PHP . ' or better, while the currently installed PHP version is ' . PHP_VERSION,
+			self::ERR_STARTUP_PHP_SAPI => 'Failnet must be run in the CLI SAPI',
+			self::ERR_STARTUP_NO_PDO => 'Failnet requires the PDO PHP extension to be loaded',
+			self::ERR_STARTUP_NO_PDO_SQLITE => 'Failnet requires the PDO_SQLite PHP extension to be loaded',
+			self::ERR_STARTUP_NO_ACCESS_DB_DIR => 'Failnet requires the database directory to exist and be readable/writeable',
+
 			self::ERR_NO_CONFIG => 'Specified Failnet configuration file not found',
 			self::ERR_PDO_EXCEPTION => 'Database exception thrown:',
 			self::ERR_INVALID_VIRTUAL_STORAGE_SLOT => 'Undefined virtual-storage property accessed:',

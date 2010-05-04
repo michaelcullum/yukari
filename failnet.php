@@ -36,37 +36,36 @@
  */
 define('FAILNET_ROOT', __DIR__);
 
-// Let's grab the config file first
+// Absolute essentials first
 require FAILNET_ROOT . 'includes/constants.php';
+require FAILNET_ROOT . 'includes/exception.php';
 
-// Check to see if we are even on the minimum PHP version necessary.
+/**
+ * We need to start checking to see if the requirements for Failnet can be met
+ *
+ * Things we check:
+ *  - Minimum PHP version
+ *  - PHP_SAPI
+ *  - PDO availability
+ *  - PDO+SQlite availability
+ *  - DB dir accessibility
+ */
 if(version_compare(FAILNET_MIN_PHP, PHP_VERSION, '>'))
-	throw new Exception('Failnet ' . FAILNET_VERSION . ' requires PHP ' . FAILNET_MIN_PHP . ' or better, while the currently installed PHP version is ' . PHP_VERSION);
-
-// Check to make sure the CLI SAPI is being used...
+	throw new failnet_exception(failnet_exception::ERR_STARTUP_MIN_PHP);
 if(strtolower(PHP_SAPI) != 'cli')
-	throw new Exception('Failnet must be run in the CLI SAPI');
-
-// Make sure that PDO and the SQLite PDO extensions are loaded, we need them.
+	throw new failnet_exception(failnet_exception::ERR_STARTUP_PHP_SAPI);
 if(!extension_loaded('PDO'))
-	throw new Exception('Failnet requires the PDO PHP extension to be loaded');
+	throw new failnet_exception(failnet_exception::ERR_STARTUP_NO_PDO);
 if(!extension_loaded('pdo_sqlite'))
-	throw new Exception('Failnet requires the PDO_SQLite PHP extension to be loaded');
-
-// Make sure our database directory actually exists and is manipulatable
+	throw new failnet_exception(failnet_exception::ERR_STARTUP_NO_PDO_SQLITE);
 if(!file_exists(FAILNET_ROOT . 'data/db/') || !is_readable(FAILNET_ROOT . 'data/db/') || !is_writeable(FAILNET_ROOT . 'data/db/') || !is_dir(FAILNET_ROOT . 'data/db/'))
-	throw new Exception('Failnet requires the database directory to exist and be readable/writeable');
+	throw new failnet_exception(failnet_exception::ERR_STARTUP_NO_ACCESS_DB_DIR);
 
-// Load up the common files and get going then.
+// Load up the common files, setup our JIT class autoloading, and get going.
 require FAILNET_ROOT . 'includes/common.php';
 require FAILNET_ROOT . 'includes/autoload.php';
 require FAILNET_ROOT . 'includes/functions.php';
 
-// Setup the JIT class autoloading.
 failnet_autoload::register();
-
-// Load the Failnet core
 failnet::setCore('core', 'failnet_core');
-
-// Run Failnet
 failnet::core()->run();
