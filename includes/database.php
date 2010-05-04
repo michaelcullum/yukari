@@ -49,10 +49,15 @@ class failnet_database extends PDO
 	private $statements = array();
 
 	/**
-	 * Overriding the __construct
+	 * @ignore
+	 * Just overriding the __construct() method of the parent
 	 */
 	public function __construct() {	}
 
+	/**
+	 * Initializes a connection to the specified database.
+	 * @see PDO::__construct()
+	 */
 	public function connect($dsn, $username = NULL, $password = NULL, $driver_options = NULL)
 	{
 		parent::__construct($dsn, $username, $password, $driver_options);
