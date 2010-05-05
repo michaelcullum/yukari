@@ -136,18 +136,17 @@ abstract class failnet
 	 * @param mixed $hook_call - The function/method to hook on top of the method we're hooking.
 	 * @param constant $hook_type - The type of hook we're using.
 	 * @return boolean - Were we successful?
+	 * @throws failnet_exception
 	 */
 	public function registerHook($hooked_method_class, $hooked_method_name, $hook_call, $hook_type = HOOK_NULL)
 	{
 		// We're deliberately ignoring HOOK_NULL here.
 		if(!in_array($hook_call, array(HOOK_STACK, HOOK_OVERRIDE)))
-			// throw an exception instead
-			return false;
+			throw new failnet_exception(failnet_exception::ERR_REGISTER_HOOK_BAD_HOOK_TYPE);
 
 		// Check for unsupported classes
 		if(substr($hooked_method_class, 0, 8) != 'failnet_')
-			// throw an exception instead
-			return false;
+			throw new failnet_exception(failnet_exception::ERR_REGISTER_HOOK_BAD_CLASS, $hooked_method_class);
 
 		/**
 		 * Hooks are placed into the hook info array using the following array structure:
@@ -173,7 +172,6 @@ abstract class failnet
 		 * We'll just have to take their word for it.
 		 */
 		self::$hooks[$hooked_method_class][$hooked_method_name][] = array('hook_call' => $hook_call, 'type' => $hook_type);
-		return true;
 	}
 
 	/**
@@ -210,6 +208,7 @@ abstract class failnet_base
 	 * @param string $name - Method name
 	 * @param array $arguments - Method parameters
 	 * @return void
+	 * @throws failnet_exception
 	 */
 	public function __call($name, $arguments)
 	{
@@ -235,8 +234,7 @@ abstract class failnet_base
 		}
 		else
 		{
-			// replace with exception
-			trigger_error("Call to undefined method '$name' in class '" . get_class($this) . "'");
+			throw new failnet_exception(failnet_exception::ERR_UNDEFINED_METHOD_CALL, array($name, get_class($this)));
 		}
 	}
 
@@ -245,6 +243,7 @@ abstract class failnet_base
 	 * @param string $name - Method name
 	 * @param array $arguments - Method parameters
 	 * @return void
+	 * @throws failnet_exception
 	 */
 	public function __callStatic($name, $arguments)
 	{
@@ -270,8 +269,7 @@ abstract class failnet_base
 		}
 		else
 		{
-			// replace with exception
-			trigger_error("Call to undefined method '$name' in class '" . static::$__CLASS__ . "'");
+			throw new failnet_exception(failnet_exception::ERR_UNDEFINED_METHOD_CALL, array($name, static::$__CLASS__));
 		}
 	}
 }

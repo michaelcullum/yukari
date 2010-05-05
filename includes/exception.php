@@ -48,20 +48,25 @@ class failnet_exception extends Exception
 	 */
 	private $translations = array();
 
-	const ERR_STARTUP_MIN_PHP = 1001;
-	const ERR_STARTUP_PHP_SAPI = 1002;
-	const ERR_STARTUP_NO_PDO = 1003;
-	const ERR_STARTUP_NO_PDO_SQLITE = 1004;
-	const ERR_STARTUP_NO_ACCESS_DB_DIR = 1005;
+	const ERR_STARTUP_MIN_PHP = 1000;
+	const ERR_STARTUP_PHP_SAPI = 1001;
+	const ERR_STARTUP_NO_PDO = 1002;
+	const ERR_STARTUP_NO_PDO_SQLITE = 1003;
+	const ERR_STARTUP_NO_ACCESS_DB_DIR = 1004;
 
-	const ERR_NO_SUCH_CORE_OBJ = 1101;
-	const ERR_NO_SUCH_NODE_OBJ = 1102;
+	const ERR_NO_SUCH_CORE_OBJ = 1100;
+	const ERR_NO_SUCH_NODE_OBJ = 1101;
 
-	const ERR_NO_CONFIG = 2001;
-	const ERR_INVALID_VIRTUAL_STORAGE_SLOT = 2002;
+	const ERR_NO_CONFIG = 2000;
+	const ERR_INVALID_VIRTUAL_STORAGE_SLOT = 2001;
 
-	const ERR_PDO_EXCEPTION = 2101;
-	const ERR_INVALID_PREP_QUERY = 2102;
+	const ERR_PDO_EXCEPTION = 2100;
+	const ERR_INVALID_PREP_QUERY = 2101;
+
+	const ERR_REGISTER_HOOK_BAD_CLASS = 2200;
+	const ERR_REGISTER_HOOK_BAD_HOOK_TYPE = 2201;
+
+	const ERR_UNDEFINED_METHOD_CALL = 3000;
 
 	/**
 	 * Exception setup method, loads the error messages up for translation and also performs additional setup if necessary
@@ -76,16 +81,22 @@ class failnet_exception extends Exception
 			self::ERR_STARTUP_NO_PDO_SQLITE => 'Failnet requires the PDO_SQLite PHP extension to be loaded',
 			self::ERR_STARTUP_NO_ACCESS_DB_DIR => 'Failnet requires the database directory to exist and be readable/writeable',
 
-			self::ERR_NO_SUCH_CORE_OBJ => 'An invalid core object was specified for access: %s',
-			self::ERR_NO_SUCH_CORE_OBJ => 'An invalid core object was specified for access: %s',
+			self::ERR_NO_SUCH_CORE_OBJ => 'An invalid core object was specified for access: %1$s',
+			self::ERR_NO_SUCH_CORE_OBJ => 'An invalid core object was specified for access: %1$s',
 
 			self::ERR_NO_CONFIG => 'Specified Failnet configuration file not found',
-			self::ERR_INVALID_VIRTUAL_STORAGE_SLOT => 'Undefined virtual-storage property accessed: %s',
+			self::ERR_INVALID_VIRTUAL_STORAGE_SLOT => 'Undefined virtual-storage property accessed: %1$s',
 
-			self::ERR_PDO_EXCEPTION => 'Database exception thrown: %s',
+			self::ERR_PDO_EXCEPTION => 'Database exception thrown: %1$s',
 			self::ERR_INVALID_PREP_QUERY => 'The specified prepared PDO query was not found',
+
+			self::ERR_REGISTER_HOOK_BAD_CLASS => 'An invalid class was specified for registering a hook with: %1$s',
+			self::ERR_REGISTER_HOOK_BAD_HOOK_TYPE => 'An invalid hook type was specified during hook registration',
+
+			self::ERR_UNDEFINED_METHOD_CALL => 'Call to undefined method - %2$s::%1$s',
 		);
-		// if we extend this class and want to define additional exception messages
+
+		// Just in case we extend this class and want to define additional exception messages
 		if(method_exists($this, 'extraSetup'))
 			$this->extraSetup();
 	}
@@ -102,7 +113,7 @@ class failnet_exception extends Exception
 		if(isset($this->code))
 			$message = $this->code;
 		$this->code = (int) $this->message;
-		$this->message = (isset($message)) ? sprintf($this->translations[$this->message], $message) : $this->translations[$message];
+		$this->message = (isset($message)) ? sprintf($this->translations[$this->message], (!is_array($message) ? array($message) : $message)) : $this->translations[$message];
 
 		// We return $this so that one may make use of Exception::__toString() directly after calling this method
 		// so, pretty much... echo failnet_exception::translate() should work nicely
