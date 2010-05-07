@@ -61,6 +61,7 @@ class failnet_socket extends failnet_common
 		set_time_limit(0);
 
 		// Check to see if the transport method we are using is allowed
+		// @todo replace with a boolean SSL setting
 		if(!in_array(failnet::core()->config('transport'), stream_get_transports()))
 			// @todo exception
 			throw_fatal('Transport ' . $this->failnet->config('transport') . ' is not supported by this PHP installation.', E_USER_ERROR);
@@ -69,8 +70,7 @@ class failnet_socket extends failnet_common
 		$remote = failnet::core()->config('transport') . '://' . failnet::core()->config('server') . ':' . failnet::core()->config('port');
 		$this->socket = @stream_socket_client($remote, $errno, $errstr);
 		if(!$this->socket)
-			// @todo exception
-			throw_fatal('Unable to connect to server: socket error ' . $errno . ' : ' . $errstr);
+			throw new failnet_exception(failnet_exception::ERR_SOCKET_ERROR, $errno, $errstr);
 
 		@stream_set_timeout($this->socket, $this->delay);
 
@@ -92,7 +92,8 @@ class failnet_socket extends failnet_common
 	{
 		// Check for a new event on the current connection
 		$buffer = fgets($this->socket, 512);
-		// @todo exception (if returns false, throw exception)
+		if($buffer === false)
+			throw new failnet_exception(failnet_exception::ERR_SOCKET_FGETS_FAILED);
 
 		// If no new event was found, return NULL
 		if (empty($buffer))
@@ -106,15 +107,7 @@ class failnet_socket extends failnet_common
 		{
 			// Parse the user hostmask, command, and arguments
 			list($prefix, $cmd, $args) = array_pad(explode(' ', ltrim($buffer, ':'), 3), 3, NULL);
-			// change into a one-liner
-			if(strpos($prefix, '@') !== false)
-			{
-				$hostmask = failnet_hostmask::load($prefix);
-			}
-			else
-			{
-				$hostmask = failnet_hostmask::load('unknown' . ((strpos($prefix, '!') === false) ? '!unknown' : '') . '@' . $prefix);
-			}
+			$hostmask = failnet_hostmask::load(((strpos($prefix, '@') !== false) ? $prefix : 'unknown' . ((strpos($prefix, '!') === false) ? '!unknown' : '') . '@' . $prefix));
 		}
 		else // If the event is from the server...
 		{
@@ -225,8 +218,7 @@ class failnet_socket extends failnet_common
 	{
 		// Require an open socket connection to continue
 		if(empty($this->socket))
-			// @todo exception
-			trigger_error('Cannot send server message; failnet_socket::connect() must be called first', E_USER_ERROR);
+			throw new failnet_exception(failnet_exception::ERR_SOCKET_NO_CONNECTION);
 
 		$buffer = strtoupper($command);
 		// Add arguments
@@ -245,8 +237,7 @@ class failnet_socket extends failnet_common
 		// Transmit the command over the socket connection
 		$success = fwrite($this->socket, $buffer . "\r\n");
 		if($success === false)
-			// @todo exception
-			throw_fatal('fwrite() failed, socket connection lost');
+			throw new failnet_exception(failnet_exception::ERR_SOCKET_FWRITE_FAILED);
 
 		// Return the command string that was transmitted
 		return $buffer;

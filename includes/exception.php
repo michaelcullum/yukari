@@ -70,7 +70,12 @@ class failnet_exception extends Exception
 	const ERR_REGISTER_HOOK_BAD_CLASS = 2200;
 	const ERR_REGISTER_HOOK_BAD_HOOK_TYPE = 2201;
 
-	const ERR_UNDEFINED_METHOD_CALL = 3000;
+	const ERR_UNDEFINED_METHOD_CALL = 2300;
+	
+	const ERR_SOCKET_ERROR = 2400;
+	const ERR_SOCKET_FGETS_FAILED = 2401;
+	const ERR_SOCKET_FWRITE_FAILED = 2402;
+	const ERR_SOCKET_NO_CONNECTION = 2403;
 
 	/**
 	 * Exception setup method, loads the error messages up for translation and also performs additional setup if necessary
@@ -101,6 +106,11 @@ class failnet_exception extends Exception
 			self::ERR_REGISTER_HOOK_BAD_HOOK_TYPE => 'An invalid hook type was specified during hook registration',
 
 			self::ERR_UNDEFINED_METHOD_CALL => 'Call to undefined method - %2$s::%1$s',
+			
+			self::ERR_SOCKET_ERROR => 'Unable to connect to server: socket error %1$s : %2$s',
+			self::ERR_SOCKET_FGETS_FAILED => 'fgets() failed, socket connection lost',
+			self::ERR_SOCKET_FWRITE_FAILED => 'fwrite() failed, socket connection lost',
+			self::ERR_SOCKET_NO_CONNECTION => 'Cannot send to server - no connection present',
 		);
 
 		// Just in case we extend this class and want to define additional exception messages
