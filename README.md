@@ -7,7 +7,7 @@ and mainly designed for use with channel management.
 
 **Copyright**: *(c) 2009 - 2010 -- Failnet Project*
 
-**License**: <http://opensource.org/licenses/gpl-2.0.php GNU GPL v2>
+**License**: <http://opensource.org/licenses/gpl-2.0.php> GNU GPL v2
 
 
 ## Failnet was inspired by the following works:
@@ -18,7 +18,7 @@ Copyright (c) 2009 - Kai Tamkun
 
 License: <http://license.youreofftask.com/software.php> - Kai License (Compatible with GPLv2)
 
-
+- - -
 
 **Phergie**
 
