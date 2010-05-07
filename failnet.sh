@@ -7,7 +7,7 @@
 #-------------------------------------------------------------------
 # Script info:
 # Version:		2.1.0 DEV
-# Copyright:	(c) 2009 - Failnet Project
+# Copyright:	(c) 2009 - 2010 -- Failnet Project
 # License:		GNU General Public License - Version 2
 #
 #===================================================================
@@ -39,4 +39,4 @@ done
 
 # Uncomment this (remove the #) to have the command prompt window pause after Failnet's termination.  
 # Useful for trapping errors.
-read -s -n 1 -p "Press any key to continue ..."
+read -s -n 1 -p "Press any key to continue ...\n"
