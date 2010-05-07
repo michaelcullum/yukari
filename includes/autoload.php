@@ -126,6 +126,6 @@ class failnet_autoload extends failnet_common
 	 */
 	public static function register()
 	{
-		spl_autoload_register(array(new self, 'load'));
+		spl_autoload_register(array(new self, 'loadFile'));
 	}
 }
