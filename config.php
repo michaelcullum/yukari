@@ -84,7 +84,6 @@ return array(
 	'owner'				=> 'Obsidian',
 
 // Should the bot say things in channel, or directly message users instead?
-// @todo implement this properly
 	'speak'				=> true,
 
 // How long should Failnet wait after the last recieved event to ping the server to check the connection?
