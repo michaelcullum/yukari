@@ -56,7 +56,7 @@ class failnet_autoload extends failnet_common
 	 */
 	public function __construct()
 	{
-		$this->paths = array(
+		self::$paths = array(
 			FAILNET_ROOT . 'addons/autoload/',
 			FAILNET_ROOT . 'includes/',
 			FAILNET_ROOT . 'addons/',
@@ -70,26 +70,24 @@ class failnet_autoload extends failnet_common
 	 */
 	public function loadFile($class)
 	{
-		// Begin by cleaning the class name of any possible ../. hacks
-		$name = basename(sanitize_filepath($class));
+		$name = basename($class);
 
-		// Now, drop the failnet_ prefix if it is there, and replace any underscores with slashes.
+		// Drop the failnet_ prefix if it is there, and replace any underscores with slashes.
+		// If you don't like it, stuff it.
 		$name = str_replace('_', '/', ((substr($name, 0, 8) == 'failnet_') ? substr($name, 8) : $name));
 
-		$found = false;
 		foreach(self::$paths as $path)
 		{
 			if(file_exists($path . $name . '.php'))
 			{
 				require $path . $name . '.php';
 				if(!class_exists($class))
-				{
+					// @todo exception
 					throw_fatal('Invalid class contained within file ' . $path . $name . '.php');
-				}
-				$found = true;
 				return;
 			}
 		}
+		// @todo exception
 		throw_fatal('No class file found for class named ' . $class . ', expecting ' . $path . $name . '.php for filepath in specified include directories');
 	}
 
@@ -100,7 +98,7 @@ class failnet_autoload extends failnet_common
 	 */
 	public static function setPath($include_path)
 	{
-		self::$paths[] = sanitize_filepath(FAILNET_ROOT . $include_path);
+		self::$paths[] = dirname(FAILNET_ROOT . $include_path);
 	}
 
 	/**
@@ -110,18 +108,16 @@ class failnet_autoload extends failnet_common
 	 */
 	public static function fileExists($class)
 	{
-		// Begin by cleaning the class name of any possible ../. hacks
-		$name = basename(sanitize_filepath($class));
+		$name = basename($class);
 
-		// Now, drop the failnet_ prefix if it is there, and replace any underscores with slashes.
+		// Drop the failnet_ prefix if it is there, and replace any underscores with slashes.
+		// If you don't like it, stuff it.
 		$name = str_replace('_', '/', ((substr($name, 0, 8) == 'failnet_') ? substr($name, 8) : $name));
 
 		foreach(self::$paths as $path)
 		{
 			if(file_exists($path . $name . '.php'))
-			{
 				return true;
-			}
 		}
 		return false;
 	}
