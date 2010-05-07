@@ -102,13 +102,16 @@ class failnet_core extends failnet_common
 
 		// Fire off the startup text.
 		failnet::core('ui')->startup();
+		
+		// Set the error handler
+		failnet::core('ui')->system('--- Setting main error handler');
+		@set_error_handler('failnetErrorHandler');
 
 		// Begin loading our core objects
 		$core_objects = array(
 			'socket'	=> 'failnet_socket',
 			'db'		=> 'failnet_database',
 			'log'		=> 'failnet_log',
-			'error'		=> 'failnet_error',
 			'hash'		=> 'failnet_hash',
 			'irc'		=> 'failnet_irc',
 			'plugin'	=> 'failnet_plugin',
@@ -120,10 +123,6 @@ class failnet_core extends failnet_common
 			failnet::core('ui')->system("--- Loaded core object $core_object_class");
 		}
 		unset($core_objects);
-
-		// Set the error handler
-		failnet::core('ui')->system('--- Setting main error handler');
-		@set_error_handler(array(failnet::core('error'), 'fail'));
 
 		// Setup the DB connection.
 		$this->setupDB();

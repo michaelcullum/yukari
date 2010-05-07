@@ -69,6 +69,61 @@ function throw_fatal($msg)
 }
 
 /**
+ * Error handler function for Failnet.  Modified from the phpBB 3.0.x msg_handler() function.
+ * @param integer $errno - Level of the error encountered
+ * @param string $msg_text - The error message recieved
+ * @param string $errfile - The file that the error was encountered at
+ * @param integer $errline - The line that the error was encountered at
+ * @return mixed - If suppressed, nothing returned...if not handled, false.
+ */
+function failnetErrorHandler($errno, $msg_text, $errfile, $errline)
+{
+   // Do not display notices if we suppress them via @
+   if (error_reporting() == 0)
+	   return;
+
+   // Strip the current directory from the offending file
+   $errfile = (!empty($errfile)) ? substr(str_replace(array(__DIR__, '\\'), array('', '/'), $errfile), 1) : '';
+   $error = 'in file ' . $errfile . ' on line ' . $errline . ': ' . $msg_text . PHP_EOL;
+   $handled = false;
+
+   switch ($errno)
+   {
+	   case E_NOTICE:
+	   case E_STRICT:
+	   case E_DEPRECATED:
+	   case E_USER_NOTICE:
+	   case E_USER_DEPRECATED:
+		   $handled = true;
+		   failnet::core('ui')->notice($error);
+		   file_put_contents(FAILNET_ROOT . 'logs/error_log_' . date('m-d-Y', time()) . '.log', date('D m/d/Y - h:i:s A') . ' - [PHP Notice] ' . $error, FILE_APPEND | LOCK_EX);
+	   break;
+
+	   case E_WARNING:
+	   case E_USER_WARNING:
+		   $handled = true;
+		   failnet::core('ui')->warning($error);
+		   file_put_contents(FAILNET_ROOT . 'logs/error_log_' . date('m-d-Y', time()) . '.log', date('D m/d/Y - h:i:s A') . ' - [PHP Warning] ' . $error, FILE_APPEND | LOCK_EX);
+	   break;
+
+	   case E_ERROR:
+	   case E_USER_ERROR:
+		   $handled = true;
+		   failnet::core('ui')->error($error);
+		   file_put_contents(FAILNET_ROOT . 'logs/error_log_' . date('m-d-Y', time()) . '.log', date('D m/d/Y - h:i:s A') . ' - [PHP Error] ' . $error, FILE_APPEND | LOCK_EX);
+	   break;
+   }
+
+   // Fatal error? DAI.
+   if($errno === E_USER_ERROR)
+	   failnet::core()->terminate(false);
+
+   // If we notice an error not handled here we pass this back to PHP by returning false
+   // This may not work for all php versions
+   return ($handled) ? true : false;
+}
+
+/**
  * Return formatted string for filesizes
  * @param integer $bytes - The number of bytes to convert.
  * @return string - The filesize converted into KiB, MiB, or GiB.
