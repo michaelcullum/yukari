@@ -76,6 +76,7 @@ class failnet_exception extends Exception
 	const ERR_SOCKET_FGETS_FAILED = 2401;
 	const ERR_SOCKET_FWRITE_FAILED = 2402;
 	const ERR_SOCKET_NO_CONNECTION = 2403;
+	const ERR_SOCKET_UNSUPPORTED_TRANSPORT = 2404;
 
 	/**
 	 * Exception setup method, loads the error messages up for translation and also performs additional setup if necessary
@@ -111,6 +112,7 @@ class failnet_exception extends Exception
 			self::ERR_SOCKET_FGETS_FAILED => 'fgets() failed, socket connection lost',
 			self::ERR_SOCKET_FWRITE_FAILED => 'fwrite() failed, socket connection lost',
 			self::ERR_SOCKET_NO_CONNECTION => 'Cannot send to server - no connection present',
+			self::ERR_SOCKET_UNSUPPORTED_TRANSPORT => 'Transport type "%1$s" is not supported by this PHP installation'
 		);
 
 		// Just in case we extend this class and want to define additional exception messages

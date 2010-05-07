@@ -40,7 +40,7 @@
 return array(
 
 // Server settings
-	'transport'			=> 'tcp',
+	'use_ssl'			=> false,
 	'server'			=> 'irc.freenode.net',
 	'port'				=> 6667,
 	'nick'				=> 'Failnet',

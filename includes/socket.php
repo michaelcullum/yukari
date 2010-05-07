@@ -57,30 +57,28 @@ class failnet_socket extends failnet_common
 	 */
 	public function connect()
 	{
-		// Listen for input indefinitely
+		// Run indefinitely...
 		set_time_limit(0);
 
 		// Check to see if the transport method we are using is allowed
-		// @todo replace with a boolean SSL setting
-		if(!in_array(failnet::core()->config('transport'), stream_get_transports()))
-			// @todo exception
-			throw_fatal('Transport ' . $this->failnet->config('transport') . ' is not supported by this PHP installation.', E_USER_ERROR);
+		$transport = failnet::core()->config('use_ssl') ? 'ssl' : 'tcp';
+		if(!in_array($transport, stream_get_transports()))
+			throw new failnet_exception(failnet_exception::ERR_SOCKET_UNSUPPORTED_TRANSPORT, $transport);
 
 		// Establish and configure the socket connection
-		$remote = failnet::core()->config('transport') . '://' . failnet::core()->config('server') . ':' . failnet::core()->config('port');
+		$remote = "$transport://" . failnet::core()->config('server') . ':' . failnet::core()->config('port');
 		$this->socket = @stream_socket_client($remote, $errno, $errstr);
 		if(!$this->socket)
 			throw new failnet_exception(failnet_exception::ERR_SOCKET_ERROR, $errno, $errstr);
 
 		@stream_set_timeout($this->socket, $this->delay);
 
-		// Send the password if one is specified
+		// Send the server password if one is specified
 		if(is_null(failnet::core()->config('server_pass')) || !failnet::core()->config('server_pass'))
 			$this->send('PASS', failnet::core()->config('server_pass'));
 
 		// Send user information
 		$this->send('USER', array(failnet::core()->config('user'), failnet::core()->config('server'), failnet::core()->config('server'), failnet::core()->config('name')));
-
 		$this->send('NICK', failnet::core()->config('nick'));
 	}
 
