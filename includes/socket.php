@@ -30,7 +30,6 @@
  */
 
 
-
 /**
  * Failnet - Socket connection handling class,
  * 		Used as Failnet's connection handler.
@@ -63,12 +62,14 @@ class failnet_socket extends failnet_common
 
 		// Check to see if the transport method we are using is allowed
 		if(!in_array(failnet::core()->config('transport'), stream_get_transports()))
+			// @todo exception
 			throw_fatal('Transport ' . $this->failnet->config('transport') . ' is not supported by this PHP installation.', E_USER_ERROR);
 
 		// Establish and configure the socket connection
 		$remote = failnet::core()->config('transport') . '://' . failnet::core()->config('server') . ':' . failnet::core()->config('port');
 		$this->socket = @stream_socket_client($remote, $errno, $errstr);
 		if(!$this->socket)
+			// @todo exception
 			throw_fatal('Unable to connect to server: socket error ' . $errno . ' : ' . $errstr);
 
 		@stream_set_timeout($this->socket, $this->delay);
@@ -91,6 +92,7 @@ class failnet_socket extends failnet_common
 	{
 		// Check for a new event on the current connection
 		$buffer = fgets($this->socket, 512);
+		// @todo exception (if returns false, throw exception)
 
 		// If no new event was found, return NULL
 		if (empty($buffer))
@@ -104,6 +106,7 @@ class failnet_socket extends failnet_common
 		{
 			// Parse the user hostmask, command, and arguments
 			list($prefix, $cmd, $args) = array_pad(explode(' ', ltrim($buffer, ':'), 3), 3, NULL);
+			// change into a one-liner
 			if(strpos($prefix, '@') !== false)
 			{
 				$hostmask = failnet_hostmask::load($prefix);
@@ -222,6 +225,7 @@ class failnet_socket extends failnet_common
 	{
 		// Require an open socket connection to continue
 		if(empty($this->socket))
+			// @todo exception
 			trigger_error('Cannot send server message; failnet_socket::connect() must be called first', E_USER_ERROR);
 
 		$buffer = strtoupper($command);
@@ -241,6 +245,7 @@ class failnet_socket extends failnet_common
 		// Transmit the command over the socket connection
 		$success = fwrite($this->socket, $buffer . "\r\n");
 		if($success === false)
+			// @todo exception
 			throw_fatal('fwrite() failed, socket connection lost');
 
 		// Return the command string that was transmitted
