@@ -66,13 +66,13 @@ class failnet_core extends failnet_common
 	 * @var boolean - DO NOT _EVER_ CHANGE THIS, FOR THE SAKE OF HUMANITY.
 	 * @link http://xkcd.com/534/
 	 */
-	private $can_become_skynet = FALSE;
+	const CAN_BECOME_SKYNET = FALSE;
 
 	/**
 	 * @var integer - DO NOT _EVER_ CHANGE THIS, FOR THE SAKE OF HUMANITY.
 	 * @link http://xkcd.com/534/
 	 */
-	private $cost_to_become_skynet = 999999999999;
+	const COST_TO_BECOME_SKYNET = 999999999999;
 
 /**
  * Failnet core methods
