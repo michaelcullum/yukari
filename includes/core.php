@@ -63,13 +63,13 @@ class failnet_core extends failnet_common
 	public $config = array();
 
 	/**
-	 * @var boolean - DO NOT _EVER_ CHANGE THIS, FOR THE SAKE OF HUMANITY.
+	 * @const DO NOT _EVER_ CHANGE THIS, FOR THE SAKE OF HUMANITY.
 	 * @link http://xkcd.com/534/
 	 */
 	const CAN_BECOME_SKYNET = FALSE;
 
 	/**
-	 * @var integer - DO NOT _EVER_ CHANGE THIS, FOR THE SAKE OF HUMANITY.
+	 * @const DO NOT _EVER_ CHANGE THIS, FOR THE SAKE OF HUMANITY.
 	 * @link http://xkcd.com/534/
 	 */
 	const COST_TO_BECOME_SKYNET = 999999999999;

@@ -56,8 +56,7 @@ class failnet_exception extends Exception
 
 	const ERR_NO_SUCH_CORE_OBJ = 1100;
 	const ERR_NO_SUCH_NODE_OBJ = 1101;
-	
-	// @todo add message
+
 	const ERR_AUTOLOAD_CLASS_INVALID = 1200;
 	const ERR_AUTOLOAD_NO_FILE = 1201;
 
@@ -92,7 +91,7 @@ class failnet_exception extends Exception
 			self::ERR_STARTUP_NO_ACCESS_DB_DIR => 'Failnet requires the database directory to exist and be readable/writeable',
 
 			self::ERR_NO_SUCH_CORE_OBJ => 'An invalid core object was specified for access: %1$s',
-			self::ERR_NO_SUCH_NODE_OBJ => 'An invalid node object was specified for access: %1$s', // @todo FIXME
+			self::ERR_NO_SUCH_NODE_OBJ => 'An invalid node object was specified for access: %1$s',
 			
 			self::ERR_AUTOLOAD_CLASS_INVALID => 'Invalid class contained within file %1$s',
 			self::ERR_AUTOLOAD_NO_FILE => 'No class file found for class %1$s',

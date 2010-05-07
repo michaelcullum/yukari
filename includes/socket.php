@@ -45,7 +45,6 @@ class failnet_socket extends failnet_common
 {
 	/**
 	 * @var integer - The socket timeout setting
-	 *
 	 */
 	private $delay = 300;
 
@@ -57,6 +56,7 @@ class failnet_socket extends failnet_common
 	/**
 	 * Initiates a connection with the server.
 	 * @return void
+	 * @throws failnet_exception
 	 */
 	public function connect()
 	{
@@ -88,6 +88,7 @@ class failnet_socket extends failnet_common
 	/**
 	 * Listens for an event on the current connection.
 	 * @return failnet_event_(response|request)|NULL - Event instance if an event was received, NULL otherwise
+	 * @throws failnet_exception
 	 */
 	public function get()
 	{
@@ -214,6 +215,7 @@ class failnet_socket extends failnet_common
 	 * @param string $command - Command to send
 	 * @param mixed $args - Optional string or array of sequential arguments
 	 * @return string - Command string that was sent
+	 * @throws failnet_exception
 	 */
 	public function send($command, $args = '')
 	{
