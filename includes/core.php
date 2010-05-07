@@ -139,6 +139,7 @@ class failnet_core extends failnet_common
 
 		// Load plugins
 		failnet::core('ui')->system('- Loading Failnet plugins');
+		// @todo autoload plugins
 		failnet::core('plugin')->pluginLoad($this->config('plugin_list'));
 
 		// Load our config settings

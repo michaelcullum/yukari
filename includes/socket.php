@@ -44,11 +44,14 @@
 class failnet_socket extends failnet_common
 {
 	/**
-	 * Some methods here (actually, quite a few) borrowed from Phergie.
-	 * See /README for details.
+	 * @var integer - The socket timeout setting
+	 *
 	 */
+	private $delay = 300;
 
-	private $delay = 50000;
+	/**
+	 * @var stream resource - The stream resource used for communicating with the server
+	 */
 	public $socket = NULL;
 
 	/**
@@ -74,7 +77,7 @@ class failnet_socket extends failnet_common
 		@stream_set_timeout($this->socket, $this->delay);
 
 		// Send the server password if one is specified
-		if(is_null(failnet::core()->config('server_pass')) || !failnet::core()->config('server_pass'))
+		if(failnet::core()->config('server_pass'))
 			$this->send('PASS', failnet::core()->config('server_pass'));
 
 		// Send user information
