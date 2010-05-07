@@ -82,13 +82,11 @@ class failnet_autoload extends failnet_common
 			{
 				require $path . $name . '.php';
 				if(!class_exists($class))
-					// @todo exception
-					throw_fatal('Invalid class contained within file ' . $path . $name . '.php');
+					throw new failnet_exception(failnet_exception::ERR_AUTOLOAD_CLASS_INVALID, $path . $name . '.php');
 				return;
 			}
 		}
-		// @todo exception
-		throw_fatal('No class file found for class named ' . $class . ', expecting ' . $path . $name . '.php for filepath in specified include directories');
+		throw new failnet_exception(failnet_exception::ERR_AUTOLOAD_NO_FILE, $class);
 	}
 
 	/**

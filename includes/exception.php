@@ -56,6 +56,10 @@ class failnet_exception extends Exception
 
 	const ERR_NO_SUCH_CORE_OBJ = 1100;
 	const ERR_NO_SUCH_NODE_OBJ = 1101;
+	
+	// @todo add message
+	const ERR_AUTOLOAD_CLASS_INVALID = 1200;
+	const ERR_AUTOLOAD_NO_FILE = 1201;
 
 	const ERR_NO_CONFIG = 2000;
 	const ERR_INVALID_VIRTUAL_STORAGE_SLOT = 2001;
@@ -82,7 +86,10 @@ class failnet_exception extends Exception
 			self::ERR_STARTUP_NO_ACCESS_DB_DIR => 'Failnet requires the database directory to exist and be readable/writeable',
 
 			self::ERR_NO_SUCH_CORE_OBJ => 'An invalid core object was specified for access: %1$s',
-			self::ERR_NO_SUCH_CORE_OBJ => 'An invalid core object was specified for access: %1$s',
+			self::ERR_NO_SUCH_NODE_OBJ => 'An invalid node object was specified for access: %1$s', // @todo FIXME
+			
+			self::ERR_AUTOLOAD_CLASS_INVALID => 'Invalid class contained within file %1$s',
+			self::ERR_AUTOLOAD_NO_FILE => 'No class file found for class %1$s',
 
 			self::ERR_NO_CONFIG => 'Specified Failnet configuration file not found',
 			self::ERR_INVALID_VIRTUAL_STORAGE_SLOT => 'Undefined virtual-storage property accessed: %1$s',
@@ -113,7 +120,7 @@ class failnet_exception extends Exception
 		if(isset($this->code))
 			$message = $this->code;
 		$this->code = (int) $this->message;
-		$this->message = (isset($message)) ? sprintf($this->translations[$this->message], (!is_array($message) ? array($message) : $message)) : $this->translations[$message];
+		$this->message = '[Error ' . $this->code . ']' . (isset($message)) ? sprintf($this->translations[$this->message], (!is_array($message) ? array($message) : $message)) : $this->translations[$message];
 
 		// We return $this so that one may make use of Exception::__toString() directly after calling this method
 		// so, pretty much... echo failnet_exception::translate() should work nicely
