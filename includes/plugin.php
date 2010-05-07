@@ -174,7 +174,7 @@ class failnet_plugin extends failnet_common
 
 	/**
 	 * Event chain-handler
-	 * @param failnet_event_response|failnet_event_request $event - The event to hand down to the other plugins.
+	 * @param failnet_event_common $event - The event to hand down to the other plugins.
 	 * @return void
 	 */
 	public function handleEvent(failnet_event_common $event)
