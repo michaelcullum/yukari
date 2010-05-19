@@ -29,7 +29,7 @@
  *
  */
 
-
+namespace Failnet;
 
 /**
  * Failnet - Autoloading class,
@@ -42,7 +42,7 @@
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class failnet_autoload extends failnet_common
+class Autoload extends Common
 {
 	/**
 	 * @var array - The paths that Failnet will attempt to load class files from.
@@ -72,9 +72,9 @@ class failnet_autoload extends failnet_common
 	{
 		$name = basename($class);
 
-		// Drop the failnet_ prefix if it is there, and replace any underscores with slashes.
+		// Drop the Failnet base namespace if it is there, and replace any backslashes with slashes.
 		// If you don't like it, stuff it.
-		$name = str_replace('_', '/', ((substr($name, 0, 8) == 'failnet_') ? substr($name, 8) : $name));
+		$name = str_replace('\\', '/', ((substr($name, 0, 7) == 'Failnet') ? substr($name, 7) : $name));
 
 		foreach(self::$paths as $path)
 		{
@@ -86,7 +86,8 @@ class failnet_autoload extends failnet_common
 				return;
 			}
 		}
-		throw new failnet_exception(failnet_exception::ERR_AUTOLOAD_NO_FILE, $class);
+		// Need a new solution, to handle stacking of Autoloaders.
+		//throw new failnet_exception(failnet_exception::ERR_AUTOLOAD_NO_FILE, $class);
 	}
 
 	/**
@@ -108,9 +109,9 @@ class failnet_autoload extends failnet_common
 	{
 		$name = basename($class);
 
-		// Drop the failnet_ prefix if it is there, and replace any underscores with slashes.
+		// Drop the Failnet base namespace if it is there, and replace any backslashes with slashes.
 		// If you don't like it, stuff it.
-		$name = str_replace('_', '/', ((substr($name, 0, 8) == 'failnet_') ? substr($name, 8) : $name));
+		$name = str_replace('\\', '/', ((substr($name, 0, 7) == 'Failnet') ? substr($name, 7) : $name));
 
 		foreach(self::$paths as $path)
 		{

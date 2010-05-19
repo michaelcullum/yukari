@@ -29,6 +29,8 @@
  *
  */
 
+namespace Failnet\Core;
+use Failnet;
 
 /**
  * Failnet - Core class,
@@ -41,7 +43,7 @@
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class failnet_core extends failnet_common
+class Core extends Common
 {
 /**
  * Failnet core class properties
@@ -97,30 +99,30 @@ class failnet_core extends failnet_common
 		$this->load($cfg_file);
 
 		// Load the UI out of cycle so we can do this the right way
-		failnet::setCore('ui', 'failnet_ui');
-		failnet::core('ui')->output_level = $this->config('output');
+		Master::setCore('ui', 'Failnet\\Core\\UI');
+		Master::core('ui')->output_level = $this->config('output');
 
 		// Fire off the startup text.
-		failnet::core('ui')->startup();
+		Master::core('ui')->startup();
 		
 		// Set the error handler
-		failnet::core('ui')->system('--- Setting main error handler');
-		@set_error_handler('failnetErrorHandler');
+		Master::core('ui')->system('--- Setting main error handler');
+		@set_error_handler('Failnet\\ErrorHandler');
 
 		// Begin loading our core objects
 		$core_objects = array(
-			'socket'	=> 'failnet_socket',
-			'db'		=> 'failnet_database',
-			'log'		=> 'failnet_log',
-			'hash'		=> 'failnet_hash',
-			'irc'		=> 'failnet_irc',
-			'plugin'	=> 'failnet_plugin',
+			'socket'	=> 'Failnet\\Core\\Socket',
+			'db'		=> 'Failnet\\Core\\Database',
+			'log'		=> 'Failnet\\Core\\Log',
+			'hash'		=> 'Failnet\\Core\\Hash',
+			'irc'		=> 'Failnet\\Core\\IRC',
+			'plugin'	=> 'Failnet\\Core\\Plugin',
 		);
-		failnet::core('ui')->system('- Loading Failnet core objects');
+		Master::core('ui')->system('- Loading Failnet core objects');
 		foreach($core_objects as $core_object_name => $core_object_class)
 		{
-			failnet::setCore($core_object_name, $core_object_class);
-			failnet::core('ui')->system("--- Loaded core object $core_object_class");
+			Master::setCore($core_object_name, $core_object_class);
+			Master::core('ui')->system("--- Loaded core object $core_object_class");
 		}
 		unset($core_objects);
 
@@ -128,37 +130,37 @@ class failnet_core extends failnet_common
 		$this->setupDB();
 
 		// Load our node files
-		failnet::core('ui')->system('- Loading Failnet node objects');
+		Master::core('ui')->system('- Loading Failnet node objects');
 		foreach($this->config('nodes_list') as $node)
 		{
-			failnet::setNode($node, "failnet_node_$node");
+			failnet::setNode($node, "Failnet\\Node\\$node");
 			failnet::core('ui')->system("--- Loaded node object $node");
 		}
 
 		$this->checkInstall();
 
 		// Load plugins
-		failnet::core('ui')->system('- Loading Failnet plugins');
+		Master::core('ui')->system('- Loading Failnet plugins');
 		// @todo autoload plugins
-		failnet::core('plugin')->pluginLoad($this->config('plugin_list'));
+		Master::core('plugin')->pluginLoad($this->config('plugin_list'));
 
 		// Load our config settings
-		failnet::core('ui')->system('- Loading config settings');
-		failnet::core('db')->useQuery('config', 'get_all')->execute();
-		$result = failnet::core('db')->useQuery('config', 'get_all')->fetchAll();
+		Master::core('ui')->system('- Loading config settings');
+		Master::core('db')->useQuery('config', 'get_all')->execute();
+		$result = Master::core('db')->useQuery('config', 'get_all')->fetchAll();
 		foreach($result as $row)
 		{
 			$this->settings[$row['name']] = $row['value'];
 		}
 
 		// This is a hack to allow us to restart Failnet if we're running the script through a batch file.
-		failnet::core('ui')->system('- Removing termination indicator file');
+		Master::core('ui')->system('- Removing termination indicator file');
 		if(file_exists(FAILNET_ROOT . 'data/restart.inc'))
 			unlink(FAILNET_ROOT . 'data/restart.inc');
 
 		// In case of restart/reload, to prevent 'Nick already in use' (which asplodes everything)
 		usleep(500);
-		failnet::core('ui')->ready();
+		Master::core('ui')->ready();
 	}
 
 	/**

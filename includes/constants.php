@@ -29,9 +29,9 @@
  *
  */
 
+namespace Failnet;
 
-// Version constants
-define('FAILNET_MIN_PHP', '5.3.0');
+// Version constant
 define('FAILNET_VERSION', '2.1.0-DEV');
 
 // Output levels

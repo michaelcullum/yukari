@@ -29,6 +29,7 @@
  *
  */
 
+namespace Failnet;
 
 /**
  * Failnet - Exception class,
@@ -41,7 +42,7 @@
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class failnet_exception extends Exception
+class Exception extends \Exception
 {
 	/**
 	 * @var array - Array of "translations" for our various error codes.
@@ -118,12 +119,8 @@ class failnet_exception extends Exception
 		if(method_exists($this, 'extraSetup'))
 			$this->extraSetup();
 	}
-
-	/**
-	 * Error translation method, takes them pesky error numbers and gives you something you can actually use!
-	 * @return object returns itself (i.e. $this) for use with the method Exception::__toString()
-	 */
-	public function translate()
+	
+	public function __toString()
 	{
 		if(!sizeof($this->translations))
 			$this->setup();
@@ -132,9 +129,7 @@ class failnet_exception extends Exception
 			$message = $this->code;
 		$this->code = (int) $this->message;
 		$this->message = '[Error ' . $this->code . ']' . (isset($message)) ? sprintf($this->translations[$this->message], (!is_array($message) ? array($message) : $message)) : $this->translations[$message];
-
-		// We return $this so that one may make use of Exception::__toString() directly after calling this method
-		// so, pretty much... echo failnet_exception::translate() should work nicely
-		return $this;
+		
+		return parent::__toString();
 	}
 }

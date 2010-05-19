@@ -29,7 +29,7 @@
  *
  */
 
-
+namespace Failnet;
 
 /**
  * Failnet - Master class,
@@ -42,7 +42,7 @@
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-abstract class failnet
+abstract class Master
 {
 	/**
 	 * @var array - The core objects, which will also include the core class.
@@ -71,7 +71,7 @@ abstract class failnet
 			return self::$core['core'];
 		if(self::checkCoreLoaded($core_name))
 			return self::$core[$core_name];
-		throw new failnet_exception(failnet_exception::ERR_NO_SUCH_CORE_OBJ, $core_name);
+		throw new Exception(failnet_exception::ERR_NO_SUCH_CORE_OBJ, $core_name);
 	}
 
 	/**
@@ -83,7 +83,7 @@ abstract class failnet
 	public static function node($node_name)
 	{
 		if(!self::checkNodeLoaded($node_name))
-			throw new failnet_exception(failnet_exception::ERR_NO_SUCH_NODE_OBJ, $node_name);
+			throw new Exception(failnet_exception::ERR_NO_SUCH_NODE_OBJ, $node_name);
 		return self::$nodes[$node_name];
 	}
 
@@ -142,11 +142,11 @@ abstract class failnet
 	{
 		// We're deliberately ignoring HOOK_NULL here.
 		if(!in_array($hook_call, array(HOOK_STACK, HOOK_OVERRIDE)))
-			throw new failnet_exception(failnet_exception::ERR_REGISTER_HOOK_BAD_HOOK_TYPE);
+			throw new Exception(Exception::ERR_REGISTER_HOOK_BAD_HOOK_TYPE);
 
 		// Check for unsupported classes
 		if(substr($hooked_method_class, 0, 8) != 'failnet_')
-			throw new failnet_exception(failnet_exception::ERR_REGISTER_HOOK_BAD_CLASS, $hooked_method_class);
+			throw new Exception(Exception::ERR_REGISTER_HOOK_BAD_CLASS, $hooked_method_class);
 
 		/**
 		 * Hooks are placed into the hook info array using the following array structure:
@@ -199,7 +199,7 @@ abstract class failnet
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-abstract class failnet_base
+abstract class Base
 {
 	public static $__CLASS__ = __CLASS__;
 
@@ -214,7 +214,7 @@ abstract class failnet_base
 	{
 		if(method_exists($this, "_$name"))
 		{
-			$hook_ary = failnet::retrieveHook(get_class($this), $name);
+			$hook_ary = Master::retrieveHook(get_class($this), $name);
 			if(!empty($hook_ary))
 			{
 				foreach($hook_ary as $hook)
@@ -234,7 +234,7 @@ abstract class failnet_base
 		}
 		else
 		{
-			throw new failnet_exception(failnet_exception::ERR_UNDEFINED_METHOD_CALL, array($name, get_class($this)));
+			throw new Exception(Exception::ERR_UNDEFINED_METHOD_CALL, array($name, get_class($this)));
 		}
 	}
 
@@ -249,7 +249,7 @@ abstract class failnet_base
 	{
 		if(method_exists(static::$__CLASS__, "_$name"))
 		{
-			$hook_ary = failnet::retrieveHook(static::$__CLASS__, $name);
+			$hook_ary = Master::retrieveHook(static::$__CLASS__, $name);
 			if(!empty($hook_ary))
 			{
 				foreach($hook_ary as $hook)
@@ -269,7 +269,7 @@ abstract class failnet_base
 		}
 		else
 		{
-			throw new failnet_exception(failnet_exception::ERR_UNDEFINED_METHOD_CALL, array($name, static::$__CLASS__));
+			throw new Exception(Exception::ERR_UNDEFINED_METHOD_CALL, array($name, static::$__CLASS__));
 		}
 	}
 }
@@ -285,7 +285,7 @@ abstract class failnet_base
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-abstract class failnet_common extends failnet_base
+abstract class Common extends Base
 {
 	/**
 	 * Auth level constants for Failnet

@@ -30,42 +30,10 @@
  *
  */
 
+define('FAILNET_ROOT', './');
+define('FAILNET_MIN_PHP', '5.3.0');
 
-/**
- * @ignore
- */
-define('FAILNET_ROOT', __DIR__);
-
-// Absolute essentials first
-require FAILNET_ROOT . 'includes/constants.php';
-require FAILNET_ROOT . 'includes/exception.php';
-
-/**
- * We need to start checking to see if the requirements for Failnet can be met
- *
- * Things we check:
- *  - Minimum PHP version
- *  - PHP_SAPI
- *  - PDO availability
- *  - PDO+SQlite availability
- *  - DB dir accessibility
- */
 if(version_compare(FAILNET_MIN_PHP, PHP_VERSION, '>'))
-	throw new failnet_exception(failnet_exception::ERR_STARTUP_MIN_PHP);
-if(strtolower(PHP_SAPI) != 'cli')
-	throw new failnet_exception(failnet_exception::ERR_STARTUP_PHP_SAPI);
-if(!extension_loaded('PDO'))
-	throw new failnet_exception(failnet_exception::ERR_STARTUP_NO_PDO);
-if(!extension_loaded('pdo_sqlite'))
-	throw new failnet_exception(failnet_exception::ERR_STARTUP_NO_PDO_SQLITE);
-if(!file_exists(FAILNET_ROOT . 'data/db/') || !is_readable(FAILNET_ROOT . 'data/db/') || !is_writeable(FAILNET_ROOT . 'data/db/') || !is_dir(FAILNET_ROOT . 'data/db/'))
-	throw new failnet_exception(failnet_exception::ERR_STARTUP_NO_ACCESS_DB_DIR);
+	throw new Exception('Failnet requires PHP ' . FAILNET_MIN_PHP . ' or better, while the currently installed PHP version is ' . PHP_VERSION, 1000);
 
-// Load up the common files, setup our JIT class autoloading, and get going.
-require FAILNET_ROOT . 'includes/common.php';
-require FAILNET_ROOT . 'includes/autoload.php';
-require FAILNET_ROOT . 'includes/functions.php';
-
-failnet_autoload::register();
-failnet::setCore('core', 'failnet_core');
-failnet::core()->run();
+require FAILNET_ROOT . 'includes/bootstrap.php';
