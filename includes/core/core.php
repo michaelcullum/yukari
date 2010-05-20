@@ -64,18 +64,6 @@ class Core extends Common
 	 */
 	public $config = array();
 
-	/**
-	 * @const DO NOT _EVER_ CHANGE THIS, FOR THE SAKE OF HUMANITY.
-	 * @link http://xkcd.com/534/
-	 */
-	const CAN_BECOME_SKYNET = FALSE;
-
-	/**
-	 * @const DO NOT _EVER_ CHANGE THIS, FOR THE SAKE OF HUMANITY.
-	 * @link http://xkcd.com/534/
-	 */
-	const COST_TO_BECOME_SKYNET = 999999999999;
-
 /**
  * Failnet core methods
  */
@@ -99,24 +87,24 @@ class Core extends Common
 		$this->load($cfg_file);
 
 		// Load the UI out of cycle so we can do this the right way
-		Bot::setCore('ui', 'Failnet\\Core\\UI');
+		Bot::setCore('ui', '\\Failnet\\Core\\UI');
 		Bot::core('ui')->output_level = $this->config('output');
 
 		// Fire off the startup text.
 		Bot::core('ui')->startup();
-		
+
 		// Set the error handler
 		Bot::core('ui')->system('--- Setting main error handler');
-		@set_error_handler('Failnet\\ErrorHandler');
+		@set_error_handler('\\Failnet\\ErrorHandler');
 
 		// Begin loading our core objects
 		$core_objects = array(
-			'socket'	=> 'Failnet\\Core\\Socket',
-			'db'		=> 'Failnet\\Core\\Database',
-			'log'		=> 'Failnet\\Core\\Log',
-			'hash'		=> 'Failnet\\Core\\Hash',
-			'irc'		=> 'Failnet\\Core\\IRC',
-			'plugin'	=> 'Failnet\\Core\\Plugin',
+			'socket'	=> '\\Failnet\\Core\\Socket',
+			'db'		=> '\\Failnet\\Core\\Database',
+			'log'		=> '\\Failnet\\Core\\Log',
+			'hash'		=> '\\Failnet\\Core\\Hash',
+			'irc'		=> '\\Failnet\\Core\\IRC',
+			'plugin'	=> '\\Failnet\\Core\\Plugin',
 		);
 		Bot::core('ui')->system('- Loading Failnet core objects');
 		foreach($core_objects as $core_object_name => $core_object_class)
@@ -133,7 +121,7 @@ class Core extends Common
 		Bot::core('ui')->system('- Loading Failnet node objects');
 		foreach($this->config('nodes_list') as $node)
 		{
-			Bot::setNode($node, "Failnet\\Node\\$node");
+			Bot::setNode($node, "\\Failnet\\Node\\$node");
 			Bot::core('ui')->system("--- Loaded node object $node");
 		}
 
@@ -220,7 +208,7 @@ class Core extends Common
 				$results = Bot::core('db')->query('SELECT COUNT(*) FROM sqlite_Bot WHERE name = ' . $this->db->quote($tablename))->fetchColumn();
 				if(!$results)
 				{
-					Bot::core('ui')->system('-  Installing the ' . $tablename . ' database table...');
+					Bot::core('ui')->system("-  Installing the $tablename database table...");
 					Bot::core('db')->exec(file_get_contents(FAILNET_ROOT . 'schemas/' . $schema));
 				}
 			}
@@ -268,7 +256,7 @@ class Core extends Common
 			Bot::core('db')->rollBack();
 
 			// Chain the exception
-			throw new failnet_exception(failnet_exception::ERR_PDO_EXCEPTION, $e);
+			throw new Exception(Exception::ERR_PDO_EXCEPTION, $e);
 		}
 	}
 
@@ -299,7 +287,7 @@ class Core extends Common
 				Bot::core('db')->rollBack();
 
 				// Chain the exception
-				throw new failnet_exception(failnet_exception::ERR_PDO_EXCEPTION, $e);
+				throw new Exception(Exception::ERR_PDO_EXCEPTION, $e);
 			}
 		}
 	}
@@ -448,7 +436,7 @@ class Core extends Common
 	public function __get($name)
 	{
 		if(!array_key_exists($name, $this->virtual_storage))
-			throw new failnet_exception(failnet_exception::ERR_INVALID_VIRTUAL_STORAGE_SLOT, $name);
+			throw new Exception(Exception::ERR_INVALID_VIRTUAL_STORAGE_SLOT, $name);
 		return $this->virtual_storage[$name];
 	}
 
