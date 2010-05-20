@@ -124,6 +124,36 @@ function errorHandler($errno, $msg_text, $errfile, $errline)
 }
 
 /**
+ * Retrieves the context code from where an error/exception was thrown (as long as file/line are provided) and outputs it.
+ * @param string $file - The file where the error/exception occurred.
+ * @param string $line - The line where the error/exception occurred.
+ * @param integer $context - How many lines of context (above AND below) the troublemaker should we grab?
+ * @return string - String containing the perpetrator + context lines for where the error/exception was thrown.
+ */
+function getErrorContext($file, $line, $context = 3)
+{
+	$return = '';
+	$line_i = 0;
+	if($fh = fopen($file,"r"))
+	{
+		while (!feof($fh))
+		{
+			$line_i++;
+			if($line_i < ($line + $context) && $line_i > ($line - $context))
+			{
+				$return[] = fgets($fh);
+			}
+			else
+			{
+				fgets($fh);
+			}
+		}
+		fclose($fh);
+	}
+	return $return;
+}
+
+/**
  * Return formatted string for filesizes
  * @param integer $bytes - The number of bytes to convert.
  * @return string - The filesize converted into KiB, MiB, or GiB.
