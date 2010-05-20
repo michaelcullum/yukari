@@ -7,7 +7,7 @@
  *-------------------------------------------------------------------
  * @version		3.0.0 DEV
  * @category	Failnet
- * @package		core
+ * @package		Failnet
  * @author		Failnet Project
  * @copyright	(c) 2009 - 2010 -- Failnet Project
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
@@ -35,7 +35,7 @@
  * 		Also will echo an array of messages properly as well.
  * @param mixed $message - The message or array of messages we want to echo to the terminal.
  * @return void
- * @deprecated since 2.1.0
+ * @deprecated since 3.0.0
  */
 function display($message)
 {
@@ -56,7 +56,7 @@ function display($message)
  * Throws a fatal and non-recoverable error.
  * @param string $msg - The error message to use
  * @return void
- * @deprecated since 2.1.0
+ * @deprecated since 3.0.0
  */
 function throw_fatal($msg)
 {
@@ -76,7 +76,7 @@ function throw_fatal($msg)
  * @param integer $errline - The line that the error was encountered at
  * @return mixed - If suppressed, nothing returned...if not handled, false.
  */
-function failnetErrorHandler($errno, $msg_text, $errfile, $errline)
+function errorHandler($errno, $msg_text, $errfile, $errline)
 {
    // Do not display notices if we suppress them via @
    if (error_reporting() == 0)
@@ -127,19 +127,20 @@ function failnetErrorHandler($errno, $msg_text, $errfile, $errline)
  * Return formatted string for filesizes
  * @param integer $bytes - The number of bytes to convert.
  * @return string - The filesize converted into KiB, MiB, or GiB.
- *
- * @author (c) 2007 phpBB Group
  */
 function formatFilesize($bytes)
 {
-	if ($bytes >= pow(2, 40))
-		return round($bytes / 1024 / 1024 / 1024 / 1024, 2) . ' TiB';
-	if ($bytes >= pow(2, 30))
-		return round($bytes / 1024 / 1024 / 1024, 2) . ' GiB';
-	if ($bytes >= pow(2, 20))
-		return round($bytes / 1024 / 1024, 2) . ' MiB';
-	if ($bytes >= pow(2, 10))
-		return round($bytes / 1024, 2) . ' KiB';
+	$types = array('TiB', 'GiB', 'MiB', 'KiB');
+	$t = (int) sizeof($types);
+	for($i = $t; $i > 0; $i--)
+	{
+		if($bytes >= pow(2, ($i * 10)))
+		{
+			for($j = $i; $j >= 1; $j--)
+				$bytes = $bytes / 1024;
+			return round($bytes, 2) . ' ' . $types[$t - $i];
+		}
+	}
 	return $bytes . ' B';
 }
 
