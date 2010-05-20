@@ -132,24 +132,17 @@ function errorHandler($errno, $msg_text, $errfile, $errline)
  */
 function getErrorContext($file, $line, $context = 3)
 {
-	$return = '';
-	$line_i = 0;
-	if($fh = fopen($file,"r"))
+	$return = array();
+	foreach (file($file) as $i => $str)
 	{
-		while (!feof($fh))
+		if (($i + 1) > ($line - $context))
 		{
-			$line_i++;
-			if($line_i < ($line + $context) && $line_i > ($line - $context))
-			{
-				$return[] = fgets($fh);
-			}
-			else
-			{
-				fgets($fh);
-			}
+			if(($i + 1) > ($line + $context))
+				break;
+			$return[] = $str;
 		}
-		fclose($fh);
 	}
+
 	return $return;
 }
 
