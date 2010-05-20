@@ -313,33 +313,26 @@ function checkuser($user)
 }
 
 /**
-* Return unique id
-* @param string $extra additional entropy
-* @return string - The unique ID
-*
-* @author (c) 2007 phpBB Group
-*/
-function unique_id($extra = 'c')
+ * Generate a random string
+ * @param integer $length - Length of the random string to generate
+ * @return string - The random string.
+ */
+function unique_string($length = 32)
 {
-	static $dss_seeded = false;
+	static $range;
+	$rand_string = '';
 
-	$rand_seed = failnet::core()->config('rand_seed');
-	$last_rand_seed = failnet::core()->config('last_rand_seed');
+	if(!$range)
+		$range = array_merge(range(0, 9), range('a', 'z'));
 
-	$val = md5($rand_seed . microtime());
-	$rand_seed = md5($rand_seed . $val . $extra);
+	if($length < 1)
+		return $rand_string;
 
-	if($dss_seeded !== true && ($last_rand_seed < time() - rand(1,10)))
-	{
-		failnet::core()->sql('config', 'update')->execute(array(':name' => 'rand_seed', ':value' => $rand_seed));
-		failnet::core()->settings['rand_seed'] = $rand_seed;
-		$last_rand_seed = time();
-		failnet::core()->sql('config', 'update')->execute(array(':name' => 'last_rand_seed', ':value' => $last_rand_seed));
-		failnet::core()->settings['last_rand_seed'] = $last_rand_seed;
-		$dss_seeded = true;
-	}
+	mt_srand((double) microtime() * (9001 + (date('j') * 1000)));
+	for($i = 1; $i = $length; $i++)
+		$rand_string .= $range[mt_rand(0, 35) - 1];
 
-	return substr($val, 4, 16);
+	return $rand_string;
 }
 
 /**
@@ -400,9 +393,7 @@ function parse_hostmask($hostmask, &$nick, &$user, &$host)
 	}
 	else
 	{
-		$nick = NULL;
-		$user = NULL;
-		$host = NULL;
+		$nick = $user = $host = NULL;
 	}
 }
 
