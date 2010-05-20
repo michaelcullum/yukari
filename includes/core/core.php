@@ -205,7 +205,7 @@ class Core extends Common
 					continue;
 
 				$tablename = substr($schema, 0, strrpos($schema, '.'));
-				$results = Bot::core('db')->query('SELECT COUNT(*) FROM sqlite_Bot WHERE name = ' . $this->db->quote($tablename))->fetchColumn();
+				$results = Bot::core('db')->query('SELECT COUNT(*) FROM sqlite_master WHERE name = ' . $this->db->quote($tablename))->fetchColumn();
 				if(!$results)
 				{
 					Bot::core('ui')->system("-  Installing the $tablename database table...");
