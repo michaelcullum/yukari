@@ -34,7 +34,7 @@ use Failnet;
 
 /**
  * Failnet - Core class,
- * 		Failnet 2.x in a nutshell.  Faster, smarter, better, and with a sexier voice.
+ * 		Failnet in a nutshell.  Faster, smarter, better, and with a sexier voice.
  *
  *
  * @category	Failnet
