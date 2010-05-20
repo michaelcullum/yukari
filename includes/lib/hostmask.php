@@ -7,7 +7,7 @@
  *-------------------------------------------------------------------
  * @version		3.0.0 DEV
  * @category	Failnet
- * @package		utilities
+ * @package		libs
  * @author		Failnet Project
  * @copyright	(c) 2009 - 2010 -- Failnet Project
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
@@ -29,6 +29,8 @@
  *
  */
 
+namespace Failnet\Lib;
+use Failnet;
 
 /**
  * Failnet - Hostmask class,
@@ -36,12 +38,12 @@
  *
  *
  * @category	Failnet
- * @package		utilities
+ * @package		libs
  * @author		Failnet Project
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class failnet_hostmask
+class Hostmask extends Common
 {
 	/**
 	 * @var string - The host of the hostmask
@@ -68,10 +70,11 @@ class failnet_hostmask
 		if(preg_match('/^([^!@]+)!(?:[ni]=)?([^@]+)@([^ ]+)/', $hostmask, $match))
 		{
 			list(, $nick, $username, $host) = $match;
-			return new failnet_hostmask($nick, $username, $host);
+			return new Hostmask($nick, $username, $host);
 		}
 		else
 		{
+			// @todo replace with exception
 			trigger_error('Invalid hostmask specified: "' . $hostmask . '"', E_USER_WARNING);
 		}
 	}

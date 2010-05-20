@@ -29,7 +29,8 @@
  *
  */
 
-
+namespace Failnet\Core;
+use Failnet;
 
 /**
  * Failnet - IRC class,
@@ -41,7 +42,7 @@
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class failnet_irc extends failnet_common
+class IRC extends Common
 {
 	/**
 	 * Some methods here (actually, quite a few) borrowed from Phergie.
@@ -61,7 +62,7 @@ class failnet_irc extends failnet_common
 		if (!empty($key))
 			$args[] = $key;
 
-		failnet::core('socket')->send('JOIN', $args);
+		Bot::core('socket')->send('JOIN', $args);
 	}
 
 	/**
@@ -76,7 +77,7 @@ class failnet_irc extends failnet_common
 		if (!empty($reason))
 			$args[] = $reason;
 
-		failnet::core('socket')->send('PART', $args);
+		Bot::core('socket')->send('PART', $args);
 	}
 
 	/**
@@ -87,7 +88,7 @@ class failnet_irc extends failnet_common
 	 */
 	public function invite($nick, $channel)
 	{
-		failnet::core('socket')->send('INVITE', array($nick, $channel));
+		Bot::core('socket')->send('INVITE', array($nick, $channel));
 	}
 
 	/**
@@ -97,7 +98,7 @@ class failnet_irc extends failnet_common
 	 */
 	public function names($channels)
 	{
-		failnet::core('socket')->send('NAMES', $channels);
+		Bot::core('socket')->send('NAMES', $channels);
 	}
 
 	/**
@@ -109,7 +110,7 @@ class failnet_irc extends failnet_common
 	 */
 	public function channels($channels = NULL)
 	{
-		failnet::core('socket')->send('LIST', $channels);
+		Bot::core('socket')->send('LIST', $channels);
 	}
 
 	/**
@@ -125,7 +126,7 @@ class failnet_irc extends failnet_common
 		if (!empty($topic))
 			$args[] = $topic;
 
-		failnet::core('socket')->send('TOPIC', $args);
+		Bot::core('socket')->send('TOPIC', $args);
 	}
 
 	/**
@@ -141,7 +142,7 @@ class failnet_irc extends failnet_common
 		if (!empty($mode))
 			$args[] = $mode;
 
-		failnet::core('socket')->send('MODE', $args);
+		Bot::core('socket')->send('MODE', $args);
 	}
 
 	/**
@@ -151,7 +152,7 @@ class failnet_irc extends failnet_common
 	 */
 	public function nick($nick)
 	{
-		failnet::core('socket')->send('NICK', $nick);
+		Bot::core('socket')->send('NICK', $nick);
 	}
 
 	/**
@@ -161,7 +162,7 @@ class failnet_irc extends failnet_common
 	 */
 	public function whois($nick)
 	{
-		failnet::core('socket')->send('WHOIS', $nick);
+		Bot::core('socket')->send('WHOIS', $nick);
 	}
 
 	/**
@@ -172,7 +173,7 @@ class failnet_irc extends failnet_common
 	 */
 	public function privmsg($target, $text)
 	{
-		failnet::core('socket')->send('PRIVMSG', array($target, $text));
+		Bot::core('socket')->send('PRIVMSG', array($target, $text));
 	}
 
 	/**
@@ -183,7 +184,7 @@ class failnet_irc extends failnet_common
 	 */
 	public function notice($target, $text)
 	{
-		failnet::core('socket')->send('NOTICE', array($target, $text));
+		Bot::core('socket')->send('NOTICE', array($target, $text));
 	}
 
 	/**
@@ -200,7 +201,7 @@ class failnet_irc extends failnet_common
 		if (!empty($reason))
 			$args[] = $reason;
 
-		failnet::core('socket')->send('KICK', $args);
+		Bot::core('socket')->send('KICK', $args);
 	}
 
 	/**
@@ -210,7 +211,7 @@ class failnet_irc extends failnet_common
 	 */
 	public function pong($daemon)
 	{
-		failnet::core('socket')->send('PONG', $daemon);
+		Bot::core('socket')->send('PONG', $daemon);
 	}
 
 	/**
@@ -291,7 +292,7 @@ class failnet_irc extends failnet_common
 	 */
 	public function raw($command)
 	{
-		failnet::core('socket')->send('RAW', $command);
+		Bot::core('socket')->send('RAW', $command);
 	}
 
 	/**
@@ -301,7 +302,7 @@ class failnet_irc extends failnet_common
 	 */
 	public function quit($reason = NULL)
 	{
-		failnet::core('socket')->send('QUIT', array($reason));
-		failnet::core('socket')->close();
+		Bot::core('socket')->send('QUIT', array($reason));
+		Bot::core('socket')->close();
 	}
 }

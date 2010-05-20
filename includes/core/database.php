@@ -29,6 +29,8 @@
  *
  */
 
+namespace Failnet\Core;
+use Failnet;
 
 /**
  * Failnet - Database class,
@@ -41,7 +43,7 @@
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class failnet_database extends PDO
+class Database extends \PDO
 {
 	/**
 	 * @var array - Stores all prepared query objects
@@ -85,7 +87,7 @@ class failnet_database extends PDO
 	public function useQuery($table, $type)
 	{
 		if(!isset($this->statements[$table][$type]))
-			throw new failnet_exception(failnet_exception::ERR_INVALID_PREP_QUERY);
+			throw new Exception(Exception::ERR_INVALID_PREP_QUERY);
 		return $this->statements[$table][$type];
 	}
 }

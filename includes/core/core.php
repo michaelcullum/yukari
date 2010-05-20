@@ -31,6 +31,7 @@
 
 namespace Failnet\Core;
 use Failnet;
+use Failnet\Lib;
 
 /**
  * Failnet - Core class,
@@ -102,9 +103,9 @@ class Core extends Common
 			'socket'	=> '\\Failnet\\Core\\Socket',
 			'db'		=> '\\Failnet\\Core\\Database',
 			'log'		=> '\\Failnet\\Core\\Log',
-			'hash'		=> '\\Failnet\\Core\\Hash',
 			'irc'		=> '\\Failnet\\Core\\IRC',
 			'plugin'	=> '\\Failnet\\Core\\Plugin',
+			'hash'		=> '\\Failnet\\Lib\\Hash',
 		);
 		Bot::core('ui')->system('- Loading Failnet core objects');
 		foreach($core_objects as $core_object_name => $core_object_class)

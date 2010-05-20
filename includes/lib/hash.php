@@ -7,7 +7,7 @@
  *-------------------------------------------------------------------
  * @version		3.0.0 DEV
  * @category	Failnet
- * @package		utilities
+ * @package		libs
  * @author		Failnet Project
  * @copyright	(c) 2009 - 2010 -- Failnet Project
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
@@ -29,13 +29,13 @@
  *
  */
 
-
+namespace Failnet\Lib;
 
 /**
  * Failnet - Password hashing framework,
  * 		Used as Failnet's password hashing system.
  *
- * @package utilities
+ * @package libs
  * @version Version 0.1 / slightly modified for Failnet (using $F$ as hash type identifier)
  *
  * Portable PHP password hashing framework.
@@ -60,7 +60,7 @@
  * Obviously, since this code is in the public domain, the above are not
  * requirements (there can be none), but merely suggestions.
  */
-class failnet_hash
+class Hash
 {
 	public $itoa64 = './0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 	public $iteration_count_log2;
