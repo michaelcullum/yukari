@@ -99,14 +99,14 @@ class Core extends Common
 		$this->load($cfg_file);
 
 		// Load the UI out of cycle so we can do this the right way
-		Master::setCore('ui', 'Failnet\\Core\\UI');
-		Master::core('ui')->output_level = $this->config('output');
+		Bot::setCore('ui', 'Failnet\\Core\\UI');
+		Bot::core('ui')->output_level = $this->config('output');
 
 		// Fire off the startup text.
-		Master::core('ui')->startup();
+		Bot::core('ui')->startup();
 		
 		// Set the error handler
-		Master::core('ui')->system('--- Setting main error handler');
+		Bot::core('ui')->system('--- Setting main error handler');
 		@set_error_handler('Failnet\\ErrorHandler');
 
 		// Begin loading our core objects
@@ -118,11 +118,11 @@ class Core extends Common
 			'irc'		=> 'Failnet\\Core\\IRC',
 			'plugin'	=> 'Failnet\\Core\\Plugin',
 		);
-		Master::core('ui')->system('- Loading Failnet core objects');
+		Bot::core('ui')->system('- Loading Failnet core objects');
 		foreach($core_objects as $core_object_name => $core_object_class)
 		{
-			Master::setCore($core_object_name, $core_object_class);
-			Master::core('ui')->system("--- Loaded core object $core_object_class");
+			Bot::setCore($core_object_name, $core_object_class);
+			Bot::core('ui')->system("--- Loaded core object $core_object_class");
 		}
 		unset($core_objects);
 
@@ -130,37 +130,37 @@ class Core extends Common
 		$this->setupDB();
 
 		// Load our node files
-		Master::core('ui')->system('- Loading Failnet node objects');
+		Bot::core('ui')->system('- Loading Failnet node objects');
 		foreach($this->config('nodes_list') as $node)
 		{
-			failnet::setNode($node, "Failnet\\Node\\$node");
-			failnet::core('ui')->system("--- Loaded node object $node");
+			Bot::setNode($node, "Failnet\\Node\\$node");
+			Bot::core('ui')->system("--- Loaded node object $node");
 		}
 
 		$this->checkInstall();
 
 		// Load plugins
-		Master::core('ui')->system('- Loading Failnet plugins');
+		Bot::core('ui')->system('- Loading Failnet plugins');
 		// @todo autoload plugins
-		Master::core('plugin')->pluginLoad($this->config('plugin_list'));
+		Bot::core('plugin')->pluginLoad($this->config('plugin_list'));
 
 		// Load our config settings
-		Master::core('ui')->system('- Loading config settings');
-		Master::core('db')->useQuery('config', 'get_all')->execute();
-		$result = Master::core('db')->useQuery('config', 'get_all')->fetchAll();
+		Bot::core('ui')->system('- Loading config settings');
+		Bot::core('db')->useQuery('config', 'get_all')->execute();
+		$result = Bot::core('db')->useQuery('config', 'get_all')->fetchAll();
 		foreach($result as $row)
 		{
 			$this->settings[$row['name']] = $row['value'];
 		}
 
 		// This is a hack to allow us to restart Failnet if we're running the script through a batch file.
-		Master::core('ui')->system('- Removing termination indicator file');
+		Bot::core('ui')->system('- Removing termination indicator file');
 		if(file_exists(FAILNET_ROOT . 'data/restart.inc'))
 			unlink(FAILNET_ROOT . 'data/restart.inc');
 
 		// In case of restart/reload, to prevent 'Nick already in use' (which asplodes everything)
 		usleep(500);
-		Master::core('ui')->ready();
+		Bot::core('ui')->ready();
 	}
 
 	/**
@@ -172,7 +172,7 @@ class Core extends Common
 	private function load($file)
 	{
 		if(!@file_exists(FAILNET_ROOT . $file . '.php') || !@is_readable(FAILNET_ROOT . $file . '.php'))
-			throw new failnet_exception(failnet_exception::ERR_NO_CONFIG);
+			throw new Exception(Exception::ERR_NO_CONFIG);
 
 		$settings = require FAILNET_ROOT . $file . '.php';
 
@@ -197,17 +197,17 @@ class Core extends Common
 	public function setupDB()
 	{
 		// Load/setup the database
-		failnet::core('ui')->system('- Connecting to the database');
+		Bot::core('ui')->system('- Connecting to the database');
 		try
 		{
 			// Initialize the database connection
-			failnet::core('db')->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-			failnet::core('db')->connect('sqlite:' . FAILNET_ROOT . 'data/db/' . basename(md5($this->config('server') . '::' . $this->config('user'))) . '.db');
+			Bot::core('db')->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			Bot::core('db')->connect('sqlite:' . FAILNET_ROOT . 'data/db/' . basename(md5($this->config('server') . '::' . $this->config('user'))) . '.db');
 
 
 			// We want this as a transaction in case anything goes wrong.
-			failnet::core('ui')->system('- Initializing the database');
-			failnet::core('db')->beginTransaction();
+			Bot::core('ui')->system('- Initializing the database');
+			Bot::core('db')->beginTransaction();
 
 			// Load up the list of files that we've got, and do stuff with them.
 			$schemas = scandir(FAILNET_ROOT . 'schemas');
@@ -217,55 +217,55 @@ class Core extends Common
 					continue;
 
 				$tablename = substr($schema, 0, strrpos($schema, '.'));
-				$results = failnet::core('db')->query('SELECT COUNT(*) FROM sqlite_master WHERE name = ' . $this->db->quote($tablename))->fetchColumn();
+				$results = Bot::core('db')->query('SELECT COUNT(*) FROM sqlite_Bot WHERE name = ' . $this->db->quote($tablename))->fetchColumn();
 				if(!$results)
 				{
-					failnet::core('ui')->system('-  Installing the ' . $tablename . ' database table...');
-					failnet::core('db')->exec(file_get_contents(FAILNET_ROOT . 'schemas/' . $schema));
+					Bot::core('ui')->system('-  Installing the ' . $tablename . ' database table...');
+					Bot::core('db')->exec(file_get_contents(FAILNET_ROOT . 'schemas/' . $schema));
 				}
 			}
 
-			failnet::core('ui')->system('--- Preparing database queries...');
+			Bot::core('ui')->system('--- Preparing database queries...');
 
 			// Let's prepare the default prepared statements.
 			// Config table
-			failnet::core('db')->armQuery('config', 'create', 'INSERT INTO config ( name, value ) VALUES ( :name, :value )');
-			failnet::core('db')->armQuery('config', 'get_all', 'SELECT * FROM config');
-			failnet::core('db')->armQuery('config', 'get', 'SELECT * FROM config WHERE LOWER(name) = LOWER(:name) LIMIT 1');
-			failnet::core('db')->armQuery('config', 'update', 'UPDATE config SET value = :value WHERE LOWER(name) = LOWER(:name)');
-			failnet::core('db')->armQuery('config', 'delete', 'DELETE FROM config WHERE LOWER(name) = LOWER(:name)');
+			Bot::core('db')->armQuery('config', 'create', 'INSERT INTO config ( name, value ) VALUES ( :name, :value )');
+			Bot::core('db')->armQuery('config', 'get_all', 'SELECT * FROM config');
+			Bot::core('db')->armQuery('config', 'get', 'SELECT * FROM config WHERE LOWER(name) = LOWER(:name) LIMIT 1');
+			Bot::core('db')->armQuery('config', 'update', 'UPDATE config SET value = :value WHERE LOWER(name) = LOWER(:name)');
+			Bot::core('db')->armQuery('config', 'delete', 'DELETE FROM config WHERE LOWER(name) = LOWER(:name)');
 
 			// @todo move to authorize
 			// Users table
-			failnet::core('db')->armQuery('users', 'create', 'INSERT INTO users ( nick, authlevel, password ) VALUES ( :nick, :authlevel, :hash )');
-			failnet::core('db')->armQuery('users', 'set_pass', 'UPDATE users SET password = :hash WHERE user_id = :user');
-			failnet::core('db')->armQuery('users', 'set_level', 'UPDATE users SET authlevel = :authlevel WHERE user_id = :user');
-			failnet::core('db')->armQuery('users', 'set_confirm', 'UPDATE users SET confirm_key = :key WHERE user_id = :user');
-			failnet::core('db')->armQuery('users', 'get', 'SELECT * FROM users WHERE LOWER(nick) = LOWER(:nick) LIMIT 1');
-			failnet::core('db')->armQuery('users', 'get_level', 'SELECT authlevel FROM users WHERE LOWER(nick) = LOWER(:nick) LIMIT 1');
-			failnet::core('db')->armQuery('users', 'get_confirm', 'SELECT confirm_key FROM users WHERE user_id = :user LIMIT 1');
-			failnet::core('db')->armQuery('users', 'delete', 'DELETE FROM users WHERE user_id = :user');
+			Bot::core('db')->armQuery('users', 'create', 'INSERT INTO users ( nick, authlevel, password ) VALUES ( :nick, :authlevel, :hash )');
+			Bot::core('db')->armQuery('users', 'set_pass', 'UPDATE users SET password = :hash WHERE user_id = :user');
+			Bot::core('db')->armQuery('users', 'set_level', 'UPDATE users SET authlevel = :authlevel WHERE user_id = :user');
+			Bot::core('db')->armQuery('users', 'set_confirm', 'UPDATE users SET confirm_key = :key WHERE user_id = :user');
+			Bot::core('db')->armQuery('users', 'get', 'SELECT * FROM users WHERE LOWER(nick) = LOWER(:nick) LIMIT 1');
+			Bot::core('db')->armQuery('users', 'get_level', 'SELECT authlevel FROM users WHERE LOWER(nick) = LOWER(:nick) LIMIT 1');
+			Bot::core('db')->armQuery('users', 'get_confirm', 'SELECT confirm_key FROM users WHERE user_id = :user LIMIT 1');
+			Bot::core('db')->armQuery('users', 'delete', 'DELETE FROM users WHERE user_id = :user');
 
 			// Sessions table
-			failnet::core('db')->armQuery('sessions', 'create', 'INSERT INTO sessions ( key_id, user_id, login_time, hostmask ) VALUES ( :key, :user, :time, :hostmask )');
-			failnet::core('db')->armQuery('sessions', 'delete_key', 'DELETE FROM sessions WHERE key_id = :key');
-			failnet::core('db')->armQuery('sessions', 'delete_user', 'DELETE FROM sessions WHERE user_id = :user');
-			failnet::core('db')->armQuery('sessions', 'delete_old', 'DELETE FROM sessions WHERE login_time < :time');
-			failnet::core('db')->armQuery('sessions', 'delete', 'DELETE FROM sessions WHERE LOWER(hostmask) = LOWER(:hostmask)');
+			Bot::core('db')->armQuery('sessions', 'create', 'INSERT INTO sessions ( key_id, user_id, login_time, hostmask ) VALUES ( :key, :user, :time, :hostmask )');
+			Bot::core('db')->armQuery('sessions', 'delete_key', 'DELETE FROM sessions WHERE key_id = :key');
+			Bot::core('db')->armQuery('sessions', 'delete_user', 'DELETE FROM sessions WHERE user_id = :user');
+			Bot::core('db')->armQuery('sessions', 'delete_old', 'DELETE FROM sessions WHERE login_time < :time');
+			Bot::core('db')->armQuery('sessions', 'delete', 'DELETE FROM sessions WHERE LOWER(hostmask) = LOWER(:hostmask)');
 
 			// Access list table
-			failnet::core('db')->armQuery('access', 'create', 'INSERT INTO access ( user_id, hostmask ) VALUES ( :user, :hostmask )');
-			failnet::core('db')->armQuery('access', 'delete', 'DELETE FROM access WHERE (user_id = :user AND LOWER(hostmask) = LOWER(:hostmask) )');
-			failnet::core('db')->armQuery('access', 'delete_user', 'DELETE FROM access WHERE user_id = :user');
-			failnet::core('db')->armQuery('access', 'get', 'SELECT hostmask FROM access WHERE user_id = :user');
+			Bot::core('db')->armQuery('access', 'create', 'INSERT INTO access ( user_id, hostmask ) VALUES ( :user, :hostmask )');
+			Bot::core('db')->armQuery('access', 'delete', 'DELETE FROM access WHERE (user_id = :user AND LOWER(hostmask) = LOWER(:hostmask) )');
+			Bot::core('db')->armQuery('access', 'delete_user', 'DELETE FROM access WHERE user_id = :user');
+			Bot::core('db')->armQuery('access', 'get', 'SELECT hostmask FROM access WHERE user_id = :user');
 
 			// Commit the stuffs
-			failnet::core('db')->commit();
+			Bot::core('db')->commit();
 		}
 		catch (PDOException $e)
 		{
 			// Something went boom.  Time to panic!
-			failnet::core('db')->rollBack();
+			Bot::core('db')->rollBack();
 
 			// Chain the exception
 			throw new failnet_exception(failnet_exception::ERR_PDO_EXCEPTION, $e);
@@ -276,27 +276,27 @@ class Core extends Common
 	public function checkInstall()
 	{
 		// Check to see if our rand_seed exists, and if not we need to execute our schema file (as long as it exists of course). :)
-		failnet::core('db')->useQuery('config', 'get')->execute(array(':name' => 'rand_seed'));
-		$rand_seed_exists = failnet::core('db')->useQuery('config', 'get')->fetch(PDO::FETCH_ASSOC);
+		Bot::core('db')->useQuery('config', 'get')->execute(array(':name' => 'rand_seed'));
+		$rand_seed_exists = Bot::core('db')->useQuery('config', 'get')->fetch(PDO::FETCH_ASSOC);
 		if(!$rand_seed_exists && file_exists(FAILNET_ROOT . 'schemas/schema_data.sql'))
 		{
 			try
 			{
-				failnet::core('db')->beginTransaction();
+				Bot::core('db')->beginTransaction();
 
 				// @todo move to authorize plugin/node
 				// Add the default user if Failnet was just installed
-				failnet::core('db')->useQuery('users', 'create')->execute(array(':nick' => $this->config('owner'), ':authlevel' => self::AUTH_OWNER, ':hash' => $this->hash->hash($this->config('user'))));
+				Bot::core('db')->useQuery('users', 'create')->execute(array(':nick' => $this->config('owner'), ':authlevel' => self::AUTH_OWNER, ':hash' => $this->hash->hash($this->config('user'))));
 
 				// Now let's add some default data to the database tables
-				failnet::core('db')->exec(file_get_contents(FAILNET_ROOT . 'schemas/schema_data.sql'));
+				Bot::core('db')->exec(file_get_contents(FAILNET_ROOT . 'schemas/schema_data.sql'));
 
-				failnet::core('db')->commit();
+				Bot::core('db')->commit();
 			}
 			catch (PDOException $e)
 			{
 				// Roll back ANY CHANGES MADE, something went boom.
-				failnet::core('db')->rollBack();
+				Bot::core('db')->rollBack();
 
 				// Chain the exception
 				throw new failnet_exception(failnet_exception::ERR_PDO_EXCEPTION, $e);
@@ -310,34 +310,34 @@ class Core extends Common
 	 */
 	public function run()
 	{
-		failnet::core('socket')->connect();
-		failnet::core('plugins')->handleConnect();
+		Bot::core('socket')->connect();
+		Bot::core('plugins')->handleConnect();
 
 		// Begin looping.
 		while(true)
 		{
 			// Real quick, we gotta clean out the event queue just in case there's junk in there.
-			failnet::core('plugins')->event_queue = array();
+			Bot::core('plugins')->event_queue = array();
 
 			// First off, fire off our tick.
-			failnet::core('plugins')->handleTick();
+			Bot::core('plugins')->handleTick();
 
 			// Grab our event, if we have one.
-			$event = failnet::core('socket')->get();
+			$event = Bot::core('socket')->get();
 
 			if($event)
-				failnet::core('plugins')->handleEvent($event);
+				Bot::core('plugins')->handleEvent($event);
 
 			// Do we have anything to do?
-			if(!empty(failnet::core('plugins')->event_queue))
+			if(!empty(Bot::core('plugins')->event_queue))
 			{
-				$result = failnet::core('plugins')->handleDispatch();
+				$result = Bot::core('plugins')->handleDispatch();
 				if($result !== true)
 					break;
 			}
 		}
-		failnet::core('plugins')->handleDisconnect();
-		failnet::core('irc')->quit($this->config('quit_msg'));
+		Bot::core('plugins')->handleDisconnect();
+		Bot::core('irc')->quit($this->config('quit_msg'));
 		$this->terminate($result->arguments[0]);
 	}
 
@@ -348,16 +348,16 @@ class Core extends Common
 	 */
 	public function terminate($restart = true)
 	{
-		if(failnet::core('socket')->socket !== NULL)
-			failnet::core('irc')->quit($this->config('quit_msg'));
+		if(Bot::core('socket')->socket !== NULL)
+			Bot::core('irc')->quit($this->config('quit_msg'));
 		if($restart)
 		{
 			// Just a hack to get it to restart through batch, and not terminate.
 			file_put_contents(FAILNET_ROOT . 'data/restart.inc', 'yesh');
 			// Dump the log cache to the file.
-			failnet::core('log')->add('--- Restarting Failnet ---', true);
-			failnet::core('ui')->system('-!- Restarting Failnet');
-			failnet::core('ui')->shutdown();
+			Bot::core('log')->add('--- Restarting Failnet ---', true);
+			Bot::core('ui')->system('-!- Restarting Failnet');
+			Bot::core('ui')->shutdown();
 			exit(0);
 		}
 		else
@@ -366,9 +366,9 @@ class Core extends Common
 			if(file_exists(FAILNET_ROOT . 'data/restart.inc'))
 				unlink(FAILNET_ROOT . 'data/restart.inc');
 			// Dump the log cache to the file.
-			failnet::core('log')->add('--- Terminating Failnet ---', true);
-			failnet::core('ui')->system('-!- Terminating Failnet');
-			failnet::core('ui')->shutdown();
+			Bot::core('log')->add('--- Terminating Failnet ---', true);
+			Bot::core('ui')->system('-!- Terminating Failnet');
+			Bot::core('ui')->shutdown();
 			exit(1);
 		}
 	}
@@ -409,12 +409,12 @@ class Core extends Common
 	{
 		if($this->config($setting) !== NULL)
 		{
-			$success = failnet::core('db')->useQuery('config', 'update')->execute(array(':name' => $setting, ':value' => $value));
+			$success = Bot::core('db')->useQuery('config', 'update')->execute(array(':name' => $setting, ':value' => $value));
 			$this->settings[$setting] = $value;
 		}
 		else
 		{
-			$success = failnet::core('db')->useQuery('config', 'create')->execute(array(':name' => $setting, ':value' => $value));
+			$success = Bot::core('db')->useQuery('config', 'create')->execute(array(':name' => $setting, ':value' => $value));
 			$this->settings[$setting] = $value;
 		}
 		return $success;
@@ -432,11 +432,11 @@ class Core extends Common
 	 */
 	public function sql($table, $type, $statement = false)
 	{
-		failnet::core('ui')->debug('Depreciated method failnet_core::sql() called');
+		Bot::core('ui')->debug('Depreciated method failnet_core::sql() called');
 		if($statement === false)
-			return failnet::core('db')->useQuery($table, $type);
+			return Bot::core('db')->useQuery($table, $type);
 
-		return failnet::core('db')->armQuery($table, $type, $statement);
+		return Bot::core('db')->armQuery($table, $type, $statement);
 	}
 
 	/**

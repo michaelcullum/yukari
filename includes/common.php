@@ -42,7 +42,7 @@ namespace Failnet;
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-abstract class Master
+abstract class Bot
 {
 	/**
 	 * @var array - The core objects, which will also include the core class.

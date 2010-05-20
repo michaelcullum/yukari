@@ -63,5 +63,5 @@ require FAILNET_ROOT . 'includes/autoload.php';
 require FAILNET_ROOT . 'includes/functions.php';
 
 Autoload::register();
-Master::setCore('core', 'Failnet\\Core\\Core');
-Master::core()->run();
+Bot::setCore('core', 'Failnet\\Core\\Core');
+Bot::core()->run();
