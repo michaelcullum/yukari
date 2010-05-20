@@ -5,7 +5,7 @@
  *
  *  Failnet -- PHP-based IRC Bot
  *-------------------------------------------------------------------
- * @version		2.1.0 DEV
+ * @version		3.0.0 DEV
  * @category	Failnet
  * @package		nodes
  * @author		Failnet Project

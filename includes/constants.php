@@ -5,7 +5,7 @@
  *
  *  Failnet -- PHP-based IRC Bot
  *-------------------------------------------------------------------
- * @version		2.1.0 DEV
+ * @version		3.0.0 DEV
  * @category	Failnet
  * @package		core
  * @author		Failnet Project
@@ -32,7 +32,7 @@
 namespace Failnet;
 
 // Version constant
-define('FAILNET_VERSION', '2.1.0-DEV');
+define('FAILNET_VERSION', '3.0.0-DEV');
 
 // Output levels
 define('OUTPUT_SILENT', 0);
