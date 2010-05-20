@@ -185,46 +185,22 @@ function timespan($time, $last_comma = false)
 {
 	$return = array();
 
-	$count = floor($time / 29030400);
-	if ($count > 0)
+	$intervals = array(
+		array('year', 29030400),
+		array('month', 2419200),
+		array('week', 604800),
+		array('day', 86400),
+		array('hour', 3600),
+		array('minute', 60)
+	);
+	foreach($intervals as $interval)
 	{
-		$return[] = $count . (($count == 1) ? ' year' : ' years');
-		$time %= 29030400;
-	}
-
-	$count = floor($time / 2419200);
-	if ($count > 0)
-	{
-		$return[] = $count . (($count == 1) ? ' month' : ' months');
-		$time %= 2419200;
-	}
-
-	$count = floor($time / 604800);
-	if ($count > 0)
-	{
-		$return[] = $count . (($count == 1) ? ' week' : ' weeks');
-		$time %= 604800;
-	}
-
-	$count = floor($time / 86400);
-	if ($count > 0)
-	{
-		$return[] = $count . (($count == 1) ? ' day' : ' days');
-		$time %= 86400;
-	}
-
-	$count = floor($time / 3600);
-	if ($count > 0)
-	{
-		$return[] = $count . (($count == 1) ? ' hour' : ' hours');
-		$time %= 3600;
-	}
-
-	$count = floor($time / 60);
-	if ($count > 0)
-	{
-		$return[] = $count . (($count == 1) ? ' minute' : ' minutes');
-		$time %= 60;
+		$count = floor($time / $interval[1]);
+		if($count > 0)
+		{
+			$return[] = "{$count} {$interval[0]}" . (($count == 1) ? 's' : '');
+			$time %= $interval[1];
+		}
 	}
 
 	$bigtime = (sizeof($return) ? implode(', ', $return) : '');
