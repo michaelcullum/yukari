@@ -95,7 +95,7 @@ class Core extends Common
 
 		// Set the error handler
 		Bot::core('ui')->system('--- Setting main error handler');
-		@set_error_handler('\\Failnet\\ErrorHandler');
+		@set_error_handler('\\Failnet\\errorHandler');
 
 		// Begin loading our core objects
 		$core_objects = array(
