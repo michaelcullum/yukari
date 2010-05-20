@@ -71,7 +71,7 @@ class Exception extends \Exception
 	const ERR_REGISTER_HOOK_BAD_HOOK_TYPE = 2201;
 
 	const ERR_UNDEFINED_METHOD_CALL = 2300;
-	
+
 	const ERR_SOCKET_ERROR = 2400;
 	const ERR_SOCKET_FGETS_FAILED = 2401;
 	const ERR_SOCKET_FWRITE_FAILED = 2402;
@@ -85,7 +85,7 @@ class Exception extends \Exception
 	public function setup()
 	{
 		$this->translations = array(
-			self::ERR_STARTUP_MIN_PHP => 'Failnet ' . FAILNET_VERSION . ' requires PHP ' . FAILNET_MIN_PHP . ' or better, while the currently installed PHP version is ' . PHP_VERSION,
+			self::ERR_STARTUP_MIN_PHP => 'Failnet requires PHP ' . FAILNET_MIN_PHP . ' or better, while the currently installed PHP version is ' . PHP_VERSION,
 			self::ERR_STARTUP_PHP_SAPI => 'Failnet must be run in the CLI SAPI',
 			self::ERR_STARTUP_NO_PDO => 'Failnet requires the PDO PHP extension to be loaded',
 			self::ERR_STARTUP_NO_PDO_SQLITE => 'Failnet requires the PDO_SQLite PHP extension to be loaded',
@@ -93,7 +93,7 @@ class Exception extends \Exception
 
 			self::ERR_NO_SUCH_CORE_OBJ => 'An invalid core object was specified for access: %1$s',
 			self::ERR_NO_SUCH_NODE_OBJ => 'An invalid node object was specified for access: %1$s',
-			
+
 			self::ERR_AUTOLOAD_CLASS_INVALID => 'Invalid class contained within file %1$s',
 			self::ERR_AUTOLOAD_NO_FILE => 'No class file found for class %1$s',
 
@@ -107,7 +107,7 @@ class Exception extends \Exception
 			self::ERR_REGISTER_HOOK_BAD_HOOK_TYPE => 'An invalid hook type was specified during hook registration',
 
 			self::ERR_UNDEFINED_METHOD_CALL => 'Call to undefined method - %2$s::%1$s',
-			
+
 			self::ERR_SOCKET_ERROR => 'Unable to connect to server: socket error %1$s : %2$s',
 			self::ERR_SOCKET_FGETS_FAILED => 'fgets() failed, socket connection lost',
 			self::ERR_SOCKET_FWRITE_FAILED => 'fwrite() failed, socket connection lost',
@@ -119,7 +119,7 @@ class Exception extends \Exception
 		if(method_exists($this, 'extraSetup'))
 			$this->extraSetup();
 	}
-	
+
 	public function __toString()
 	{
 		if(!sizeof($this->translations))
@@ -129,7 +129,7 @@ class Exception extends \Exception
 			$message = $this->code;
 		$this->code = (int) $this->message;
 		$this->message = '[Error ' . $this->code . ']' . (isset($message)) ? sprintf($this->translations[$this->message], (!is_array($message) ? array($message) : $message)) : $this->translations[$message];
-		
+
 		return parent::__toString();
 	}
 }
