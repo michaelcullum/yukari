@@ -156,7 +156,7 @@ class Core extends Common
 	 * Failnet configuration file settings load method
 	 * @param string $file - The configuration file to load
 	 * @return void
-	 * @throws failnet_exception
+	 * @throws \Failnet\Exception
 	 */
 	private function load($file)
 	{
@@ -181,7 +181,7 @@ class Core extends Common
 	/**
 	 * Setup the database connection and load up our prepared SQL statements
 	 * @return void
-	 * @throws failnet_exception
+	 * @throws \Failnet\Exception
 	 */
 	public function setupDB()
 	{
@@ -257,7 +257,7 @@ class Core extends Common
 			Bot::core('db')->rollBack();
 
 			// Chain the exception
-			throw new Exception(Exception::ERR_PDO_EXCEPTION, $e);
+			throw new Exception(Exception::ERR_PDO_EXCEPTION, $e, $e);
 		}
 	}
 
@@ -288,7 +288,7 @@ class Core extends Common
 				Bot::core('db')->rollBack();
 
 				// Chain the exception
-				throw new Exception(Exception::ERR_PDO_EXCEPTION, $e);
+				throw new Exception(Exception::ERR_PDO_EXCEPTION, $e, $e);
 			}
 		}
 	}
@@ -410,29 +410,10 @@ class Core extends Common
 	}
 
 	/**
-	 * Unified interface for prepared PDO statements
-	 * @param string $table - The table that we are looking at
-	 * @param string $type - The type of statement we are looking at
-	 * @param mixed $statement - The actual PDO statement that is to be prepared (if we are preparing a statement)
-	 * @return mixed - Either an instance of PDO_Statement class (if $statement is false) or void
-	 * @deprecated since 2.1.0
-	 * @see failnet_database::armQuery()
-	 * @see failnet_database::useQuery()
-	 */
-	public function sql($table, $type, $statement = false)
-	{
-		Bot::core('ui')->debug('Depreciated method failnet_core::sql() called');
-		if($statement === false)
-			return Bot::core('db')->useQuery($table, $type);
-
-		return Bot::core('db')->armQuery($table, $type, $statement);
-	}
-
-	/**
 	 * Magic method __get() to use for referencing specific module classes, used to return the property desired
 	 * @param string $name - The name of the module class to use
 	 * @return object - The object we want to use, or void.
-	 * @throws failnet_exception
+	 * @throws \Failnet\Exception
 	 */
 	public function __get($name)
 	{
