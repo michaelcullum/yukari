@@ -70,11 +70,7 @@ class Autoload extends Common
 	 */
 	public function loadFile($class)
 	{
-		$name = basename($class);
-
-		// Drop the Failnet base namespace if it is there, and replace any backslashes with slashes.
-		// If you don't like it, stuff it.
-		$name = str_replace('\\', '/', ((substr($name, 0, 7) == 'Failnet') ? substr($name, 7) : $name));
+		$name = self::cleanName($class);
 
 		foreach(self::$paths as $path)
 		{
@@ -82,7 +78,7 @@ class Autoload extends Common
 			{
 				require $path . $name . '.php';
 				if(!class_exists($class))
-					throw new failnet_exception(failnet_exception::ERR_AUTOLOAD_CLASS_INVALID, $path . $name . '.php');
+					throw new Exception(Exception::ERR_AUTOLOAD_CLASS_INVALID, $path . $name . '.php');
 				return;
 			}
 		}
@@ -107,11 +103,7 @@ class Autoload extends Common
 	 */
 	public static function fileExists($class)
 	{
-		$name = basename($class);
-
-		// Drop the Failnet base namespace if it is there, and replace any backslashes with slashes.
-		// If you don't like it, stuff it.
-		$name = str_replace('\\', '/', ((substr($name, 0, 7) == 'Failnet') ? substr($name, 7) : $name));
+		$name = self::cleanName($class);
 
 		foreach(self::$paths as $path)
 		{
@@ -119,6 +111,16 @@ class Autoload extends Common
 				return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Drop the Failnet base namespace if it is there, and replace any backslashes with slashes.
+	 * @param string $class_name - The name of the class to spit-polish.
+	 * @return string - The cleaned class name.
+	 */
+	public static function cleanName($class_name)
+	{
+		return str_replace('\\', '/', ((substr($class_name, 0, 7) == 'Failnet') ? substr(basename($class_name), 7) : basename($class_name)));
 	}
 
 	/**

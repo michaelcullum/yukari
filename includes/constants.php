@@ -34,6 +34,13 @@ namespace Failnet;
 // Version constant
 define('FAILNET_VERSION', '3.0.0-DEV');
 
+/**
+ * DO NOT _EVER_ CHANGE THIS, FOR THE SAKE OF HUMANITY.
+ * @link http://xkcd.com/534/
+ */
+define('CAN_BECOME_SKYNET', false);
+define('COST_TO_BECOME_SKYNET', 999999999);
+
 // Output levels
 define('OUTPUT_SILENT', 0);
 define('OUTPUT_NORMAL', 1);
