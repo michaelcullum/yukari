@@ -71,7 +71,7 @@ abstract class Bot
 			return self::$core['core'];
 		if(self::checkCoreLoaded($core_name))
 			return self::$core[$core_name];
-		throw new Exception(failnet_exception::ERR_NO_SUCH_CORE_OBJ, $core_name);
+		throw new Exception(Exception::ERR_NO_SUCH_CORE_OBJ, $core_name);
 	}
 
 	/**
@@ -83,7 +83,7 @@ abstract class Bot
 	public static function node($node_name)
 	{
 		if(!self::checkNodeLoaded($node_name))
-			throw new Exception(failnet_exception::ERR_NO_SUCH_NODE_OBJ, $node_name);
+			throw new Exception(Exception::ERR_NO_SUCH_NODE_OBJ, $node_name);
 		return self::$nodes[$node_name];
 	}
 
@@ -214,7 +214,7 @@ abstract class Base
 	{
 		if(method_exists($this, "_$name"))
 		{
-			$hook_ary = Master::retrieveHook(get_class($this), $name);
+			$hook_ary = Bot::retrieveHook(get_class($this), $name);
 			if(!empty($hook_ary))
 			{
 				foreach($hook_ary as $hook)
@@ -249,7 +249,7 @@ abstract class Base
 	{
 		if(method_exists(static::$__CLASS__, "_$name"))
 		{
-			$hook_ary = Master::retrieveHook(static::$__CLASS__, $name);
+			$hook_ary = Bot::retrieveHook(static::$__CLASS__, $name);
 			if(!empty($hook_ary))
 			{
 				foreach($hook_ary as $hook)

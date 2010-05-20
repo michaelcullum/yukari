@@ -128,7 +128,7 @@ class Exception extends \Exception
 		if(isset($this->code))
 			$message = $this->code;
 		$this->code = (int) $this->message;
-		$this->message = '[Error ' . $this->code . ']' . (isset($message)) ? sprintf($this->translations[$this->message], (!is_array($message) ? array($message) : $message)) : $this->translations[$message];
+		$this->message = '[Error ' . $this->code . '] ' . (isset($message)) ? sprintf($this->translations[$this->message], (!is_array($message) ? array($message) : $message)) : $this->translations[$message];
 
 		return parent::__toString();
 	}

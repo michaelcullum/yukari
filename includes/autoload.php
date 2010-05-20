@@ -7,7 +7,7 @@
  *-------------------------------------------------------------------
  * @version		3.0.0 DEV
  * @category	Failnet
- * @package		core
+ * @package		Failnet
  * @author		Failnet Project
  * @copyright	(c) 2009 - 2010 -- Failnet Project
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
@@ -37,7 +37,7 @@ namespace Failnet;
  *
  *
  * @category	Failnet
- * @package		core
+ * @package		Failnet
  * @author		Failnet Project
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
@@ -70,7 +70,7 @@ class Autoload extends Common
 	 */
 	public function loadFile($class)
 	{
-		$name = self::cleanName($class);
+		$name = strtolower(self::cleanName($class));
 
 		foreach(self::$paths as $path)
 		{
@@ -103,7 +103,7 @@ class Autoload extends Common
 	 */
 	public static function fileExists($class)
 	{
-		$name = self::cleanName($class);
+		$name = strtolower(self::cleanName($class));
 
 		foreach(self::$paths as $path)
 		{
@@ -118,9 +118,11 @@ class Autoload extends Common
 	 * @param string $class_name - The name of the class to spit-polish.
 	 * @return string - The cleaned class name.
 	 */
-	public static function cleanName($class_name)
+	public static function cleanName($class)
 	{
-		return str_replace('\\', '/', ((substr($class_name, 0, 7) == 'Failnet') ? substr(basename($class_name), 7) : basename($class_name)));
+		$class = ($class[0] == '\\') ? substr($class, 1) : $class;
+		$class = (substr($class, 0, 7) == 'Failnet') ? substr($class, 7) : $class;
+		return str_replace('\\', '/', $class);
 	}
 
 	/**
