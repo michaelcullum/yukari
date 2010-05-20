@@ -78,6 +78,7 @@ class UI extends Common
 			$this->fg_colors = array('black' => '30', 'blue' => '34', 'green' => '32', 'cyan' => '36', 'red' => '31', 'purple' => '35', 'brown' => '33', 'yellow' => '33', 'white' => '37');
 			$this->bg_colors = array('black' => '40', 'red' => '41', 'green' => '42', 'yellow' => '43', 'blue' => '44', 'magenta' => '45', 'cyan' => '46', 'light_gray' => '47');
 			$this->color_profiles = array(
+				'INFO'		=> array('foreground' => 'cyan', 'bold' => true),
 				'WARNING'	=> array('background' => 'yellow', 'foreground' => 'black', 'bold' => true),
 				'ERROR'		=> array('background' => 'red', 'foreground' => 'white', 'bold' => true),
 			);
