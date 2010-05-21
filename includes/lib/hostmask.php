@@ -10,7 +10,7 @@
  * @package		libs
  * @author		Failnet Project
  * @copyright	(c) 2009 - 2010 -- Failnet Project
- * @license		http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
+ * @license		GNU General Public License, Version 3
  * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  *
  *===================================================================
@@ -40,7 +40,7 @@ use Failnet;
  * @category	Failnet
  * @package		libs
  * @author		Failnet Project
- * @license		http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
+ * @license		GNU General Public License, Version 3
  * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
 class Hostmask extends Common

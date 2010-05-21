@@ -10,7 +10,7 @@
  * @package		core
  * @author		Failnet Project
  * @copyright	(c) 2009 - 2010 -- Failnet Project
- * @license		http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
+ * @license		GNU General Public License, Version 3
  * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  *
  *===================================================================
@@ -41,7 +41,7 @@ use Failnet;
  * @category	Failnet
  * @package		core
  * @author		Failnet Project
- * @license		http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
+ * @license		GNU General Public License, Version 3
  * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
 class UI extends Common
@@ -146,7 +146,7 @@ class UI extends Common
 			$this->output('---------------------------------------------------------------------');
 			$this->output('Failnet -- PHP-based IRC Bot version ' . FAILNET_VERSION);
 			$this->output('Copyright: (c) 2009 - 2010 -- Obsidian');
-			$this->output('License: GNU General Public License - Version 2');
+			$this->output('License: GNU General Public License, Version 3');
 			$this->output('---------------------------------------------------------------------');
 			$this->output('Failnet is starting up. Go get yourself a coffee.');
 		}

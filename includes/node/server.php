@@ -8,7 +8,7 @@
  *	Script info:
  * @version:	3.0.0 DEV
  * @copyright:	(c) 2009 - 2010 -- Failnet Project
- * @license:	http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
+ * @license:	GNU General Public License, Version 3
  *
  *===================================================================
  *
@@ -36,7 +36,7 @@
  * @package nodes
  * @author Obsidian
  * @copyright (c) 2009 - 2010 -- Failnet Project
- * @license GNU General Public License - Version 2
+ * @license GNU General Public License, Version 3
  */
 class failnet_node_server extends failnet_common
 {

@@ -7,7 +7,7 @@ and mainly designed for use with channel management.
 
 **Copyright**: *(c) 2009 - 2010 -- Failnet Project*
 
-**License**: <http://opensource.org/licenses/gpl-2.0.php> - GNU GPL v2
+**License**: GNU General Public License, Version 3 - <http://opensource.org/licenses/gpl-3.0.html>
 
 
 ## Failnet was inspired by the following works:
@@ -16,8 +16,6 @@ and mainly designed for use with channel management.
 
 Copyright (c) 2009 - Kai Tamkun
 
-License: <http://license.youreofftask.com/software.php> - Kai License (Compatible with GPLv2)
-
 - - -
 
 **Phergie**
@@ -25,8 +23,6 @@ License: <http://license.youreofftask.com/software.php> - Kai License (Compatibl
 *IRC Bot written in PHP 5 code with OO API.*
 
 Copyright (c) 2009 - tobias382
-
-License: (formerly) <http://www.gnu.org/licenses/lgpl.html> - GNU LGPL v3
 
 
 ## How do I use Failnet?
