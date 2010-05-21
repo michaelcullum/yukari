@@ -29,6 +29,8 @@
  *
  */
 
+namespace Failnet\Core;
+use Failnet;
 
 /**
  * Failnet - Plugin management class,
@@ -41,7 +43,7 @@
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class failnet_plugin extends failnet_common
+class Plugin extends Common
 {
 	/**
 	 * @var array - Loaded Failnet plugins
@@ -90,16 +92,16 @@ class failnet_plugin extends failnet_common
 				$plugin_class = 'failnet_plugin_' . $name;
 				if(!$plugin_class::checkDependencies())
 				{
-					failnet::core('ui')->system("--- Plugin '$name' load failed, unmet dependencies found");
+					Bot::core('ui')->system("--- Plugin '$name' load failed, unmet dependencies found");
 					$this->pluginRemove($name);
 					return false;
 				}
 				$this->plugins_loaded[$name] = $plugin_class;
 				$this->plugins[$name] = new $plugin_class($this);
-				failnet::core('ui')->system("--- Plugin '$name' loaded");
+				Bot::core('ui')->system("--- Plugin '$name' loaded");
 				return true;
 			}
-			failnet::core('ui')->system("--- Plugin '$name' load failed, plugin does not exist or has been loaded already");
+			Bot::core('ui')->system("--- Plugin '$name' load failed, plugin does not exist or has been loaded already");
 			return false; // If a plugin was removed, we don't want to reinstantiate it...
 		}
 	}
@@ -121,7 +123,7 @@ class failnet_plugin extends failnet_common
 	 */
 	public function pluginExists($name)
 	{
-		return (bool) failnet_autoload::fileExists('failnet_plugin_' . $name);
+		return (bool) Autoload::fileExists('failnet_plugin_' . $name);
 	}
 
 	/**
@@ -146,7 +148,7 @@ class failnet_plugin extends failnet_common
 		{
 			if(method_exists($plugin, 'tick'))
 			{
-				failnet::core('ui')->event('tick call: plugin "' . $name . '"');
+				Bot::core('ui')->event('tick call: plugin "' . $name . '"');
 				$plugin->tick();
 				if(!empty($plugin->events))
 					$plugin->events = $this->queue($plugin->events);
@@ -164,7 +166,7 @@ class failnet_plugin extends failnet_common
 		{
 			if(method_exists($plugin, 'connect'))
 			{
-				failnet::core('ui')->event('connection established call: plugin "' . $name . '"');
+				Bot::core('ui')->event('connection established call: plugin "' . $name . '"');
 				$plugin->cmd_connect();
 				if(!empty($plugin->events))
 					$plugin->events = $this->queue($plugin->events);
@@ -177,14 +179,14 @@ class failnet_plugin extends failnet_common
 	 * @param failnet_event_common $event - The event to hand down to the other plugins.
 	 * @return void
 	 */
-	public function handleEvent(failnet_event_common $event)
+	public function handleEvent(Failnet\Event\Common $event)
 	{
-		$event_type = ($event instanceof failnet_event_response) ? 'response' : $event_type;
+		$event_type = ($event instanceof Failnet\Event\Response) ? 'response' : $event_type;
 		foreach($this->plugins as $name => $plugin)
 		{
 			if(method_exists($plugin, 'cmd_' . $event_type))
 			{
-				failnet::core('ui')->event('command event call (' . $event_type . '): plugin "' . $name . '"');
+				Bot::core('ui')->event('command event call (' . $event_type . '): plugin "' . $name . '"');
 				$plugin->event = $event;
 				$plugin->{'cmd_' . $event_type}();
 				if(!empty($plugin->events))
@@ -202,7 +204,7 @@ class failnet_plugin extends failnet_common
 		//Execute pre-dispatch callback for plugin events
 		foreach($this->plugins as $name => $plugin)
 		{
-			failnet::core('ui')->event('pre-dispatch call: plugin "' . $name . '" - events: ' . sizeof($this->event_queue));
+			Bot::core('ui')->event('pre-dispatch call: plugin "' . $name . '" - events: ' . sizeof($this->event_queue));
 			$plugin->pre_dispatch($this->event_queue);
 		}
 
@@ -212,7 +214,7 @@ class failnet_plugin extends failnet_common
 		{
 			if(strcasecmp($event->type, 'quit') != 0)
 			{
-				failnet::core('ui')->event('event dispatch call: type "' . $event->type . '"');
+				Bot::core('ui')->event('event dispatch call: type "' . $event->type . '"');
 				call_user_func_array(array($this->failnet->irc, $event->type), $event->arguments);
 			}
 			elseif(empty($quit))
@@ -224,7 +226,7 @@ class failnet_plugin extends failnet_common
 		// Post-dispatch events
 		foreach($this->plugins as $name => $plugin)
 		{
-			failnet::core('ui')->event('post-dispatch call: plugin "' . $name . '" - events: ' . sizeof($this->event_queue));
+			Bot::core('ui')->event('post-dispatch call: plugin "' . $name . '" - events: ' . sizeof($this->event_queue));
 			$plugin->post_dispatch($this->event_queue);
 		}
 
@@ -243,7 +245,7 @@ class failnet_plugin extends failnet_common
 		{
 			if(method_exists($plugin, 'disconnect'))
 			{
-				failnet::core('ui')->event('disconnect call: plugin "' . $name . '"');
+				Bot::core('ui')->event('disconnect call: plugin "' . $name . '"');
 				$plugin->cmd_disconnect();
 			}
 		}

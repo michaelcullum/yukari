@@ -29,6 +29,9 @@
  *
  */
 
+namespace Failnet\Core;
+use Failnet;
+use Failnet\Lib;
 
 /**
  * Failnet - Socket connection handling class,
@@ -41,7 +44,7 @@
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class failnet_socket extends failnet_common
+class Socket extends Common
 {
 	/**
 	 * @var integer - The socket timeout setting
@@ -64,25 +67,25 @@ class failnet_socket extends failnet_common
 		set_time_limit(0);
 
 		// Check to see if the transport method we are using is allowed
-		$transport = failnet::core()->config('use_ssl') ? 'ssl' : 'tcp';
+		$transport = Bot::core()->config('use_ssl') ? 'ssl' : 'tcp';
 		if(!in_array($transport, stream_get_transports()))
-			throw new failnet_exception(failnet_exception::ERR_SOCKET_UNSUPPORTED_TRANSPORT, $transport);
+			throw new Exception(Exception::ERR_SOCKET_UNSUPPORTED_TRANSPORT, $transport);
 
 		// Establish and configure the socket connection
-		$remote = "$transport://" . failnet::core()->config('server') . ':' . failnet::core()->config('port');
+		$remote = "$transport://" . Bot::core()->config('server') . ':' . Bot::core()->config('port');
 		$this->socket = @stream_socket_client($remote, $errno, $errstr);
 		if(!$this->socket)
-			throw new failnet_exception(failnet_exception::ERR_SOCKET_ERROR, $errno, $errstr);
+			throw new Exception(Exception::ERR_SOCKET_ERROR, $errno, $errstr);
 
 		@stream_set_timeout($this->socket, $this->delay);
 
 		// Send the server password if one is specified
-		if(failnet::core()->config('server_pass'))
-			$this->send('PASS', failnet::core()->config('server_pass'));
+		if(Bot::core()->config('server_pass'))
+			$this->send('PASS', Bot::core()->config('server_pass'));
 
 		// Send user information
-		$this->send('USER', array(failnet::core()->config('user'), failnet::core()->config('server'), failnet::core()->config('server'), failnet::core()->config('name')));
-		$this->send('NICK', failnet::core()->config('nick'));
+		$this->send('USER', array(Bot::core()->config('user'), Bot::core()->config('server'), Bot::core()->config('server'), Bot::core()->config('name')));
+		$this->send('NICK', Bot::core()->config('nick'));
 	}
 
 	/**
@@ -95,7 +98,7 @@ class failnet_socket extends failnet_common
 		// Check for a new event on the current connection
 		$buffer = fgets($this->socket, 512);
 		if($buffer === false)
-			throw new failnet_exception(failnet_exception::ERR_SOCKET_FGETS_FAILED);
+			throw new Exception(Exception::ERR_SOCKET_FGETS_FAILED);
 
 		// If no new event was found, return NULL
 		if (empty($buffer))
@@ -109,13 +112,13 @@ class failnet_socket extends failnet_common
 		{
 			// Parse the user hostmask, command, and arguments
 			list($prefix, $cmd, $args) = array_pad(explode(' ', ltrim($buffer, ':'), 3), 3, NULL);
-			$hostmask = failnet_hostmask::load(((strpos($prefix, '@') !== false) ? $prefix : 'unknown' . ((strpos($prefix, '!') === false) ? '!unknown' : '') . '@' . $prefix));
+			$hostmask = Hostmask::load(((strpos($prefix, '@') !== false) ? $prefix : 'unknown' . ((strpos($prefix, '!') === false) ? '!unknown' : '') . '@' . $prefix));
 		}
 		else // If the event is from the server...
 		{
 			// Parse the command and arguments
 			list($cmd, $args) = array_pad(explode(' ', $buffer, 2), 2, NULL);
-			$hostmask = failnet_hostmask::load('server!server@' . failnet::core()->config('server'));
+			$hostmask = Hostmask::load('server!server@' . Bot::core()->config('server'));
 		}
 
 		// Parse the event arguments depending on the event type
@@ -192,14 +195,14 @@ class failnet_socket extends failnet_common
 		// Create, populate, and return an event object
 		if(ctype_digit($cmd))
 		{
-			$event = new failnet_event_response;
+			$event = new Failnet\Event\Response;
 			$event->code = $cmd;
 			$event->description = $args;
 			$event->buffer = $buffer;
 		}
 		else
 		{
-			$event = new failnet_event_request;
+			$event = new Failnet\Event\Request;
 			$event->type = $cmd;
 			$event->arguments = $args;
 			if (isset($hostmask))
@@ -221,7 +224,7 @@ class failnet_socket extends failnet_common
 	{
 		// Require an open socket connection to continue
 		if(empty($this->socket))
-			throw new failnet_exception(failnet_exception::ERR_SOCKET_NO_CONNECTION);
+			throw new Exception(Exception::ERR_SOCKET_NO_CONNECTION);
 
 		$buffer = strtoupper($command);
 		// Add arguments
@@ -240,7 +243,7 @@ class failnet_socket extends failnet_common
 		// Transmit the command over the socket connection
 		$success = fwrite($this->socket, $buffer . "\r\n");
 		if($success === false)
-			throw new failnet_exception(failnet_exception::ERR_SOCKET_FWRITE_FAILED);
+			throw new Exception(Exception::ERR_SOCKET_FWRITE_FAILED);
 
 		// Return the command string that was transmitted
 		return $buffer;
@@ -253,8 +256,8 @@ class failnet_socket extends failnet_common
 	 */
 	public function close()
 	{
-		failnet::core('ui')->system('-!- Quitting from server "' . failnet::core()->config('server') . '"');
-		failnet::core('log')->add('--- Quitting from server "' . failnet::core()->config('server') . '" ---');
+		Bot::core('ui')->system('-!- Quitting from server "' . Bot::core()->config('server') . '"');
+		Bot::core('log')->add('--- Quitting from server "' . Bot::core()->config('server') . '" ---');
 
 		// Terminate the socket connection
 		fclose($this->socket);
