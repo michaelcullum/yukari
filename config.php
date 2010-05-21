@@ -48,10 +48,10 @@ return array(
 
 // Nodes to load
 	'nodes_list'		=> array(
-		'server', // node
-		'help', // node
-		'authorize', // node
-		'ignore', // node
+		'server',
+		'help',
+		'authorize',
+		'ignore',
 	),
 
 // Plugins to automatically load on startup.
@@ -107,6 +107,9 @@ return array(
 
 // Should Failnet automatically rejoin a channel when kicked?
 	'autorejoin'		=> false,
+
+// If running Failnet through the supplied bash/batch shell scripts, set this to true.  If you are using a daemon to run Failnet, set this to false.
+	'run_via_shell'		=> true,
 
 // Standard messages for Failnet.
 	'intro_msg'			=> 'Let there be faiiiillll!',

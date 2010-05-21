@@ -122,7 +122,7 @@ class Core extends Common
 		Bot::core('ui')->system('- Loading Failnet node objects');
 		foreach($this->config('nodes_list') as $node)
 		{
-			Bot::setNode($node, "\\Failnet\\Node\\$node");
+			Bot::setNode($node, '\\Failnet\\Node\\' . ucfirst($node));
 			Bot::core('ui')->system("--- Loaded node object $node");
 		}
 
@@ -288,7 +288,7 @@ class Core extends Common
 				Bot::core('db')->rollBack();
 
 				// Chain the exception
-				throw new Exception(Exception::ERR_PDO_EXCEPTION, $e, $e);
+				throw new Exception(Exception::ERR_PDO_EXCEPTION, $e->getMessage, $e);
 			}
 		}
 	}
@@ -324,6 +324,8 @@ class Core extends Common
 				if($result !== true)
 					break;
 			}
+
+			Bot::core('cron')->runTasks();
 		}
 		Bot::core('plugins')->handleDisconnect();
 		Bot::core('irc')->quit($this->config('quit_msg'));
@@ -339,11 +341,12 @@ class Core extends Common
 	{
 		if(Bot::core('socket')->socket !== NULL)
 			Bot::core('irc')->quit($this->config('quit_msg'));
-		if($restart)
+		if($restart && $this->config('run_via_shell'))
 		{
 			// Just a hack to get it to restart through batch, and not terminate.
 			file_put_contents(FAILNET_ROOT . 'data/restart.inc', 'yesh');
 			// Dump the log cache to the file.
+			// @todo recode for the new log system
 			Bot::core('log')->add('--- Restarting Failnet ---', true);
 			Bot::core('ui')->system('-!- Restarting Failnet');
 			Bot::core('ui')->shutdown();
@@ -352,23 +355,18 @@ class Core extends Common
 		else
 		{
 			// Just a hack to get it to truly terminate through batch, and not restart.
-			if(file_exists(FAILNET_ROOT . 'data/restart.inc'))
-				unlink(FAILNET_ROOT . 'data/restart.inc');
+			if($this->config('run_via_shell'))
+			{
+				if(file_exists(FAILNET_ROOT . 'data/restart.inc'))
+					unlink(FAILNET_ROOT . 'data/restart.inc');
+			}
 			// Dump the log cache to the file.
+			// @todo recode for the new log system
 			Bot::core('log')->add('--- Terminating Failnet ---', true);
 			Bot::core('ui')->system('-!- Terminating Failnet');
 			Bot::core('ui')->shutdown();
 			exit(1);
 		}
-	}
-
-	/**
-	 * @ignore
-	 * ;D
-	 */
-	public function sigsegv($restart = true)
-	{
-		$this->terminate($restart);
 	}
 
 	/**

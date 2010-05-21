@@ -89,7 +89,7 @@ class Plugin extends Common
 		{
 			if(!$this->pluginLoaded($name) && $this->pluginExists($name))
 			{
-				$plugin_class = 'failnet_plugin_' . $name;
+				$plugin_class = '\\Fainet\\Plugin\\' . ucfirst($name);
 				if(!$plugin_class::checkDependencies())
 				{
 					Bot::core('ui')->system("--- Plugin '$name' load failed, unmet dependencies found");
@@ -97,7 +97,7 @@ class Plugin extends Common
 					return false;
 				}
 				$this->plugins_loaded[$name] = $plugin_class;
-				$this->plugins[$name] = new $plugin_class($this);
+				$this->plugins[$name] = new $plugin_class();
 				Bot::core('ui')->system("--- Plugin '$name' loaded");
 				return true;
 			}
