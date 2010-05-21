@@ -29,7 +29,8 @@
  *
  */
 
-
+namespace Failnet\Core;
+use Failnet;
 
 /**
  * Failnet - Logging handling class,
@@ -42,7 +43,7 @@
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU GPL v2
  * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class failnet_log extends failnet_common
+class Log extends Common
 {
 	/**
 	 * Queue of logs to be written
