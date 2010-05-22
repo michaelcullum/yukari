@@ -48,23 +48,28 @@ abstract class Bot
 	/**
 	 * @var array - The core objects, which will also include the core class.
 	 */
-	public static $core = array();
+	private static $core = array();
 
 	/**
 	 * @var array - Array of loaded node objects
 	 */
-	public static $nodes = array();
+	private static $nodes = array();
+
+	/**
+	 * @var array - Array of loaded cron objects
+	 */
+	private static $cron = array();
 
 	/**
 	 * @var array - Array of hook data
 	 */
-	public static $hooks = array();
+	protected static $hooks = array();
 
 	/**
 	 * Grab the core object.
 	 * @param string $core_name - The name of the core object that we want, or an empty string if we want THE core.
-	 * @return mixed - Either the desired core object, or NULL if no such object.
-	 * @throws failnet_exception
+	 * @return mixed - The desired core object if present, or void if no such object.
+	 * @throws \Failnet\Exception
 	 */
 	public static function core($core_name = '')
 	{
@@ -78,14 +83,29 @@ abstract class Bot
 	/**
 	 * Grab a node object.
 	 * @param string $node_name - The name of the node object that we want.
-	 * @return mixed - Either the desired node object, or NULL if no such object.
-	 * @throws failnet_exception
+	 * @return object - The desired node object if present, or void if no such object.
+	 * @throws \Failnet\Exception
 	 */
 	public static function node($node_name)
 	{
 		if(!self::checkNodeLoaded($node_name))
 			throw new Exception(Exception::ERR_NO_SUCH_NODE_OBJ, $node_name);
 		return self::$nodes[$node_name];
+	}
+
+	/**
+	 * Grab a cron object.
+	 * @param string $cron_name - The name of the cron object that we want.
+	 * @return object - The desired cron object if present, or void if no such object.
+	 * @throws \Failnet\Exception
+	 */
+	public static function cron($cron_name)
+	{
+		if(empty($cron_name))
+			return self::$cron['core'];
+		if(!self::checkCronLoaded($cron_name))
+			throw new Exception(Exception::ERR_NO_SUCH_CRON_OBJ, $cron_name);
+		return self::$cron[$cron_name];
 	}
 
 	/**
@@ -111,6 +131,17 @@ abstract class Bot
 	}
 
 	/**
+	 * Create a new core object.
+	 * @param string $cron_name - The name of the cron slot to load into.
+	 * @param string $cron_class - The name of the class to load.
+	 * @return void
+	 */
+	public static function setCron($cron_name, $cron_class)
+	{
+		self::$cron[$cron_name] = new $cron_class();
+	}
+
+	/**
 	 * Checks to see if the specified core slot has been occupied
 	 * @param string $core_name - The name of the core slot to check
 	 * @return boolean - Whether or not a core object has been loaded yet into the specified slot
@@ -130,6 +161,16 @@ abstract class Bot
 		return isset(self::$nodes[$core_name]);
 	}
 
+	/**
+	 * Checks to see if the specified cron slot has been occupied
+	 * @param string $node_name - The name of the cron slot to check
+	 * @return boolean - Whether or not a cron object has been loaded yet into the specified slot
+	 */
+	public static function checkCronLoaded($cron_name)
+	{
+		return isset(self::$cron[$cron_name]);
+	}
+
 
 	/**
 	 * Register a hook function to be called before
@@ -146,7 +187,7 @@ abstract class Bot
 			throw new Exception(Exception::ERR_REGISTER_HOOK_BAD_HOOK_TYPE);
 
 		// Check for unsupported classes
-		if(substr($hooked_method_class, 0, 8) != 'failnet_')
+		if(substr($hooked_method_class, 0, 8) != '\\Failnet')
 			throw new Exception(Exception::ERR_REGISTER_HOOK_BAD_CLASS, $hooked_method_class);
 
 		/**
@@ -298,4 +339,8 @@ abstract class Common extends Base
 	const AUTH_KNOWNUSER = 2;
 	const AUTH_REGISTEREDUSER = 1;
 	const AUTH_UNKNOWNUSER = 0;
+	
+	const TASK_ACTIVE = 1;
+	const TASK_MANUAL = 2;
+	const TASK_ZOMBIE = 3;
 }

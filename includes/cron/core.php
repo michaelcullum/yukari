@@ -7,7 +7,7 @@
  *-------------------------------------------------------------------
  * @version		3.0.0 DEV
  * @category	Failnet
- * @package		core
+ * @package		cron
  * @author		Failnet Project
  * @copyright	(c) 2009 - 2010 -- Failnet Project
  * @license		GNU General Public License, Version 3
@@ -30,27 +30,36 @@
  *
  */
 
-namespace Failnet;
-
-// Version constant
-define('Failnet\FAILNET_VERSION', '3.0.0-DEV');
+namespace Failnet\Cron;
+use Failnet;
 
 /**
- * DO NOT _EVER_ CHANGE THIS, FOR THE SAKE OF HUMANITY.
- * @link http://xkcd.com/534/
+ * Failnet - Cron core class,
+ * 		Manages the cron system, handles tasks, etc.
+ *
+ *
+ * @category	Failnet
+ * @package		cron
+ * @author		Failnet Project
+ * @license		GNU General Public License, Version 3
+ * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-define('Failnet\CAN_BECOME_SKYNET', false);
-define('Failnet\COST_TO_BECOME_SKYNET', 999999999);
+class Core extends Common
+{
+	public $last_event = 0;
 
-// Output levels
-define('Failnet\OUTPUT_SILENT', 0);
-define('Failnet\OUTPUT_NORMAL', 1);
-define('Failnet\OUTPUT_DEBUG', 2);
-define('Failnet\OUTPUT_DEBUG_FULL', 3);
-define('Failnet\OUTPUT_RAW', 4);
-define('Failnet\OUTPUT_SPAM', 4); // ;D
+	public $task_times = array();
 
-// Hook types
-define('Failnet\HOOK_NULL', 0);
-define('Failnet\HOOK_STACK', 1);
-define('Failnet\HOOK_OVERRIDE', 2);
+	public function __construct()
+	{
+		// meh
+	}
+
+	public function addTask() { }
+
+	public function toggleTask() { }
+
+	public function runTasks() { }
+
+	public function triggerTask() { }
+}

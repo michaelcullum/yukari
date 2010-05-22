@@ -65,4 +65,5 @@ require FAILNET_ROOT . 'includes/functions.php';
 
 Autoload::register();
 Bot::setCore('core', '\\Failnet\\Core\\Core');
+Bot::setCron('handler', '\\Failnet\\Cron\\Core');
 Bot::core()->run();

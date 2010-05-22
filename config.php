@@ -120,10 +120,10 @@ return array(
 	'quit_msg'			=> 'Failnet PHP IRC Bot',
 
 // What output level should we be in?
-//		OUTPUT_SILENT		- Do not output anything.
-//		OUTPUT_NORMAL		- Only output standard in/out data (IRC messages and actions)
-//		OUTPUT_DEBUG		- Output warnings and notices in addition to standard data
-//		OUTPUT_DEBUG_FULL	- Output warnings, notices, standard data, and also show event triggers
-//		OUTPUT_RAW			- Output raw IRC data going in and out.
-	'output'			=> OUTPUT_NORMAL,
+//		Failnet\OUTPUT_SILENT		- Do not output anything.
+//		Failnet\OUTPUT_NORMAL		- Only output standard in/out data (IRC messages and actions)
+//		Failnet\OUTPUT_DEBUG		- Output warnings and notices in addition to standard data
+//		Failnet\OUTPUT_DEBUG_FULL	- Output warnings, notices, standard data, and also show event triggers
+//		Failnet\OUTPUT_RAW			- Output raw IRC data going in and out.
+	'output'			=> Failnet\OUTPUT_NORMAL,
 );

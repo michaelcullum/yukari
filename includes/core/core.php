@@ -309,8 +309,11 @@ class Core extends Common
 			// Real quick, we gotta clean out the event queue just in case there's junk in there.
 			Bot::core('plugins')->event_queue = array();
 
+			// Check for tasks that need run, and take care of them.
+			Bot::cron()->runTasks();
+
 			// First off, fire off our tick.
-			Bot::core('plugins')->handleTick();
+			//Bot::core('plugins')->handleTick();
 
 			// Grab our event, if we have one.
 			$event = Bot::core('socket')->get();
@@ -325,8 +328,6 @@ class Core extends Common
 				if($result !== true)
 					break;
 			}
-
-			Bot::core('cron')->runTasks();
 		}
 		Bot::core('plugins')->handleDisconnect();
 		Bot::core('irc')->quit($this->config('quit_msg'));
