@@ -89,7 +89,7 @@ class Core extends Common
 		$this->load($cfg_file);
 
 		// Load the UI out of cycle so we can do this the right way
-		Bot::setCore('ui', '\\Failnet\\Core\\UI');
+		Bot::setCore('ui', 'Failnet\\Core\\UI');
 		Bot::core('ui')->output_level = $this->config('output');
 
 		// Fire off the startup text.
@@ -97,16 +97,16 @@ class Core extends Common
 
 		// Set the error handler
 		Bot::core('ui')->system('--- Setting main error handler');
-		@set_error_handler('\\Failnet\\errorHandler');
+		@set_error_handler('Failnet\\errorHandler');
 
 		// Begin loading our core objects
 		$core_objects = array(
-			'socket'	=> '\\Failnet\\Core\\Socket',
-			'db'		=> '\\Failnet\\Core\\Database',
-			'log'		=> '\\Failnet\\Core\\Log',
-			'irc'		=> '\\Failnet\\Core\\IRC',
-			'plugin'	=> '\\Failnet\\Core\\Plugin',
-			'hash'		=> '\\Failnet\\Lib\\Hash',
+			'socket'	=> 'Failnet\\Core\\Socket',
+			'db'		=> 'Failnet\\Core\\Database',
+			'log'		=> 'Failnet\\Core\\Log',
+			'irc'		=> 'Failnet\\Core\\IRC',
+			'plugin'	=> 'Failnet\\Core\\Plugin',
+			'hash'		=> 'Failnet\\Lib\\Hash',
 		);
 		Bot::core('ui')->system('- Loading Failnet core objects');
 		foreach($core_objects as $core_object_name => $core_object_class)
