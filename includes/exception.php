@@ -79,6 +79,14 @@ class Exception extends \Exception
 	const ERR_SOCKET_NO_CONNECTION = 2403;
 	const ERR_SOCKET_UNSUPPORTED_TRANSPORT = 2404;
 
+	const ERR_CRON_LOAD_FAILED = 3000;
+	const ERR_CRON_NO_SUCH_TASK = 3001;
+	const ERR_CRON_TASK_ALREADY_LOADED = 3002;
+
+	const ERR_CRON_INVALID_TASK = 3100;
+	const ERR_CRON_TASK_STATUS_INVALID = 3101;
+	const ERR_CRON_TASK_ACCESS_ZOMBIE = 3102;
+
 	/**
 	 * Exception setup method, loads the error messages up for translation and also performs additional setup if necessary
 	 * @return void
