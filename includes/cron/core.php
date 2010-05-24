@@ -44,7 +44,7 @@ use Failnet;
  * @license		GNU General Public License, Version 3
  * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class Core extends Common
+class Core extends Base
 {
 	public $last_event = 0;
 
@@ -55,7 +55,17 @@ class Core extends Common
 		// meh
 	}
 
-	public function addTask() { }
+	public function addTask($task_name)
+	{
+		if(Autoload::fileExists('Failnet\\Cron\\Task\\' . ucfirst($task_name)))
+		{
+			// meh
+		}
+		else
+		{
+			throw new Exception(Exception::ERR_CRON_LOAD_FAILED, $task_name);
+		}
+	}
 
 	public function toggleTask() { }
 

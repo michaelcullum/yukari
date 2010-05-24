@@ -31,12 +31,24 @@
  */
 
 namespace Failnet\Cron\Task;
+use Failnet;
 
-interface Task
+/**
+ * Failnet - Cron task common class,
+ * 		Common class which defines the required methods that each cron task must implement, and provides a singular base for tasks.
+ *
+ *
+ * @category	Failnet
+ * @package		cron
+ * @author		Failnet Project
+ * @license		GNU General Public License, Version 3
+ * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
+ */
+abstract class Common extends Base
 {
-	public function nextRun();
-	
-	public function toggle();
-	
-	public function runTask();
+	abstract public function nextRun();
+
+	abstract public function toggle();
+
+	abstract public function runTask();
 }
