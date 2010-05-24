@@ -30,6 +30,7 @@
  *
  */
 
+namespace Failnet;
 
 /**
  * Echos a message, and cleans out any extra NL's after the message.
