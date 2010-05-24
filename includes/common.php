@@ -38,7 +38,7 @@ namespace Failnet;
  *
  *
  * @category	Failnet
- * @package		core
+ * @package		Failnet
  * @author		Failnet Project
  * @license		GNU General Public License, Version 3
  * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
@@ -236,14 +236,29 @@ abstract class Bot
  *
  *
  * @category	Failnet
- * @package		core
+ * @package		Failnet
  * @author		Failnet Project
  * @license		GNU General Public License, Version 3
  * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
 abstract class Base
 {
+	/**
+	 * @var string - The current class name
+	 */
 	public static $__CLASS__ = __CLASS__;
+
+	const AUTH_OWNER = 6;
+	const AUTH_SUPERADMIN = 5;
+	const AUTH_ADMIN = 4;
+	const AUTH_TRUSTEDUSER = 3;
+	const AUTH_KNOWNUSER = 2;
+	const AUTH_REGISTEREDUSER = 1;
+	const AUTH_UNKNOWNUSER = 0;
+
+	const TASK_ACTIVE = 10;
+	const TASK_MANUAL = 20;
+	const TASK_ZOMBIE = 30;
 
 	/**
 	 * __call hook enabler, intercepts calls to methods and checks for hooks, then forwards the call to the actual method.
@@ -314,33 +329,4 @@ abstract class Base
 			throw new Exception(Exception::ERR_UNDEFINED_METHOD_CALL, array($name, static::$__CLASS__));
 		}
 	}
-}
-
-/**
- * Failnet - Common class,
- * 		Used as the common class for most of Failnet's classes
- *
- *
- * @category	Failnet
- * @package		core
- * @author		Failnet Project
- * @license		GNU General Public License, Version 3
- * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
- */
-abstract class Common extends Base
-{
-	/**
-	 * Auth level constants for Failnet
-	 */
-	const AUTH_OWNER = 6;
-	const AUTH_SUPERADMIN = 5;
-	const AUTH_ADMIN = 4;
-	const AUTH_TRUSTEDUSER = 3;
-	const AUTH_KNOWNUSER = 2;
-	const AUTH_REGISTEREDUSER = 1;
-	const AUTH_UNKNOWNUSER = 0;
-	
-	const TASK_ACTIVE = 1;
-	const TASK_MANUAL = 2;
-	const TASK_ZOMBIE = 3;
 }
