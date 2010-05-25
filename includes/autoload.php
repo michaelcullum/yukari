@@ -94,7 +94,7 @@ class Autoload extends Common
 	 */
 	public static function setPath($include_path)
 	{
-		self::$paths[] = dirname(FAILNET_ROOT . $include_path);
+		self::$paths[] = FAILNET_ROOT . $include_path;
 	}
 
 	/**
