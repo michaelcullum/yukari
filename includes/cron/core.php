@@ -57,6 +57,7 @@ class Core extends Base
 
 	public function addTask($task_name)
 	{
+
 		if(Autoload::fileExists('Failnet\\Cron\\Task\\' . ucfirst($task_name)))
 		{
 			// meh

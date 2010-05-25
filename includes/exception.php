@@ -7,7 +7,7 @@
  *-------------------------------------------------------------------
  * @version		3.0.0 DEV
  * @category	Failnet
- * @package		core
+ * @package		Failnet
  * @author		Failnet Project
  * @copyright	(c) 2009 - 2010 -- Failnet Project
  * @license		GNU General Public License, Version 3
@@ -28,6 +28,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+ * @todo branch out this class into several for each "package"
+ *
  */
 
 namespace Failnet;
@@ -38,7 +40,7 @@ namespace Failnet;
  *
  *
  * @category	Failnet
- * @package		core
+ * @package		Failnet
  * @author		Failnet Project
  * @license		GNU General Public License, Version 3
  * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
@@ -121,7 +123,15 @@ class Exception extends \Exception
 			self::ERR_SOCKET_FGETS_FAILED => 'fgets() failed, socket connection lost',
 			self::ERR_SOCKET_FWRITE_FAILED => 'fwrite() failed, socket connection lost',
 			self::ERR_SOCKET_NO_CONNECTION => 'Cannot send to server - no connection present',
-			self::ERR_SOCKET_UNSUPPORTED_TRANSPORT => 'Transport type "%1$s" is not supported by this PHP installation'
+			self::ERR_SOCKET_UNSUPPORTED_TRANSPORT => 'Transport type "%1$s" is not supported by this PHP installation',
+
+			self::ERR_CRON_LOAD_FAILED => 'Cron system load failed for unknown reason.',
+			self::ERR_CRON_NO_SUCH_TASK => 'No class file found for cron task "%1$s"',
+			self::ERR_CRON_TASK_ALREADY_LOADED => 'Cron task "%1$s" is already loaded',
+
+			self::ERR_CRON_INVALID_TASK => 'Invalid cron task "%1$s" specified',
+			self::ERR_CRON_TASK_STATUS_INVALID => 'Cron task "%1$s" has an invalid status code [%1$s]',
+			self::ERR_CRON_TASK_ACCESS_ZOMBIE => 'Attempted to access zombie cron task "%1$s"',
 		);
 
 		// Just in case we extend this class and want to define additional exception messages
