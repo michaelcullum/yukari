@@ -60,6 +60,7 @@ class Exception extends \Exception
 
 	const ERR_NO_SUCH_CORE_OBJ = 1100;
 	const ERR_NO_SUCH_NODE_OBJ = 1101;
+	const ERR_NO_SUCH_CRON_OBJ = 1102;
 
 	const ERR_AUTOLOAD_CLASS_INVALID = 1200;
 	const ERR_AUTOLOAD_NO_FILE = 1201;
@@ -104,6 +105,7 @@ class Exception extends \Exception
 
 			self::ERR_NO_SUCH_CORE_OBJ => 'An invalid core object was specified for access: %1$s',
 			self::ERR_NO_SUCH_NODE_OBJ => 'An invalid node object was specified for access: %1$s',
+			self::ERR_NO_SUCH_CRON_OBJ => 'An invalid cron object was specified for access: %1$s',
 
 			self::ERR_AUTOLOAD_CLASS_INVALID => 'Invalid class contained within file %1$s',
 			self::ERR_AUTOLOAD_NO_FILE => 'No class file found for class %1$s',
