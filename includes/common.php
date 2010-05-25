@@ -248,18 +248,6 @@ abstract class Base
 	 */
 	public static $__CLASS__ = __CLASS__;
 
-	const AUTH_OWNER = 6;
-	const AUTH_SUPERADMIN = 5;
-	const AUTH_ADMIN = 4;
-	const AUTH_TRUSTEDUSER = 3;
-	const AUTH_KNOWNUSER = 2;
-	const AUTH_REGISTEREDUSER = 1;
-	const AUTH_UNKNOWNUSER = 0;
-
-	const TASK_ACTIVE = 10;
-	const TASK_MANUAL = 20;
-	const TASK_ZOMBIE = 30;
-
 	/**
 	 * __call hook enabler, intercepts calls to methods and checks for hooks, then forwards the call to the actual method.
 	 * @param string $name - Method name

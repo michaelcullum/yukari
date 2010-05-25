@@ -33,24 +33,38 @@
 namespace Failnet;
 
 // Version constant
-define('Failnet\FAILNET_VERSION', '3.0.0-DEV');
+const FAILNET_VERSION = '3.0.0-DEV';
 
 /**
  * DO NOT _EVER_ CHANGE THIS, FOR THE SAKE OF HUMANITY.
  * @link http://xkcd.com/534/
  */
-define('Failnet\CAN_BECOME_SKYNET', false);
-define('Failnet\COST_TO_BECOME_SKYNET', 999999999);
+const CAN_BECOME_SKYNET = false;
+const COST_TO_BECOME_SKYNET = 999999999;
 
 // Output levels
-define('Failnet\OUTPUT_SILENT', 0);
-define('Failnet\OUTPUT_NORMAL', 1);
-define('Failnet\OUTPUT_DEBUG', 2);
-define('Failnet\OUTPUT_DEBUG_FULL', 3);
-define('Failnet\OUTPUT_RAW', 4);
-define('Failnet\OUTPUT_SPAM', 4); // ;D
+const OUTPUT_SILENT = 0;
+const OUTPUT_NORMAL = 1;
+const OUTPUT_DEBUG = 2;
+const OUTPUT_DEBUG_FULL = 3;
+const OUTPUT_RAW = 4;
+const OUTPUT_SPAM = 4; // ;D
 
 // Hook types
-define('Failnet\HOOK_NULL', 0);
-define('Failnet\HOOK_STACK', 1);
-define('Failnet\HOOK_OVERRIDE', 2);
+const HOOK_NULL = 0;
+const HOOK_STACK = 1;
+const HOOK_OVERRIDE = 2;
+
+// Auth classes
+const AUTH_OWNER = 6;
+const AUTH_SUPERADMIN = 5;
+const AUTH_ADMIN = 4;
+const AUTH_TRUSTEDUSER = 3;
+const AUTH_KNOWNUSER = 2;
+const AUTH_REGISTEREDUSER = 1;
+const AUTH_UNKNOWNUSER = 0;
+
+// Cron task states
+const TASK_ACTIVE = 10;
+const TASK_MANUAL = 20;
+const TASK_ZOMBIE = 30;
