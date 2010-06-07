@@ -50,7 +50,7 @@ class Exception extends \Exception
 	/**
 	 * @var array - Array of "translations" for our various error codes.
 	 */
-	private $translations = array();
+	private static $translations = array();
 
 	const ERR_STARTUP_MIN_PHP = 1000;
 	const ERR_STARTUP_PHP_SAPI = 1001;
@@ -94,9 +94,9 @@ class Exception extends \Exception
 	 * Exception setup method, loads the error messages up for translation and also performs additional setup if necessary
 	 * @return void
 	 */
-	public function setup()
+	public static function setup()
 	{
-		$this->translations = array(
+		self::$translations = array(
 			self::ERR_STARTUP_MIN_PHP => 'Failnet requires PHP ' . FAILNET_MIN_PHP . ' or better, while the currently installed PHP version is ' . PHP_VERSION,
 			self::ERR_STARTUP_PHP_SAPI => 'Failnet must be run in the CLI SAPI',
 			self::ERR_STARTUP_NO_PDO => 'Failnet requires the PDO PHP extension to be loaded',
@@ -106,6 +106,7 @@ class Exception extends \Exception
 			self::ERR_NO_SUCH_CORE_OBJ => 'An invalid core object was specified for access: %1$s',
 			self::ERR_NO_SUCH_NODE_OBJ => 'An invalid node object was specified for access: %1$s',
 			self::ERR_NO_SUCH_CRON_OBJ => 'An invalid cron object was specified for access: %1$s',
+			self::ERR_NO_SUCH_PLUGIN_OBJ => 'An invalid cron object was specified for access: %1$s',
 
 			self::ERR_AUTOLOAD_CLASS_INVALID => 'Invalid class contained within file %1$s',
 			self::ERR_AUTOLOAD_NO_FILE => 'No class file found for class %1$s',
@@ -132,25 +133,53 @@ class Exception extends \Exception
 			self::ERR_CRON_TASK_ALREADY_LOADED => 'Cron task "%1$s" is already loaded',
 
 			self::ERR_CRON_INVALID_TASK => 'Invalid cron task "%1$s" specified',
-			self::ERR_CRON_TASK_STATUS_INVALID => 'Cron task "%1$s" has an invalid status code [%1$s]',
+			self::ERR_CRON_TASK_STATUS_INVALID => 'Cron task "%1$s" has an invalid status code [%2$s]',
 			self::ERR_CRON_TASK_ACCESS_ZOMBIE => 'Attempted to access zombie cron task "%1$s"',
 		);
 
 		// Just in case we extend this class and want to define additional exception messages
 		if(method_exists($this, 'extraSetup'))
-			$this->extraSetup();
+			self::extraSetup();
+	}
+
+	/**
+	 * Parses the provided error number using the error description scring along with any necessary details using vsprintf()
+	 * @param integer &$code - The error code we're using
+	 * @param array $parameters - Any necessary parameters for our error string
+	 * @return string - The desired error string
+	 */
+	public static function parse(&$code = 0, array $parameters = array())
+	{
+		if(empty(self::$translations))
+			self::setup();
+		if(!isset(self::$translations[$code]))
+		{
+			$code = 0;
+			$parameters = array();
+		}
+		return (!empty($parameters)) ? ":E:{$code}:" . vsprintf(self::$translations[$code], $parameters) : ":E:{$code}:" . self::$translations[$code];
+	}
+
+	public function translate()
+	{
+		static $translate;
+		if(!$translate)
+		{
+			// We use ':' in the error message to denote our error codes, as a hackish way to allow us to alter error codes in-flight
+			// @note expected string format -- :E:{$error_code}:{$error_message}
+			if($this->message[0] === ':')
+			{
+				$message = substr($this->message, 3);
+				$this->code = (int) substr($message, 0, strpos($message, ':'));
+				$this->message = substr($message, strpos($message, ':') + 1);
+			}
+			$translate = true;
+		}
 	}
 
 	public function __toString()
 	{
-		if(!empty($this->translations))
-			$this->setup();
-
-		if(isset($this->code))
-			$message = $this->code;
-		$this->code = (int) $this->message;
-		$this->message = '[Error ' . $this->code . '] ' . (isset($message)) ? vsprintf($this->translations[$this->message], (!is_array($message) ? array($message) : $message)) : $this->translations[$message];
-
+		$this->translate();
 		return parent::__toString();
 	}
 }
