@@ -106,6 +106,7 @@ class Core extends Common
 			'log'		=> 'Failnet\\Core\\Log',
 			'irc'		=> 'Failnet\\Core\\IRC',
 			'plugin'	=> 'Failnet\\Core\\Plugin',
+			'cron'		=> 'Failnet\\Core\\Cron',
 			'hash'		=> 'Failnet\\Lib\\Hash',
 		);
 		Bot::core('ui')->system('- Loading Failnet core objects');

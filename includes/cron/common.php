@@ -30,7 +30,7 @@
  *
  */
 
-namespace Failnet\Cron\Task;
+namespace Failnet\Cron;
 use Failnet;
 
 /**

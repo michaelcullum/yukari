@@ -7,7 +7,7 @@
  *-------------------------------------------------------------------
  * @version		3.0.0 DEV
  * @category	Failnet
- * @package		cron
+ * @package		core
  * @author		Failnet Project
  * @copyright	(c) 2009 - 2010 -- Failnet Project
  * @license		GNU General Public License, Version 3
@@ -30,7 +30,7 @@
  *
  */
 
-namespace Failnet\Cron;
+namespace Failnet\Core;
 use Failnet;
 
 /**
@@ -39,12 +39,12 @@ use Failnet;
  *
  *
  * @category	Failnet
- * @package		cron
+ * @package		core
  * @author		Failnet Project
  * @license		GNU General Public License, Version 3
  * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class Core extends Base
+class Cron extends Base
 {
 	public $last_event = 0;
 
@@ -58,7 +58,7 @@ class Core extends Base
 	public function addTask($task_name)
 	{
 
-		if(Autoload::fileExists('Failnet\\Cron\\Task\\' . ucfirst($task_name)))
+		if(Autoload::fileExists('Failnet\\Cron\\' . ucfirst($task_name)))
 		{
 			// meh
 		}

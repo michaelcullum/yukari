@@ -28,6 +28,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+ * @todo fix exceptions, cannot pass "string" params
+ *
  */
 
 namespace Failnet;
@@ -61,6 +63,11 @@ abstract class Bot
 	private static $cron = array();
 
 	/**
+	 * @var array - Array of loaded plugins
+	 */
+	private static $plugins = array();
+
+	/**
 	 * @var array - Array of hook data
 	 */
 	protected static $hooks = array();
@@ -68,7 +75,7 @@ abstract class Bot
 	/**
 	 * Grab the core object.
 	 * @param string $core_name - The name of the core object that we want, or an empty string if we want THE core.
-	 * @return mixed - The desired core object if present, or void if no such object.
+	 * @return \Failnet\Base - The desired core object if present.
 	 * @throws \Failnet\Exception
 	 */
 	public static function core($core_name = '')
@@ -77,26 +84,26 @@ abstract class Bot
 			return self::$core['core'];
 		if(self::checkCoreLoaded($core_name))
 			return self::$core[$core_name];
-		throw new Exception(Exception::ERR_NO_SUCH_CORE_OBJ, $core_name);
+		throw new Exception(Exception::ERR_NO_SUCH_CORE_OBJ);
 	}
 
 	/**
 	 * Grab a node object.
 	 * @param string $node_name - The name of the node object that we want.
-	 * @return object - The desired node object if present, or void if no such object.
+	 * @return \Failnet\Base - The desired node object if present, or void if no such object.
 	 * @throws \Failnet\Exception
 	 */
 	public static function node($node_name)
 	{
 		if(!self::checkNodeLoaded($node_name))
-			throw new Exception(Exception::ERR_NO_SUCH_NODE_OBJ, $node_name);
+			throw new Exception(Exception::ERR_NO_SUCH_NODE_OBJ);
 		return self::$nodes[$node_name];
 	}
 
 	/**
 	 * Grab a cron object.
 	 * @param string $cron_name - The name of the cron object that we want.
-	 * @return object - The desired cron object if present, or void if no such object.
+	 * @return \Failnet\Cron\Common - The desired cron object if present, or void if no such object.
 	 * @throws \Failnet\Exception
 	 */
 	public static function cron($cron_name)
@@ -104,8 +111,21 @@ abstract class Bot
 		if(empty($cron_name))
 			return self::$cron['core'];
 		if(!self::checkCronLoaded($cron_name))
-			throw new Exception(Exception::ERR_NO_SUCH_CRON_OBJ, $cron_name);
+			throw new Exception(Exception::ERR_NO_SUCH_CRON_OBJ);
 		return self::$cron[$cron_name];
+	}
+
+	/**
+	 * Grab a plugin object.
+	 * @param string $plugin_name - The name of the plugin object that we want.
+	 * @return Failnet\Plugin\Common - The desired plugin object if present.
+	 * @throws \Failnet\Exception
+	 */
+	public static function plugin($plugin_name)
+	{
+		if(!self::checkPluginLoaded($plugin_name))
+			throw new Exception(Exception::ERR_NO_SUCH_PLUGIN_OBJ);
+		return self::$plugins[$plugin_name];
 	}
 
 	/**
@@ -142,6 +162,17 @@ abstract class Bot
 	}
 
 	/**
+	 * Create a new core object.
+	 * @param string $cron_name - The name of the cron slot to load into.
+	 * @param string $cron_class - The name of the class to load.
+	 * @return void
+	 */
+	public static function setPlugin($plugin_name, $plugin_class)
+	{
+		self::$plugins[$plugin_name] = new $plugin_class();
+	}
+
+	/**
 	 * Checks to see if the specified core slot has been occupied
 	 * @param string $core_name - The name of the core slot to check
 	 * @return boolean - Whether or not a core object has been loaded yet into the specified slot
@@ -163,12 +194,22 @@ abstract class Bot
 
 	/**
 	 * Checks to see if the specified cron slot has been occupied
-	 * @param string $node_name - The name of the cron slot to check
+	 * @param string $cron_name - The name of the cron slot to check
 	 * @return boolean - Whether or not a cron object has been loaded yet into the specified slot
 	 */
 	public static function checkCronLoaded($cron_name)
 	{
 		return isset(self::$cron[$cron_name]);
+	}
+
+	/**
+	 * Checks to see if the specified cron slot has been occupied
+	 * @param string $plugin_name - The name of the plugin slot to check
+	 * @return boolean - Whether or not a plugin object has been loaded yet into the specified slot
+	 */
+	public static function checkPluginLoaded($plugin_name)
+	{
+		return isset(self::$plugins[$plugin_name]);
 	}
 
 
