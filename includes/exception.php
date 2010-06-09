@@ -5,13 +5,13 @@
  *
  *  Failnet -- PHP-based IRC Bot
  *-------------------------------------------------------------------
- * @version		3.0.0 DEV
- * @category	Failnet
- * @package		Failnet
- * @author		Failnet Project
- * @copyright	(c) 2009 - 2010 -- Failnet Project
- * @license		GNU General Public License, Version 3
- * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
+ * @version     3.0.0 DEV
+ * @category    Failnet
+ * @package     Failnet
+ * @author      Failnet Project
+ * @copyright   (c) 2009 - 2010 -- Failnet Project
+ * @license     GNU General Public License, Version 3
+ * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  *
  *===================================================================
  *
@@ -39,11 +39,11 @@ namespace Failnet;
  * 		Extension of the default Exception class, adapted to suit Failnet's needs.
  *
  *
- * @category	Failnet
- * @package		Failnet
- * @author		Failnet Project
- * @license		GNU General Public License, Version 3
- * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
+ * @category    Failnet
+ * @package     Failnet
+ * @author      Failnet Project
+ * @license     GNU General Public License, Version 3
+ * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
 class Exception extends \Exception
 {
@@ -51,6 +51,8 @@ class Exception extends \Exception
 	 * @var array - Array of "translations" for our various error codes.
 	 */
 	private static $translations = array();
+
+	const ERR_UNK = 0;
 
 	const ERR_STARTUP_MIN_PHP = 1000;
 	const ERR_STARTUP_PHP_SAPI = 1001;
@@ -97,6 +99,8 @@ class Exception extends \Exception
 	public static function setup()
 	{
 		self::$translations = array(
+			self::ERR_UNK => 'Unknown exception thrown', // o_O
+
 			self::ERR_STARTUP_MIN_PHP => 'Failnet requires PHP ' . FAILNET_MIN_PHP . ' or better, while the currently installed PHP version is ' . PHP_VERSION,
 			self::ERR_STARTUP_PHP_SAPI => 'Failnet must be run in the CLI SAPI',
 			self::ERR_STARTUP_NO_PDO => 'Failnet requires the PDO PHP extension to be loaded',
@@ -177,6 +181,10 @@ class Exception extends \Exception
 		}
 	}
 
+	/**
+	 * Hooks into __toString() to automatically translate the exception message if we haven't done so already
+	 * @return string - Output of \Exception::__toString()
+	 */
 	public function __toString()
 	{
 		$this->translate();
