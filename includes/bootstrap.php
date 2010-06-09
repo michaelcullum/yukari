@@ -50,13 +50,13 @@ require FAILNET_ROOT . 'includes/exception.php';
  *  - DB dir accessibility
  */
 if(strtolower(PHP_SAPI) != 'cli')
-	throw new Exception(Exception::ERR_STARTUP_PHP_SAPI);
+	throw new Exception(ex(Exception::ERR_STARTUP_PHP_SAPI));
 if(!extension_loaded('PDO'))
-	throw new Exception(Exception::ERR_STARTUP_NO_PDO);
+	throw new Exception(ex(Exception::ERR_STARTUP_NO_PDO));
 if(!extension_loaded('pdo_sqlite'))
-	throw new Exception(Exception::ERR_STARTUP_NO_PDO_SQLITE);
+	throw new Exception(ex(Exception::ERR_STARTUP_NO_PDO_SQLITE));
 if(!file_exists(FAILNET_ROOT . 'data/db/') || !is_readable(FAILNET_ROOT . 'data/db/') || !is_writeable(FAILNET_ROOT . 'data/db/') || !is_dir(FAILNET_ROOT . 'data/db/'))
-	throw new Exception(Exception::ERR_STARTUP_NO_ACCESS_DB_DIR);
+	throw new Exception(ex(Exception::ERR_STARTUP_NO_ACCESS_DB_DIR));
 
 // Load up the common files, setup our JIT class autoloading, and get going.
 require FAILNET_ROOT . 'includes/common.php';

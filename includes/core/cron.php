@@ -64,7 +64,7 @@ class Cron extends Base
 		}
 		else
 		{
-			throw new Exception(Exception::ERR_CRON_LOAD_FAILED, $task_name);
+			throw new Exception(ex(Exception::ERR_CRON_LOAD_FAILED), $task_name);
 		}
 	}
 

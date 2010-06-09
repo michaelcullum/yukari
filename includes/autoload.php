@@ -79,7 +79,7 @@ class Autoload extends Common
 			{
 				require $path . $name . '.php';
 				if(!class_exists($class))
-					throw new Exception(Exception::ERR_AUTOLOAD_CLASS_INVALID, $path . $name . '.php');
+					throw new Exception(Exception::parse(Exception::ERR_AUTOLOAD_CLASS_INVALID, array($path . $name . '.php')));
 				return;
 			}
 		}

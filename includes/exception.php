@@ -138,28 +138,28 @@ class Exception extends \Exception
 		);
 
 		// Just in case we extend this class and want to define additional exception messages
-		if(method_exists($this, 'extraSetup'))
+		if(method_exists(self, 'extraSetup'))
 			self::extraSetup();
 	}
 
 	/**
-	 * Parses the provided error number using the error description scring along with any necessary details using vsprintf()
+	 * Takes the provided exception code and returns the exception string format
 	 * @param integer &$code - The error code we're using
-	 * @param array $parameters - Any necessary parameters for our error string
-	 * @return string - The desired error string
+	 * @return string - The desired error string format for sprintf()
 	 */
-	public static function parse(&$code = 0, array $parameters = array())
+	public static function getTranslation(&$code = 0)
 	{
 		if(empty(self::$translations))
 			self::setup();
 		if(!isset(self::$translations[$code]))
-		{
 			$code = 0;
-			$parameters = array();
-		}
-		return (!empty($parameters)) ? ":E:{$code}:" . vsprintf(self::$translations[$code], $parameters) : ":E:{$code}:" . self::$translations[$code];
+		return self::$translations[$code];
 	}
 
+	/**
+	 * Translates the exception message and extracts the exception code from it.
+	 * @return void
+	 */
 	public function translate()
 	{
 		static $translate;

@@ -84,7 +84,7 @@ abstract class Bot
 			return self::$core['core'];
 		if(self::checkCoreLoaded($core_name))
 			return self::$core[$core_name];
-		throw new Exception(Exception::ERR_NO_SUCH_CORE_OBJ);
+		throw new Exception(ex(Exception::ERR_NO_SUCH_CORE_OBJ));
 	}
 
 	/**
@@ -96,7 +96,7 @@ abstract class Bot
 	public static function node($node_name)
 	{
 		if(!self::checkNodeLoaded($node_name))
-			throw new Exception(Exception::ERR_NO_SUCH_NODE_OBJ);
+			throw new Exception(ex(Exception::ERR_NO_SUCH_NODE_OBJ));
 		return self::$nodes[$node_name];
 	}
 
@@ -111,7 +111,7 @@ abstract class Bot
 		if(empty($cron_name))
 			return self::$cron['core'];
 		if(!self::checkCronLoaded($cron_name))
-			throw new Exception(Exception::ERR_NO_SUCH_CRON_OBJ);
+			throw new Exception(ex(Exception::ERR_NO_SUCH_CRON_OBJ));
 		return self::$cron[$cron_name];
 	}
 
@@ -124,7 +124,7 @@ abstract class Bot
 	public static function plugin($plugin_name)
 	{
 		if(!self::checkPluginLoaded($plugin_name))
-			throw new Exception(Exception::ERR_NO_SUCH_PLUGIN_OBJ);
+			throw new Exception(ex(Exception::ERR_NO_SUCH_PLUGIN_OBJ));
 		return self::$plugins[$plugin_name];
 	}
 
@@ -221,15 +221,15 @@ abstract class Bot
 	 * @return boolean - Were we successful?
 	 * @throws failnet_exception
 	 */
-	public function registerHook($hooked_method_class, $hooked_method_name, $hook_call, $hook_type = HOOK_NULL)
+	public static function registerHook($hooked_method_class, $hooked_method_name, $hook_call, $hook_type = HOOK_NULL)
 	{
 		// We're deliberately ignoring HOOK_NULL here.
 		if(!in_array($hook_call, array(HOOK_STACK, HOOK_OVERRIDE)))
-			throw new Exception(Exception::ERR_REGISTER_HOOK_BAD_HOOK_TYPE);
+			throw new Exception(ex(Exception::ERR_REGISTER_HOOK_BAD_HOOK_TYPE));
 
 		// Check for unsupported classes
 		if(substr($hooked_method_class, 0, 8) != '\\Failnet')
-			throw new Exception(Exception::ERR_REGISTER_HOOK_BAD_CLASS, $hooked_method_class);
+			throw new Exception(ex(Exception::ERR_REGISTER_HOOK_BAD_CLASS, array($hooked_method_class)));
 
 		/**
 		 * Hooks are placed into the hook info array using the following array structure:
@@ -263,7 +263,7 @@ abstract class Bot
 	 * @param string $hooked_method_name - The name of the previously specified class's method to check for hooks
 	 * @return mixed - Returns either false if there's no such hooks associated, or returns the array containing that method's hook data.
 	 */
-	public function retrieveHook($hooked_method_class, $hooked_method_name)
+	public static function retrieveHook($hooked_method_class, $hooked_method_name)
 	{
 		if(!isset(self::$hooks[$hooked_method_class][$hooked_method_name]))
 			return false;
@@ -320,7 +320,7 @@ abstract class Base
 		}
 		else
 		{
-			throw new Exception(Exception::ERR_UNDEFINED_METHOD_CALL, array($name, get_class($this)));
+			throw new Exception(ex(Exception::ERR_UNDEFINED_METHOD_CALL, array($name, get_class($this))));
 		}
 	}
 
@@ -355,7 +355,7 @@ abstract class Base
 		}
 		else
 		{
-			throw new Exception(Exception::ERR_UNDEFINED_METHOD_CALL, array($name, static::$__CLASS__));
+			throw new Exception(ex(Exception::ERR_UNDEFINED_METHOD_CALL, array($name, static::$__CLASS__)));
 		}
 	}
 }
