@@ -204,7 +204,7 @@ class Core extends Base
 			$schemas = scandir(FAILNET_ROOT . 'Schemas');
 			foreach($schemas as $schema)
 			{
-				if(substr($schema, 0, 1) == '.' || substr(strrchr($schema, '.'), 1) != 'sql' || $schema == 'Schema_data.sql')
+				if($schema[0] == '.' || substr(strrchr($schema, '.'), 1) != 'sql' || $schema == 'Schema_data.sql')
 					continue;
 
 				$tablename = substr($schema, 0, strrpos($schema, '.'));
