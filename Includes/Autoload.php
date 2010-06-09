@@ -58,9 +58,9 @@ class Autoload extends Base
 	public function __construct()
 	{
 		self::$paths = array(
-			FAILNET_ROOT . 'addons/autoload/',
-			FAILNET_ROOT . 'includes/',
-			FAILNET_ROOT . 'addons/',
+			FAILNET_ROOT . 'Addons/Autoload/',
+			FAILNET_ROOT . 'Includes/',
+			FAILNET_ROOT . 'Addons/',
 		);
 	}
 
@@ -71,7 +71,7 @@ class Autoload extends Base
 	 */
 	public function loadFile($class)
 	{
-		$name = strtolower(self::cleanName($class));
+		$name = self::cleanName($class);
 
 		foreach(self::$paths as $path)
 		{
@@ -104,7 +104,7 @@ class Autoload extends Base
 	 */
 	public static function fileExists($class)
 	{
-		$name = strtolower(self::cleanName($class));
+		$name = self::cleanName($class);
 
 		foreach(self::$paths as $path)
 		{

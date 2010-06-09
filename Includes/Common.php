@@ -359,3 +359,21 @@ abstract class Base
 		}
 	}
 }
+
+class ConfigBase extends Base
+{
+	const SRC_CONFIG = 1;
+	const SRC_DB = 2;
+	const SRC_PROP = 3;
+	const SRC_MIX = 4;
+
+	protected static $config = array();
+
+	public static function get($setting, $source = self::SRC_MIX)
+	{
+		// Make sure they're not pulling a fast one on us
+		if(!in_array($source, range(1, 4)))
+			throw new Exception(); // @todo exception msg
+		// code the rest
+	}
+}

@@ -37,8 +37,8 @@ namespace Failnet;
  */
 
 // Absolute essentials first
-require FAILNET_ROOT . 'includes/constants.php';
-require FAILNET_ROOT . 'includes/exception.php';
+require FAILNET_ROOT . 'Includes/Constants.php';
+require FAILNET_ROOT . 'Includes/Exception.php';
 
 /**
  * We need to start checking to see if the requirements for Failnet can be met
@@ -55,7 +55,7 @@ if(!extension_loaded('PDO'))
 	throw new Exception(ex(Exception::ERR_STARTUP_NO_PDO));
 if(!extension_loaded('pdo_sqlite'))
 	throw new Exception(ex(Exception::ERR_STARTUP_NO_PDO_SQLITE));
-if(!file_exists(FAILNET_ROOT . 'data/db/') || !is_readable(FAILNET_ROOT . 'data/db/') || !is_writeable(FAILNET_ROOT . 'data/db/') || !is_dir(FAILNET_ROOT . 'data/db/'))
+if(!file_exists(FAILNET_ROOT . 'Data/DB/') || !is_readable(FAILNET_ROOT . 'data/db/') || !is_writeable(FAILNET_ROOT . 'data/db/') || !is_dir(FAILNET_ROOT . 'data/db/'))
 	throw new Exception(ex(Exception::ERR_STARTUP_NO_ACCESS_DB_DIR));
 
 // Load up the common files, setup our JIT class autoloading, and get going.
