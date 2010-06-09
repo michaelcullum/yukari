@@ -115,28 +115,28 @@ function errorHandler($errno, $msg_text, $errfile, $errline)
 	   case E_USER_NOTICE:
 	   case E_USER_DEPRECATED:
 		   $handled = true;
-		   failnet::core('ui')->notice($error);
+		   Bot::core('ui')->notice($error);
 		   file_put_contents(FAILNET_ROOT . 'logs/error_log_' . date('m-d-Y', time()) . '.log', date('D m/d/Y - h:i:s A') . ' - [PHP Notice] ' . $error, FILE_APPEND | LOCK_EX);
 	   break;
 
 	   case E_WARNING:
 	   case E_USER_WARNING:
 		   $handled = true;
-		   failnet::core('ui')->warning($error);
+		   Bot::core('ui')->warning($error);
 		   file_put_contents(FAILNET_ROOT . 'logs/error_log_' . date('m-d-Y', time()) . '.log', date('D m/d/Y - h:i:s A') . ' - [PHP Warning] ' . $error, FILE_APPEND | LOCK_EX);
 	   break;
 
 	   case E_ERROR:
 	   case E_USER_ERROR:
 		   $handled = true;
-		   failnet::core('ui')->error($error);
+		   Bot::core('ui')->error($error);
 		   file_put_contents(FAILNET_ROOT . 'logs/error_log_' . date('m-d-Y', time()) . '.log', date('D m/d/Y - h:i:s A') . ' - [PHP Error] ' . $error, FILE_APPEND | LOCK_EX);
 	   break;
    }
 
    // Fatal error? DAI.
    if($errno === E_USER_ERROR)
-	   failnet::core()->terminate(false);
+	   Bot::core()->terminate(false);
 
    // If we notice an error not handled here we pass this back to PHP by returning false
    // This may not work for all php versions
@@ -346,7 +346,7 @@ function deny_message()
  */
 function checkuser($user)
 {
-   if(preg_match('#' . preg_quote(failnet::core()->config('owner'), '#') . '|' . preg_quote(failnet::core()->config('nick'), '#') . '|self#i', $user))
+   if(preg_match('#' . preg_quote(Bot::core()->config('owner'), '#') . '|' . preg_quote(Bot::core()->config('nick'), '#') . '|self#i', $user))
 	   return true;
    return false;
 }
