@@ -31,7 +31,7 @@
  *
  */
 
-define('FAILNET_ROOT', './');
+define('FAILNET_ROOT', dirname(__FILE__));
 define('FAILNET_MIN_PHP', '5.3.0');
 
 if(version_compare(FAILNET_MIN_PHP, PHP_VERSION, '>'))
