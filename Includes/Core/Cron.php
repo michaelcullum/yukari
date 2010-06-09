@@ -58,17 +58,20 @@ class Cron extends Base
 	public function addTask($task_name)
 	{
 
-		if(Autoload::fileExists('Failnet\\Cron\\' . ucfirst($task_name)))
-		{
-			// meh
-		}
-		else
-		{
-			throw new Exception(ex(Exception::ERR_CRON_LOAD_FAILED), $task_name);
-		}
+		if(!Autoload::fileExists('Failnet\\Cron\\' . ucfirst($task_name)))
+			throw new Exception(ex(Exception::ERR_CRON_LOAD_FAILED, $task_name));
+		Bot::setCron(strtolower($task_name), 'Failnet\\Cron\\' . ucfirst($task_name));
 	}
 
-	public function toggleTask() { }
+	public function toggleTask($task_name, $status)
+	{
+		if(!in_array($status, array(TASK_ACTIVE, TASK_MANUAL, TASK_ZOMBIE)))
+			throw new Exception(); // @todo exception msg
+		if(!Bot::checkCronLoaded($task_name))
+			return false;
+		Bot::cron(strtolower($task_name))->status = $status;
+		return true;
+	}
 
 	public function runTasks() { }
 

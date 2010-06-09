@@ -46,9 +46,9 @@ use Failnet;
  */
 abstract class Common extends Base
 {
-	abstract public function nextRun();
+	public $status = TASK_ZOMBIE;
 
-	abstract public function toggle();
+	abstract public function nextRun();
 
 	abstract public function runTask();
 }
