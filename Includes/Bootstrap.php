@@ -49,19 +49,19 @@ require FAILNET_ROOT . 'Includes/Exception.php';
  *  - PDO+SQlite availability
  *  - DB dir being usable
  */
-if(strtolower(PHP_SAPI) != 'cli')
+if(strtolower(PHP_SAPI) !== 'cli')
 	throw new Exception(ex(Exception::ERR_STARTUP_PHP_SAPI));
 if(!extension_loaded('PDO'))
 	throw new Exception(ex(Exception::ERR_STARTUP_NO_PDO));
 if(!extension_loaded('pdo_sqlite'))
 	throw new Exception(ex(Exception::ERR_STARTUP_NO_PDO_SQLITE));
-if(!file_exists(FAILNET_ROOT . 'Data/DB/') || !is_readable(FAILNET_ROOT . 'data/db/') || !is_writeable(FAILNET_ROOT . 'data/db/') || !is_dir(FAILNET_ROOT . 'data/db/'))
+if(!file_exists(FAILNET_ROOT . 'Data/DB/') || !is_readable(FAILNET_ROOT . 'Data/DB/') || !is_writeable(FAILNET_ROOT . 'Data/DB/') || !is_dir(FAILNET_ROOT . 'Data/DB/'))
 	throw new Exception(ex(Exception::ERR_STARTUP_NO_ACCESS_DB_DIR));
 
 // Load up the common files, setup our JIT class autoloading, and get going.
-require FAILNET_ROOT . 'includes/common.php';
-require FAILNET_ROOT . 'includes/autoload.php';
-require FAILNET_ROOT . 'includes/functions.php';
+require FAILNET_ROOT . 'Includes/Common.php';
+require FAILNET_ROOT . 'Includes/Autoload.php';
+require FAILNET_ROOT . 'Includes/Functions.php';
 
 Autoload::register();
 Bot::setCore('core', 'Failnet\\Core\\Core');

@@ -146,8 +146,8 @@ class Core extends Base
 
 		// This is a hack to allow us to restart Failnet if we're running the script through a batch file.
 		Bot::core('ui')->system('- Removing termination indicator file');
-		if(file_exists(FAILNET_ROOT . 'data/restart.inc'))
-			unlink(FAILNET_ROOT . 'data/restart.inc');
+		if(file_exists(FAILNET_ROOT . 'Data/Restart.inc'))
+			unlink(FAILNET_ROOT . 'Data/Restart.inc');
 
 		// In case of restart/reload, to prevent 'Nick already in use' (which asplodes everything)
 		usleep(500);
@@ -193,7 +193,7 @@ class Core extends Base
 		{
 			// Initialize the database connection
 			Bot::core('db')->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-			Bot::core('db')->connect('sqlite:' . FAILNET_ROOT . 'data/db/' . basename(md5($this->config('server') . '::' . $this->config('user'))) . '.db');
+			Bot::core('db')->connect('sqlite:' . FAILNET_ROOT . 'Data/DB/' . basename(md5($this->config('server') . '::' . $this->config('user'))) . '.db');
 
 
 			// We want this as a transaction in case anything goes wrong.
@@ -201,10 +201,10 @@ class Core extends Base
 			Bot::core('db')->beginTransaction();
 
 			// Load up the list of files that we've got, and do stuff with them.
-			$schemas = scandir(FAILNET_ROOT . 'schemas');
+			$schemas = scandir(FAILNET_ROOT . 'Schemas');
 			foreach($schemas as $schema)
 			{
-				if(substr($schema, 0, 1) == '.' || substr(strrchr($schema, '.'), 1) != 'sql' || $schema == 'schema_data.sql')
+				if(substr($schema, 0, 1) == '.' || substr(strrchr($schema, '.'), 1) != 'sql' || $schema == 'Schema_data.sql')
 					continue;
 
 				$tablename = substr($schema, 0, strrpos($schema, '.'));
@@ -212,7 +212,7 @@ class Core extends Base
 				if(!$results)
 				{
 					Bot::core('ui')->system("-  Installing the $tablename database table...");
-					Bot::core('db')->exec(file_get_contents(FAILNET_ROOT . 'schemas/' . $schema));
+					Bot::core('db')->exec(file_get_contents(FAILNET_ROOT . 'Schemas/' . $schema));
 				}
 			}
 
@@ -259,7 +259,7 @@ class Core extends Base
 			Bot::core('db')->rollBack();
 
 			// Chain the exception
-			throw new Exception(Exception::ERR_PDO_EXCEPTION, $e, $e);
+			throw new Exception(ex(Exception::ERR_PDO_EXCEPTION, $e->getMessage()), $e);
 		}
 	}
 
@@ -269,7 +269,7 @@ class Core extends Base
 		// Check to see if our rand_seed exists, and if not we need to execute our schema file (as long as it exists of course). :)
 		Bot::core('db')->useQuery('config', 'get')->execute(array(':name' => 'rand_seed'));
 		$rand_seed_exists = Bot::core('db')->useQuery('config', 'get')->fetch(PDO::FETCH_ASSOC);
-		if(!$rand_seed_exists && file_exists(FAILNET_ROOT . 'schemas/schema_data.sql'))
+		if(!$rand_seed_exists && file_exists(FAILNET_ROOT . 'Schemas/Schema_data.sql'))
 		{
 			try
 			{
@@ -277,10 +277,10 @@ class Core extends Base
 
 				// @todo move to authorize plugin/node
 				// Add the default user if Failnet was just installed
-				Bot::core('db')->useQuery('users', 'create')->execute(array(':nick' => $this->config('owner'), ':authlevel' => self::AUTH_OWNER, ':hash' => $this->hash->hash($this->config('user'))));
+				Bot::core('db')->useQuery('users', 'create')->execute(array(':nick' => $this->config('owner'), ':authlevel' => self::AUTH_OWNER, ':hash' => Bot::core('hash')->hash($this->config('user'))));
 
 				// Now let's add some default data to the database tables
-				Bot::core('db')->exec(file_get_contents(FAILNET_ROOT . 'schemas/schema_data.sql'));
+				Bot::core('db')->exec(file_get_contents(FAILNET_ROOT . 'Schemas/Schema_data.sql'));
 
 				Bot::core('db')->commit();
 			}
@@ -290,7 +290,7 @@ class Core extends Base
 				Bot::core('db')->rollBack();
 
 				// Chain the exception
-				throw new Exception(Exception::ERR_PDO_EXCEPTION, $e->getMessage, $e);
+				throw new Exception(ex(Exception::ERR_PDO_EXCEPTION, $e->getMessage()), $e);
 			}
 		}
 	}
@@ -311,7 +311,7 @@ class Core extends Base
 			Bot::core('plugins')->event_queue = array();
 
 			// Check for tasks that need run, and take care of them.
-			Bot::cron()->runTasks();
+			Bot::core('cron')->runTasks();
 
 			// First off, fire off our tick.
 			//Bot::core('plugins')->handleTick();
@@ -347,7 +347,7 @@ class Core extends Base
 		if($restart && $this->config('run_via_shell'))
 		{
 			// Just a hack to get it to restart through batch, and not terminate.
-			file_put_contents(FAILNET_ROOT . 'data/restart.inc', 'yesh');
+			file_put_contents(FAILNET_ROOT . 'Data/Restart.inc', 'yesh');
 			// Dump the log cache to the file.
 			// @todo recode for the new log system
 			Bot::core('log')->add('--- Restarting Failnet ---', true);
@@ -360,8 +360,8 @@ class Core extends Base
 			// Just a hack to get it to truly terminate through batch, and not restart.
 			if($this->config('run_via_shell'))
 			{
-				if(file_exists(FAILNET_ROOT . 'data/restart.inc'))
-					unlink(FAILNET_ROOT . 'data/restart.inc');
+				if(file_exists(FAILNET_ROOT . 'Data/Restart.inc'))
+					unlink(FAILNET_ROOT . 'Data/Restart.inc');
 			}
 			// Dump the log cache to the file.
 			// @todo recode for the new log system
@@ -419,7 +419,7 @@ class Core extends Base
 	public function __get($name)
 	{
 		if(!array_key_exists($name, $this->virtual_storage))
-			throw new Exception(Exception::ERR_INVALID_VIRTUAL_STORAGE_SLOT, $name);
+			throw new Exception(ex(Exception::ERR_INVALID_VIRTUAL_STORAGE_SLOT, $name));
 		return $this->virtual_storage[$name];
 	}
 
