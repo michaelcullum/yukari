@@ -35,7 +35,7 @@ use Failnet;
 
 /**
  * Failnet - Cron core class,
- * 		Manages the cron system, handles tasks, etc.
+ * 	    Manages the cron system, handles tasks, etc.
  *
  *
  * @category    Failnet

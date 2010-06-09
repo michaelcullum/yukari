@@ -34,7 +34,7 @@ namespace Failnet;
 
 /**
  * Failnet - Autoloading class,
- * 		Handles automatic loading of class files based on their names.
+ * 	    Handles automatic loading of class files based on their names.
  *
  *
  * @category    Failnet

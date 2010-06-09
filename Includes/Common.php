@@ -35,7 +35,7 @@ namespace Failnet;
 
 /**
  * Failnet - Master class,
- * 		Used as the master static class that will contain all node objects, core objects, etc.
+ *      Used as the master static class that will contain all node objects, core objects, etc.
  *
  *
  * @category    Failnet
@@ -272,7 +272,7 @@ abstract class Bot
 
 /**
  * Failnet - Base class,
- * 		Used as the base class that will handle method hooking.
+ * 	    Used as the base class that will handle method hooking.
  *
  *
  * @category    Failnet

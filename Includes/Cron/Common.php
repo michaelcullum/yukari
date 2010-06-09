@@ -5,13 +5,13 @@
  *
  *  Failnet -- PHP-based IRC Bot
  *-------------------------------------------------------------------
- * @version		3.0.0 DEV
- * @category	Failnet
- * @package		cron
- * @author		Failnet Project
- * @copyright	(c) 2009 - 2010 -- Failnet Project
- * @license		GNU General Public License, Version 3
- * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
+ * @version     3.0.0 DEV
+ * @category    Failnet
+ * @package     cron
+ * @author      Failnet Project
+ * @copyright   (c) 2009 - 2010 -- Failnet Project
+ * @license     GNU General Public License, Version 3
+ * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  *
  *===================================================================
  *
@@ -35,14 +35,14 @@ use Failnet;
 
 /**
  * Failnet - Cron task common class,
- * 		Common class which defines the required methods that each cron task must implement, and provides a singular base for tasks.
+ * 	    Common class which defines the required methods that each cron task must implement, and provides a singular base for tasks.
  *
  *
- * @category	Failnet
- * @package		cron
- * @author		Failnet Project
- * @license		GNU General Public License, Version 3
- * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
+ * @category    Failnet
+ * @package     cron
+ * @author      Failnet Project
+ * @license     GNU General Public License, Version 3
+ * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
 abstract class Common extends Base
 {
