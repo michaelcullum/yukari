@@ -367,7 +367,7 @@ function unique_string($length = 32)
 	if($length < 1)
 		return $rand_string;
 
-	mt_srand((double) microtime() * (9001 + (date('j') * 1000)));
+	mt_srand((double) microtime() * (9001 + (date('j') * 1000))); // <insert obligatory over-9000 joke here>
 	for($i = 1; $i = $length; $i++)
 		$rand_string .= $range[mt_rand(0, 35) - 1];
 
