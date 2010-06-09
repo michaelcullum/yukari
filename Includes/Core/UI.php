@@ -146,8 +146,21 @@ class UI extends Common
 		{
 			$this->output('---------------------------------------------------------------------');
 			$this->output('Failnet -- PHP-based IRC Bot version ' . FAILNET_VERSION);
-			$this->output('Copyright: (c) 2009 - 2010 -- Obsidian');
-			$this->output('License: GNU General Public License, Version 3');
+			$this->output('Copyright (c) 2009 - 2010 -- Failnet Project');
+			$this->output('');
+			$this->output('This program is free software: you can redistribute it and/or modify');
+			$this->output('it under the terms of the GNU General Public License as published by');
+			$this->output('the Free Software Foundation, either version 3 of the License, or');
+			$this->output('(at your option) any later version.');
+			$this->output('');
+			$this->output('This program is distributed in the hope that it will be useful,');
+			$this->output('but WITHOUT ANY WARRANTY; without even the implied warranty of');
+			$this->output('MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the');
+			$this->output('GNU General Public License for more details.');
+			$this->output('');
+			$this->output('You should have received a copy of the GNU General Public License');
+			$this->output('along with this program.  If not, see <http://www.gnu.org/licenses/>.');
+			$this->output('');
 			$this->output('---------------------------------------------------------------------');
 			$this->output('Failnet is starting up. Go get yourself a coffee.');
 		}
