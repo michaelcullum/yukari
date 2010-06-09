@@ -37,16 +37,16 @@ SET PHP=
 SET BOT=
 
 :: This is what server configuration file you want Failnet to load.
-SET SERVER=config
+SET SERVER=Config
 
 :: Ignore this.  It's just for the bot to find its termination indicator file. ;)
-SET CHECKFILE="%BOT%\data\restart.inc"
+SET CHECKFILE="%BOT%\Data\Restart.inc"
 
 :: Loop to here if we're just restarting Failnet.
 :RUNBOT
 
 :: Run Failnet!
-"%PHP%\php\php.exe" "%BOT%\failnet.php" %SERVER% %2 %3 %4
+"%PHP%\php\php.exe" "%BOT%\Failnet.php" %SERVER% %2 %3 %4
 
 :: Is our termination indicator file there?
 IF EXIST %CHECKFILE% GOTO RUNBOT

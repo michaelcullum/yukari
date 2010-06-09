@@ -11,7 +11,7 @@
 #
 #===================================================================
 #
-# Thanks to Techie-Micheal for writing the fancy bash script for Failnet 2.
+# Thanks to Techie-Micheal for writing the fancy bash script for Failnet!
 #
 
 #
@@ -30,10 +30,10 @@
 #
 
 # This is what server configuration file you want Failnet to load.
-SERVER="config"
+SERVER="Config"
 
 # Run Failnet!
-while php failnet.php $SERVER;
+while php Failnet.php $SERVER;
 	do true
 done
 
