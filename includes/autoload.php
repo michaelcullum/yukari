@@ -43,7 +43,7 @@ namespace Failnet;
  * @license		GNU General Public License, Version 3
  * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class Autoload extends Common
+class Autoload extends Base
 {
 	/**
 	 * @var array - The paths that Failnet will attempt to load class files from.

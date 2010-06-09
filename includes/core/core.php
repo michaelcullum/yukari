@@ -45,7 +45,7 @@ use Failnet\Lib;
  * @license		GNU General Public License, Version 3
  * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class Core extends Common
+class Core extends Base
 {
 /**
  * Failnet core class properties
