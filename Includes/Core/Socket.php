@@ -45,12 +45,12 @@ use Failnet\Lib;
  * @license		GNU General Public License, Version 3
  * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class Socket extends Common
+class Socket extends Base
 {
 	/**
-	 * @var integer - The socket timeout setting
+	 * @var float - The socket timeout setting
 	 */
-	private $delay = 300;
+	private $timeout = 0.1;
 
 	/**
 	 * @var stream resource - The stream resource used for communicating with the server
@@ -76,9 +76,9 @@ class Socket extends Common
 		$remote = "$transport://" . Bot::core()->config('server') . ':' . Bot::core()->config('port');
 		$this->socket = @stream_socket_client($remote, $errno, $errstr);
 		if(!$this->socket)
-			throw new Exception(Exception::ERR_SOCKET_ERROR, $errno, $errstr);
+			throw new Exception(ex(Exception::ERR_SOCKET_ERROR, array($errno, $errstr)));
 
-		@stream_set_timeout($this->socket, $this->delay);
+		stream_set_timeout($this->socket, (int) $this->timeout, (($this->timeout - (int) $this->timeout) * 1000000));
 
 		// Send the server password if one is specified
 		if(Bot::core()->config('server_pass'))
@@ -99,7 +99,7 @@ class Socket extends Common
 		// Check for a new event on the current connection
 		$buffer = fgets($this->socket, 512);
 		if($buffer === false)
-			throw new Exception(Exception::ERR_SOCKET_FGETS_FAILED);
+			throw new Exception(ex(Exception::ERR_SOCKET_FGETS_FAILED));
 
 		// If no new event was found, return NULL
 		if (empty($buffer))
@@ -225,7 +225,7 @@ class Socket extends Common
 	{
 		// Require an open socket connection to continue
 		if(empty($this->socket))
-			throw new Exception(Exception::ERR_SOCKET_NO_CONNECTION);
+			throw new Exception(ex(Exception::ERR_SOCKET_NO_CONNECTION));
 
 		$buffer = strtoupper($command);
 		// Add arguments
@@ -242,9 +242,8 @@ class Socket extends Common
 		}
 
 		// Transmit the command over the socket connection
-		$success = fwrite($this->socket, $buffer . "\r\n");
-		if($success === false)
-			throw new Exception(Exception::ERR_SOCKET_FWRITE_FAILED);
+		if(!fwrite($this->socket, $buffer . "\r\n"))
+			throw new Exception(ex(Exception::ERR_SOCKET_FWRITE_FAILED));
 
 		// Return the command string that was transmitted
 		return $buffer;
