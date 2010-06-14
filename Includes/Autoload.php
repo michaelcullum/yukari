@@ -91,7 +91,7 @@ class Autoload extends Base
 	 * @param string $prefix - A namespace prefix to use, if we need one
 	 * @return array - An array of class names to autoload.
 	 */
-	function getNamespaces($path, $strip = '', $prefix = '')
+	public function getNamespaces($path, $strip = '', $prefix = '')
 	{
 		$files = scandir($path);
 		foreach($files as $file)
