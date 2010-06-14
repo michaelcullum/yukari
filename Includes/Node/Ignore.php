@@ -30,7 +30,7 @@
  *
  * @todo rebuild so that this pops up before pre-event and kills the event somehow, or prevents reactions within dispatch
  * @todo __construct and not init
- * @todo failnet::core() and not $this->failnet
+ * @todo Bot::core() and not $this->failnet
  * @todo camelCase method names
  *
  */
