@@ -38,7 +38,7 @@ use Failnet;
 
 /**
  * Failnet - Server syncronization class,
- * 		Used as Failnet's server sync handler.
+ * 	    Used as Failnet's server sync handler.
  *
  *
  * @category    Failnet
@@ -49,13 +49,6 @@ use Failnet;
  */
 class Server extends Base
 {
-	/**
-	 * Specialized init function to allow class construction to be easier.
-	 * @see includes/failnet_common#init()
-	 * @return void
-	 */
-	public function init() { }
-
 	/**
 	 * Get the userlist of a channel
 	 * @param string $chan - Channel name

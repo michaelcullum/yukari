@@ -40,7 +40,7 @@ use Failnet;
 
 /**
  * Failnet - Ignore handling class,
- * 		Used as Failnet's handler for ignoring users based on hostmasks.
+ * 	    Used as Failnet's handler for ignoring users based on hostmasks.
  *
  *
  * @category    Failnet

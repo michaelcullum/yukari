@@ -36,7 +36,7 @@ use Failnet;
 
 /**
  * Failnet - Terminal UI class,
- * 		Used to handle displaying Failnet's output to a terminal/command prompt.
+ * 	    Used to handle displaying Failnet's output to a terminal/command prompt.
  *
  *
  * @category    Failnet

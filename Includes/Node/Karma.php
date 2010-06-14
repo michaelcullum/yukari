@@ -35,7 +35,7 @@ use Failnet;
 
 /**
  * Failnet - Karma class,
- * 		Used as Failnet's karma system.
+ * 	    Used as Failnet's karma system.
  *
  *
  * @category    Failnet

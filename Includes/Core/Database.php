@@ -35,7 +35,7 @@ use Failnet;
 
 /**
  * Failnet - Database class,
- * 		Extension of PDO, adapted to suit Failnet's needs.
+ * 	    Extension of PDO, adapted to suit Failnet's needs.
  *
  *
  * @category    Failnet

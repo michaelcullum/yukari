@@ -35,7 +35,7 @@ use Failnet;
 
 /**
  * Failnet - Help class,
- * 		Failnet's handler for the dynamic help system
+ * 	    Failnet's handler for the dynamic help system
  *
  *
  * @category    Failnet

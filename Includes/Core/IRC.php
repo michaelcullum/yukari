@@ -35,7 +35,7 @@ use Failnet;
 
 /**
  * Failnet - IRC class,
- * 		Used as Failnet's IRC command class, for issuing IRC commands correctly as per RFC guidelines.
+ * 	    Used as Failnet's IRC command class, for issuing IRC commands correctly as per RFC guidelines.
  *
  * @category	Failnet
  * @package		core

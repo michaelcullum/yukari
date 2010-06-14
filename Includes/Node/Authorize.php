@@ -35,7 +35,7 @@ use Failnet;
 
 /**
  * Failnet - User authorization handling class,
- * 		Used as Failnet's authorization handler.
+ * 	    Used as Failnet's authorization handler.
  *
  *
  * @category    Failnet
@@ -66,9 +66,7 @@ class Authorize extends Base
  */
 
 	/**
-	 * Specialized init function to allow class construction to be easier.
-	 * @see includes/failnet_common#init()
-	 * @return void
+	 * @ignore
 	 */
 	public function __construct()
 	{

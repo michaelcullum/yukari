@@ -36,7 +36,7 @@ use Failnet\Lib;
 
 /**
  * Failnet - Socket connection handling class,
- * 		Used as Failnet's connection handler.
+ * 	    Used as Failnet's connection handler.
  *
  *
  * @category    Failnet

@@ -35,7 +35,7 @@ use Failnet;
 
 /**
  * Failnet - Logging handling class,
- * 		Used as Failnet's logging handler.
+ * 	    Used as Failnet's logging handler.
  *
  *
  * @category    Failnet

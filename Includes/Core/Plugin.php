@@ -35,7 +35,7 @@ use Failnet;
 
 /**
  * Failnet - Plugin management class,
- * 		Handles plugins, loading of plugins, calling plugin methods, and so on.
+ * 	    Handles plugins, loading of plugins, calling plugin methods, and so on.
  *
  *
  * @category    Failnet
