@@ -92,21 +92,21 @@ class Authorize extends Base
 	public function auth($hostmask, $password)
 	{
 		// First, we want to parse the user's hostmask here.
-		parse_hostmask($hostmask, $nick, $user, $host);
+		parseHostmask($hostmask, $nick, $user, $host);
 
 		// Now, let's do a query to grab the row for that user
-		failnet::core()->sql('users', 'get')->execute(array(':nick' => $nick));
-		$result = failnet::core()->sql('users', 'get')->fetch(PDO::FETCH_ASSOC);
+		Bot::core('db')->useQuery('users', 'get')->execute(array(':nick' => $nick));
+		$result = Bot::core('db')->useQuery('users', 'get')->fetch(PDO::FETCH_ASSOC);
 
 		// No such user?  Derr...
 		if(!$result)
 			return NULL;
 
 		// Let's check that password now...
-		if(failnet::core('hash')->check($password, $result['password']))
+		if(Bot::core('hash')->check($password, $result['password']))
 		{
 			// Success!  We need to just add a row to the sessions table now so that the login persists.
-			return failnet::core()->sql('sessions', 'create')->execute(array(':key' => unique_id(), ':user' => $result['user_id'], ':time' => time(), ':hostmask' => $hostmask));
+			return Bot::core('db')->useQuery('sessions', 'create')->execute(array(':key' => unique_string(16), ':user' => $result['user_id'], ':time' => time(), ':hostmask' => $hostmask));
 		}
 
 		// FAIL!  NOW GIT OUT OF MAH KITCHEN!
@@ -125,11 +125,11 @@ class Authorize extends Base
 			return self::AUTH_OWNER;
 
 		// First, we want to parse the user's hostmask here.
-		parse_hostmask($hostmask, $nick, $user, $host);
+		parseHostmask($hostmask, $nick, $user, $host);
 
 		// Do some SQL to get our user ID for the user
-		failnet::core()->sql('users', 'get')->execute(array(':nick' => $nick));
-		$result = failnet::core()->sql('users', 'get')->fetch(PDO::FETCH_ASSOC);
+		Bot::core('db')->useQuery('users', 'get')->execute(array(':nick' => $nick));
+		$result = Bot::core('db')->useQuery('users', 'get')->fetch(PDO::FETCH_ASSOC);
 
 		// Check to see if we have any results.
 		if(!$result)
@@ -144,10 +144,10 @@ class Authorize extends Base
 		{
 			// Okay, they aren't on the access list for that user.
 			// What we'll have to do instead is to check to see if they are logged in.
-			$sql = failnet::core('db')->query('SELECT u.authlevel, s.login_time
+			$sql = Bot::core('db')->query('SELECT u.authlevel, s.login_time
 			FROM sessions s, users u
 			WHERE u.user_id = s.user_id
-				AND LOWER(u.nick) = LOWER(' . failnet::core('db')->quote($nick) . ')
+				AND LOWER(u.nick) = LOWER(' . Bot::core('db')->quote($nick) . ')
 			ORDER BY s.login_time DESC');
 
 			$result = $sql->fetch(PDO::FETCH_ASSOC);
@@ -172,8 +172,8 @@ class Authorize extends Base
 		if($nick === false)
 			return self::AUTH_OWNER;
 
-		failnet::core()->sql('users', 'get')->execute(array(':nick' => $nick));
-		$result = failnet::core()->sql('users', 'get')->fetch(PDO::FETCH_ASSOC);
+		Bot::core('db')->useQuery('users', 'get')->execute(array(':nick' => $nick));
+		$result = Bot::core('db')->useQuery('users', 'get')->fetch(PDO::FETCH_ASSOC);
 
 		return ($result) ? (int) $result['authlevel'] : false;
 	}
@@ -191,8 +191,8 @@ class Authorize extends Base
 	 */
 	public function addUser($nick, $password, $authlevel)
 	{
-		$user_exists = failnet::core('db')->query('SELECT COUNT(*) FROM users WHERE nick = ' . failnet::core('db')->quote($nick))->fetchColumn();
-		return (!$user_exists) ? failnet::core()->sql('users', 'create')->execute(array(':nick' => $nick, ':authlevel' => $authlevel, ':hash' => failnet::core('hash')->hash($password))) : false;
+		$user_exists = Bot::core('db')->query('SELECT COUNT(*) FROM users WHERE nick = ' . Bot::core('db')->quote($nick))->fetchColumn();
+		return (!$user_exists) ? Bot::core('db')->useQuery('users', 'create')->execute(array(':nick' => $nick, ':authlevel' => $authlevel, ':hash' => Bot::core('hash')->hash($password))) : false;
 	}
 
 	/**
@@ -204,22 +204,22 @@ class Authorize extends Base
 	public function deleteUser($hostmask, $password)
 	{
 		// First, we want to parse the user's hostmask here.
-		parse_hostmask($hostmask, $nick, $user, $host);
+		parseHostmask($hostmask, $nick, $user, $host);
 
 		// Now, let's do a query to grab the row for that user
-		failnet::core()->sql('users', 'get')->execute(array(':nick' => $nick));
-		$result = failnet::core()->sql('users', 'get')->fetch(PDO::FETCH_ASSOC);
+		Bot::core('db')->useQuery('users', 'get')->execute(array(':nick' => $nick));
+		$result = Bot::core('db')->useQuery('users', 'get')->fetch(PDO::FETCH_ASSOC);
 
 		// No such user?  Derr...
 		if(!$result)
 			return NULL;
 
 		// We should compare to see if this is the correct password that the user is sending to delete their user entry.
-		if(failnet::core('hash')->check($password, $result['password']))
+		if(Bot::core('hash')->check($password, $result['password']))
 		{
 			// Let's generate a unique ID for the confirm key.
-			$confirm = unique_id();
-			failnet::core()->sql('users', 'set_confirm')->execute(array(':key' => $confirm, ':user' => $result['user_id']));
+			$confirm = unique_string();
+			Bot::core('db')->useQuery('users', 'set_confirm')->execute(array(':key' => $confirm, ':user' => $result['user_id']));
 			return $confirm;
 		}
 
@@ -236,11 +236,11 @@ class Authorize extends Base
 	public function confirmDelete($hostmask, $confirm_key)
 	{
 		// First, we want to parse the user's hostmask here.
-		parse_hostmask($hostmask, $nick, $user, $host);
+		parseHostmask($hostmask, $nick, $user, $host);
 
 		// Now, let's do a query to grab the row for that user
-		failnet::core()->sql('users', 'get')->execute(array(':nick' => $nick));
-		$result = failnet::core()->sql('users', 'get')->fetch(PDO::FETCH_ASSOC);
+		Bot::core('db')->useQuery('users', 'get')->execute(array(':nick' => $nick));
+		$result = Bot::core('db')->useQuery('users', 'get')->fetch(PDO::FETCH_ASSOC);
 
 		// No such user?  Derr...
 		if(!$result)
@@ -251,9 +251,9 @@ class Authorize extends Base
 
 		if($result['confirm_key'] == trim($confirm_key))
 		{
-			failnet::core()->sql('access', 'delete_user')->execute(array(':user' => $result['user_id']));
-			failnet::core()->sql('sessions', 'delete_user')->execute(array(':user' => $result['user_id']));
-			failnet::core()->sql('users', 'delete')->execute(array(':user' => $result['user_id']));
+			Bot::core('db')->useQuery('access', 'delete_user')->execute(array(':user' => $result['user_id']));
+			Bot::core('db')->useQuery('sessions', 'delete_user')->execute(array(':user' => $result['user_id']));
+			Bot::core('db')->useQuery('users', 'delete')->execute(array(':user' => $result['user_id']));
 			return true;
 		}
 
@@ -271,20 +271,20 @@ class Authorize extends Base
 	public function setPassword($hostmask, $old_pass, $new_pass)
 	{
 		// First, we want to parse the user's hostmask here.
-		parse_hostmask($hostmask, $nick, $user, $host);
+		parseHostmask($hostmask, $nick, $user, $host);
 
 		// Now, let's do a query to grab the row for that user
-		failnet::core()->sql('users', 'get')->execute(array(':nick' => $nick));
-		$result = failnet::core()->sql('users', 'get')->fetch(PDO::FETCH_ASSOC);
+		Bot::core('db')->useQuery('users', 'get')->execute(array(':nick' => $nick));
+		$result = Bot::core('db')->useQuery('users', 'get')->fetch(PDO::FETCH_ASSOC);
 
 		// No such user?  Derr...
 		if(!$result)
 			return NULL;
 
 		// We should compare to see if this is the correct password that the user is sending to change their password to something else.
-		if(failnet::core('hash')->check($old_pass, $result['password']))
+		if(Bot::core('hash')->check($old_pass, $result['password']))
 		{
-			failnet::core()->sql('users', 'set_pass')->execute(array(':hash' => failnet::core('hash')->hash($new_pass), ':user' => $result['user_id']));
+			Bot::core('db')->useQuery('users', 'set_pass')->execute(array(':hash' => Bot::core('hash')->hash($new_pass), ':user' => $result['user_id']));
 			return true;
 		}
 
@@ -301,19 +301,17 @@ class Authorize extends Base
 	public function setAuthlevel($nick, $level)
 	{
 		// Now, let's do a query to grab the row for that user
-		failnet::core()->sql('users', 'get')->execute(array(':nick' => $nick));
-		$result = failnet::core()->sql('users', 'get')->fetch(PDO::FETCH_ASSOC);
+		Bot::core('db')->useQuery('users', 'get')->execute(array(':nick' => $nick));
+		$result = Bot::core('db')->useQuery('users', 'get')->fetch(PDO::FETCH_ASSOC);
 
 		// No such user?  Derr...
 		if(!$result)
 			return NULL;
 
 		if((int) $result['authlevel'] === self::AUTH_OWNER)
-		{
 			return false;
-		}
 
-		failnet::core()->sql('users', 'set_level')->execute(array(':user' => $result['user_id'], ':authlevel' => (int) $level));
+		Bot::core('db')->useQuery('users', 'set_level')->execute(array(':user' => $result['user_id'], ':authlevel' => (int) $level));
 		return true;
 	}
 
@@ -333,9 +331,9 @@ class Authorize extends Base
 		if(!isset($this->access[$user_id]))
 		{
 			// Guess not, so we run a query to see if we have a user with this ID in the access lists.
-			failnet::core()->sql('access', 'get')->execute(array(':user' => $user_id));
-			$result = failnet::core()->sql('access', 'get')->fetchAll(PDO::FETCH_COLUMN, 0);
-			$this->access[$user_id] = hostmasks_to_regex($result);
+			Bot::core('db')->useQuery('access', 'get')->execute(array(':user' => $user_id));
+			$result = Bot::core('db')->useQuery('access', 'get')->fetchAll(PDO::FETCH_COLUMN, 0);
+			$this->access[$user_id] = hostmasksToRegex($result);
 		}
 
 		// Now that all that junk is taken care of, we need to actually check if this hostmask is in the access list.
@@ -351,25 +349,25 @@ class Authorize extends Base
 	public function addAccess($hostmask, $password, $mask = NULL)
 	{
 		// First, we want to parse the user's hostmask here.
-		parse_hostmask($hostmask, $nick, $user, $host);
+		parseHostmask($hostmask, $nick, $user, $host);
 
 		// Now, let's check to see if the users hostmask is the target hostmask.
 		if($mask === NULL)
 			$mask = $hostmask;
 
 		// Now, let's do a query to grab the row for that user
-		failnet::core()->sql('users', 'get')->execute(array(':nick' => $nick));
-		$result = failnet::core()->sql('users', 'get')->fetch(PDO::FETCH_ASSOC);
+		Bot::core('db')->useQuery('users', 'get')->execute(array(':nick' => $nick));
+		$result = Bot::core('db')->useQuery('users', 'get')->fetch(PDO::FETCH_ASSOC);
 
 		// No such user?  Derr...
 		if(!$result)
 			return NULL;
 
 		// Let's check that password now...
-		if(failnet::core('hash')->check($password, $result['password']))
+		if(Bot::core('hash')->check($password, $result['password']))
 		{
 			// Success!  We need to just add a row to the sessions table now so that the login persists.
-			failnet::core()->sql('access', 'create')->execute(array(':user' => $result['user_id'], ':hostmask' => $mask));
+			Bot::core('db')->useQuery('access', 'create')->execute(array(':user' => $result['user_id'], ':hostmask' => $mask));
 
 			// Clear out the hostmask cache
 			if(isset($this->access[$result['user_id']]))
@@ -390,25 +388,25 @@ class Authorize extends Base
 	public function deleteAccess($hostmask, $password, $mask = NULL)
 	{
 		// First, we want to parse the user's hostmask here.
-		parse_hostmask($hostmask, $nick, $user, $host);
+		parseHostmask($hostmask, $nick, $user, $host);
 
 		// Now, let's check to see if the users hostmask is the target hostmask.
 		if($mask === NULL)
 			$mask = $hostmask;
 
 		// Now, let's do a query to grab the row for that user
-		failnet::core()->sql('users', 'get')->execute(array(':nick' => $nick));
-		$result = failnet::core()->sql('users', 'get')->fetch(PDO::FETCH_ASSOC);
+		Bot::core('db')->useQuery('users', 'get')->execute(array(':nick' => $nick));
+		$result = Bot::core('db')->useQuery('users', 'get')->fetch(PDO::FETCH_ASSOC);
 
 		// No such user?  Derr...
 		if(!$result)
 			return NULL;
 
 		// Let's check that password now...
-		if(failnet::core('hash')->check($password, $result['password']))
+		if(Bot::core('hash')->check($password, $result['password']))
 		{
 			// Success!  Now we just have to kill off that entry.
-			failnet::core()->sql('access', 'delete')->execute(array(':user' => $result['user_id'], ':hostmask' => $mask));
+			Bot::core('db')->useQuery('access', 'delete')->execute(array(':user' => $result['user_id'], ':hostmask' => $mask));
 
 			// Clear out the hostmask cache
 			if(isset($this->access[$result['user_id']]))
