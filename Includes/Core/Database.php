@@ -83,12 +83,12 @@ class Database extends \PDO
 	 * @param string $table - The table that we are looking at
 	 * @param string $type - The type of statement we are looking at
 	 * @return PDO_Statement - An instance of PDO_Statement.
-	 * @throws failnet_exception
+	 * @throws Failnet\Exception
 	 */
 	public function useQuery($table, $type)
 	{
 		if(!isset($this->statements[$table][$type]))
-			throw new Exception(Exception::ERR_INVALID_PREP_QUERY);
+			throw new Exception(ex(Exception::ERR_INVALID_PREP_QUERY));
 		return $this->statements[$table][$type];
 	}
 }

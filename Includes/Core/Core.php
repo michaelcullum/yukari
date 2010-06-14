@@ -163,7 +163,7 @@ class Core extends Base
 	private function load($file)
 	{
 		if(!@file_exists(FAILNET_ROOT . $file . '.php') || !@is_readable(FAILNET_ROOT . $file . '.php'))
-			throw new Exception(Exception::ERR_NO_CONFIG);
+			throw new Exception(ex(Exception::ERR_NO_CONFIG));
 
 		$settings = require FAILNET_ROOT . $file . '.php';
 
