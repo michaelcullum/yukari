@@ -446,7 +446,7 @@ function parse_hostmask($hostmask, &$nick, &$user, &$host)
  */
 function array_split(&$input, $compare)
 {
-	$return = array_filter($input, $callback);
+	$return = array_filter($input, $compare);
 	$input = array_diff($input, $return);
 	return $return;
 }
