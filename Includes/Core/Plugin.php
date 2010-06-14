@@ -44,7 +44,7 @@ use Failnet;
  * @license		GNU General Public License, Version 3
  * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class Plugin extends Common
+class Plugin extends Base
 {
 	/**
 	 * @var array - Loaded Failnet plugins

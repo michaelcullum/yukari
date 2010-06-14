@@ -44,7 +44,7 @@ use Failnet;
  * @license		GNU General Public License, Version 3
  * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class Log extends Common
+class Log extends Base
 {
 	/**
 	 * Queue of logs to be written
