@@ -64,8 +64,7 @@ class Ignore extends Base
 	private $users = array();
 
 	/**
-	 * Sets up the prepared SQL statements for the ignore package
-	 * @return void
+	 * @ignore
 	 */
 	public function __construct()
 	{

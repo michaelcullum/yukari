@@ -149,8 +149,7 @@ class Core extends Base
 		if(file_exists(FAILNET_ROOT . 'Data/Restart.inc'))
 			unlink(FAILNET_ROOT . 'Data/Restart.inc');
 
-		// In case of restart/reload, to prevent 'Nick already in use' (which asplodes everything)
-		usleep(500);
+		usleep(500); // In case of restart/reload, to prevent 'Nick already in use' (which asplodes everything)
 		Bot::core('ui')->ready();
 	}
 

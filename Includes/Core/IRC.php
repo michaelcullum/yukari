@@ -104,9 +104,7 @@ class IRC extends Common
 
 	/**
 	 * Obtains a list of channel names and topics.
-	 * @param string $channels - Comma-delimited list of one or more channels
-	 *                         to which the response should be restricted
-	 *                         (optional)
+	 * @param string $channels - Comma-delimited list of one or more channels to which the response should be restricted (optional)
 	 * @return void
 	 */
 	public function channels($channels = NULL)
