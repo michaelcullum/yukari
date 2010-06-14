@@ -5,10 +5,13 @@
  *
  *  Failnet -- PHP-based IRC Bot
  *-------------------------------------------------------------------
- *	Script info:
- * @version:	3.0.0 DEV
- * @copyright:	(c) 2009 - 2010 -- Failnet Project
- * @license:	GNU General Public License, Version 3
+ * @version     3.0.0 DEV
+ * @category    Failnet
+ * @package     node
+ * @author      Failnet Project
+ * @copyright   (c) 2009 - 2010 -- Failnet Project
+ * @license     GNU General Public License, Version 3
+ * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  *
  *===================================================================
  *
@@ -27,19 +30,21 @@
  *
  */
 
-
+namespace Failnet\Node;
+use Failnet;
 
 /**
  * Failnet - Karma class,
  * 		Used as Failnet's karma system.
  *
  *
- * @package nodes
- * @author Obsidian
- * @copyright (c) 2009 - 2010 -- Failnet Project
- * @license GNU General Public License, Version 3
+ * @category    Failnet
+ * @package     node
+ * @author      Failnet Project
+ * @license     GNU General Public License, Version 3
+ * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class failnet_node_karma extends failnet_common
+class Karma extends Base
 {
 	/**
 	 * Items that have a fixed karma rating, along with what the fixed rating is.
@@ -99,6 +104,7 @@ class failnet_node_karma extends failnet_common
         );
 
 		// Add in our prepared SQL statements. ;)
+		// @todo convert for new db
 		$this->sql('karma', 'create', 'INSERT INTO karma ( karma_value, term ) VALUES ( :karma, :term )');
 		$this->sql('karma', 'update', 'UPDATE karma SET karma_value = :karma WHERE LOWER(term) = LOWER(:term)');
 		$this->sql('karma', 'get', 'SELECT karma_value FROM karma WHERE LOWER(term) = LOWER(:term) LIMIT 1');
@@ -117,6 +123,7 @@ class failnet_node_karma extends failnet_common
 		if(isset($this->fixed[$term]))
 			return sprintf($this->fixed[$term], $term);
 
+		// @todo convert for new db
 		$this->failnet->sql('karma', 'get')->execute(array(':term' => $term));
 		$result = $this->failnet->sql('karma', 'get')->fetch(PDO::FETCH_ASSOC);
 		if(!$result)
@@ -144,6 +151,8 @@ class failnet_node_karma extends failnet_common
 			return 'You\'re not allowed to change karma for that!';
 
 		$amount = $this->get_karma($term);
+
+		// @todo convert for new db
 		if(!is_null($amount))
 		{
 			$this->failnet->sql('karma', 'update')->execute(array(':term' => $term, ':karma' => $amount + $type));

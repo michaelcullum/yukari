@@ -5,10 +5,13 @@
  *
  *  Failnet -- PHP-based IRC Bot
  *-------------------------------------------------------------------
- *	Script info:
- * @version:	3.0.0 DEV
- * @copyright:	(c) 2009 - 2010 -- Failnet Project
- * @license:	GNU General Public License, Version 3
+ * @version     3.0.0 DEV
+ * @category    Failnet
+ * @package     node
+ * @author      Failnet Project
+ * @copyright   (c) 2009 - 2010 -- Failnet Project
+ * @license     GNU General Public License, Version 3
+ * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  *
  *===================================================================
  *
@@ -25,21 +28,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+ * @todo camelCase method names
+ * @todo convert for new framework
+ *
  */
 
-
+namespace Failnet\Node;
+use Failnet;
 
 /**
  * Failnet - Server syncronization class,
  * 		Used as Failnet's server sync handler.
  *
  *
- * @package nodes
- * @author Obsidian
- * @copyright (c) 2009 - 2010 -- Failnet Project
- * @license GNU General Public License, Version 3
+ * @category    Failnet
+ * @package     node
+ * @author      Failnet Project
+ * @license     GNU General Public License, Version 3
+ * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class failnet_node_server extends failnet_common
+class Server extends Base
 {
 	/**
 	 * Specialized init function to allow class construction to be easier.
