@@ -51,15 +51,13 @@ class Autoload extends Base
 	private static $paths = array();
 
 	/**
-	 * Specialized init function to allow class construction to be easier.
-	 * @see includes/failnet_common#init()
-	 * @return void
+	 * @ignore
 	 */
 	public function __construct()
 	{
 		self::$paths = array(
-			FAILNET_ROOT . 'Addons/Autoload/',
 			FAILNET_ROOT . 'Includes/',
+			FAILNET_ROOT . 'Addons/Autoload/',
 			FAILNET_ROOT . 'Addons/',
 		);
 	}
@@ -79,12 +77,32 @@ class Autoload extends Base
 			{
 				require $path . $name . '.php';
 				if(!class_exists($class))
-					throw new Exception(Exception::parse(Exception::ERR_AUTOLOAD_CLASS_INVALID, array($path . $name . '.php')));
+					throw new Exception(ex(Exception::ERR_AUTOLOAD_CLASS_INVALID, $path . $name . '.php'));
 				return;
 			}
 		}
-		// Need a new solution, to handle stacking of Autoloaders.
-		//throw new failnet_exception(failnet_exception::ERR_AUTOLOAD_NO_FILE, $class);
+		return false;
+	}
+
+	/**
+	 * Scan a directory for files that we would want to autoload
+	 * @param string $path - The path to scan
+	 * @param string $strip - Anything extra to strip out of the path when generating the namespace
+	 * @param string $prefix - A namespace prefix to use, if we need one
+	 * @return array - An array of class names to autoload.
+	 */
+	function getNamespaces($path, $strip = '', $prefix = '')
+	{
+		$files = scandir($path);
+		foreach($files as $file)
+		{
+			if($file[0] == '.' || substr(strrchr($file, '.'), 1) != 'php')
+				continue;
+
+			$prefix = (!$prefix) ? 'Failnet\\' . str_replace('/', '\\', substr($path, strlen(FAILNET_ROOT . $strip) + 1)) : $prefix;
+			$return[] = $prefix . (substr($prefix, -1, 1) != '\\' ? '\\' : '') . ucfirst(substr($file, 0, strrpos($file, '.')));
+		}
+		return $return;
 	}
 
 	/**

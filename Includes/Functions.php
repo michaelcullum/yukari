@@ -233,24 +233,6 @@ function timespan($time, $last_comma = false)
 }
 
 /**
- * Scan a directory for files that we would want to autoload
- * @param string $path - The path to scan
- * @param string $prefix - A namespace prefix to use, if we need one
- * @return array - An array of class names to autoload.
- */
-function autoload_scan($path, $prefix = '')
-{
-	$files = scandir(FAILNET_ROOT . $path);
-	foreach($files as $file)
-	{
-		if($file[0] == '.' || substr(strrchr($file, '.'), 1) != 'php')
-			continue;
-		$return[] = (($prefix) ? $prefix : 'Failnet\\') . ucfirst(substr($file, 0, strrpos($file, '.')));
-	}
-	return $return;
-}
-
-/**
  * Generate a backtrace and return it for use elsewhere.
  * @return array - The backtrace results.
  */
@@ -381,7 +363,7 @@ function unique_string($length = 32)
  *
  * @author Phergie Development Team {@link http://code.assembla.com/phergie/subversion/nodes}
  */
-function hostmasks_to_regex($list)
+function hostmasksToRegex($list)
 {
 	static $hmask_find, $hmask_repl;
 	if(empty($hmask_find))
@@ -424,7 +406,7 @@ function hostmasks_to_regex($list)
  *
  * @author Phergie Development Team {@link http://code.assembla.com/phergie/subversion/nodes}
  */
-function parse_hostmask($hostmask, &$nick, &$user, &$host)
+function parseHostmask($hostmask, &$nick, &$user, &$host)
 {
 	if (preg_match('/^([^!@]+)!([^@]+)@(.*)$/', $hostmask, $match) > 0)
 	{
