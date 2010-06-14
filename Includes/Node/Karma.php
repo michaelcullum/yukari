@@ -65,11 +65,9 @@ class Karma extends Base
 	const KARMA_DECREASE = -1;
 
 	/**
-	 * Specialized init function to allow class construction to be easier.
-	 * @see includes/failnet_common#init()
-	 * @return void
+	 * @ignore
 	 */
-	public function init()
+	public function __construct()
 	{
 		if(!defined('M_EULER'))
             define('M_EULER', '0.57721566490153286061');
@@ -104,10 +102,9 @@ class Karma extends Base
         );
 
 		// Add in our prepared SQL statements. ;)
-		// @todo convert for new db
-		$this->sql('karma', 'create', 'INSERT INTO karma ( karma_value, term ) VALUES ( :karma, :term )');
-		$this->sql('karma', 'update', 'UPDATE karma SET karma_value = :karma WHERE LOWER(term) = LOWER(:term)');
-		$this->sql('karma', 'get', 'SELECT karma_value FROM karma WHERE LOWER(term) = LOWER(:term) LIMIT 1');
+		Bot::core('db')->armQuery('karma', 'create', 'INSERT INTO karma ( karma_value, term ) VALUES ( :karma, :term )');
+		Bot::core('db')->armQuery('karma', 'update', 'UPDATE karma SET karma_value = :karma WHERE LOWER(term) = LOWER(:term)');
+		Bot::core('db')->armQuery('karma', 'get', 'SELECT karma_value FROM karma WHERE LOWER(term) = LOWER(:term) LIMIT 1');
 	}
 
 	/**
@@ -115,7 +112,7 @@ class Karma extends Base
 	 * @param string $term - The karma term to lookup.
 	 * @return mixed - NULL if no such karma term, integer of karma value if karma term found.
 	 */
-	public function get_karma($term)
+	public function getKarma($term)
 	{
 		// Check within the fixed karma list and karma blacklist.
 		if(isset($this->blacklist[$term]))
@@ -123,9 +120,8 @@ class Karma extends Base
 		if(isset($this->fixed[$term]))
 			return sprintf($this->fixed[$term], $term);
 
-		// @todo convert for new db
-		$this->failnet->sql('karma', 'get')->execute(array(':term' => $term));
-		$result = $this->failnet->sql('karma', 'get')->fetch(PDO::FETCH_ASSOC);
+		Bot::core('db')->useQuery('karma', 'get')->execute(array(':term' => $term));
+		$result = Bot::core('db')->useQuery('karma', 'get')->fetch(PDO::FETCH_ASSOC);
 		if(!$result)
 			return NULL;
 
@@ -138,7 +134,7 @@ class Karma extends Base
 	 * @param string $type - Whether or not we should increase or decrease the karma for this term
 	 * @return boolean - Whether or not the karma change was successful
 	 */
-	public function set_karma($term, $type)
+	public function setKarma($term, $type)
 	{
 		// Make sure we're playing fair here. :)
 		if($type !== self::KARMA_INCREASE && $type !== self::KARMA_DECREASE)
@@ -150,16 +146,15 @@ class Karma extends Base
 		if(isset($this->fixed[$term]))
 			return 'You\'re not allowed to change karma for that!';
 
-		$amount = $this->get_karma($term);
+		$amount = $this->getKarma($term);
 
-		// @todo convert for new db
 		if(!is_null($amount))
 		{
-			$this->failnet->sql('karma', 'update')->execute(array(':term' => $term, ':karma' => $amount + $type));
+			Bot::core('db')->useQuery('karma', 'update')->execute(array(':term' => $term, ':karma' => $amount + $type));
 		}
 		else
 		{
-			$this->failnet->sql('karma', 'create')->execute(array(':term' => $term, ':karma' => 0 + $type));
+			Bot::core('db')->useQuery('karma', 'create')->execute(array(':term' => $term, ':karma' => 0 + $type));
 		}
 
 		return true;
