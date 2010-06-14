@@ -5,13 +5,13 @@
  *
  *  Failnet -- PHP-based IRC Bot
  *-------------------------------------------------------------------
- * @version		3.0.0 DEV
- * @category	Failnet
- * @package		nodes
- * @author		Failnet Project
- * @copyright	(c) 2009 - 2010 -- Failnet Project
- * @license		GNU General Public License, Version 3
- * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
+ * @version     3.0.0 DEV
+ * @category    Failnet
+ * @package     node
+ * @author      Failnet Project
+ * @copyright   (c) 2009 - 2010 -- Failnet Project
+ * @license     GNU General Public License, Version 3
+ * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  *
  *===================================================================
  *
@@ -30,19 +30,21 @@
  *
  */
 
+namespace Failnet\Node;
+use Failnet;
 
 /**
  * Failnet - User authorization handling class,
  * 		Used as Failnet's authorization handler.
  *
  *
- * @category	Failnet
- * @package		nodes
- * @author		Failnet Project
- * @license		GNU General Public License, Version 3
- * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
+ * @category    Failnet
+ * @package     node
+ * @author      Failnet Project
+ * @license     GNU General Public License, Version 3
+ * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class failnet_node_authorize extends failnet_common
+class Authorize extends Base
 {
 
 /**
