@@ -75,7 +75,7 @@ abstract class Bot
 	 * Grab the core object.
 	 * @param string $core_name - The name of the core object that we want, or an empty string if we want THE core.
 	 * @return \Failnet\Base - The desired core object if present.
-	 * @throws \Failnet\Exception
+	 * @throws Failnet\Exception
 	 */
 	public static function core($core_name = '')
 	{
@@ -90,7 +90,7 @@ abstract class Bot
 	 * Grab a node object.
 	 * @param string $node_name - The name of the node object that we want.
 	 * @return \Failnet\Base - The desired node object if present, or void if no such object.
-	 * @throws \Failnet\Exception
+	 * @throws Failnet\Exception
 	 */
 	public static function node($node_name)
 	{
@@ -103,7 +103,7 @@ abstract class Bot
 	 * Grab a cron object.
 	 * @param string $cron_name - The name of the cron object that we want.
 	 * @return \Failnet\Cron\Common - The desired cron object if present, or void if no such object.
-	 * @throws \Failnet\Exception
+	 * @throws Failnet\Exception
 	 */
 	public static function cron($cron_name)
 	{
@@ -118,7 +118,7 @@ abstract class Bot
 	 * Grab a plugin object.
 	 * @param string $plugin_name - The name of the plugin object that we want.
 	 * @return Failnet\Plugin\Common - The desired plugin object if present.
-	 * @throws \Failnet\Exception
+	 * @throws Failnet\Exception
 	 */
 	public static function plugin($plugin_name)
 	{

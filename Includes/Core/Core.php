@@ -158,7 +158,7 @@ class Core extends Base
 	 * Failnet configuration file settings load method
 	 * @param string $file - The configuration file to load
 	 * @return void
-	 * @throws \Failnet\Exception
+	 * @throws Failnet\Exception
 	 */
 	private function load($file)
 	{
@@ -183,7 +183,7 @@ class Core extends Base
 	/**
 	 * Setup the database connection and load up our prepared SQL statements
 	 * @return void
-	 * @throws \Failnet\Exception
+	 * @throws Failnet\Exception
 	 */
 	public function setupDB()
 	{
@@ -414,7 +414,7 @@ class Core extends Base
 	 * Magic method __get() to use for referencing specific module classes, used to return the property desired
 	 * @param string $name - The name of the module class to use
 	 * @return object - The object we want to use, or void.
-	 * @throws \Failnet\Exception
+	 * @throws Failnet\Exception
 	 */
 	public function __get($name)
 	{
