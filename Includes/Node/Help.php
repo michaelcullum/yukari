@@ -5,13 +5,13 @@
  *
  *  Failnet -- PHP-based IRC Bot
  *-------------------------------------------------------------------
- * @version		3.0.0 DEV
- * @category	Failnet
- * @package		nodes
- * @author		Failnet Project
- * @copyright	(c) 2009 - 2010 -- Failnet Project
- * @license		GNU General Public License, Version 3
- * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
+  * @version     3.0.0 DEV
+ * @category    Failnet
+ * @package     node
+ * @author      Failnet Project
+ * @copyright   (c) 2009 - 2010 -- Failnet Project
+ * @license     GNU General Public License, Version 3
+ * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  *
  *===================================================================
  *
@@ -30,19 +30,21 @@
  *
  */
 
+namespace Failnet\Node;
+use Failnet;
 
 /**
  * Failnet - Help class,
  * 		Failnet's handler for the dynamic help system
  *
  *
- * @category	Failnet
- * @package		nodes
- * @author		Failnet Project
- * @license		GNU General Public License, Version 3
- * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
+ * @category    Failnet
+ * @package     node
+ * @author      Failnet Project
+ * @license     GNU General Public License, Version 3
+ * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class failnet_node_help extends failnet_common
+class Help extends Base
 {
 	/**
 	 * @var array - Index list of plugins with commands
@@ -54,7 +56,13 @@ class failnet_node_help extends failnet_common
 	 */
 	public $commands = array();
 
-	public function collect($name, $commands)
+	/**
+	 * Collects and merges in the command information from a plugin
+	 * @param string $name - The name of the plugin
+	 * @param array $commands - The command set information
+	 * @return void
+	 */
+	public function collect($name, array $commands)
 	{
 		$commands_index = array();
 		foreach($commands as $c_name => $c_value)
@@ -62,7 +70,7 @@ class failnet_node_help extends failnet_common
 			$commands_index[] = $c_name;
 			if(isset($this->commands[$c_name]))
 			{
-				failnet::core('ui')->debug('Duplicate command name within dynamic help system detected');
+				Bot::core('ui')->debug('Duplicate command name within dynamic help system detected');
 			}
 			$this->commands[$c_name] = $c_value;
 		}
