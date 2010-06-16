@@ -48,7 +48,23 @@ abstract class Common extends Base
 {
 	public $status = TASK_ZOMBIE;
 
-	abstract public function nextRun();
+	abstract public function getNextRun();
 
-	abstract public function runTask();
+	public function autoRunTask()
+	{
+		if($this->status === TASK_ZOMBIE)
+			throw new Exception(ex(Exception::ERR_CRON_TASK_ACCESS_ZOMBIE));
+		if($this->status === TASK_MANUAL)
+			throw new Exception(ex(Exception::ERR_CRON_TASK_ACCESS_MANUAL));
+		return $this->runTask(false);
+	}
+
+	public function manualRunTask()
+	{
+		if($this->status === TASK_ZOMBIE)
+			throw new Exception(ex(Exception::ERR_CRON_TASK_ACCESS_ZOMBIE));
+		return $this->runTask(true);
+	}
+
+	abstract protected function runTask($manual_call);
 }

@@ -6,13 +6,13 @@
  *
  *  Failnet -- PHP-based IRC Bot
  *-------------------------------------------------------------------
- * @version		3.0.0 DEV
- * @category	Failnet
- * @package		Failnet
- * @author		Failnet Project
- * @copyright	(c) 2009 - 2010 -- Failnet Project
- * @license		GNU General Public License, Version 3
- * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
+ * @version     3.0.0 DEV
+ * @category    Failnet
+ * @package     Failnet
+ * @author      Failnet Project
+ * @copyright   (c) 2009 - 2010 -- Failnet Project
+ * @license     GNU General Public License, Version 3
+ * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  *
  *===================================================================
  *
@@ -29,6 +29,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+ */
+
+/**
+ * @ignore
  */
 
 define('FAILNET_ROOT', dirname(__FILE__));

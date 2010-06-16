@@ -36,7 +36,7 @@ namespace Failnet;
 
 /**
  * Failnet - Exception class,
- * 		Extension of the default Exception class, adapted to suit Failnet's needs.
+ * 	    Extension of the default Exception class, adapted to suit Failnet's needs.
  *
  *
  * @category    Failnet
@@ -87,10 +87,12 @@ class Exception extends \Exception
 	const ERR_CRON_LOAD_FAILED = 3000;
 	const ERR_CRON_NO_SUCH_TASK = 3001;
 	const ERR_CRON_TASK_ALREADY_LOADED = 3002;
+	const ERR_CRON_INVALID_STATE = 3003;
 
 	const ERR_CRON_INVALID_TASK = 3100;
 	const ERR_CRON_TASK_STATUS_INVALID = 3101;
-	const ERR_CRON_TASK_ACCESS_ZOMBIE = 3102;
+	const ERR_CRON_TASK_ACCESS_MANUAL = 3102;
+	const ERR_CRON_TASK_ACCESS_ZOMBIE = 3103;
 
 	/**
 	 * Exception setup method, loads the error messages up for translation and also performs additional setup if necessary
@@ -135,10 +137,12 @@ class Exception extends \Exception
 			self::ERR_CRON_LOAD_FAILED => 'Cron system load failed for unknown reason.',
 			self::ERR_CRON_NO_SUCH_TASK => 'No class file found for cron task "%1$s"',
 			self::ERR_CRON_TASK_ALREADY_LOADED => 'Cron task "%1$s" is already loaded',
+			self::ERR_CRON_INVALID_STATE => 'Attempted to set an invalid state on a cron task',
 
 			self::ERR_CRON_INVALID_TASK => 'Invalid cron task "%1$s" specified',
 			self::ERR_CRON_TASK_STATUS_INVALID => 'Cron task "%1$s" has an invalid status code [%2$s]',
-			self::ERR_CRON_TASK_ACCESS_ZOMBIE => 'Attempted to access zombie cron task "%1$s"',
+			self::ERR_CRON_TASK_ACCESS_MANUAL => 'Attempted to automatically run manual cron task "%1$s"',
+			self::ERR_CRON_TASK_ACCESS_ZOMBIE => 'Attempted to run zombie cron task "%1$s"',
 		);
 
 		// Just in case we extend this class and want to define additional exception messages
