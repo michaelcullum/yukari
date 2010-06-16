@@ -5,13 +5,13 @@
  *
  *  Failnet -- PHP-based IRC Bot
  *-------------------------------------------------------------------
- * @version		3.0.0 DEV
- * @category	Failnet
- * @package		libs
- * @author		Failnet Project
- * @copyright	(c) 2009 - 2010 -- Failnet Project
- * @license		GNU General Public License, Version 3
- * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
+ * @version     3.0.0 DEV
+ * @category    Failnet
+ * @package     libs
+ * @author      Failnet Project
+ * @copyright   (c) 2009 - 2010 -- Failnet Project
+ * @license     GNU General Public License, Version 3
+ * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  *
  *===================================================================
  *
@@ -35,16 +35,16 @@ use Failnet;
 
 /**
  * Failnet - Hostmask class,
- * 		Used as a class for housing hostmask data
+ * 	    Used as a class for housing hostmask data
  *
  *
- * @category	Failnet
- * @package		libs
- * @author		Failnet Project
- * @license		GNU General Public License, Version 3
- * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
+ * @category    Failnet
+ * @package     libs
+ * @author      Failnet Project
+ * @license     GNU General Public License, Version 3
+ * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class Hostmask extends Common
+class Hostmask extends Base
 {
 	/**
 	 * @var string - The host of the hostmask
@@ -62,22 +62,39 @@ class Hostmask extends Common
 	public $username = '';
 
 	/**
+	 * Constructor method to initialize components of the hostmask.
+	 * @param string $nick - Nick of the hostmask
+	 * @param string $username - Username of the hostmask
+	 * @param string $host - Host of the hostmask
+	 * @return void
+	 */
+	public function __construct($nick, $username, $host)
+	{
+		list($this->nick, $this->username, $this->host) = array($nick, $username, $host);
+	}
+
+	/**
 	 * Parses a string containing the entire hostmask into a new instance of this class.
 	 * @param string $hostmask - Entire hostmask including the nick, username, and host components
-	 * @return object failnet_hostmask - New object instance populated with the data parsed from the provided hostmask string
+	 * @return object Failnet\Hostmask - New object instance populated with the data parsed from the provided hostmask string
+	 * @throws Failnet\Exception
 	 */
 	public static function load($hostmask)
 	{
-		if(preg_match('/^([^!@]+)!(?:[ni]=)?([^@]+)@([^ ]+)/', $hostmask, $match))
-		{
-			list(, $nick, $username, $host) = $match;
-			return new Hostmask($nick, $username, $host);
-		}
-		else
-		{
-			// @todo replace with exception
-			trigger_error('Invalid hostmask specified: "' . $hostmask . '"', E_USER_WARNING);
-		}
+		if(!preg_match('/^([^!@]+)!(?:[ni]=)?([^@]+)@([^ ]+)/', $hostmask, $match))
+			throw new Exception(ex(Exception::ERR_INVALID_HOSTMASK, $hostmask));
+
+		list(, $nick, $username, $host) = $match;
+		return new Hostmask($nick, $username, $host);
+	}
+
+	/**
+	 * Returns the hostmask for the originating server or user.
+	 * @return string - The full hostmask desired
+	 */
+	public function __toString()
+	{
+		return $this->nick . '!' . $this->username . '@' . $this->host;
 	}
 
 	/**
@@ -88,28 +105,5 @@ class Hostmask extends Common
 	public function checkMatch($regex)
 	{
 		return (preg_match('#^' . str_replace('*', '.*', $regex) . '$#i', (string) $this) > 0);
-	}
-
-	/**
-	 * Constructor method to initialize components of the hostmask.
-	 * @param string $nick - Nick of the hostmask
-	 * @param string $username - Username of the hostmask
-	 * @param string $host - Host of the hostmask
-	 * @return void
-	 */
-	public function __construct($nick, $username, $host)
-	{
-		$this->nick = $nick;
-		$this->username = $username;
-		$this->host = $host;
-	}
-
-	/**
-	 * Returns the hostmask for the originating server or user.
-	 * @return string - The full hostmask desired
-	 */
-	public function __toString()
-	{
-		return $this->nick . '!' . $this->username . '@' . $this->host;
 	}
 }
