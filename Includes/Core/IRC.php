@@ -43,7 +43,7 @@ use Failnet;
  * @license		GNU General Public License, Version 3
  * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class IRC extends Common
+class IRC extends Base
 {
 	/**
 	 * Some methods here (actually, quite a few) borrowed from Phergie.
