@@ -31,15 +31,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-/**
- * Users table
- */
-CREATE TABLE users (
-	user_id INTEGER PRIMARY KEY NOT NULL,
-	nick TEXT NOT NULL DEFAULT '',
-	authlevel INTEGER UNSIGNED NOT NULL DEFAULT 0,
-	confirm_key TEXT NOT NULL DEFAULT '',
-	password TEXT NOT NULL DEFAULT ''
+CREATE TABLE Logs (
+	log_id INTEGER PRIMARY KEY NOT NULL,
+	log_time INTEGER UNSIGNED NOT NULL DEFAULT 0,
+	sender TEXT NOT NULL DEFAULT '',
+	location TEXT NOT NULL DEFAULT '',
+	type INTEGER UNSIGNED NOT NULL DEFAULT 0,
+	event TEXT NOT NULL DEFAULT ''
 );
-CREATE UNIQUE INDEX nick ON users ( nick );
