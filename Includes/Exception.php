@@ -58,7 +58,8 @@ class Exception extends \Exception
 	const ERR_STARTUP_PHP_SAPI = 1001;
 	const ERR_STARTUP_NO_PDO = 1002;
 	const ERR_STARTUP_NO_PDO_SQLITE = 1003;
-	const ERR_STARTUP_NO_ACCESS_DB_DIR = 1004;
+	const ERR_STARTUP_NO_ACCESS_CFG_DIR = 1004;
+	const ERR_STARTUP_NO_ACCESS_DB_DIR = 1005;
 
 	const ERR_NO_SUCH_CORE_OBJ = 1100;
 	const ERR_NO_SUCH_NODE_OBJ = 1101;
@@ -109,6 +110,7 @@ class Exception extends \Exception
 			self::ERR_STARTUP_PHP_SAPI => 'Failnet must be run in the CLI SAPI',
 			self::ERR_STARTUP_NO_PDO => 'Failnet requires the PDO PHP extension to be loaded',
 			self::ERR_STARTUP_NO_PDO_SQLITE => 'Failnet requires the PDO_SQLite PHP extension to be loaded',
+			self::ERR_STARTUP_NO_ACCESS_CFG_DIR => 'Failnet requires the configuration file directory to exist and be readable/writeable',
 			self::ERR_STARTUP_NO_ACCESS_DB_DIR => 'Failnet requires the database directory to exist and be readable/writeable',
 
 			self::ERR_NO_SUCH_CORE_OBJ => 'An invalid core object was specified for access: %1$s',

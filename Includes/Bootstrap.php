@@ -55,6 +55,8 @@ if(!extension_loaded('PDO'))
 	throw new Exception(ex(Exception::ERR_STARTUP_NO_PDO));
 if(!extension_loaded('pdo_sqlite'))
 	throw new Exception(ex(Exception::ERR_STARTUP_NO_PDO_SQLITE));
+if(!file_exists(FAILNET_ROOT . 'Data/Config/') || !is_readable(FAILNET_ROOT . 'Data/Config/') || !is_writeable(FAILNET_ROOT . 'Data/Config/') || !is_dir(FAILNET_ROOT . 'Data/Config/'))
+	throw new Exception(ex(Exception::ERR_STARTUP_NO_ACCESS_CFG_DIR));
 if(!file_exists(FAILNET_ROOT . 'Data/DB/') || !is_readable(FAILNET_ROOT . 'Data/DB/') || !is_writeable(FAILNET_ROOT . 'Data/DB/') || !is_dir(FAILNET_ROOT . 'Data/DB/'))
 	throw new Exception(ex(Exception::ERR_STARTUP_NO_ACCESS_DB_DIR));
 
