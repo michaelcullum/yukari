@@ -59,7 +59,8 @@ if(!file_exists(FAILNET_ROOT . 'Data/DB/') || !is_readable(FAILNET_ROOT . 'Data/
 	throw new Exception(ex(Exception::ERR_STARTUP_NO_ACCESS_DB_DIR));
 
 // Load up the common files, setup our JIT class autoloading, and get going.
-require FAILNET_ROOT . 'Includes/Common.php';
+require FAILNET_ROOT . 'Includes/Base.php';
+require FAILNET_ROOT . 'Includes/Bot.php';
 require FAILNET_ROOT . 'Includes/Autoload.php';
 require FAILNET_ROOT . 'Includes/Functions.php';
 
