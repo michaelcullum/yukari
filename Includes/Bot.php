@@ -71,6 +71,11 @@ abstract class Bot
 	protected static $hooks = array();
 
 	/**
+	 * @var array - Array of all $argv arguments passed to the script, properly parsed.
+	 */
+	protected static $args = array();
+
+	/**
 	 * Grab the core object.
 	 * @param string $core_name - The name of the core object that we want, or an empty string if we want THE core.
 	 * @return \Failnet\Base - The desired core object if present.
@@ -208,6 +213,55 @@ abstract class Bot
 	public static function checkPluginLoaded($plugin_name)
 	{
 		return isset(self::$plugins[$plugin_name]);
+	}
+
+
+	/**
+	 * Pull a specific arg that should have been passed to the script, it was sent.
+	 * @param string $arg_name - The name of the CLI arg to grab (must have been present in $_SERVER['argv'])
+	 * @return mixed - NULL if no such arg, the arg if present.
+	 */
+	public static function arg($arg_name)
+	{
+		if(isset(self::$args[$arg_name]))
+			return self::$args[$arg_name];
+		return NULL;
+	}
+
+	/**
+	 * Load up the CLI args and parse them.
+	 * @param array $args - An array of CLI args to load and parse
+	 * @return void
+	 *
+	 * @copyright   (c) 2010 Sam Thompson
+	 * @author      Sam Thompson
+	 * @license     GNU General Public License, Version 3
+	 * @note        This code generously provided by a friend of mine, Sam Thompson.  Kudos!
+	 */
+	public static function loadArgs(array $args)
+	{
+		foreach($args as $i => $val)
+		{
+			if($val[0] === '-')
+			{
+				if($val[1] === '-')
+				{
+					$separator = strpos($val, '=');
+					if($separator === false)
+					{
+						self::$args[substr($val, 2, $separator - 2)] = substr($val, $separator + 1);
+					}
+					else
+					{
+						self::$args[substr($val, 2)] = true;
+					}
+				}
+				else
+				{
+					self::$args[substr($val, 1)] = true;
+				}
+			}
+		}
 	}
 
 
