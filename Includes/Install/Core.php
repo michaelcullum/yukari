@@ -47,5 +47,5 @@ use Failnet\Lib as Lib;
  */
 class Core extends Base
 {
-
+	// blargh
 }
