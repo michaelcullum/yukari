@@ -75,18 +75,13 @@ class Core extends Base
 	 */
 	public function __construct()
 	{
-		// Check to see if date.timezone is empty in the PHP.ini; if so, set the timezone with some Hax to prevent strict errors.
-		if(!ini_get('date.timezone'))
-			@date_default_timezone_set(@date_default_timezone_get());
-
 		// Set the time that Failnet was started.
 		$this->start = time();
 		$this->base_mem = memory_get_usage();
 		$this->base_mem_peak = memory_get_peak_usage();
 
 		// Load the config file
-		$cfg_file = ($_SERVER['argc'] > 1) ? $_SERVER['argv'][1] : 'config';
-		$this->load($cfg_file);
+		$this->load(CONFIG_FILE);
 
 		// Load the UI out of cycle so we can do this the right way
 		Bot::setCore('ui', 'Failnet\\Core\\UI');
@@ -161,7 +156,7 @@ class Core extends Base
 	 */
 	private function load($file)
 	{
-		if(!@file_exists(FAILNET_ROOT . $file . '.php') || !@is_readable(FAILNET_ROOT . $file . '.php'))
+		if(!file_exists(FAILNET_ROOT . "Data/Config/{$file}.php") || !is_readable(FAILNET_ROOT . "Data/Config/{$file}.php"))
 			throw new Exception(ex(Exception::ERR_NO_CONFIG));
 
 		$settings = require FAILNET_ROOT . $file . '.php';

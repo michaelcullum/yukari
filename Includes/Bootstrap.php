@@ -60,6 +60,13 @@ if(!file_exists(FAILNET_ROOT . 'Data/Config/') || !is_readable(FAILNET_ROOT . 'D
 if(!file_exists(FAILNET_ROOT . 'Data/DB/') || !is_readable(FAILNET_ROOT . 'Data/DB/') || !is_writeable(FAILNET_ROOT . 'Data/DB/') || !is_dir(FAILNET_ROOT . 'Data/DB/'))
 	throw new Exception(ex(Exception::ERR_STARTUP_NO_ACCESS_DB_DIR));
 
+// Check to see if date.timezone is empty in the PHP.ini; if so, set the timezone with some Hax to prevent strict errors.
+if(!ini_get('date.timezone'))
+	@date_default_timezone_set(@date_default_timezone_get());
+
+// The first chunk always gets in the way, so we drop it.
+array_shift($_SERVER['argv']);
+
 // Load up the common files, setup our JIT class autoloading, and get going.
 require FAILNET_ROOT . 'Includes/Base.php';
 require FAILNET_ROOT . 'Includes/Bot.php';
@@ -67,5 +74,19 @@ require FAILNET_ROOT . 'Includes/Autoload.php';
 require FAILNET_ROOT . 'Includes/Functions.php';
 
 Autoload::register();
-Bot::setCore('core', 'Failnet\\Core\\Core');
+Bot::loadArgs($_SERVER['argv']);
+define('IN_INSTALL', (Bot::arg('mode') === 'install'));
+define('CONFIG_FILE', Bot::arg('config'));
+
+// Load the appropriate core file.
+if(!IN_INSTALL && file_exists(FAILNET_ROOT . 'Data/Config/' . CONFIG_FILE . '.php'))
+{
+	Bot::setCore('core', 'Failnet\\Core\\Core');
+}
+else
+{
+	Bot::setCore('core', 'Failnet\\Install\\Core');
+}
+
+// Run it!
 Bot::core()->run();
