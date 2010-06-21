@@ -7,7 +7,7 @@
 ::-------------------------------------------------------------------
 :: Version:     3.0.0 DEV
 :: Copyright:   (c) 2009 - 2010 -- Damian Bushong
-:: License:     GNU General Public License, Version 3
+:: License:     MIT License
 ::
 ::===================================================================
 ::

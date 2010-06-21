@@ -8,7 +8,7 @@
  *	Script info:
  * Version:		3.0.0 DEV
  * Copyright:	(c) 2009 - 2010 -- Damian Bushong
- * License:		GNU General Public License, Version 3
+ * License:		MIT License
  *
  *===================================================================
  *
@@ -39,7 +39,7 @@
  * @package plugins
  * @author Obsidian
  * @copyright (c) 2009 - 2010 -- Damian Bushong
- * @license GNU General Public License, Version 3
+ * @license MIT License
  */
 class failnet_plugin_weather extends failnet_plugin_common
 {

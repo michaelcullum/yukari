@@ -8,7 +8,7 @@
  *	Script info:
  * Version:		3.0.0 DEV
  * Copyright:	(c) 2009 - 2010 -- Damian Bushong
- * License:		GNU General Public License, Version 3
+ * License:		MIT License
  *
  *===================================================================
  *
@@ -38,7 +38,7 @@
  * @package connection
  * @author Obsidian
  * @copyright (c) 2009 - 2010 -- Damian Bushong
- * @license GNU General Public License, Version 3
+ * @license MIT License
  */
 class failnet_event_command extends failnet_event_request
 {

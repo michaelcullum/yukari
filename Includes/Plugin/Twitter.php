@@ -8,7 +8,7 @@
  *	Script info:
  * Version:		0.2.0
  * Copyright:	(c) 2009 - Obsidian
- * License:		GNU General Public License, Version 3
+ * License:		MIT License
  *
  *===================================================================
  *
@@ -40,7 +40,7 @@
  *
  * @author Damian Bushong (a.k.a. Obsidian)
  * @copyright (c) 2009 - Obsidian
- * @license GNU General Public License, Version 3
+ * @license MIT License
  */
 class twitter
 {

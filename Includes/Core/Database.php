@@ -10,23 +10,13 @@
  * @package     core
  * @author      Damian Bushong
  * @copyright   (c) 2009 - 2010 -- Damian Bushong
- * @license     GNU General Public License, Version 3
+ * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  *
  *===================================================================
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * This source file is subject to the MIT license that is bundled
+ * with this package in the file LICENSE.
  *
  */
 
@@ -41,7 +31,7 @@ use Failnet;
  * @category    Failnet
  * @package     core
  * @author      Damian Bushong
- * @license     GNU General Public License, Version 3
+ * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
 class Database extends \PDO

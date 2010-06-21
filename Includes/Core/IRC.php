@@ -10,7 +10,7 @@
  * @package     core
  * @author      Damian Bushong
  * @copyright   (c) 2009 - 2010 -- Damian Bushong
- * @license     GNU General Public License, Version 3
+ * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  *
  *===================================================================
@@ -40,7 +40,7 @@ use Failnet;
  * @category    Failnet
  * @package     core
  * @author      Damian Bushong
- * @license     GNU General Public License, Version 3
+ * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
 class IRC extends Base
