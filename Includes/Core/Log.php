@@ -53,11 +53,14 @@ class Log extends Base
 	private $log = array();
 
 	/**
-	 * Initiator method
-	 * @see includes/failnet_common#init()
+	 * @ignore
 	 */
-	public function init()
+	public function __construct()
 	{
+		Bot::core('db')->armQuery('logs', 'create', 'INSERT INTO Logs ( sender, location, type, event, log_time ) VALUES ( :sender, :where, :type, :data, :time )');
+		Bot::core('db')->armQuery('logs', 'lastsaid', 'SELECT * FROM Logs WHERE preg_match()');
+		//PDO::sqliteCreateFunction
+		// @todo table schema
 		// Make sure our logs directory actually exists and is manipulatable
 		if(!file_exists(FAILNET_ROOT . '/logs') || !is_readable(FAILNET_ROOT . '/logs') || !is_writeable(FAILNET_ROOT . '/logs'))
     	{
