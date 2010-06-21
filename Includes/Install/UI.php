@@ -36,8 +36,8 @@ use Failnet\Core as Core;
 use Failnet\Lib as Lib;
 
 /**
- * Failnet - Installer core class,
- *      Failnet's installer core.  This will handle all of the juicy stuff.
+ * Failnet - User Interface class,
+ *      Handles the prompts and the output shiz for Failnet's installer.
  *
  *
  * @category    Failnet
@@ -46,7 +46,7 @@ use Failnet\Lib as Lib;
  * @license     GNU General Public License, Version 3
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class Core extends Base
+class UI extends Base
 {
 	// blargh
 }

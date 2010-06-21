@@ -67,6 +67,16 @@ class Database extends \PDO
 	}
 
 	/**
+	 * Checks to see if a specified table exists.
+	 * @param string $table_name - The name of the table to check.
+	 * @return boolean - Whether or not the table exists
+	 */
+	public function tableExists($table_name)
+	{
+		return (bool) $this->query('SELECT COUNT(*) FROM sqlite_master WHERE name = ' . $this->quote($table_name))->fetchColumn();
+	}
+
+	/**
 	 * Prepared query object generation and storage
 	 * @param string $table - The table that we are looking at
 	 * @param string $type - The type of statement we are looking at
