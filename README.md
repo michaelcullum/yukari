@@ -5,7 +5,7 @@ and mainly designed for use with channel management.
 
 **Version**:	*3.0.0*
 
-**Copyright**: *(c) 2009 - 2010 -- Failnet Project*
+**Copyright**: *(c) 2009 - 2010 -- Damian Bushong*
 
 **License**: GNU General Public License, Version 3 - <http://opensource.org/licenses/gpl-3.0.html>
 

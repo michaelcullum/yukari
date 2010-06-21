@@ -8,8 +8,8 @@
  * @version     3.0.0 DEV
  * @category    Failnet
  * @package     core
- * @author      Failnet Project
- * @copyright   (c) 2009 - 2010 -- Failnet Project
+ * @author      Damian Bushong
+ * @copyright   (c) 2009 - 2010 -- Damian Bushong
  * @license     GNU General Public License, Version 3
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  *
@@ -41,7 +41,7 @@ use Failnet;
  *
  * @category    Failnet
  * @package     core
- * @author      Failnet Project
+ * @author      Damian Bushong
  * @license     GNU General Public License, Version 3
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
@@ -146,7 +146,7 @@ class UI extends Base
 		{
 			$this->output('---------------------------------------------------------------------');
 			$this->output('Failnet -- PHP-based IRC Bot version ' . FAILNET_VERSION);
-			$this->output('Copyright (c) 2009 - 2010 -- Failnet Project');
+			$this->output('Copyright (c) 2009 - 2010 -- Damian Bushong');
 			$this->output('');
 			$this->output('This program is free software: you can redistribute it and/or modify');
 			$this->output('it under the terms of the GNU General Public License as published by');

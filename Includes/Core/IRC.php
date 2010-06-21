@@ -5,13 +5,13 @@
  *
  *  Failnet -- PHP-based IRC Bot
  *-------------------------------------------------------------------
- * @version		3.0.0 DEV
- * @category	Failnet
- * @package		core
- * @author		Failnet Project
- * @copyright	(c) 2009 - 2010 -- Failnet Project
- * @license		GNU General Public License, Version 3
- * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
+ * @version     3.0.0 DEV
+ * @category    Failnet
+ * @package     core
+ * @author      Damian Bushong
+ * @copyright   (c) 2009 - 2010 -- Damian Bushong
+ * @license     GNU General Public License, Version 3
+ * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  *
  *===================================================================
  *
@@ -37,11 +37,11 @@ use Failnet;
  * Failnet - IRC class,
  * 	    Used as Failnet's IRC command class, for issuing IRC commands correctly as per RFC guidelines.
  *
- * @category	Failnet
- * @package		core
- * @author		Failnet Project
- * @license		GNU General Public License, Version 3
- * @link		http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
+ * @category    Failnet
+ * @package     core
+ * @author      Damian Bushong
+ * @license     GNU General Public License, Version 3
+ * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
 class IRC extends Base
 {

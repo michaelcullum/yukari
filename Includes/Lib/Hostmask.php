@@ -8,8 +8,8 @@
  * @version     3.0.0 DEV
  * @category    Failnet
  * @package     libs
- * @author      Failnet Project
- * @copyright   (c) 2009 - 2010 -- Failnet Project
+ * @author      Damian Bushong
+ * @copyright   (c) 2009 - 2010 -- Damian Bushong
  * @license     GNU General Public License, Version 3
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  *
@@ -40,7 +40,7 @@ use Failnet;
  *
  * @category    Failnet
  * @package     libs
- * @author      Failnet Project
+ * @author      Damian Bushong
  * @license     GNU General Public License, Version 3
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */

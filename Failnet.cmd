@@ -5,9 +5,9 @@
 ::
 ::  Failnet -- PHP-based IRC Bot
 ::-------------------------------------------------------------------
-:: Version:		3.0.0 DEV
-:: Copyright:	(c) 2009 - 2010 -- Failnet Project
-:: License:		GNU General Public License, Version 3
+:: Version:     3.0.0 DEV
+:: Copyright:   (c) 2009 - 2010 -- Damian Bushong
+:: License:     GNU General Public License, Version 3
 ::
 ::===================================================================
 ::
