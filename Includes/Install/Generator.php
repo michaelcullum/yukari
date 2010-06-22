@@ -63,6 +63,31 @@ class Generator extends Base
 			' *',
 			' *' . '/',
 			'',
+			'/' . '**',
+			' *',
+			' * This configuration file was automatically generated',
+			' * by Failnet.',
+			' *',
+			' * Modification of this file by hand is highly discouraged.',
+			' *',
+			' *' . '/',
+			'',
 		));
+	}
+
+	public function buildOptions(array $options)
+	{
+		foreach($options as $option)
+		{
+			$type = gettype($option['default']);
+			if($option['value'])
+			{
+				settype($option['value'], $type);
+			}
+			else
+			{
+				$option['value'] = $option['default'];
+			}
+		}
 	}
 }

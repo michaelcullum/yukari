@@ -22,7 +22,7 @@
 
 namespace Failnet\Install;
 use Failnet;
-use Failnet\Core as Core;
+//use Failnet\Core as Core;
 use Failnet\Lib as Lib;
 
 /**
