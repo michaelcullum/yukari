@@ -38,5 +38,23 @@ use Failnet\Lib as Lib;
  */
 class UI extends Base
 {
-	// blargh
+	public function stdinPrompt($inst)
+	{
+		// blah
+	}
+
+	public function getBool($key, $default)
+	{
+		// blah
+	}
+
+	public function getString($key, $default)
+	{
+		// blah
+	}
+
+	public function getInt($key, $default)
+	{
+		// blah
+	}
 }

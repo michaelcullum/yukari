@@ -79,15 +79,27 @@ class Generator extends Base
 	{
 		foreach($options as $option)
 		{
-			$type = gettype($option['default']);
 			if($option['value'])
 			{
+				$type = gettype($option['default']);
 				settype($option['value'], $type);
 			}
 			else
 			{
-				$option['value'] = $option['default'];
+				$option['value'] = (isset($option['previous'])) ? $option['previous'] : $option['default'];
 			}
+			$return[] = "\t'{$option['key']}' => " . var_export($option['value']) . ',';
 		}
+		return $return;
+	}
+
+	public function buildFooter()
+	{
+		// meh
+	}
+
+	public function makeFile()
+	{
+		// meh
 	}
 }
