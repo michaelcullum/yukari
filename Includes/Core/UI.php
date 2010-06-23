@@ -69,6 +69,7 @@ class UI extends Base
 			$this->fg_colors = array('black' => '30', 'blue' => '34', 'green' => '32', 'cyan' => '36', 'red' => '31', 'purple' => '35', 'brown' => '33', 'yellow' => '33', 'white' => '37');
 			$this->bg_colors = array('black' => '40', 'red' => '41', 'green' => '42', 'yellow' => '43', 'blue' => '44', 'magenta' => '45', 'cyan' => '46', 'light_gray' => '47');
 			$this->color_profiles = array(
+				'STATUS'	=> array('background' => 'black', 'foreground' => 'blue'),
 				'INFO'		=> array('foreground' => 'cyan', 'bold' => true),
 				'WARNING'	=> array('background' => 'yellow', 'foreground' => 'black', 'bold' => true),
 				'ERROR'		=> array('background' => 'red', 'foreground' => 'white', 'bold' => true),
@@ -101,19 +102,28 @@ class UI extends Base
 
 		$profile = $this->color_profiles[strtoupper($profile)];
 
-		$codes = (isset($profile['foreground']) ? $this->fg_colors[$profile['foreground']] . ';' : '');
-		$codes .= (isset($profile['background']) ? $this->bg_colors[$profile['background']] . ';' : '');
-		$codes .= (isset($profile['bold']) ? '1;' : '');
-		return "\033[{$codes}m{$string}\033[0m";
+		$codes = '';
+		$codes .= (isset($profile['foreground']) ? "\033[" . (isset($profile['bold']) ? '1;' : '') . $this->fg_colors[$profile['foreground']] . 'm' : '');
+		$codes .= (isset($profile['background']) ? "\033[" . $this->bg_colors[$profile['background']] . 'm' : '');
+
+		return "{$codes}{$string}\033[0m";
 	}
 
 	/**
 	 * Method that handles output of all data for the UI.
 	 * @return void
 	 */
-	public function output($data)
+	public function output($data, $color = NULL)
 	{
-		echo ((strrpos($data, PHP_EOL . PHP_EOL) !== false) ? substr($data, 0, strlen($data) - 1) : $data) . PHP_EOL;
+		$data = rtrim($data, PHP_EOL);
+		if(is_null($color))
+		{
+			echo str_pad($data, 80) . PHP_EOL;
+		}
+		else
+		{
+			echo $this->addColor(str_pad($data, 80), $color) . PHP_EOL;
+		}
 	}
 
 	/**
@@ -134,25 +144,21 @@ class UI extends Base
 	{
 		if($this->level(OUTPUT_NORMAL))
 		{
-			$this->output('---------------------------------------------------------------------');
-			$this->output('Failnet -- PHP-based IRC Bot version ' . FAILNET_VERSION);
-			$this->output('Copyright (c) 2009 - 2010 -- Damian Bushong');
-			$this->output('');
-			$this->output('This program is free software: you can redistribute it and/or modify');
-			$this->output('it under the terms of the GNU General Public License as published by');
-			$this->output('the Free Software Foundation, either version 3 of the License, or');
-			$this->output('(at your option) any later version.');
-			$this->output('');
-			$this->output('This program is distributed in the hope that it will be useful,');
-			$this->output('but WITHOUT ANY WARRANTY; without even the implied warranty of');
-			$this->output('MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the');
-			$this->output('GNU General Public License for more details.');
-			$this->output('');
-			$this->output('You should have received a copy of the GNU General Public License');
-			$this->output('along with this program.  If not, see <http://www.gnu.org/licenses/>.');
-			$this->output('');
-			$this->output('---------------------------------------------------------------------');
-			$this->output('Failnet is starting up. Go get yourself a coffee.');
+			$this->output('===================================================================', 'STATUS');
+			$this->output('', 'STATUS');
+			$this->output('  Failnet -- PHP-based IRC Bot', 'STATUS');
+			$this->output('---------------------------------------------------------------------', 'STATUS');
+			$this->output('@version:      ' . FAILNET_VERSION, 'STATUS');
+			$this->output('@copyright:    (c) 2009 - 2010 -- Damian Bushong', 'STATUS');
+			$this->output('@license:      MIT License', 'STATUS');
+			$this->output('', 'STATUS');
+			$this->output('===================================================================', 'STATUS');
+			$this->output('', 'STATUS');
+			$this->output('This program is subject to the MIT license that is bundled', 'STATUS');
+			$this->output('with this package in the file LICENSE.', 'STATUS');
+			$this->output('', 'STATUS');
+			$this->output('---------------------------------------------------------------------', 'STATUS');
+			$this->output('Failnet is starting up. Go get yourself a coffee.', 'STATUS');
 		}
 	}
 
@@ -164,9 +170,9 @@ class UI extends Base
 	{
 		if($this->level(OUTPUT_NORMAL))
 		{
-			$this->output('---------------------------------------------------------------------');
-			$this->output('Failnet loaded and ready!');
-			$this->output('---------------------------------------------------------------------');
+			$this->output('---------------------------------------------------------------------', 'STATUS');
+			$this->output('Failnet loaded and ready!', 'STATUS');
+			$this->output('---------------------------------------------------------------------', 'STATUS');
 		}
 	}
 
@@ -176,11 +182,11 @@ class UI extends Base
 	 */
 	public function shutdown()
 	{
-		if($this->ui_level(OUTPUT_NORMAL))
+		if($this->level(OUTPUT_NORMAL))
 		{
-			$this->output('---------------------------------------------------------------------');
-			$this->output('Failnet shutting down...');
-			$this->output('---------------------------------------------------------------------');
+			$this->output('---------------------------------------------------------------------', 'STATUS');
+			$this->output('Failnet shutting down...', 'STATUS');
+			$this->output('---------------------------------------------------------------------', 'STATUS');
 		}
 	}
 
@@ -243,7 +249,7 @@ class UI extends Base
 	{
 		if($this->level(OUTPUT_DEBUG))
 		{
-			$this->output('[php warning] ' . $data);
+			$this->output('[php warning] ' . $data, 'WARNING');
 		}
 	}
 
@@ -255,7 +261,7 @@ class UI extends Base
 	{
 		if($this->level(OUTPUT_DEBUG))
 		{
-			$this->output('[php error] ' . $data);
+			$this->output('[php error] ' . $data, 'ERROR');
 		}
 	}
 
