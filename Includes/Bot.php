@@ -225,7 +225,7 @@ abstract class Bot
 	 *
 	 * @copyright   (c) 2010 Sam Thompson
 	 * @author      Sam Thompson
-	 * @license     GNU General Public License, Version 3
+	 * @license     MIT License
 	 * @note        This code generously provided by a friend of mine, Sam Thompson.  Kudos!
 	 */
 	public static function loadArgs(array $args)
