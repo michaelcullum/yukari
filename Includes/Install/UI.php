@@ -36,17 +36,8 @@ use Failnet\Lib as Lib;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class UI extends Base
+class UI extends Core\UI
 {
-	/**
-	 * Method that handles output of all data for the UI.
-	 * @return void
-	 */
-	public function output($data)
-	{
-		echo rtrim($data, PHP_EOL) . PHP_EOL;
-	}
-
 	public function stdinPrompt($name, $instruction, $prompt, $default)
 	{
 		// blah
