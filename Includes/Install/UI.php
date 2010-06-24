@@ -38,7 +38,16 @@ use Failnet\Lib as Lib;
  */
 class UI extends Base
 {
-	public function stdinPrompt($inst)
+	/**
+	 * Method that handles output of all data for the UI.
+	 * @return void
+	 */
+	public function output($data)
+	{
+		echo rtrim($data, PHP_EOL) . PHP_EOL;
+	}
+
+	public function stdinPrompt($name, $instruction, $prompt, $default)
 	{
 		// blah
 	}

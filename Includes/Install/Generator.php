@@ -90,7 +90,7 @@ class Generator extends Base
 			}
 			$return[] = "\t'{$option['key']}' => " . var_export($option['value']) . ',';
 		}
-		return $return;
+		return implode(PHP_EOL, $return);
 	}
 
 	public function buildFooter()
@@ -101,5 +101,8 @@ class Generator extends Base
 	public function makeFile()
 	{
 		// meh
+		$content = '';
+		$content .= $this->buildHeader();
+		$content .= $this->buildOptions(Bot::core()->loadConfig());
 	}
 }
