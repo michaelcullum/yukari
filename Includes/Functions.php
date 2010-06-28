@@ -361,5 +361,6 @@ function cake()
 	'                                          ',
 	'                                          ',
 	);
-	display($cake);
+	foreach($cake as $line)
+		Bot::core('ui')->output($line);
 }
