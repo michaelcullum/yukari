@@ -75,7 +75,10 @@ class Exception extends \Exception
 	const ERR_SOCKET_NO_CONNECTION = 2403;
 	const ERR_SOCKET_UNSUPPORTED_TRANSPORT = 2404;
 
-	const ERR_INVALID_HOSTMASK = 2500;
+	const ERR_LANGUAGE_FILE_LOAD_FAILED = 2500;
+	const ERR_LANGUAGE_CORE_NO_PARAMS = 2501;
+
+	const ERR_INVALID_HOSTMASK = 2600;
 
 	const ERR_CRON_LOAD_FAILED = 3000;
 	const ERR_CRON_NO_SUCH_TASK = 3001;
@@ -127,6 +130,9 @@ class Exception extends \Exception
 			self::ERR_SOCKET_FWRITE_FAILED => 'fwrite() failed, socket connection lost',
 			self::ERR_SOCKET_NO_CONNECTION => 'Cannot send to server - no connection present',
 			self::ERR_SOCKET_UNSUPPORTED_TRANSPORT => 'Transport type "%1$s" is not supported by this PHP installation',
+
+			self::ERR_LANGUAGE_FILE_LOAD_FAILED => 'Failed to load language file: %1$s',
+			self::ERR_LANGUAGE_CORE_NO_PARAMS => 'Invalid parameters provided for Bot::lang()',
 
 			self::ERR_INVALID_HOSTMASK => 'Invalid hostmask "%1$s" specified',
 

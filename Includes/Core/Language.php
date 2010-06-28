@@ -111,7 +111,7 @@ class Language extends Base
 
 		// Okay, time to include the file.  We use include on language files in case something blows up.
 		if(($include = @include($file)) === false)
-			throw new Exception(); // @todo exception
+			throw new Exception(ex(Exception::ERR_LANGUAGE_FILE_LOAD_FAILED, $file));
 
 		// Add this language file to the list of loaded language files
 		$this->files[] = $filename;

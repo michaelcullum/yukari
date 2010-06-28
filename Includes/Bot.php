@@ -224,10 +224,9 @@ abstract class Bot
 		{
 			return Bot::core('lang')->getEntry(strtoupper(func_get_args(0)));
 		}
-		else
-		{
-			throw new Exception(); // @todo exception
-		}
+
+		// Okay, someone was being stupid and didn't pass any parameters.
+		throw new Exception(ex(Exception::ERR_LANGUAGE_CORE_NO_PARAMS));
 	}
 
 
