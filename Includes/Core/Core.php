@@ -86,6 +86,7 @@ class Core extends Base
 
 		// Begin loading our core objects
 		$core_objects = array(
+			'lang'		=> 'Failnet\\Core\\Language',
 			'socket'	=> 'Failnet\\Core\\Socket',
 			'db'		=> 'Failnet\\Core\\Database',
 			'log'		=> 'Failnet\\Core\\Log',
