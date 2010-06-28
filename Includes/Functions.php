@@ -55,7 +55,6 @@ function throw_fatal($msg)
 	if(file_exists(FAILNET_ROOT . 'data/restart.inc'))
 		unlink(FAILNET_ROOT . 'data/restart.inc');
 	display('[Fatal Error] ' . $msg);
-	display(dump_backtrace());
 	sleep(7);
 	exit(1);
 }
@@ -84,7 +83,6 @@ function ex($code, $parameters = array(), $exception_class = 'Exception')
  * @param string $errfile - The file that the error was encountered at
  * @param integer $errline - The line that the error was encountered at
  * @return mixed - If suppressed, nothing returned...if not handled, false.
- * @todo update for new framework
  */
 function errorHandler($errno, $msg_text, $errfile, $errline)
 {
@@ -105,22 +103,22 @@ function errorHandler($errno, $msg_text, $errfile, $errline)
 	   case E_USER_NOTICE:
 	   case E_USER_DEPRECATED:
 		   $handled = true;
-		   Bot::core('ui')->notice($error);
-		   file_put_contents(FAILNET_ROOT . 'logs/error_log_' . date('m-d-Y', time()) . '.log', date('D m/d/Y - h:i:s A') . ' - [PHP Notice] ' . $error, FILE_APPEND | LOCK_EX);
+		   Bot::core('ui')->php("notice: $error");
+		   file_put_contents(FAILNET_ROOT . 'Data/Logs/Error_' . date('m-d-Y', time()) . '.log', date('D m/d/Y - h:i:s A') . ' - [PHP Notice] ' . $error, FILE_APPEND | LOCK_EX);
 	   break;
 
 	   case E_WARNING:
 	   case E_USER_WARNING:
 		   $handled = true;
-		   Bot::core('ui')->warning($error);
-		   file_put_contents(FAILNET_ROOT . 'logs/error_log_' . date('m-d-Y', time()) . '.log', date('D m/d/Y - h:i:s A') . ' - [PHP Warning] ' . $error, FILE_APPEND | LOCK_EX);
+		   Bot::core('ui')->php("warning: $error");
+		   file_put_contents(FAILNET_ROOT . 'Data/Logs/Error_' . date('m-d-Y', time()) . '.log', date('D m/d/Y - h:i:s A') . ' - [PHP Warning] ' . $error, FILE_APPEND | LOCK_EX);
 	   break;
 
 	   case E_ERROR:
 	   case E_USER_ERROR:
 		   $handled = true;
-		   Bot::core('ui')->error($error);
-		   file_put_contents(FAILNET_ROOT . 'logs/error_log_' . date('m-d-Y', time()) . '.log', date('D m/d/Y - h:i:s A') . ' - [PHP Error] ' . $error, FILE_APPEND | LOCK_EX);
+		   Bot::core('ui')->php("error: $error");
+		   file_put_contents(FAILNET_ROOT . 'Data/Logs/Error_' . date('m-d-Y', time()) . '.log', date('D m/d/Y - h:i:s A') . ' - [PHP Error] ' . $error, FILE_APPEND | LOCK_EX);
 	   break;
    }
 
@@ -220,61 +218,6 @@ function timespan($time, $last_comma = false)
 	}
 
 	return $bigtime;
-}
-
-/**
- * Generate a backtrace and return it for use elsewhere.
- * @return array - The backtrace results.
- */
-function dump_backtrace()
-{
-	$output = array();
-	$backtrace = debug_backtrace();
-	foreach ($backtrace as $number => $trace)
-	{
-		// We skip the first one, because it only shows this file/function
-		if ($number == 0)
-		{
-			continue;
-		}
-
-		// Strip the current directory from path
-		if (empty($trace['file']))
-		{
-			$trace['file'] = '';
-		}
-		else
-		{
-			$trace['file'] = str_replace(array(__DIR__, '\\'), array('', '/'), $trace['file']);
-			$trace['file'] = substr($trace['file'], 1);
-		}
-		$args = array();
-
-		// If include/require/include_once is not called, do not show arguments - they may contain sensible information
-		if (!in_array($trace['function'], array('include', 'require', 'include_once')))
-		{
-			unset($trace['args']);
-		}
-		else
-		{
-			// Path...
-			if (!empty($trace['args'][0]))
-			{
-				$argument = $trace['args'][0];
-				$argument = str_replace(array(__DIR__, '\\'), array('', '/'), $argument);
-				$argument = substr($argument, 1);
-				$args[] = "'{$argument}'";
-			}
-		}
-
-		$trace['class'] = (!isset($trace['class'])) ? '' : $trace['class'];
-		$trace['type'] = (!isset($trace['type'])) ? '' : $trace['type'];
-
-		$output[] = 'FILE: ' . $trace['file'];
-		$output[] = 'LINE: ' . ((!empty($trace['line'])) ? $trace['line'] : '');
-		$output[] = 'CALL: ' . $trace['class'] . $trace['type'] . $trace['function'] . '(' . ((sizeof($args)) ? implode(', ', $args) : '') . ')';
-	}
-	return $output;
 }
 
 /**
