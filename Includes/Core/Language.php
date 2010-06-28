@@ -64,7 +64,7 @@ class Language extends Base
 	 */
 	public function setDir($path)
 	{
-		$this->language_dir = $path;
+		$this->language_dir = (string) $path;
 	}
 
 	/**
@@ -77,6 +77,7 @@ class Language extends Base
 		Bot::core('ui')->status('- Loading language files');
 		foreach($files as $file)
 		{
+			// ignore useless files
 			if($file[0] == '.' || substr(strrchr($file, '.'), 1) != 'php')
 				continue;
 
