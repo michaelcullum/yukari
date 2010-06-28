@@ -203,6 +203,18 @@ class UI extends Base
 	}
 
 	/**
+	 * Method called when a low-level system event is triggered or occurs in Failnet
+	 * @return void
+	 */
+	public function status($data)
+	{
+		if($this->level(OUTPUT_NORMAL))
+		{
+			$this->output('[system] ' . $data);
+		}
+	}
+
+	/**
 	 * Method called when a system event is triggered or occurs in Failnet
 	 * @return void
 	 */

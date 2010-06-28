@@ -94,7 +94,7 @@ class Core extends Base
 			'cron'		=> 'Failnet\\Core\\Cron',
 			'hash'		=> 'Failnet\\Lib\\Hash',
 		);
-		Bot::core('ui')->system('- Loading Failnet core objects');
+		Bot::core('ui')->status('- Loading Failnet core objects');
 		foreach($core_objects as $core_object_name => $core_object_class)
 		{
 			Bot::setCore($core_object_name, $core_object_class);
@@ -106,7 +106,7 @@ class Core extends Base
 		$this->setupDB();
 
 		// Load our node files
-		Bot::core('ui')->system('- Loading Failnet node objects');
+		Bot::core('ui')->status('- Loading Failnet node objects');
 		foreach($this->config('nodes_list') as $node)
 		{
 			Bot::setNode($node, '\\Failnet\\Node\\' . ucfirst($node));
@@ -116,7 +116,7 @@ class Core extends Base
 		$this->checkInstall();
 
 		// Load plugins
-		Bot::core('ui')->system('- Loading Failnet plugins');
+		Bot::core('ui')->status('- Loading Failnet plugins');
 		// @todo autoload plugins
 		Bot::core('plugin')->pluginLoad($this->config('plugin_list'));
 
