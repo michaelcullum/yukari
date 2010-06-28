@@ -80,10 +80,20 @@ class Plugin extends Base
 		{
 			if(!$this->pluginLoaded($name) && $this->pluginExists($name))
 			{
-				$plugin_class = '\\Fainet\\Plugin\\' . ucfirst($name);
-				if(!$plugin_class::checkDependencies())
+				$plugin_class = "Fainet\\Plugin\\$name";
+				try
 				{
-					Bot::core('ui')->system("--- Plugin '$name' load failed, unmet dependencies found");
+					$check = $plugin_class::checkDependencies();
+				}
+				catch(Exception $e)
+				{
+					Bot::core('ui')->debug('Plugin exception thrown, message:' . $e);
+					$check = false;
+				}
+
+				if(!$check)
+				{
+					Bot::core('ui')->error("--- Plugin '$name' load failed, unmet dependencies found");
 					$this->pluginRemove($name);
 					return false;
 				}
@@ -92,7 +102,7 @@ class Plugin extends Base
 				Bot::core('ui')->system("--- Plugin '$name' loaded");
 				return true;
 			}
-			Bot::core('ui')->system("--- Plugin '$name' load failed, plugin does not exist or has been loaded already");
+			Bot::core('ui')->warning("--- Plugin '$name' load failed, plugin does not exist or has been loaded already");
 			return false; // If a plugin was removed, we don't want to reinstantiate it...
 		}
 	}
@@ -104,7 +114,7 @@ class Plugin extends Base
 	 */
 	public function pluginLoaded($name)
 	{
-		return isset($this->plugins_loaded[$name]);
+		return isset($this->plugins_loaded[$name]) || class_exists("Failnet\\Plugin\\$name");
 	}
 
 	/**
@@ -114,7 +124,7 @@ class Plugin extends Base
 	 */
 	public function pluginExists($name)
 	{
-		return (bool) Autoload::fileExists('failnet_plugin_' . $name);
+		return (bool) Autoload::fileExists("Failnet\\Plugin\\$name");
 	}
 
 	/**
@@ -129,25 +139,6 @@ class Plugin extends Base
 	}
 
 	/**
-	 * Plugin tick call, fires off tick calls to any plugins that handle them.
-	 * @return array - Returns the array of events to fire off
-	 */
-	public function handleTick()
-	{
-		// Upon each iteration of the loop, we let plugins run if they want tow
-		foreach($this->plugins as $name => $plugin)
-		{
-			if(method_exists($plugin, 'tick'))
-			{
-				Bot::core('ui')->event('tick call: plugin "' . $name . '"');
-				$plugin->tick();
-				if(!empty($plugin->events))
-					$plugin->events = $this->queue($plugin->events);
-			}
-		}
-	}
-
-	/**
 	 * Plugin connect call, fires off connect calls to any plugins that handle them.
 	 * @return void
 	 */
@@ -157,7 +148,7 @@ class Plugin extends Base
 		{
 			if(method_exists($plugin, 'connect'))
 			{
-				Bot::core('ui')->event('connection established call: plugin "' . $name . '"');
+				Bot::core('ui')->event("connection established call: plugin '$name'");
 				$plugin->cmd_connect();
 				if(!empty($plugin->events))
 					$plugin->events = $this->queue($plugin->events);
@@ -177,7 +168,7 @@ class Plugin extends Base
 		{
 			if(method_exists($plugin, 'cmd_' . $event_type))
 			{
-				Bot::core('ui')->event('command event call (' . $event_type . '): plugin "' . $name . '"');
+				Bot::core('ui')->event("command event call ($event_type): plugin '$name'");
 				$plugin->event = $event;
 				$plugin->{'cmd_' . $event_type}();
 				if(!empty($plugin->events))
@@ -195,7 +186,7 @@ class Plugin extends Base
 		//Execute pre-dispatch callback for plugin events
 		foreach($this->plugins as $name => $plugin)
 		{
-			Bot::core('ui')->event('pre-dispatch call: plugin "' . $name . '" - events: ' . sizeof($this->event_queue));
+			Bot::core('ui')->event("pre-dispatch call: plugin '$name' - events: " . sizeof($this->event_queue));
 			$plugin->pre_dispatch($this->event_queue);
 		}
 
@@ -205,8 +196,8 @@ class Plugin extends Base
 		{
 			if(strcasecmp($event->type, 'quit') != 0)
 			{
-				Bot::core('ui')->event('event dispatch call: type "' . $event->type . '"');
-				call_user_func_array(array($this->failnet->irc, $event->type), $event->arguments);
+				Bot::core('ui')->event("event dispatch call: type '{$event->type}'");
+				call_user_func_array(array(Bot::core('irc'), $event->type), $event->arguments);
 			}
 			elseif(empty($quit))
 			{
@@ -217,7 +208,7 @@ class Plugin extends Base
 		// Post-dispatch events
 		foreach($this->plugins as $name => $plugin)
 		{
-			Bot::core('ui')->event('post-dispatch call: plugin "' . $name . '" - events: ' . sizeof($this->event_queue));
+			Bot::core('ui')->event("post-dispatch call: plugin '$name' - events: " . sizeof($this->event_queue));
 			$plugin->post_dispatch($this->event_queue);
 		}
 
@@ -236,7 +227,7 @@ class Plugin extends Base
 		{
 			if(method_exists($plugin, 'disconnect'))
 			{
-				Bot::core('ui')->event('disconnect call: plugin "' . $name . '"');
+				Bot::core('ui')->event("disconnect call: plugin '$name'");
 				$plugin->cmd_disconnect();
 			}
 		}
