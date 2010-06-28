@@ -111,6 +111,8 @@ class UI extends Base
 
 	/**
 	 * Method that handles output of all data for the UI.
+	 * @param string $data - The string to output
+	 * @param string $color - The color profile to use for output, if we want to use one.
 	 * @return void
 	 */
 	public function output($data, $color = NULL)
