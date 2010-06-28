@@ -64,9 +64,19 @@ class Socket extends Base
 
 		// Establish and configure the socket connection
 		$remote = "$transport://" . Bot::core()->config('server') . ':' . Bot::core()->config('port');
-		$this->socket = @stream_socket_client($remote, $errno, $errstr);
-		if(!$this->socket)
-			throw new Exception(ex(Exception::ERR_SOCKET_ERROR, array($errno, $errstr)));
+
+		// Try a few times to connect to the server, and if we can't, we dai.
+		$attempts = 0;
+		do
+		{
+			if(++$attempts > 5)
+				throw new Exception(ex(Exception::ERR_SOCKET_ERROR, array($errno, $errstr)));
+
+			$this->socket = @stream_socket_client($remote, $errno, $errstr);
+			if(!$this->socket)
+				sleep(5);
+		}
+		while(!$this->socket);
 
 		stream_set_timeout($this->socket, (int) $this->timeout, (($this->timeout - (int) $this->timeout) * 1000000));
 
