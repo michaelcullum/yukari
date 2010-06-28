@@ -51,11 +51,12 @@ class Core extends Base
 		$core_objects = array(
 			//'lang'		=> 'Failnet\\Core\\Language',
 			//'socket'	=> 'Failnet\\Core\\Socket',
+			'generator' => 'Failnet\\Install\\Generator',
 			'db'		=> 'Failnet\\Core\\Database',
 			//'log'		=> 'Failnet\\Core\\Log',
 			//'irc'		=> 'Failnet\\Core\\IRC',
-			'plugin'	=> 'Failnet\\Core\\Plugin',
-			'cron'		=> 'Failnet\\Core\\Cron',
+			//'plugin'	=> 'Failnet\\Core\\Plugin',
+			//'cron'		=> 'Failnet\\Core\\Cron',
 			'hash'		=> 'Failnet\\Lib\\Hash',
 		);
 
