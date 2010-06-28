@@ -80,10 +80,6 @@ class Core extends Base
 		// Fire off the startup text.
 		Bot::core('ui')->startup();
 
-		// Set the error handler
-		Bot::core('ui')->system('--- Setting main error handler');
-		@set_error_handler('Failnet\\errorHandler');
-
 		// Begin loading our core objects
 		$core_objects = array(
 			'lang'		=> 'Failnet\\Core\\Language',
