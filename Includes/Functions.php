@@ -23,43 +23,6 @@
 namespace Failnet;
 
 /**
- * Echos a message, and cleans out any extra NL's after the message.
- * 		Also will echo an array of messages properly as well.
- * @param mixed $message - The message or array of messages we want to echo to the terminal.
- * @return void
- * @deprecated since 3.0.0
- */
-function display($message)
-{
-	if(is_array($message))
-	{
-		foreach($message as $line)
-		{
-			echo ((strrpos($line, PHP_EOL . PHP_EOL) !== false) ? substr($line, 0, strlen($line) - 1) : $line) . PHP_EOL;
-		}
-	}
-	else
-	{
-		echo ((strrpos($message, PHP_EOL . PHP_EOL) !== false) ? substr($message, 0, strlen($message) - 1) : $message) . PHP_EOL;
-	}
-}
-
-/**
- * Throws a fatal and non-recoverable error.
- * @param string $msg - The error message to use
- * @return void
- * @deprecated since 3.0.0
- */
-function throw_fatal($msg)
-{
-	if(file_exists(FAILNET_ROOT . 'data/restart.inc'))
-		unlink(FAILNET_ROOT . 'data/restart.inc');
-	display('[Fatal Error] ' . $msg);
-	sleep(7);
-	exit(1);
-}
-
-/**
  * Converts an exception code to an actual exception error message
  * @param integer $code - Exception code that we're converting
  * @param array $parameters - The parameters to pass to the exception string if we want to use sprintf()

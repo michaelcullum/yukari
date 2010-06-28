@@ -51,15 +51,7 @@ class Log extends Base
 		Bot::core('db')->armQuery('logs', 'lastsaid', 'SELECT * FROM Logs WHERE preg_match()');
 		//PDO::sqliteCreateFunction
 		// @todo table schema
-		// Make sure our logs directory actually exists and is manipulatable
-		if(!file_exists(FAILNET_ROOT . '/logs') || !is_readable(FAILNET_ROOT . '/logs') || !is_writeable(FAILNET_ROOT . '/logs'))
-    	{
-    		if(file_exists(FAILNET_ROOT . 'data/restart.inc'))
-				unlink(FAILNET_ROOT . 'data/restart.inc');
-            throw_fatal('Failnet requires the logs directory to exist and be readable/writeable');
-			sleep(3);
-		    exit(1);
-    	}
+
 		$this->add('--- Starting Failnet ---', true);
 	}
 
