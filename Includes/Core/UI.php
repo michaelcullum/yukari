@@ -140,7 +140,7 @@ class UI extends Base
 	}
 
 	/**
-	 * Method called on init that dumps the startup text for Failnet to output
+	 * Method called on startup that dumps the startup text for Failnet to output
 	 * @return void
 	 */
 	public function startup()
