@@ -158,7 +158,7 @@ class Plugin extends Base
 
 	/**
 	 * Event chain-handler
-	 * @param failnet_event_common $event - The event to hand down to the other plugins.
+	 * @param Failnet\Event\Common $event - The event to hand down to the other plugins.
 	 * @return void
 	 */
 	public function handleEvent(Failnet\Event\Common $event)
