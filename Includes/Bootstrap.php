@@ -65,8 +65,8 @@ require FAILNET_ROOT . 'Includes/Functions.php';
 
 Autoload::register();
 Bot::loadArgs($_SERVER['argv']);
-define('IN_INSTALL', (Bot::arg('mode') === 'install'));
-define('CONFIG_FILE', Bot::arg('config'));
+define('IN_INSTALL', (Bot::arg('mode') === 'install') ? true : false);
+define('CONFIG_FILE', (Bot::arg('config') ? Bot::arg('config') : 'Config'));
 
 // Load the appropriate core file.
 if(!IN_INSTALL && file_exists(FAILNET_ROOT . 'Data/Config/' . CONFIG_FILE . '.php'))
