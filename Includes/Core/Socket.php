@@ -242,8 +242,15 @@ class Socket extends Base
 		}
 
 		// Transmit the command over the socket connection
-		if(!fwrite($this->socket, $buffer . "\r\n"))
-			throw new Exception(ex(Exception::ERR_SOCKET_FWRITE_FAILED));
+		$attempts = 0;
+		do
+		{
+			if(++$attempts > 5)
+				throw new Exception(ex(Exception::ERR_SOCKET_FWRITE_FAILED));
+
+			$success = @fwrite($this->socket, $buffer . "\r\n");
+		}
+		while(!$success);
 
 		// Return the command string that was transmitted
 		return $buffer;
