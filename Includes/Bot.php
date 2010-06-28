@@ -207,6 +207,31 @@ abstract class Bot
 
 
 	/**
+	 * Grabs a language entry from the language core system
+	 * @note uses virtual method arguments with func_get_args(), first arg is the key to grab, additional args are used in conjunction with vsprintf()
+	 * @return mixed - Whatever Failnet\Language\getEntry() returns
+	 * @throws Failnet\Exception
+	 */
+	public static function lang()
+	{
+		if(func_num_args() > 1)
+		{
+			$args = func_get_args();
+			$key = array_shift($args);
+			return Bot::core('lang')->getEntry(strtoupper($key), $args);
+		}
+		elseif(func_num_args() === 1)
+		{
+			return Bot::core('lang')->getEntry(strtoupper(func_get_args(0)));
+		}
+		else
+		{
+			throw new Exception(); // @todo exception
+		}
+	}
+
+
+	/**
 	 * Pull a specific arg that should have been passed to the script, it was sent.
 	 * @param string $arg_name - The name of the CLI arg to grab (must have been present in $_SERVER['argv'])
 	 * @return mixed - NULL if no such arg, the arg if present.
