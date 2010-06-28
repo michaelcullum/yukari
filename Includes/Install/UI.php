@@ -115,4 +115,30 @@ class UI extends Core\UI
 	{
 		return (int) $this->stdinPrompt($instruction, (int) $default, $prompt);
 	}
+
+	/**
+	 * Method called on startup that dumps the startup text for Failnet to output
+	 * @return void
+	 */
+	public function startup()
+	{
+		if($this->level(OUTPUT_NORMAL))
+		{
+			$this->output('===================================================================', 'STATUS');
+			$this->output('', 'STATUS');
+			$this->output('  Failnet -- PHP-based IRC Bot', 'STATUS');
+			$this->output('---------------------------------------------------------------------', 'STATUS');
+			$this->output('@version:      ' . FAILNET_VERSION, 'STATUS');
+			$this->output('@copyright:    (c) 2009 - 2010 -- Damian Bushong', 'STATUS');
+			$this->output('@license:      MIT License', 'STATUS');
+			$this->output('', 'STATUS');
+			$this->output('===================================================================', 'STATUS');
+			$this->output('', 'STATUS');
+			$this->output('This program is subject to the MIT license that is bundled', 'STATUS');
+			$this->output('with this package in the file LICENSE.', 'STATUS');
+			$this->output('', 'STATUS');
+			$this->output('---------------------------------------------------------------------', 'STATUS');
+			$this->output('The Failnet installer is loading, please wait.', 'STATUS');
+		}
+	}
 }
