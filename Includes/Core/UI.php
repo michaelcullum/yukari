@@ -242,7 +242,7 @@ class UI extends Base
 	}
 
 	/**
-	 * Method being called on a PHP notice being thrown
+	 * Method called on a notice being thrown
 	 * @param string $data - The data to display
 	 * @return void
 	 */
@@ -250,12 +250,12 @@ class UI extends Base
 	{
 		if($this->level(OUTPUT_DEBUG))
 		{
-			$this->output('[php notice] ' . $data);
+			$this->output('[notice] ' . $data);
 		}
 	}
 
 	/**
-	 * Method being called on a PHP warning being thrown
+	 * Method called on a warning being issued
 	 * @param string $data - The data to display
 	 * @return void
 	 */
@@ -263,24 +263,38 @@ class UI extends Base
 	{
 		if($this->level(OUTPUT_DEBUG))
 		{
-			$this->output('[php warning] ' . $data, 'WARNING');
+			$this->output('[warning] ' . $data, 'WARNING');
 		}
 	}
 
 	/**
-	 * Method being called on a PHP error being thrown
+	 * Method called on an error being encountered
+	 * @param string $data - The data to display
 	 * @return void
 	 */
 	public function error($data)
 	{
 		if($this->level(OUTPUT_DEBUG))
 		{
-			$this->output('[php error] ' . $data, 'ERROR');
+			$this->output('[error] ' . $data, 'ERROR');
 		}
 	}
 
 	/**
-	 * Method being called on debug information being output in Failnet
+	 * Method that is called when a PHP issue pops up (notice, warning, etc.)
+	 * @param string $data - The data to display
+	 * @return void
+	 */
+	public function php($data)
+	{
+		if($this->level(OUTPUT_DEBUG))
+		{
+			$this->output('[php] ' . $data, 'ERROR');
+		}
+	}
+
+	/**
+	 * Method called on debug information being output in Failnet
 	 * @return void
 	 */
 	public function debug($data)
@@ -292,7 +306,7 @@ class UI extends Base
 	}
 
 	/**
-	 * Method being called on raw IRC protocol information being output in Failnet
+	 * Method called on raw IRC protocol information being output in Failnet
 	 * @return void
 	 */
 	public function raw($data)
