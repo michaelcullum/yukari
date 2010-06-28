@@ -45,7 +45,7 @@ abstract class Base
 	 * @param string $name - Method name
 	 * @param array $arguments - Method parameters
 	 * @return void
-	 * @throws failnet_exception
+	 * @throws Failnet\Exception
 	 */
 	public function __call($name, $arguments)
 	{
@@ -80,7 +80,7 @@ abstract class Base
 	 * @param string $name - Method name
 	 * @param array $arguments - Method parameters
 	 * @return void
-	 * @throws failnet_exception
+	 * @throws Failnet\Exception
 	 */
 	public function __callStatic($name, $arguments)
 	{

@@ -50,7 +50,7 @@ class Socket extends Base
 	/**
 	 * Initiates a connection with the server.
 	 * @return void
-	 * @throws failnet_exception
+	 * @throws Failnet\Exception
 	 */
 	public function connect()
 	{
@@ -92,7 +92,7 @@ class Socket extends Base
 	/**
 	 * Listens for an event on the current connection.
 	 * @return failnet_event_(response|request)|NULL - Event instance if an event was received, NULL otherwise
-	 * @throws failnet_exception
+	 * @throws Failnet\Exception
 	 */
 	public function get()
 	{
@@ -219,7 +219,7 @@ class Socket extends Base
 	 * @param string $command - Command to send
 	 * @param mixed $args - Optional string or array of sequential arguments
 	 * @return string - Command string that was sent
-	 * @throws failnet_exception
+	 * @throws Failnet\Exception
 	 */
 	public function send($command, $args = '')
 	{

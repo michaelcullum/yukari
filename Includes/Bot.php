@@ -285,7 +285,7 @@ abstract class Bot
 	 * @param mixed $hook_call - The function/method to hook on top of the method we're hooking.
 	 * @param constant $hook_type - The type of hook we're using.
 	 * @return boolean - Were we successful?
-	 * @throws failnet_exception
+	 * @throws Failnet\Exception
 	 */
 	public static function registerHook($hooked_method_class, $hooked_method_name, $hook_call, $hook_type = HOOK_NULL)
 	{
