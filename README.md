@@ -9,6 +9,11 @@ and mainly designed for use with channel management.
 
 **License**: MIT License
 
+## Failnet's Requirements
+
+* PHP 5.3
+* SQLite
+* SQLite extension for PDO
 
 ## Failnet was inspired by the following works:
 
