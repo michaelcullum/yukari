@@ -65,7 +65,7 @@ require FAILNET_ROOT . 'Includes/Functions.php';
 
 Autoload::register();
 @set_error_handler('Failnet\\errorHandler');
-
+// @set_exception_handler('Failnet\\exceptionHandler');
 
 Bot::loadArgs($_SERVER['argv']);
 define('IN_INSTALL', (Bot::arg('mode') === 'install') ? true : false);
