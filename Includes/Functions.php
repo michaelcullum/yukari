@@ -362,5 +362,5 @@ function cake()
 	'                                          ',
 	);
 	foreach($cake as $line)
-		Bot::core('ui')->output($line);
+		Bot::core('ui')->output($line, 'CAKE');
 }
