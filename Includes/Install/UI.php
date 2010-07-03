@@ -93,6 +93,31 @@ class UI extends Core\UI
 	}
 
 	/**
+	 * Get a multiple-choice value answer from the user.
+	 * @param string $instruction - The instruction text to provide the user so they know what we're asking.
+	 * @param boolean $default - The default value for the question.
+	 * @param array $choices - The choices available.
+	 * @return string - Desired user input.
+	 */
+	public function getMulti($instruction, $default, array $choices)
+	{
+		$prompt = implode(', ', $choices);
+
+		// Nag the user for a usable answer
+		$validates = false;
+		do
+		{
+			$input = strtolower($this->stdinPrompt($instruction, (boolean) $default, $prompt));
+			$validates = in_array($input, $choices);
+			if(!$validates)
+				$this->output('Invalid response', 'ERROR');
+		}
+		while(!$validates);
+
+		return (boolean) $input;
+	}
+
+	/**
 	 * Get a string value answer from the user.
 	 * @param string $instruction - The instruction text to provide the user so they know what we're asking.
 	 * @param string $default - The default value for the question.
