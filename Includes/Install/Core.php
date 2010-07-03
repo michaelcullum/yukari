@@ -42,7 +42,7 @@ class Core extends Base
 	{
 		// Load the UI out of cycle so we can do this the right way
 		Bot::setCore('ui', 'Failnet\\Install\\UI');
-		Bot::core('ui')->output_level = (Bot::arg('debug') ? Bot::arg('debug') : OUTPUT_NORMAL);
+		Bot::core('ui')->output_level = Bot::arg('debug') ? Bot::arg('debug') : OUTPUT_NORMAL;
 
 		// Fire off the startup text.
 		Bot::core('ui')->startup();
