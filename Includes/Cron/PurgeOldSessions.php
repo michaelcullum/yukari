@@ -24,8 +24,8 @@ namespace Failnet\Cron;
 use Failnet;
 
 /**
- * Failnet - Cron task common class,
- * 	    Common class which defines the required methods that each cron task must implement, and provides a singular base for tasks.
+ * Failnet - Expired session purge cron task class,
+ * 	    Cleans out old, dead session data on a regular basis.
  *
  *
  * @category    Failnet
@@ -34,28 +34,9 @@ use Failnet;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-abstract class Common extends Base
+class PurgeOldSessions extends Common
 {
-	public $status = TASK_ZOMBIE;
+	public $status = TASK_ACTIVE;
 
-	// @todo document all
-	abstract public function getNextRun();
-
-	public function autoRunTask()
-	{
-		if($this->status === TASK_ZOMBIE)
-			throw new Exception(ex(Exception::ERR_CRON_TASK_ACCESS_ZOMBIE));
-		if($this->status === TASK_MANUAL)
-			throw new Exception(ex(Exception::ERR_CRON_TASK_ACCESS_MANUAL));
-		return $this->runTask(false);
-	}
-
-	public function manualRunTask()
-	{
-		if($this->status === TASK_ZOMBIE)
-			throw new Exception(ex(Exception::ERR_CRON_TASK_ACCESS_ZOMBIE));
-		return $this->runTask(true);
-	}
-
-	abstract protected function runTask($manual_call);
+	// blah
 }

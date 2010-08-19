@@ -261,7 +261,7 @@ abstract class Bot
 				if($val[1] === '-')
 				{
 					$separator = strpos($val, '=');
-					if($separator === false)
+					if($separator !== false)
 					{
 						self::$args[substr($val, 2, $separator - 2)] = substr($val, $separator + 1);
 					}
