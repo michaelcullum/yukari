@@ -3,6 +3,10 @@
 Failnet is an IRC bot built in PHP 5.3 Object Oriented Programming,
 and mainly designed for use with channel management.
 
+## WARNING
+
+Failnet is currently pending a complete codebase rewrite, but is on the back burner while work on other projects commences.  I'm currently figuring out new coding techniques and methods that can and should probably be applied to Failnet on these other projects; check back later for when I return to working on Failnet primarily!
+
 **Version**:	*3.0.0*
 
 **Copyright**: *(c) 2009 - 2010 -- Damian Bushong*
