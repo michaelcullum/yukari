@@ -53,6 +53,6 @@ class Nick extends Failnet\Event\EventBase
 	 */
 	public function getBuffer()
 	{
-		return $this->arg_nick;
+		return 'NICK ' . $this->arg_nick;
 	}
 }
