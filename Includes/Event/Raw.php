@@ -23,8 +23,8 @@
 namespace Failnet\Event;
 
 /**
- * Failnet - Event base class,
- * 	    Base class that all events must extend.
+ * Failnet - Event object,
+ * 	    A class to define ene of the various event types.
  *
  *
  * @category    Failnet
