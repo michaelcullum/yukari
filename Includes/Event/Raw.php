@@ -38,7 +38,7 @@ class Raw extends Failnet\Event\EventBase
 	/**
 	 * @var array - Array mapping args for quick setting later
 	 */
-	public $map = array(
+	protected $map = array(
 		'message'
 	);
 

@@ -53,7 +53,7 @@ class EventBase extends Failnet\Base implements EventInterface
 	/**
 	 * @var array - The map of the various arguments for the event
 	 */
-	public $map = array();
+	protected $map = array();
 
 	/**
 	 * Grabs this event object's event type
