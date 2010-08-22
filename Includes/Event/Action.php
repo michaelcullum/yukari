@@ -33,7 +33,7 @@ namespace Failnet\Event;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class Raw extends Failnet\Event\EventBase
+class Action extends Failnet\Event\EventBase
 {
 	/**
 	 * @var array - Array mapping args for quick setting later
