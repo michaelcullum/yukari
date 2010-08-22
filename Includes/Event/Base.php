@@ -78,6 +78,11 @@ class EventBase extends Failnet\Base implements EventInterface
 		$this->{'arg_' . $this->map[$arg_number]} = $arg_value;
 		return true;
 	}
+
+	public function getBuffer()
+	{
+		return (!isset($this->buffer)) ? $this->buildCommand() : $this->buffer;
+	}
 }
 
 interface EventInterface
@@ -86,4 +91,5 @@ interface EventInterface
 	public function setArgNumber($arg_number, $arg_value);
 	public function getSource();
 	public function getBuffer();
+	public function buildCommand();
 }

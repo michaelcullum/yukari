@@ -48,10 +48,10 @@ class Nick extends Failnet\Event\EventBase
 	public $arg_nick = '';
 
 	/**
-	 * Grab the event's buffer, useful when sending events
-	 * @return string - The event buffer.
+	 * Build the IRC command from the args included
+	 * @return string - The raw command to send.
 	 */
-	public function getBuffer()
+	public function buildCommand()
 	{
 		return 'NICK ' . $this->arg_nick;
 	}
