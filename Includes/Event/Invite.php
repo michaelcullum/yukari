@@ -44,12 +44,12 @@ class Invite extends Failnet\Event\EventBase
 	);
 
 	/**
-	 * @var string - Target arg for the INVITE event type.
+	 * @var string - Event arg.
 	 */
 	public $arg_target = '';
 
 	/**
-	 * @var string - Channel arg for the INVITE event type.
+	 * @var string - Event arg.
 	 */
 	public $arg_channel = '';
 

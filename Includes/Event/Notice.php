@@ -44,12 +44,12 @@ class Notice extends Failnet\Event\EventBase
 	);
 
 	/**
-	 * @var string - Target arg for the NOTICE event type.
+	 * @var string - Event arg.
 	 */
 	public $arg_target = '';
 
 	/**
-	 * @var string - Text arg for the NOTICE event type.
+	 * @var string - Event arg.
 	 */
 	public $arg_text = '';
 

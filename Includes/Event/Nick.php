@@ -43,7 +43,7 @@ class Nick extends Failnet\Event\EventBase
 	);
 
 	/**
-	 * @var string - Nick arg for the NICK event type.
+	 * @var string - Event arg.
 	 */
 	public $arg_nick = '';
 

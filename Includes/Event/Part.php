@@ -44,20 +44,20 @@ class Part extends Failnet\Event\EventBase
 	);
 
 	/**
-	 * @var string - Channel arg for the PART event type.
+	 * @var string - Event arg.
 	 */
 	public $arg_channel = '';
 
 	/**
-	 * @var string - Reason arg for the PART event type.
+	 * @var string - Event arg.
 	 */
 	public $arg_reason = '';
 
 	/**
-	 * Grab the event's buffer, useful when sending events
-	 * @return string - The event buffer.
+	 * Build the IRC command from the args included
+	 * @return string - The raw command to send.
 	 */
-	public function getBuffer()
+	public function buildCommand()
 	{
 		return 'PART ' . $this->arg_channel . (!empty($this->arg_reason)) ? ' :' . $this->arg_reason : '';
 	}

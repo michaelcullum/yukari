@@ -43,7 +43,7 @@ class Raw extends Failnet\Event\EventBase
 	);
 
 	/**
-	 * @var string - Message arg for the RAW event type.
+	 * @var string - Event arg.
 	 */
 	public $arg_message = '';
 

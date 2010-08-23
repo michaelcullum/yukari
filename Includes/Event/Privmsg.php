@@ -44,12 +44,12 @@ class Privmsg extends Failnet\Event\EventBase
 	);
 
 	/**
-	 * @var string - Target arg for the PRIVMSG event type.
+	 * @var string - Event arg.
 	 */
 	public $arg_target = '';
 
 	/**
-	 * @var string - Text arg for the PRIVMSG event type.
+	 * @var string - Event arg.
 	 */
 	public $arg_text = '';
 
