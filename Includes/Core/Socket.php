@@ -54,8 +54,6 @@ class Socket extends Base
 	 */
 	public function connect()
 	{
-		// Run indefinitely...
-		set_time_limit(0);
 
 		// Check to see if the transport method we are using is allowed
 		$transport = Bot::core()->config('use_ssl') ? 'ssl' : 'tcp';

@@ -54,6 +54,8 @@ if(!file_exists(FAILNET_ROOT . 'Data/DB/') || !is_readable(FAILNET_ROOT . 'Data/
 if(!ini_get('date.timezone'))
 	@date_default_timezone_set(@date_default_timezone_get());
 
+// Run indefinitely...
+set_time_limit(0);
 // The first chunk always gets in the way, so we drop it.
 array_shift($_SERVER['argv']);
 
