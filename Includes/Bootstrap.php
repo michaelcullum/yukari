@@ -56,6 +56,7 @@ if(!ini_get('date.timezone'))
 
 // Run indefinitely...
 set_time_limit(0);
+
 // The first chunk always gets in the way, so we drop it.
 array_shift($_SERVER['argv']);
 
@@ -65,13 +66,18 @@ require FAILNET_ROOT . 'Includes/Bot.php';
 require FAILNET_ROOT . 'Includes/Autoload.php';
 require FAILNET_ROOT . 'Includes/Functions.php';
 
-Autoload::register();
+Failnet\Autoload::register();
 @set_error_handler('Failnet\\errorHandler');
 // @set_exception_handler('Failnet\\exceptionHandler');
 
-Bot::loadArgs($_SERVER['argv']);
-define('IN_INSTALL', (Bot::arg('mode') === 'install') ? true : false);
-define('CONFIG_FILE', (Bot::arg('config') ? Bot::arg('config') : 'Config'));
+$cli = new Failnet\Core\CLI($_SERVER['argv']);
+Failnet\Bot::setObject('core.cli', $cli);
+
+
+
+//Bot::loadArgs($_SERVER['argv']);
+define('IN_INSTALL', ($cli('mode') === 'install') ? true : false);
+define('CONFIG_FILE', ($cli('config') ? $cli('config') : 'Config'));
 
 // Load the appropriate core file.
 if(!IN_INSTALL && file_exists(FAILNET_ROOT . 'Data/Config/' . CONFIG_FILE . '.php'))

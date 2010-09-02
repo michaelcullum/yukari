@@ -38,22 +38,27 @@ abstract class Bot
 	/**
 	 * @var array - The core objects, which will also include the core class.
 	 */
-	private static $core = array();
+	protected static $core = array();
 
 	/**
 	 * @var array - Array of loaded node objects
 	 */
-	private static $nodes = array();
+	protected static $nodes = array();
 
 	/**
 	 * @var array - Array of loaded cron objects
 	 */
-	private static $cron = array();
+	protected static $cron = array();
 
 	/**
 	 * @var array - Array of loaded plugins
 	 */
-	private static $plugins = array();
+	protected static $plugins = array();
+
+	/**
+	 * @var array - Array of various loaded objects
+	 */
+	protected static $objects = array();
 
 	/**
 	 * @var array - Array of hook data
@@ -61,150 +66,92 @@ abstract class Bot
 	protected static $hooks = array();
 
 	/**
-	 * @var array - Array of all $argv arguments passed to the script, properly parsed.
+	 * Get an object for whatever purpose
+	 * @param mixed $object - The object's location and name.  Either an array of format array('type'=>'objecttype','name'=>'objectname'), or a string of format 'objecttype.objectname'
+	 * @return object - The desired object.
+	 *
+	 * @throws BotException
 	 */
-	protected static $args = array();
-
-	/**
-	 * Grab the core object.
-	 * @param string $core_name - The name of the core object that we want, or an empty string if we want THE core.
-	 * @return \Failnet\Base - The desired core object if present.
-	 * @throws Failnet\Exception
-	 */
-	public static function core($core_name = '')
+	public static function getObject($object)
 	{
-		if(empty($core_name))
-			return self::$core['core'];
-		if(self::checkCoreLoaded($core_name))
-			return self::$core[$core_name];
-		throw new Exception(ex(Exception::ERR_NO_SUCH_CORE_OBJ));
+		// If this is not an array, we need to resolve the object name for something usable.
+		if(!is_array($object))
+			$object = self::resolveObject($object);
+		extract($object);
+		if(property_exists(self, $type))
+		{
+			if(isset(self::$$type[$name]))
+				return self::$$type[$name];
+		}
+		else
+		{
+			if(isset(self::$objects[$type][$name]))
+				return self::$objects[$type][$name];
+		}
+		throw new BotException('The object specified was unable to be fetched.', BotException::ERR_NO_SUCH_OBJ);
 	}
 
 	/**
-	 * Grab a node object.
-	 * @param string $node_name - The name of the node object that we want.
-	 * @return \Failnet\Base - The desired node object if present, or void if no such object.
-	 * @throws Failnet\Exception
+	 * Alias of Failnet\Bot::getObject()
+	 * @see Failnet\Bot::getObject()
 	 */
-	public static function node($node_name)
+	public static function obj($object)
 	{
-		if(!self::checkNodeLoaded($node_name))
-			throw new Exception(ex(Exception::ERR_NO_SUCH_NODE_OBJ));
-		return self::$nodes[$node_name];
+		return self::getObject($object);
 	}
 
 	/**
-	 * Grab a cron object.
-	 * @param string $cron_name - The name of the cron object that we want.
-	 * @return \Failnet\Cron\Common - The desired cron object if present, or void if no such object.
-	 * @throws Failnet\Exception
-	 */
-	public static function cron($cron_name)
-	{
-		if(empty($cron_name))
-			return self::$cron['core'];
-		if(!self::checkCronLoaded($cron_name))
-			throw new Exception(ex(Exception::ERR_NO_SUCH_CRON_OBJ));
-		return self::$cron[$cron_name];
-	}
-
-	/**
-	 * Grab a plugin object.
-	 * @param string $plugin_name - The name of the plugin object that we want.
-	 * @return Failnet\Plugin\Common - The desired plugin object if present.
-	 * @throws Failnet\Exception
-	 */
-	public static function plugin($plugin_name)
-	{
-		if(!self::checkPluginLoaded($plugin_name))
-			throw new Exception(ex(Exception::ERR_NO_SUCH_PLUGIN_OBJ));
-		return self::$plugins[$plugin_name];
-	}
-
-	/**
-	 * Create a new core object.
-	 * @param string $core_name - The name of the core slot to load into.
-	 * @param string $core_class - The name of the class to load.
+	 * Load an object into the global class.
+	 * @param mixed $object - The object's location and name.  Either an array of format array('type'=>'objecttype','name'=>'objectname'), or a string of format 'objecttype.objectname'
+	 * @param mixed $value - The object to load.
 	 * @return void
 	 */
-	public static function setCore($core_name, $core_class)
+	public static function setObject($object, $value)
 	{
-		self::$core[$core_name] = new $core_class();
+		if(!is_array($object))
+			$object = self::resolveObject($object);
+		extract($object);
+		if(property_exists(self, $type))
+		{
+			if(isset(self::$$type[$name]))
+				self::$$type[$name] = $value;
+		}
+		else
+		{
+			if(isset(self::$objects[$type][$name]))
+				self::$objects[$type][$name] = $value;
+		}
 	}
 
 	/**
-	 * Create a new node object.
-	 * @param string $node_name - The name of the node slot to load into.
-	 * @param string $node_class - The name of the class to load.
-	 * @return void
+	 * Check to see if an object has been loaded or not
+	 * @param mixed $object - The object's location and name.  Either an array of format array('type'=>'objecttype','name'=>'objectname'), or a string of format 'objecttype.objectname'
+	 * @return boolean - Do we have this object?
 	 */
-	public static function setNode($node_name, $node_class)
+	public static function checkObjectLoaded($object)
 	{
-		self::$nodes[$node_name] = new $node_class();
+		if(!is_array($object))
+			$object = self::resolveObject($object);
+		extract($object);
+		if(property_exists(self, $type))
+			return isset(self::$$type[$name]);
+		return isset(self::$objects[$type][$name]);
 	}
 
 	/**
-	 * Create a new core object.
-	 * @param string $cron_name - The name of the cron slot to load into.
-	 * @param string $cron_class - The name of the class to load.
-	 * @return void
+	 * Resolves an object's name
+	 * @param string $object - The object's name we want to resolve into a workable array
+	 * @return array - The resolved name location for the object.
 	 */
-	public static function setCron($cron_name, $cron_class)
+	protected static function resolveObject($object)
 	{
-		self::$cron[$cron_name] = new $cron_class();
+		$object = explode('.', $object, 1);
+		$return = array(
+			'name' => isset($object[1]) ? $object[1] : $object[0],
+			'type' => isset($object[1]) ? $object[0] : 'core',
+		);
+		return $return;
 	}
-
-	/**
-	 * Create a new core object.
-	 * @param string $cron_name - The name of the cron slot to load into.
-	 * @param string $cron_class - The name of the class to load.
-	 * @return void
-	 */
-	public static function setPlugin($plugin_name, $plugin_class)
-	{
-		self::$plugins[$plugin_name] = new $plugin_class();
-	}
-
-	/**
-	 * Checks to see if the specified core slot has been occupied
-	 * @param string $core_name - The name of the core slot to check
-	 * @return boolean - Whether or not a core object has been loaded yet into the specified slot
-	 */
-	public static function checkCoreLoaded($core_name)
-	{
-		return isset(self::$core[$core_name]);
-	}
-
-	/**
-	 * Checks to see if the specified node slot has been occupied
-	 * @param string $node_name - The name of the node slot to check
-	 * @return boolean - Whether or not a node object has been loaded yet into the specified slot
-	 */
-	public static function checkNodeLoaded($node_name)
-	{
-		return isset(self::$nodes[$core_name]);
-	}
-
-	/**
-	 * Checks to see if the specified cron slot has been occupied
-	 * @param string $cron_name - The name of the cron slot to check
-	 * @return boolean - Whether or not a cron object has been loaded yet into the specified slot
-	 */
-	public static function checkCronLoaded($cron_name)
-	{
-		return isset(self::$cron[$cron_name]);
-	}
-
-	/**
-	 * Checks to see if the specified cron slot has been occupied
-	 * @param string $plugin_name - The name of the plugin slot to check
-	 * @return boolean - Whether or not a plugin object has been loaded yet into the specified slot
-	 */
-	public static function checkPluginLoaded($plugin_name)
-	{
-		return isset(self::$plugins[$plugin_name]);
-	}
-
 
 	/**
 	 * Grabs a language entry from the language core system
@@ -229,55 +176,7 @@ abstract class Bot
 		throw new Exception(ex(Exception::ERR_LANGUAGE_CORE_NO_PARAMS));
 	}
 
-
-	/**
-	 * Pull a specific arg that should have been passed to the script, it was sent.
-	 * @param string $arg_name - The name of the CLI arg to grab (must have been present in $_SERVER['argv'])
-	 * @return mixed - NULL if no such arg, the arg if present.
-	 */
-	public static function arg($arg_name)
-	{
-		if(isset(self::$args[$arg_name]))
-			return self::$args[$arg_name];
-		return NULL;
-	}
-
-	/**
-	 * Load up the CLI args and parse them.
-	 * @param array $args - An array of CLI args to load and parse
-	 * @return void
-	 *
-	 * @copyright   (c) 2010 Sam Thompson
-	 * @author      Sam Thompson
-	 * @license     MIT License
-	 * @note        This code generously provided by a friend of mine, Sam Thompson.  Kudos!
-	 */
-	public static function loadArgs(array $args)
-	{
-		foreach($args as $i => $val)
-		{
-			if($val[0] === '-')
-			{
-				if($val[1] === '-')
-				{
-					$separator = strpos($val, '=');
-					if($separator !== false)
-					{
-						self::$args[substr($val, 2, $separator - 2)] = substr($val, $separator + 1);
-					}
-					else
-					{
-						self::$args[substr($val, 2)] = true;
-					}
-				}
-				else
-				{
-					self::$args[substr($val, 1)] = true;
-				}
-			}
-		}
-	}
-
+// @todo move hook storage stuff to own object
 
 	/**
 	 * Register a hook function to be called before
@@ -291,11 +190,11 @@ abstract class Bot
 	{
 		// We're deliberately ignoring HOOK_NULL here.
 		if(!in_array($hook_call, array(HOOK_STACK, HOOK_OVERRIDE)))
-			throw new Exception(ex(Exception::ERR_REGISTER_HOOK_BAD_HOOK_TYPE));
+			throw new Exception(ex(Exception::ERR_REGISTER_HOOK_BAD_HOOK_TYPE)); // @todo -> HookException
 
 		// Check for unsupported classes
 		if(substr($hooked_method_class, 0, 8) != '\\Failnet')
-			throw new Exception(ex(Exception::ERR_REGISTER_HOOK_BAD_CLASS, array($hooked_method_class)));
+			throw new Exception(ex(Exception::ERR_REGISTER_HOOK_BAD_CLASS, array($hooked_method_class))); // @todo HookException
 
 		/**
 		 * Hooks are placed into the hook info array using the following array structure:
