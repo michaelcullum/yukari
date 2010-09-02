@@ -25,8 +25,8 @@ use Failnet as Root;
 
 
 /**
- * Failnet - CLI handling class,
- * 	    Used to provide access to parameters passed to Failnet via argv.
+ * Failnet - Hook handling class,
+ * 	    Used to handle hook registration.
  *
  *
  * @category    Failnet

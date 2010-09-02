@@ -23,7 +23,7 @@
 namespace Failnet;
 
 /**
- * Failnet - Base class,
+ * Failnet - Hook base class,
  * 	    Used as the base class that will handle method hooking.
  *
  *
