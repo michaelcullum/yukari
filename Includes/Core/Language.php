@@ -86,7 +86,7 @@ class Language extends Base
 			{
 				$this->loadFile($this->language_dir . '/' . $file);
 			}
-			catch(Exception $e)
+			catch(Exception $e) // @todo -> LanguageException
 			{
 				Bot::core('ui')->debug('Failed to load language file ' . substr(strrchr($file, '.'), 1));
 			}
@@ -112,7 +112,7 @@ class Language extends Base
 
 		// Okay, time to include the file.  We use include on language files in case something blows up.
 		if(($include = @include($file)) === false)
-			throw new Exception(ex(Exception::ERR_LANGUAGE_FILE_LOAD_FAILED, $file));
+			throw new Exception(ex(Exception::ERR_LANGUAGE_FILE_LOAD_FAILED, $file)); // @todo -> LanguageException
 
 		// Add this language file to the list of loaded language files
 		$this->files[] = $filename;
@@ -164,5 +164,14 @@ class Language extends Base
 		{
 			$this->setEntry($key, $value);
 		}
+	}
+
+	/**
+	 * Alias of Failnet\Core\Language->getEntry()
+	 * @see Failnet\Core\Language->getEntry()
+	 */
+	public function __invoke($key, array $arguments = array())
+	{
+		return $this->getEntry($key, $arguments);
 	}
 }
