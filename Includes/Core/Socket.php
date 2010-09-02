@@ -54,11 +54,10 @@ class Socket extends Base
 	 */
 	public function connect()
 	{
-
 		// Check to see if the transport method we are using is allowed
 		$transport = Bot::core()->config('use_ssl') ? 'ssl' : 'tcp';
 		if(!in_array($transport, stream_get_transports()))
-			throw new Exception(ex(Exception::ERR_SOCKET_UNSUPPORTED_TRANSPORT, $transport));
+			throw new Exception(ex(Exception::ERR_SOCKET_UNSUPPORTED_TRANSPORT, $transport)); // @todo -> SocketException
 
 		// Establish and configure the socket connection
 		$remote = "$transport://" . Bot::core()->config('server') . ':' . Bot::core()->config('port');
@@ -68,7 +67,7 @@ class Socket extends Base
 		do
 		{
 			if(++$attempts > 5)
-				throw new Exception(ex(Exception::ERR_SOCKET_ERROR, array($errno, $errstr)));
+				throw new Exception(ex(Exception::ERR_SOCKET_ERROR, array($errno, $errstr))); // @todo SocketException
 
 			$this->socket = @stream_socket_client($remote, $errno, $errstr);
 			if(!$this->socket)
