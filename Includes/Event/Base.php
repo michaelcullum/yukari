@@ -33,7 +33,7 @@ namespace Failnet\Event;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class EventBase extends Failnet\Base implements EventInterface
+abstract class EventBase extends Failnet\Base implements EventInterface
 {
 	/**
 	 * @var Failnet\Lib\Hostmask - The hostmask for the originating server or user
@@ -75,10 +75,15 @@ class EventBase extends Failnet\Base implements EventInterface
 	{
 		if(!isset($this->map[$arg_number]))
 			return false;
-		$this->{'arg_' . $this->map[$arg_number]} = $arg_value;
+		$arg_key = 'arg_' . $this->map[$arg_number];
+		$this->$arg_key = $arg_value;
 		return true;
 	}
 
+	/**
+	 * Get the command buffer (if no buffer available, we build the command from stored args)
+	 * @return string - Raw IRC buffer for the event
+	 */
 	public function getBuffer()
 	{
 		return (!isset($this->buffer)) ? $this->buildCommand() : $this->buffer;
