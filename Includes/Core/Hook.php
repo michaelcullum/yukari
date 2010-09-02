@@ -37,10 +37,6 @@ use Failnet as Root;
  */
 class Hook extends Root\Base
 {
-	// @todo implement this
-	// @see http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot/issues/issue/55
-	protected $use_hooks = false;
-
 	/**
 	 * @var array - The hook data loaded.
 	 */
