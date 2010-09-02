@@ -61,6 +61,11 @@ abstract class Bot
 	protected static $objects = array();
 
 	/**
+	 * @var array - Array of loaded configuration options
+	 */
+	protected static $options = array();
+
+	/**
 	 * Get an object for whatever purpose
 	 * @param mixed $object - The object's location and name.  Either an array of format array('type'=>'objecttype','name'=>'objectname'), or a string of format 'objecttype.objectname'
 	 * @return object - The desired object.

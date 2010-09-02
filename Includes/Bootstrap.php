@@ -65,15 +65,16 @@ require FAILNET_ROOT . 'Includes/Base.php';
 require FAILNET_ROOT . 'Includes/Bot.php';
 require FAILNET_ROOT . 'Includes/Autoload.php';
 require FAILNET_ROOT . 'Includes/Functions.php';
+//require FAILNET_ROOT . 'Includes/Environment.php';
 
 Failnet\Autoload::register();
 @set_error_handler('Failnet\\errorHandler');
 // @set_exception_handler('Failnet\\exceptionHandler');
 
+
+// @todo move to Environment
 $cli = new Failnet\Core\CLI($_SERVER['argv']);
 Failnet\Bot::setObject('core.cli', $cli);
-
-
 
 //Bot::loadArgs($_SERVER['argv']);
 define('IN_INSTALL', ($cli('mode') === 'install') ? true : false);
