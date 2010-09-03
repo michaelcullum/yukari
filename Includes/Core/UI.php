@@ -21,7 +21,7 @@
  */
 
 namespace Failnet\Core;
-use Failnet;
+use Failnet as Root;
 
 
 /**
@@ -35,7 +35,7 @@ use Failnet;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class UI extends Base
+class UI extends Root\Base
 {
 	/**
 	 * @var integer - Our current output level
@@ -64,7 +64,7 @@ class UI extends Base
 
 	public function __construct()
 	{
-		if(Bot::core()->config('enable_colors') && $this->checkColorSupport())
+		if(Root\Bot::getOption('ui.enable_colors', false) && $this->checkColorSupport())
 		{
 			$this->fg_colors = array('black' => '30', 'blue' => '34', 'green' => '32', 'cyan' => '36', 'red' => '31', 'purple' => '35', 'brown' => '33', 'yellow' => '33', 'white' => '37');
 			$this->bg_colors = array('black' => '40', 'red' => '41', 'green' => '42', 'yellow' => '43', 'blue' => '44', 'magenta' => '45', 'cyan' => '46', 'light_gray' => '47');
@@ -136,7 +136,7 @@ class UI extends Base
 	 */
 	public function level($level)
 	{
-		return (($level != OUTPUT_RAW) ? ($this->output_level >= $level && $this->output_level !== OUTPUT_RAW) : ($this->output_level === OUTPUT_RAW));
+		return (($level != Root\OUTPUT_RAW) ? ($this->output_level >= $level && $this->output_level !== Root\OUTPUT_RAW) : ($this->output_level === Root\OUTPUT_RAW));
 	}
 
 	/**
@@ -145,13 +145,13 @@ class UI extends Base
 	 */
 	public function startup()
 	{
-		if($this->level(OUTPUT_NORMAL))
+		if($this->level(Root\OUTPUT_NORMAL))
 		{
 			$this->output('===================================================================', 'STATUS');
 			$this->output('', 'STATUS');
 			$this->output('  Failnet -- PHP-based IRC Bot', 'STATUS');
 			$this->output('---------------------------------------------------------------------', 'STATUS');
-			$this->output('@version:      ' . FAILNET_VERSION, 'STATUS');
+			$this->output('@version:      ' . Root\FAILNET_VERSION, 'STATUS');
 			$this->output('@copyright:    (c) 2009 - 2010 -- Damian Bushong', 'STATUS');
 			$this->output('@license:      MIT License', 'STATUS');
 			$this->output('', 'STATUS');
@@ -171,7 +171,7 @@ class UI extends Base
 	 */
 	public function ready()
 	{
-		if($this->level(OUTPUT_NORMAL))
+		if($this->level(Root\OUTPUT_NORMAL))
 		{
 			$this->output('---------------------------------------------------------------------', 'STATUS');
 			$this->output('Failnet loaded and ready!', 'STATUS');
@@ -185,7 +185,7 @@ class UI extends Base
 	 */
 	public function shutdown()
 	{
-		if($this->level(OUTPUT_NORMAL))
+		if($this->level(Root\OUTPUT_NORMAL))
 		{
 			$this->output('---------------------------------------------------------------------', 'STATUS');
 			$this->output('Failnet shutting down...', 'STATUS');
@@ -199,7 +199,7 @@ class UI extends Base
 	 */
 	public function message($data)
 	{
-		if($this->level(OUTPUT_NORMAL))
+		if($this->level(Root\OUTPUT_NORMAL))
 		{
 			$this->output('[irc] ' . $data);
 		}
@@ -211,7 +211,7 @@ class UI extends Base
 	 */
 	public function status($data)
 	{
-		if($this->level(OUTPUT_NORMAL))
+		if($this->level(Root\OUTPUT_NORMAL))
 		{
 			$this->output('[system] ' . $data);
 		}
@@ -223,7 +223,7 @@ class UI extends Base
 	 */
 	public function system($data)
 	{
-		if($this->level(OUTPUT_DEBUG))
+		if($this->level(Root\OUTPUT_DEBUG))
 		{
 			$this->output('[system] ' . $data);
 		}
@@ -236,7 +236,7 @@ class UI extends Base
 	 */
 	public function event($data)
 	{
-		if($this->level(OUTPUT_DEBUG_FULL))
+		if($this->level(Root\OUTPUT_DEBUG_FULL))
 		{
 			$this->output('[event] ' . $data);
 		}
@@ -249,7 +249,7 @@ class UI extends Base
 	 */
 	public function notice($data)
 	{
-		if($this->level(OUTPUT_DEBUG))
+		if($this->level(Root\OUTPUT_DEBUG))
 		{
 			$this->output('[notice] ' . $data);
 		}
@@ -262,7 +262,7 @@ class UI extends Base
 	 */
 	public function warning($data)
 	{
-		if($this->level(OUTPUT_DEBUG))
+		if($this->level(Root\OUTPUT_DEBUG))
 		{
 			$this->output('[warning] ' . $data, 'WARNING');
 		}
@@ -275,7 +275,7 @@ class UI extends Base
 	 */
 	public function error($data)
 	{
-		if($this->level(OUTPUT_DEBUG))
+		if($this->level(Root\OUTPUT_DEBUG))
 		{
 			$this->output('[error] ' . $data, 'ERROR');
 		}
@@ -288,7 +288,7 @@ class UI extends Base
 	 */
 	public function php($data)
 	{
-		if($this->level(OUTPUT_DEBUG))
+		if($this->level(Root\OUTPUT_DEBUG))
 		{
 			$this->output('[php] ' . $data, 'ERROR');
 		}
@@ -300,7 +300,7 @@ class UI extends Base
 	 */
 	public function debug($data)
 	{
-		if($this->level(OUTPUT_DEBUG_FULL))
+		if($this->level(Root\OUTPUT_DEBUG_FULL))
 		{
 			$this->output('[debug] ' . $data);
 		}
@@ -312,7 +312,7 @@ class UI extends Base
 	 */
 	public function raw($data)
 	{
-		if($this->level(OUTPUT_RAW))
+		if($this->level(Root\OUTPUT_RAW))
 		{
 			$this->output('[SOCKET] ' . $data);
 		}

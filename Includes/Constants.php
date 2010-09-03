@@ -26,7 +26,7 @@ namespace Failnet;
 const FAILNET_VERSION = '3.0.0-DEV';
 
 /**
- * DO NOT _EVER_ CHANGE THIS, FOR THE SAKE OF HUMANITY.
+ * DO NOT _EVER_ CHANGE THESE, FOR THE SAKE OF HUMANITY.
  * @link http://xkcd.com/534/
  */
 const CAN_BECOME_SKYNET = false;

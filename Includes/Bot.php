@@ -36,120 +36,54 @@ namespace Failnet;
 abstract class Bot
 {
 	/**
-	 * @var array - The core objects, which will also include the core class.
+	 * @var Failnet\Environment - The Failnet environment object
 	 */
-	protected static $core = array();
+	protected static $environment;
 
 	/**
-	 * @var array - Array of loaded node objects
+	 * Starts up the Bot class
+	 * @param Failnet\Environment $environment - The Failnet environment object.
+	 * @return void
 	 */
-	protected static $nodes = array();
+	public static function init(Failnet\Environment $environment)
+	{
+		/* @var Failnet\Environment */
+		self::$environment = $environment;
+
+		self::$environment->setOptions(array(
+			'start'				=> time(),
+			'base_memory'		=> memory_get_usage(),
+			'base_memory_peak'	=> memory_get_peak_usage(),
+		));
+	}
 
 	/**
-	 * @var array - Array of loaded cron objects
+	 * Grab the Failnet environment object, in order to make changes to global settings, or interact with loaded objects more directly
+	 * @return Failnet\Environment - The Failnet environment object.
 	 */
-	protected static $cron = array();
+	public static function getEnvironment()
+	{
+		return self::$environment;
+	}
 
 	/**
-	 * @var array - Array of loaded plugins
-	 */
-	protected static $plugins = array();
-
-	/**
-	 * @var array - Array of various loaded objects
-	 */
-	protected static $objects = array();
-
-	/**
-	 * @var array - Array of loaded configuration options
-	 */
-	protected static $options = array();
-
-	/**
-	 * Get an object for whatever purpose
+	 * Get a loaded object from the Failnet environment
 	 * @param mixed $object - The object's location and name.  Either an array of format array('type'=>'objecttype','name'=>'objectname'), or a string of format 'objecttype.objectname'
 	 * @return object - The desired object.
-	 *
-	 * @throws BotException
 	 */
 	public static function getObject($object)
 	{
-		// If this is not an array, we need to resolve the object name for something usable.
-		if(!is_array($object))
-			$object = self::resolveObject($object);
-		extract($object);
-		if(property_exists(self, $type))
-		{
-			if(isset(self::$$type[$name]))
-				return self::$$type[$name];
-		}
-		else
-		{
-			if(isset(self::$objects[$type][$name]))
-				return self::$objects[$type][$name];
-		}
-		throw new BotException('The object specified was unable to be fetched.', BotException::ERR_NO_SUCH_OBJ);
+		return self::$environment->getObject($object);
 	}
 
 	/**
-	 * Alias of Failnet\Bot::getObject()
-	 * @see Failnet\Bot::getObject()
+	 * Get configuration options from the Failnet environment
+	 * @param string $option - The option name.
+	 * @param mixed $default - The default value to use if the option is not set.
+	 * @return mixed - The value of the option we're grabbing.
 	 */
-	public static function obj($object)
+	public static function getOption($option, $default)
 	{
-		return self::getObject($object);
-	}
-
-	/**
-	 * Load an object into the global class.
-	 * @param mixed $object - The object's location and name.  Either an array of format array('type'=>'objecttype','name'=>'objectname'), or a string of format 'objecttype.objectname'
-	 * @param mixed $value - The object to load.
-	 * @return void
-	 */
-	public static function setObject($object, $value)
-	{
-		if(!is_array($object))
-			$object = self::resolveObject($object);
-		extract($object);
-		if(property_exists(self, $type))
-		{
-			if(isset(self::$$type[$name]))
-				self::$$type[$name] = $value;
-		}
-		else
-		{
-			if(isset(self::$objects[$type][$name]))
-				self::$objects[$type][$name] = $value;
-		}
-	}
-
-	/**
-	 * Check to see if an object has been loaded or not
-	 * @param mixed $object - The object's location and name.  Either an array of format array('type'=>'objecttype','name'=>'objectname'), or a string of format 'objecttype.objectname'
-	 * @return boolean - Do we have this object?
-	 */
-	public static function checkObjectLoaded($object)
-	{
-		if(!is_array($object))
-			$object = self::resolveObject($object);
-		extract($object);
-		if(property_exists(self, $type))
-			return isset(self::$$type[$name]);
-		return isset(self::$objects[$type][$name]);
-	}
-
-	/**
-	 * Resolves an object's name
-	 * @param string $object - The object's name we want to resolve into a workable array
-	 * @return array - The resolved name location for the object.
-	 */
-	protected static function resolveObject($object)
-	{
-		$object = explode('.', $object, 1);
-		$return = array(
-			'name' => isset($object[1]) ? $object[1] : $object[0],
-			'type' => isset($object[1]) ? $object[0] : 'core',
-		);
-		return $return;
+		return self::$environment->getOption($option, $default);
 	}
 }

@@ -21,17 +21,219 @@
  */
 
 namespace Failnet;
+use Failnet\Lib as Lib;
 
+/**
+ * Failnet - Environment class,
+ *      Manages the Failnet environment.
+ *
+ *
+ * @category    Failnet
+ * @package     Failnet
+ * @author      Damian Bushong
+ * @license     MIT License
+ * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
+ */
 class Environment extends Failnet\Base
 {
+	/**
+	 * @var array - The core objects, which will also include the core class.
+	 */
+	protected $core = array();
+
+	/**
+	 * @var array - Array of loaded node objects
+	 */
+	protected $nodes = array();
+
+	/**
+	 * @var array - Array of loaded cron objects
+	 */
+	protected $cron = array();
+
+	/**
+	 * @var array - Array of loaded plugins
+	 */
+	protected $plugins = array();
+
+	/**
+	 * @var array - Array of various loaded objects
+	 */
+	protected $objects = array();
+
+	/**
+	 * @var array - Array of loaded configuration options
+	 */
+	protected $options = array();
+
+	/**
+	 * Constructor
+	 * @return void
+	 */
 	public function __construct()
 	{
-		// meh
+		// nerf the pyro, then init the Bot with a reference back to the environment.
+		Bot::init($this);
+
+		try
+		{
+			$this->setObject('core.cli', new Failnet\Core\CLI($_SERVER['argv']));
+			/* @var Failnet\Core\CLI */
+			$cli = $this->getObject('core.cli');
+			define('Failnet\\IN_INSTALL', ($cli('mode') === 'install') ? true : false);
+			define('Failnet\\CONFIG_FILE', ($cli('config') ? $cli('config') : 'Config.php'));
+
+			// load the config file up next
+			$this->loadConfig(Failnet\CONFIG_FILE);
+
+			$this->setObject('core.hook', new Failnet\Core\Hook());
+			$this->setObject('core.ui', new Failnet\Core\UI());
+		}
+		catch(FailnetException $e)
+		{
+			throw new EnvironmentException(sprintf('Failnet environment initialization encountered a fatal exception (%1$s::%2$s)' . PHP_EOL . 'Exception message: %1$s', get_class($e), $e->getCode(), $e->getMessage()), EnvironmentException::ERR_ENVIRONMENT_LOAD_FAILED, $e);
+		}
 	}
 
+	/**
+	 * Load a specified configuration file
+	 * @param string $config -The config file to load, either JSON or PHP.
+	 * @return void
+	 *
+	 * @throws EnvironmentException
+	 */
 	public function loadConfig($config)
 	{
-		// meh
+		// grab the file extension of the config file, see if it is PHP or JSON...we'll react appropriately based on which we're working with.
+		$file_extension = substr(strrchr($config, '.'), 1);
+		if($file_extension == 'php')
+		{
+			if(($include = @include(FAILNET_ROOT . "Data/Config/$config")) === false)
+				throw new EnvironmentException('Failed to load the specified config file "%1$s"', EnvironmentException::ERR_ENVIRONMENT_FAILED_CONFIG_LOAD);
+			$this->setOptions($data);
+		}
+		elseif($file_extension == 'json')
+		{
+			// @todo json integration
+			$this->setOptions($data);
+		}
+		else
+		{
+			throw new EnvironmentException('The specified config file\'s file type is not supported', EnvironmentException::ERR_ENVIRONMENT_UNSUPPORTED_CONFIG);
+		}
+	}
+
+	/**
+	 * Get an object for whatever purpose
+	 * @param mixed $object - The object's location and name.  Either an array of format array('type'=>'objecttype','name'=>'objectname'), or a string of format 'objecttype.objectname'
+	 * @return mixed - The desired object.
+	 *
+	 * @throws EnvironmentException
+	 */
+	public function getObject($object)
+	{
+		// If this is not an array, we need to resolve the object name for something usable.
+		if(!is_array($object))
+			$object = $this->resolveObject($object);
+		extract($object);
+		if(property_exists($this, $type))
+		{
+			if(isset($this->$type[$name]))
+				return $this->$type[$name];
+		}
+		else
+		{
+			if(isset($this->objects[$type][$name]))
+				return $this->objects[$type][$name];
+		}
+		throw new EnvironmentException(sprintf('The object "%1$s" was unable to be fetched.', "$type.$name"), EnvironmentException::ERR_ENVIRONMENT_NO_SUCH_OBJECT);
+	}
+
+	/**
+	 * Load an object into the global class.
+	 * @param mixed $object - The object's location and name.  Either an array of format array('type'=>'objecttype','name'=>'objectname'), or a string of format 'objecttype.objectname'
+	 * @param mixed $value - The object to load.
+	 * @return void
+	 */
+	public function setObject($object, $value)
+	{
+		if(!is_array($object))
+			$object = $this->resolveObject($object);
+		extract($object);
+		if(property_exists($this, $type))
+		{
+			if(isset($this->$type[$name]))
+				$this->$type[$name] = $value;
+		}
+		else
+		{
+			if(isset($this->objects[$type][$name]))
+				$this->objects[$type][$name] = $value;
+		}
+	}
+
+	/**
+	 * Check to see if an object has been loaded or not
+	 * @param mixed $object - The object's location and name.  Either an array of format array('type'=>'objecttype','name'=>'objectname'), or a string of format 'objecttype.objectname'
+	 * @return boolean - Do we have this object?
+	 */
+	public function checkObjectLoaded($object)
+	{
+		if(!is_array($object))
+			$object = $this->resolveObject($object);
+		extract($object);
+		if(property_exists($this, $type))
+			return isset($this->$type[$name]);
+		return isset($this->objects[$type][$name]);
+	}
+
+	/**
+	 * Resolves an object's name
+	 * @param string $object - The object's name we want to resolve into a workable array
+	 * @return array - The resolved name location for the object.
+	 */
+	protected function resolveObject($object)
+	{
+		$object = explode('.', $object, 1);
+		$return = array(
+			'name' => isset($object[1]) ? $object[1] : $object[0],
+			'type' => isset($object[1]) ? $object[0] : 'core',
+		);
+		return $return;
+	}
+
+	/**
+	 * Grab an option, or return the default if the option isn't set
+	 * @param string $option - The option name to grab.
+	 * @param mixed $default - The default value to use if the option is not set.
+	 * @return mixed - The value of the option we're grabbing, or the default if it's not set.
+	 */
+	public function getOption($option, $default)
+	{
+		if(isset($this->options[$option]))
+			return $this->options[$option];
+		return $default;
+	}
+
+	/**
+	 * Set an option to a specified value
+	 * @param string $option - The option name to set.
+	 * @param mixed $value - The value to set.
+	 * @return void
+	 */
+	public function setOption($option, $value)
+	{
+		$this->options[$option] = $value;
+	}
+
+	/**
+	 * Set multiple options at once.
+	 * @param array $options - The array of options to set, with the array keys being the option names, and array values being the option values.
+	 * @return void
+	 */
+	public function setOptions(array $options)
+	{
+		$this->options = array_merge($this->options, $options);
 	}
 
 	public function runBot()

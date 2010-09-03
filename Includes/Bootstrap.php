@@ -40,15 +40,15 @@ require FAILNET_ROOT . 'Includes/Exception.php';
  *  - DB dir being usable
  */
 if(strtolower(PHP_SAPI) !== 'cli')
-	throw new Exception(ex(Exception::ERR_STARTUP_PHP_SAPI));
+	throw new StartupException('Failnet must be run in the CLI SAPI', StartupException::ERR_STARTUP_PHP_SAPI);
 if(!extension_loaded('PDO'))
-	throw new Exception(ex(Exception::ERR_STARTUP_NO_PDO));
+	throw new StartupException('Failnet requires the PDO PHP extension to be loaded', StartupException::ERR_STARTUP_NO_PDO);
 if(!extension_loaded('pdo_sqlite'))
-	throw new Exception(ex(Exception::ERR_STARTUP_NO_PDO_SQLITE));
+	throw new StartupException('Failnet requires the SQLite PDO extension to be loaded', StartupException::ERR_STARTUP_NO_PDO_SQLITE);
 if(!file_exists(FAILNET_ROOT . 'Data/Config/') || !is_readable(FAILNET_ROOT . 'Data/Config/') || !is_writeable(FAILNET_ROOT . 'Data/Config/') || !is_dir(FAILNET_ROOT . 'Data/Config/'))
-	throw new Exception(ex(Exception::ERR_STARTUP_NO_ACCESS_CFG_DIR));
+	throw new StartupException('Failnet requires the configuration file directory to exist and be readable/writeable', StartupException::ERR_STARTUP_NO_ACCESS_CFG_DIR);
 if(!file_exists(FAILNET_ROOT . 'Data/DB/') || !is_readable(FAILNET_ROOT . 'Data/DB/') || !is_writeable(FAILNET_ROOT . 'Data/DB/') || !is_dir(FAILNET_ROOT . 'Data/DB/'))
-	throw new Exception(ex(Exception::ERR_STARTUP_NO_ACCESS_DB_DIR));
+	throw new StartupException('Failnet requires the database directory to exist and be readable/writeable', StartupException::ERR_STARTUP_NO_ACCESS_DB_DIR);
 
 // Check to see if date.timezone is empty in the PHP.ini; if so, set the timezone with some Hax to prevent strict errors.
 if(!ini_get('date.timezone'))
@@ -64,24 +64,18 @@ array_shift($_SERVER['argv']);
 require FAILNET_ROOT . 'Includes/Base.php';
 require FAILNET_ROOT . 'Includes/Bot.php';
 require FAILNET_ROOT . 'Includes/Autoload.php';
+require FAILNET_ROOT . 'Includes/Hookable.php';
 require FAILNET_ROOT . 'Includes/Functions.php';
-//require FAILNET_ROOT . 'Includes/Environment.php';
+require FAILNET_ROOT . 'Includes/Environment.php';
 
 Failnet\Autoload::register();
 @set_error_handler('Failnet\\errorHandler');
 // @set_exception_handler('Failnet\\exceptionHandler');
 
-
-// @todo move to Environment
-$cli = new Failnet\Core\CLI($_SERVER['argv']);
-Failnet\Bot::setObject('core.cli', $cli);
-
-//Bot::loadArgs($_SERVER['argv']);
-define('IN_INSTALL', ($cli('mode') === 'install') ? true : false);
-define('CONFIG_FILE', ($cli('config') ? $cli('config') : 'Config'));
+$environment = new Failnet\Environment();
 
 // Load the appropriate core file.
-if(!IN_INSTALL && file_exists(FAILNET_ROOT . 'Data/Config/' . CONFIG_FILE . '.php'))
+if(!Failnet\IN_INSTALL && file_exists(FAILNET_ROOT . 'Data/Config/' . Failnet\CONFIG_FILE . '.php'))
 {
 	Bot::setCore('core', 'Failnet\\Core\\Core');
 }

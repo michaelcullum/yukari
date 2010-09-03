@@ -23,23 +23,6 @@
 namespace Failnet;
 
 /**
- * Converts an exception code to an actual exception error message
- * @param integer $code - Exception code that we're converting
- * @param array $parameters - The parameters to pass to the exception string if we want to use sprintf()
- * @param string $exception_class - The class to use for the exception lookup (must extend \Failnet\Exception!)
- * @return string - The desired error message to throw our exception with
- */
-function ex($code, $parameters = array(), $exception_class = 'Exception')
-{
-	$message = $exception_class::getTranslation($code);
-	if($code === 0)
-		$parameters = array();
-	if(!is_array($parameters))
-		$parameters = array($parameters);
-	return ":E:{$code}:" . ((!empty($parameters)) ? vsprintf($message, $parameters) : $message);
-}
-
-/**
  * Error handler function for Failnet.  Modified from the phpBB 3.0.x msg_handler() function.
  * @param integer $errno - Level of the error encountered
  * @param string $msg_text - The error message recieved

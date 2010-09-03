@@ -67,7 +67,7 @@ class Autoload extends Base
 			{
 				require $path . $name . '.php';
 				if(!class_exists($class))
-					throw new Exception(ex(Exception::ERR_AUTOLOAD_CLASS_INVALID, $path . $name . '.php'));
+					throw new AutoloadException(sprintf('Invalid class contained within file %1$s', $path . $name . '.php'), AutoloadException::ERR_AUTOLOAD_CLASS_INVALID);
 				return;
 			}
 		}

@@ -21,7 +21,7 @@
  */
 
 namespace Failnet\Core;
-use Failnet;
+use Failnet as Root;
 
 
 /**
@@ -35,7 +35,7 @@ use Failnet;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class CLI extends Base
+class CLI extends Root\Base
 {
 	/**
 	 * @var array - The args loaded.
