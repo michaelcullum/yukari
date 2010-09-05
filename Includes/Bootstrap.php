@@ -37,7 +37,6 @@ require FAILNET_ROOT . 'Includes/Exception.php';
  *  - PHP_SAPI
  *  - PDO availability
  *  - PDO+SQlite availability
- *  - DB dir being usable
  */
 if(strtolower(PHP_SAPI) !== 'cli')
 	throw new StartupException('Failnet must be run in the CLI SAPI', StartupException::ERR_STARTUP_PHP_SAPI);
@@ -45,20 +44,6 @@ if(!extension_loaded('PDO'))
 	throw new StartupException('Failnet requires the PDO PHP extension to be loaded', StartupException::ERR_STARTUP_NO_PDO);
 if(!extension_loaded('pdo_sqlite'))
 	throw new StartupException('Failnet requires the SQLite PDO extension to be loaded', StartupException::ERR_STARTUP_NO_PDO_SQLITE);
-if(!file_exists(FAILNET_ROOT . 'Data/Config/') || !is_readable(FAILNET_ROOT . 'Data/Config/') || !is_writeable(FAILNET_ROOT . 'Data/Config/') || !is_dir(FAILNET_ROOT . 'Data/Config/'))
-	throw new StartupException('Failnet requires the configuration file directory to exist and be readable/writeable', StartupException::ERR_STARTUP_NO_ACCESS_CFG_DIR);
-if(!file_exists(FAILNET_ROOT . 'Data/DB/') || !is_readable(FAILNET_ROOT . 'Data/DB/') || !is_writeable(FAILNET_ROOT . 'Data/DB/') || !is_dir(FAILNET_ROOT . 'Data/DB/'))
-	throw new StartupException('Failnet requires the database directory to exist and be readable/writeable', StartupException::ERR_STARTUP_NO_ACCESS_DB_DIR);
-
-// Check to see if date.timezone is empty in the PHP.ini; if so, set the timezone with some Hax to prevent strict errors.
-if(!ini_get('date.timezone'))
-	@date_default_timezone_set(@date_default_timezone_get());
-
-// Run indefinitely...
-set_time_limit(0);
-
-// The first chunk always gets in the way, so we drop it.
-array_shift($_SERVER['argv']);
 
 // Load up the common files, setup our JIT class autoloading, and get going.
 require FAILNET_ROOT . 'Includes/Base.php';

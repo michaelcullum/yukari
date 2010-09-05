@@ -74,6 +74,21 @@ class Environment extends Failnet\Base
 	 */
 	public function __construct()
 	{
+		if(!file_exists(FAILNET_ROOT . 'Data/Config/') || !is_readable(FAILNET_ROOT . 'Data/Config/') || !is_writeable(FAILNET_ROOT . 'Data/Config/') || !is_dir(FAILNET_ROOT . 'Data/Config/'))
+			throw new EnvironmentException('Configuration file directory does not exist, or is not readable/writeable', EnvironmentException::ERR_ENVIRONMENT_NO_ACCESS_CFG_DIR);
+		if(!file_exists(FAILNET_ROOT . 'Data/DB/') || !is_readable(FAILNET_ROOT . 'Data/DB/') || !is_writeable(FAILNET_ROOT . 'Data/DB/') || !is_dir(FAILNET_ROOT . 'Data/DB/'))
+			throw new EnvironmentException('Database directory does not exist, or is not readable/writeable', EnvironmentException::ERR_ENVIRONMENT_NO_ACCESS_DB_DIR);
+
+		// Check to see if date.timezone is empty in the PHP.ini; if so, set the timezone with some Hax to prevent strict errors.
+		if(!ini_get('date.timezone'))
+			@date_default_timezone_set(@date_default_timezone_get());
+
+		// Run indefinitely...
+		set_time_limit(0);
+
+		// The first chunk always gets in the way, so we drop it.
+		array_shift($_SERVER['argv']);
+
 		// nerf the pyro, then init the Bot with a reference back to the environment.
 		Bot::init($this);
 
