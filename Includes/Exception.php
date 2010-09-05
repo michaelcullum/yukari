@@ -51,16 +51,14 @@ class FailnetException extends \Exception
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  *
- * @note reserves 10xx error codes
+ * @note reserves 100xx error codes
  */
 class StartupException extends FailnetException
 {
-	const ERR_STARTUP_MIN_PHP = 1000;
-	const ERR_STARTUP_PHP_SAPI = 1001;
-	const ERR_STARTUP_NO_PDO = 1002;
-	const ERR_STARTUP_NO_PDO_SQLITE = 1003;
-	const ERR_STARTUP_NO_ACCESS_CFG_DIR = 1004;
-	const ERR_STARTUP_NO_ACCESS_DB_DIR = 1005;
+	const ERR_STARTUP_MIN_PHP = 10000;
+	const ERR_STARTUP_PHP_SAPI = 10001;
+	const ERR_STARTUP_NO_PDO = 10002;
+	const ERR_STARTUP_NO_PDO_SQLITE = 10003;
 }
 
 /**
@@ -74,11 +72,11 @@ class StartupException extends FailnetException
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  *
- * @note reserves 11xx error codes
+ * @note reserves 110xx error codes
  */
 class AutoloadException extends FailnetException
 {
-	const ERR_AUTOLOAD_CLASS_INVALID = 1100;
+	const ERR_AUTOLOAD_CLASS_INVALID = 11000;
 }
 
 /**
@@ -92,14 +90,16 @@ class AutoloadException extends FailnetException
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  *
- * @note reserves 12xx error codes
+ * @note reserves 120xx error codes
  */
 class EnvironmentException extends FailnetException
 {
-	const ERR_ENVIRONMENT_LOAD_FAILED = 1200;
-	const ERR_ENVIRONMENT_NO_SUCH_OBJECT = 1201;
-	const ERR_ENVIRONMENT_FAILED_CONFIG_LOAD = 1202;
-	const ERR_ENVIRONMENT_UNSUPPORTED_CONFIG = 1203;
+	const ERR_ENVIRONMENT_LOAD_FAILED = 12000;
+	const ERR_ENVIRONMENT_NO_SUCH_OBJECT = 12001;
+	const ERR_ENVIRONMENT_FAILED_CONFIG_LOAD = 12002;
+	const ERR_ENVIRONMENT_UNSUPPORTED_CONFIG = 12003;
+	const ERR_ENVIRONMENT_NO_ACCESS_CFG_DIR = 12004;
+	const ERR_ENVIRONMENT_NO_ACCESS_DB_DIR = 12005;
 }
 
 /**
@@ -113,9 +113,9 @@ class EnvironmentException extends FailnetException
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  *
- * @note reserves 13xx error codes
+ * @note reserves 130xx error codes
  */
 class HookableException extends FailnetException
 {
-	const ERR_HOOKABLE_UNDEFINED_METHOD_CALL = 1300;
+	const ERR_HOOKABLE_UNDEFINED_METHOD_CALL = 13000;
 }
