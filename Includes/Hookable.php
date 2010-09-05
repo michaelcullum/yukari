@@ -69,13 +69,19 @@ abstract class Hookable extends Base
 				foreach($hook_ary as $call)
 				{
 					// process the hook data here
-					if($call['type'] === HOOK_OVERRIDE)
+					switch($call['type'])
 					{
-						return call_user_func_array($call['hook_call'], $arguments);
-					}
-					elseif($call['type'] === HOOK_STACK)
-					{
-						call_user_func_array($call['hook_call'], $arguments);
+						case Failnet\HOOK_OVERRIDE:
+							return call_user_func_array($call['hook_call'], $arguments);
+						break;
+
+						case Failnet\HOOK_STACK:
+							call_user_func_array($call['hook_call'], $arguments);
+						break;
+
+						case Failnet\HOOK_LAMBDA:
+							$call['hook_call']($arguments);
+						break;
 					}
 				}
 			}
@@ -106,13 +112,19 @@ abstract class Hookable extends Base
 				foreach($hook_ary as $call)
 				{
 					// process the hook data here
-					if($call['type'] === HOOK_OVERRIDE)
+					switch($call['type'])
 					{
-						return call_user_func_array($call['hook_call'], $arguments);
-					}
-					elseif($call['type'] === HOOK_STACK)
-					{
-						call_user_func_array($call['hook_call'], $arguments);
+						case Failnet\HOOK_OVERRIDE:
+							return call_user_func_array($call['hook_call'], $arguments);
+						break;
+
+						case Failnet\HOOK_STACK:
+							call_user_func_array($call['hook_call'], $arguments);
+						break;
+
+						case Failnet\HOOK_LAMBDA:
+							$call['hook_call']($arguments);
+						break;
 					}
 				}
 			}

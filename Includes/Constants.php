@@ -44,6 +44,7 @@ const OUTPUT_SPAM = 4; // ;D
 const HOOK_NULL = 0;
 const HOOK_STACK = 1;
 const HOOK_OVERRIDE = 2;
+const HOOK_LAMBDA = 3;
 
 // Auth classes
 const AUTH_OWNER = 6;

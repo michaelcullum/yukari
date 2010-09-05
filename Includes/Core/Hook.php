@@ -45,7 +45,7 @@ class Hook extends Root\Base
 	/**
 	 * Register a hook function to be called before
 	 * @param array $hooked_method_call - The callback info for the method we're hooking onto.
-	 * @param mixed $hook_call - The function/method to hook on top of the method we're hooking.
+	 * @param mixed $hook_call - The function/method to hook on top of the method we're hooking (accepts lambda functions).
 	 * @param constant $hook_type - The type of hook we're using.
 	 * @return boolean - Were we successful?
 	 *
@@ -54,11 +54,11 @@ class Hook extends Root\Base
 	public static function registerHook($hooked_method_class, $hooked_method_name, $hook_call, $hook_type = HOOK_NULL)
 	{
 		// We're deliberately ignoring HOOK_NULL here.
-		if(!in_array($hook_call, array(HOOK_STACK, HOOK_OVERRIDE)))
+		if(!in_array($hook_call, array(Root\HOOK_STACK, Root\HOOK_OVERRIDE, Root\HOOK_LAMBDA)))
 			throw new Exception(ex(Exception::ERR_REGISTER_HOOK_BAD_HOOK_TYPE)); // @todo -> HookException
 
 		// Check for unsupported classes
-		if(substr($hooked_method_class, 0, 8) != '\\Failnet')
+		if(substr($hooked_method_class, 0, 7) != 'Failnet')
 			throw new Exception(ex(Exception::ERR_REGISTER_HOOK_BAD_CLASS, array($hooked_method_class))); // @todo HookException
 
 		/**
