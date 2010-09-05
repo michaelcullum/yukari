@@ -83,6 +83,10 @@ class Environment extends Failnet\Base
 		if(!ini_get('date.timezone'))
 			@date_default_timezone_set(@date_default_timezone_get());
 
+		// Set our error and exception handlers
+		@set_error_handler('Failnet\\errorHandler');
+		// @set_exception_handler('Failnet\\exceptionHandler');
+
 		// Run indefinitely...
 		set_time_limit(0);
 
@@ -94,6 +98,9 @@ class Environment extends Failnet\Base
 
 		try
 		{
+			// Register our autoloader
+			Autoload::register();
+
 			$this->setObject('core.cli', new Failnet\Core\CLI($_SERVER['argv']));
 			/* @var Failnet\Core\CLI */
 			$cli = $this->getObject('core.cli');
