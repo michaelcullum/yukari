@@ -69,6 +69,8 @@ class Environment extends Failnet\Base
 	/**
 	 * Constructor
 	 * @return void
+	 *
+	 * @throws Failnet\EnvironmentException
 	 */
 	public function __construct()
 	{
@@ -100,7 +102,7 @@ class Environment extends Failnet\Base
 	 * @param string $config -The config file to load, either JSON or PHP.
 	 * @return void
 	 *
-	 * @throws EnvironmentException
+	 * @throws Failnet\EnvironmentException
 	 */
 	public function loadConfig($config)
 	{
@@ -128,7 +130,7 @@ class Environment extends Failnet\Base
 	 * @param mixed $object - The object's location and name.  Either an array of format array('type'=>'objecttype','name'=>'objectname'), or a string of format 'objecttype.objectname'
 	 * @return mixed - The desired object.
 	 *
-	 * @throws EnvironmentException
+	 * @throws Failnet\EnvironmentException
 	 */
 	public function getObject($object)
 	{
