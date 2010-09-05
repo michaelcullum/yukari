@@ -107,11 +107,26 @@ class Environment extends Failnet\Base
 			define('Failnet\\IN_INSTALL', ($cli('mode') === 'install') ? true : false);
 			define('Failnet\\CONFIG_FILE', ($cli('config') ? $cli('config') : 'Config.php'));
 
-			// load the config file up next
-			$this->loadConfig(Failnet\CONFIG_FILE);
+			if(!Failnet\IN_INSTALL)
+			{
+				// stuff for the dynamic installer goes here
+				$this->setObject('core.ui', new Failnet\Install\UI($this->getOption('ui.output_level', 'normal'));
 
-			$this->setObject('core.hook', new Failnet\Core\Hook());
-			$this->setObject('core.ui', new Failnet\Core\UI($this->getOption('ui.output_level', 'normal'));
+				$this->setObject('core.core', new Failnet\Install\Core());
+			}
+			else
+			{
+				if(!file_exists(FAILNET_ROOT . 'Data/Config/' . Failnet\CONFIG_FILE))
+					throw new EnvironmentException(sprintf('The configuration file "%1$s" could not be loaded, as it does not exist.', Failnet\CONFIG_FILE), EnvironmentException::ERR_ENVIRONMENT_CONFIG_MISSING);
+
+				// load the config file up next
+				$this->loadConfig(Failnet\CONFIG_FILE);
+
+				$this->setObject('core.hook', new Failnet\Core\Hook());
+				$this->setObject('core.ui', new Failnet\Core\UI($this->getOption('ui.output_level', 'normal'));
+
+				$this->setObject('core.core', new Failnet\Core\Core());
+			}
 		}
 		catch(FailnetException $e)
 		{

@@ -54,16 +54,4 @@ require FAILNET_ROOT . 'Includes/Functions.php';
 require FAILNET_ROOT . 'Includes/Environment.php';
 
 $environment = new Failnet\Environment();
-
-// Load the appropriate core file.
-if(!Failnet\IN_INSTALL && file_exists(FAILNET_ROOT . 'Data/Config/' . Failnet\CONFIG_FILE . '.php'))
-{
-	Bot::setCore('core', 'Failnet\\Core\\Core');
-}
-else
-{
-	Bot::setCore('core', 'Failnet\\Install\\Core');
-}
-
-// Run it!
-Bot::core()->run();
+$environment->runBot();
