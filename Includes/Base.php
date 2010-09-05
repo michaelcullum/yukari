@@ -35,7 +35,13 @@ namespace Failnet;
  */
 abstract class Base
 {
+	/**
+	 * @var boolean - Does this object support hooks?
+	 */
 	public $supports_hooks = false;
 
+	/**
+	 * @var boolean - If this object supports hooks, are they enabled?
+	 */
 	public $using_hooks = false;
 }

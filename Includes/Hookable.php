@@ -35,9 +35,14 @@ namespace Failnet;
  */
 abstract class Hookable extends Base
 {
-	// @todo docs
-	public $supports_hooks = true;
+	/**
+	 * @var boolean - Does this object support hooks?
+	 */
+	public $supports_hooks = false;
 
+	/**
+	 * @var boolean - If this object supports hooks, are they enabled?
+	 */
 	public $using_hooks = false;
 
 	/**
