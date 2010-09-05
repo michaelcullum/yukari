@@ -35,6 +35,7 @@ namespace Failnet;
  */
 abstract class Hookable extends Base
 {
+	// @todo docs
 	public $supports_hooks = true;
 
 	public $using_hooks = false;
@@ -49,25 +50,27 @@ abstract class Hookable extends Base
 	 * @param string $name - Method name
 	 * @param array $arguments - Method parameters
 	 * @return void
-	 * @throws Failnet\Exception
+	 *
+	 * @throws Failnet\HookableException
 	 */
 	public function __call($name, $arguments)
 	{
+		$hook = Failnet\Bot::getObject('core.hook');
 		if(method_exists($this, "_$name"))
 		{
-			$hook_ary = Bot::retrieveHook(get_class($this), $name);
+			$hook_ary = $hook->retrieveHook(get_class($this), $name);
 			if(!empty($hook_ary))
 			{
-				foreach($hook_ary as $hook)
+				foreach($hook_ary as $call)
 				{
 					// process the hook data here
-					if($hook['type'] === HOOK_OVERRIDE)
+					if($call['type'] === HOOK_OVERRIDE)
 					{
-						return call_user_func_array($hook['hook_call'], $arguments);
+						return call_user_func_array($call['hook_call'], $arguments);
 					}
-					elseif($hook['type'] === HOOK_STACK)
+					elseif($call['type'] === HOOK_STACK)
 					{
-						call_user_func_array($hook['hook_call'], $arguments);
+						call_user_func_array($call['hook_call'], $arguments);
 					}
 				}
 			}
@@ -75,7 +78,7 @@ abstract class Hookable extends Base
 		}
 		else
 		{
-			throw new Exception(ex(Exception::ERR_UNDEFINED_METHOD_CALL, array($name, get_class($this))));
+			throw new HookableException(sprintf('Call to undefined method - %2$s::%1$s', $name, get_class($this)), HookableException::ERR_HOOKABLE_UNDEFINED_METHOD_CALL);
 		}
 	}
 
@@ -84,25 +87,27 @@ abstract class Hookable extends Base
 	 * @param string $name - Method name
 	 * @param array $arguments - Method parameters
 	 * @return void
-	 * @throws Failnet\Exception
+	 *
+	 * @throws Failnet\HookableException
 	 */
 	public function __callStatic($name, $arguments)
 	{
+		$hook = Failnet\Bot::getObject('core.hook');
 		if(method_exists(static::$__CLASS__, "_$name"))
 		{
-			$hook_ary = Bot::retrieveHook(static::$__CLASS__, $name);
+			$hook_ary = $hook->retrieveHook(static::$__CLASS__, $name);
 			if(!empty($hook_ary))
 			{
-				foreach($hook_ary as $hook)
+				foreach($hook_ary as $call)
 				{
 					// process the hook data here
-					if($hook['type'] === HOOK_OVERRIDE)
+					if($call['type'] === HOOK_OVERRIDE)
 					{
-						return call_user_func_array($hook['hook_call'], $arguments);
+						return call_user_func_array($call['hook_call'], $arguments);
 					}
-					elseif($hook['type'] === HOOK_STACK)
+					elseif($call['type'] === HOOK_STACK)
 					{
-						call_user_func_array($hook['hook_call'], $arguments);
+						call_user_func_array($call['hook_call'], $arguments);
 					}
 				}
 			}
@@ -110,7 +115,7 @@ abstract class Hookable extends Base
 		}
 		else
 		{
-			throw new Exception(ex(Exception::ERR_UNDEFINED_METHOD_CALL, array($name, static::$__CLASS__)));
+			throw new HookableException(sprintf('Call to undefined method - %2$s::%1$s', $name, static::$__CLASS__), HookableException::ERR_HOOKABLE_UNDEFINED_METHOD_CALL);
 		}
 	}
 }

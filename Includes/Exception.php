@@ -101,3 +101,21 @@ class EnvironmentException extends FailnetException
 	const ERR_ENVIRONMENT_FAILED_CONFIG_LOAD = 1202;
 	const ERR_ENVIRONMENT_UNSUPPORTED_CONFIG = 1203;
 }
+
+/**
+ * Failnet - Subordinate exception class
+ *      Extension of the Failnet exception class.
+ *
+ *
+ * @category    Failnet
+ * @package     Failnet
+ * @author      Damian Bushong
+ * @license     MIT License
+ * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
+ *
+ * @note reserves 13xx error codes
+ */
+class HookableException extends FailnetException
+{
+	const ERR_HOOKABLE_UNDEFINED_METHOD_CALL = 1300;
+}
