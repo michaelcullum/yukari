@@ -104,7 +104,7 @@ class Environment extends Failnet\Base
 			$this->loadConfig(Failnet\CONFIG_FILE);
 
 			$this->setObject('core.hook', new Failnet\Core\Hook());
-			$this->setObject('core.ui', new Failnet\Core\UI());
+			$this->setObject('core.ui', new Failnet\Core\UI($this->getOption('ui.output_level', 'normal'));
 		}
 		catch(FailnetException $e)
 		{

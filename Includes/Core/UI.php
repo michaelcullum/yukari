@@ -40,7 +40,7 @@ class UI extends Root\Base
 	/**
 	 * @var integer - Our current output level
 	 */
-	public $output_level = 0;
+	protected $output_level = 0;
 
 	/**
 	 * @var array - Various color codes for use with terminals that support it.
@@ -60,9 +60,9 @@ class UI extends Root\Base
 	/**
 	 * @var boolean - Do we want to enable the use of colors in our output?
 	 */
-	public $enable_colors = false;
+	protected $enable_colors = false;
 
-	public function __construct()
+	public function __construct($output_level = 'normal')
 	{
 		if(Root\Bot::getOption('ui.enable_colors', false) && $this->checkColorSupport())
 		{
@@ -78,6 +78,10 @@ class UI extends Root\Base
 			$this->enable_colors = true;
 		}
 
+		if(!in_array($output_level, array('silent', 'normal', 'debug', 'debug_full', 'raw', 'spam')))
+			throw new UIException(); // @todo exception
+
+		$this->output_level = constant('Failnet\\OUTPUT_' . strtoupper($output_level));
 	}
 
 	/**
@@ -136,7 +140,14 @@ class UI extends Root\Base
 	 */
 	public function level($level)
 	{
-		return (($level != Root\OUTPUT_RAW) ? ($this->output_level >= $level && $this->output_level !== Root\OUTPUT_RAW) : ($this->output_level === Root\OUTPUT_RAW));
+		if($level === Root\OUTPUT_RAW)
+		{
+			return ($this->output_level === Root\OUTPUT_RAW);
+		}
+		else
+		{
+			return ($this->output_level >= $level && $this->output_level !== Root\OUTPUT_RAW);
+		}
 	}
 
 	/**
