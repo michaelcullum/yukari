@@ -50,11 +50,9 @@ abstract class Bot
 		/* @var Failnet\Environment */
 		self::$environment = $environment;
 
-		self::$environment->setOptions(array(
-			'start'				=> time(),
-			'base_memory'		=> memory_get_usage(),
-			'base_memory_peak'	=> memory_get_peak_usage(),
-		));
+		define('Failnet\\START', time());
+		define('Failnet\\BASE_MEMORY', memory_get_usage());
+		define('Failnet\\BASE_MEMORY_PEAK', memory_get_peak_usage());
 	}
 
 	/**
