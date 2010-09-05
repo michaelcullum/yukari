@@ -79,7 +79,7 @@ class UI extends Root\Base
 		}
 
 		if(!in_array($output_level, array('silent', 'normal', 'debug', 'debug_full', 'raw', 'spam')))
-			throw new UIException(); // @todo exception
+			throw new UIException(sprintf('Invalid UI output level "%1$s" specified', $output_level), UIException::ERR_UI_INVALID_OUTPUT_LEVEL);
 
 		$this->output_level = constant('Failnet\\OUTPUT_' . strtoupper($output_level));
 	}
@@ -328,4 +328,22 @@ class UI extends Root\Base
 			$this->output('[SOCKET] ' . $data);
 		}
 	}
+}
+
+/**
+ * Failnet - Subordinate exception class
+ *      Extension of the Failnet exception class.
+ *
+ *
+ * @category    Failnet
+ * @package     Failnet
+ * @author      Damian Bushong
+ * @license     MIT License
+ * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
+ *
+ * @note reserves 230xx error codes
+ */
+class UIException extends Root\FailnetException
+{
+	const ERR_UI_INVALID_OUTPUT_LEVEL = 23000;
 }
