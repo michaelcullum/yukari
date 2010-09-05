@@ -38,7 +38,7 @@ abstract class Hookable extends Base
 	/**
 	 * @var boolean - Does this object support hooks?
 	 */
-	public $supports_hooks = false;
+	public $supports_hooks = true;
 
 	/**
 	 * @var boolean - If this object supports hooks, are they enabled?
