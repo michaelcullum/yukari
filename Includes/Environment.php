@@ -99,7 +99,8 @@ class Environment extends Failnet\Base
 		try
 		{
 			// Register our autoloader
-			Autoload::register();
+			$this->setObject('core.autoload', new Failnet\Autoload());
+			spl_autoload_register(array($this, 'autoloadFile'));
 
 			$this->setObject('core.cli', new Failnet\Core\CLI($_SERVER['argv']));
 			/* @var Failnet\Core\CLI */
@@ -273,6 +274,16 @@ class Environment extends Failnet\Base
 	public function setOptions(array $options)
 	{
 		$this->options = array_merge($this->options, $options);
+	}
+
+	/**
+	 * Autoload a class file up.
+	 * @param string $class - The class to load the file for.
+	 * @return mixed - Whatever the autoloader's loadFile() call returned.
+	 */
+	public function autoloadFile($class)
+	{
+		return $this->getObject('core.autoload')->loadFile($class);
 	}
 
 	public function runBot()

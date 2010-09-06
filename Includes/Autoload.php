@@ -33,19 +33,20 @@ namespace Failnet;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class Autoload extends Base
+class Autoload extends Failnet\Base
 {
 	/**
 	 * @var array - The paths that Failnet will attempt to load class files from.
 	 */
-	private static $paths = array();
+	private $paths = array();
 
 	/**
-	 * @ignore
+	 * Constructor
+	 * @return void
 	 */
 	public function __construct()
 	{
-		self::$paths = array(
+		$this->paths = array(
 			FAILNET_ROOT . 'Includes/',
 			FAILNET_ROOT . 'Addons/Autoload/',
 			FAILNET_ROOT . 'Addons/',
@@ -59,9 +60,9 @@ class Autoload extends Base
 	 */
 	public function loadFile($class)
 	{
-		$name = self::cleanName($class);
+		$name = $this->cleanName($class);
 
-		foreach(self::$paths as $path)
+		foreach($this->paths as $path)
 		{
 			if(file_exists($path . $name . '.php'))
 			{
@@ -100,9 +101,9 @@ class Autoload extends Base
 	 * @param string $include_path - The include path to add to the autoloader
 	 * @return void
 	 */
-	public static function setPath($include_path)
+	public function setPath($include_path)
 	{
-		self::$paths[] = FAILNET_ROOT . $include_path;
+		$this->paths[] = $include_path;
 	}
 
 	/**
@@ -110,11 +111,11 @@ class Autoload extends Base
 	 * @param string $class - The class file we're looking for.
 	 * @return boolean - Whether or not the source file we're looking for exists
 	 */
-	public static function fileExists($class)
+	public function fileExists($class)
 	{
-		$name = self::cleanName($class);
+		$name = $this->cleanName($class);
 
-		foreach(self::$paths as $path)
+		foreach($this->paths as $path)
 		{
 			if(file_exists($path . $name . '.php'))
 				return true;
@@ -127,19 +128,10 @@ class Autoload extends Base
 	 * @param string $class_name - The name of the class to spit-polish.
 	 * @return string - The cleaned class name.
 	 */
-	public static function cleanName($class)
+	public function cleanName($class)
 	{
 		$class = ($class[0] == '\\') ? substr($class, 1) : $class;
 		$class = (substr($class, 0, 7) == 'Failnet') ? substr($class, 7) : $class;
 		return str_replace('\\', '/', $class);
-	}
-
-	/**
-	 * Registers an instance of this class as an autoloader.
-	 * @return void
-	 */
-	public static function register()
-	{
-		spl_autoload_register(array(new self, 'loadFile'));
 	}
 }
