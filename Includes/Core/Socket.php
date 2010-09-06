@@ -89,7 +89,7 @@ class Socket extends Base
 
 	/**
 	 * Listens for an event on the current connection.
-	 * @return failnet_event_(response|request)|NULL - Event instance if an event was received, NULL otherwise
+	 * @return Failnet\Event\Base - Event instance if an event was received, NULL otherwise
 	 *
 	 * @throws Failnet\Core\SocketException
 	 */
@@ -98,7 +98,7 @@ class Socket extends Base
 		// Check for a new event on the current connection
 		$buffer = fgets($this->socket, 512);
 		if($buffer === false)
-			throw new Exception(ex(Exception::ERR_SOCKET_FGETS_FAILED));
+			throw new SocketException('fgets() call failed, socket connection lost', SocketException::ERR_SOCKET_FGETS_FAILED);
 
 		// If no new event was found, return NULL
 		if (empty($buffer))
@@ -112,16 +112,19 @@ class Socket extends Base
 		{
 			// Parse the user hostmask, command, and arguments
 			list($prefix, $cmd, $args) = array_pad(explode(' ', ltrim($buffer, ':'), 3), 3, NULL);
+			// @todo replace with proper calls here
 			$hostmask = Hostmask::load(((strpos($prefix, '@') !== false) ? $prefix : 'unknown' . ((strpos($prefix, '!') === false) ? '!unknown' : '') . '@' . $prefix));
 		}
 		else // If the event is from the server...
 		{
 			// Parse the command and arguments
 			list($cmd, $args) = array_pad(explode(' ', $buffer, 2), 2, NULL);
+			// @todo replace with proper calls here
 			$hostmask = Hostmask::load('server!server@' . Bot::core()->config('server'));
 		}
 
 		// Parse the event arguments depending on the event type
+		// @todo rewrite for proper parsing using the new event objects
 		$cmd = strtolower($cmd);
 		switch ($cmd)
 		{
@@ -299,4 +302,5 @@ class SocketException extends Root\FailnetException
 {
 	const ERR_SOCKET_UNSUPPORTED_TRANSPORT = 20200;
 	const ERR_SOCKET_ERROR = 20201;
+	const ERR_SOCKET_FGETS_FAILED = 20202;
 }
