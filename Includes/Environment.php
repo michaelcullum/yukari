@@ -111,7 +111,7 @@ class Environment extends Failnet\Base
 			if(!Failnet\IN_INSTALL)
 			{
 				// stuff for the dynamic installer goes here
-				$this->setObject('core.ui', new Failnet\Install\UI($this->getOption('ui.output_level', 'normal'));
+				$this->setObject('core.ui', new Failnet\Install\UI($this->getOption('ui.output_level', 'normal')));
 
 				$this->setObject('core.core', new Failnet\Install\Core());
 			}
@@ -124,7 +124,7 @@ class Environment extends Failnet\Base
 				$this->loadConfig(Failnet\CONFIG_FILE);
 
 				$this->setObject('core.hook', new Failnet\Core\Hook());
-				$this->setObject('core.ui', new Failnet\Core\UI($this->getOption('ui.output_level', 'normal'));
+				$this->setObject('core.ui', new Failnet\Core\UI($this->getOption('ui.output_level', 'normal')));
 
 				$this->setObject('core.core', new Failnet\Core\Core());
 			}
