@@ -85,7 +85,7 @@ class Environment extends Failnet\Base
 
 		// Set our error and exception handlers
 		@set_error_handler('Failnet\\errorHandler');
-		// @set_exception_handler('Failnet\\exceptionHandler');
+		// @set_exception_handler('Failnet\\exceptionHandler'); // @todo uncomment when an exception handler is written
 
 		// Run indefinitely...
 		set_time_limit(0);
@@ -100,8 +100,9 @@ class Environment extends Failnet\Base
 		{
 			// Register our autoloader
 			$this->setObject('core.autoload', new Failnet\Autoload());
-			spl_autoload_register(array($this, 'autoloadFile'));
+			spl_autoload_register(array($this, 'autoloadClass'));
 
+			// Setup our CLI object, and grab any passed args
 			$this->setObject('core.cli', new Failnet\Core\CLI($_SERVER['argv']));
 			/* @var Failnet\Core\CLI */
 			$cli = $this->getObject('core.cli');
@@ -281,7 +282,7 @@ class Environment extends Failnet\Base
 	 * @param string $class - The class to load the file for.
 	 * @return mixed - Whatever the autoloader's loadFile() call returned.
 	 */
-	public function autoloadFile($class)
+	public function autoloadClass($class)
 	{
 		return $this->getObject('core.autoload')->loadFile($class);
 	}

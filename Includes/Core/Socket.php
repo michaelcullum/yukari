@@ -56,19 +56,19 @@ class Socket extends Base
 	public function connect()
 	{
 		// Check to see if the transport method we are using is allowed
-		$transport = Bot::core()->config('use_ssl') ? 'ssl' : 'tcp';
+		$transport = Root\Bot::getOption('socket.use_ssl', false) ? 'ssl' : 'tcp';
 		if(!in_array($transport, stream_get_transports()))
 			throw new SocketException(sprintf('', $transport), SocketException::ERR_SOCKET_UNSUPPORTED_TRANSPORT);
 
 		// Establish and configure the socket connection
-		$remote = "$transport://" . Bot::core()->config('server') . ':' . Bot::core()->config('port');
+		$remote = "$transport://" . Root\Bot::getOption('server.server_uri', '') . ':' . Root\Bot::getOption('server.port', 6667);
 
 		// Try a few times to connect to the server, and if we can't, we dai.
 		$attempts = 0;
 		do
 		{
 			if(++$attempts > 5)
-				throw new Exception(ex(Exception::ERR_SOCKET_ERROR, array($errno, $errstr))); // @todo SocketException
+				throw new SocketException(sprintf('Socket error encountered: [%1$s] %2$s', $errno, $errstr), SocketException::ERR_SOCKET_ERROR);
 
 			$this->socket = @stream_socket_client($remote, $errno, $errstr);
 			if(!$this->socket)
@@ -79,18 +79,19 @@ class Socket extends Base
 		stream_set_timeout($this->socket, (int) $this->timeout, (($this->timeout - (int) $this->timeout) * 1000000));
 
 		// Send the server password if one is specified
-		if(Bot::core()->config('server_pass'))
-			$this->send('PASS', Bot::core()->config('server_pass'));
+		if(Root\Bot::getOption('socket.server_pass', ''))
+			$this->send('PASS', Root\Bot::getOption('server.server_pass', ''));
 
 		// Send user information
-		$this->send('USER', array(Bot::core()->config('user'), Bot::core()->config('server'), Bot::core()->config('server'), Bot::core()->config('name')));
-		$this->send('NICK', Bot::core()->config('nick'));
+		$this->send('USER', array(Root\Bot::getOption('server.username', 'Failnet'), Root\Bot::getOption('server.server_uri', ''), Root\Bot::getOption('server.server_uri', ''), Root\Bot::getOption('server.realname', 'Failnet')));
+		$this->send('NICK', Root\Bot::getOption('socket.nickname', 'Failnet_'));
 	}
 
 	/**
 	 * Listens for an event on the current connection.
 	 * @return failnet_event_(response|request)|NULL - Event instance if an event was received, NULL otherwise
-	 * @throws Failnet\Exception
+	 *
+	 * @throws Failnet\Core\SocketException
 	 */
 	public function get()
 	{
@@ -297,4 +298,5 @@ class Socket extends Base
 class SocketException extends Root\FailnetException
 {
 	const ERR_SOCKET_UNSUPPORTED_TRANSPORT = 20200;
+	const ERR_SOCKET_ERROR = 20201;
 }
