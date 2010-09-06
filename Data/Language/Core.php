@@ -21,7 +21,7 @@
  */
 
 namespace Failnet\Lang;
-use Failnet;
+use Failnet as Root;
 
 /**
  * @ignore

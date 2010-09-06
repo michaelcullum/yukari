@@ -21,7 +21,7 @@
  */
 
 namespace Failnet\Core;
-use Failnet;
+use Failnet as Root;
 use Failnet\Lib;
 
 /**
@@ -50,14 +50,15 @@ class Socket extends Base
 	/**
 	 * Initiates a connection with the server.
 	 * @return void
-	 * @throws Failnet\Exception
+	 * 
+	 * @throws Failnet\Core\SocketException
 	 */
 	public function connect()
 	{
 		// Check to see if the transport method we are using is allowed
 		$transport = Bot::core()->config('use_ssl') ? 'ssl' : 'tcp';
 		if(!in_array($transport, stream_get_transports()))
-			throw new Exception(ex(Exception::ERR_SOCKET_UNSUPPORTED_TRANSPORT, $transport)); // @todo -> SocketException
+			throw new SocketException(sprintf('', $transport), SocketException::ERR_SOCKET_UNSUPPORTED_TRANSPORT);
 
 		// Establish and configure the socket connection
 		$remote = "$transport://" . Bot::core()->config('server') . ':' . Bot::core()->config('port');
@@ -278,4 +279,22 @@ class Socket extends Base
 	{
 		return preg_split('/ :?/S', $args, $count);
 	}
+}
+
+/**
+ * Failnet - Subordinate exception class
+ *      Extension of the Failnet exception class.
+ *
+ *
+ * @category    Failnet
+ * @package     Failnet
+ * @author      Damian Bushong
+ * @license     MIT License
+ * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
+ *
+ * @note reserves 220xx error codes
+ */
+class SocketException extends Root\FailnetException
+{
+	const ERR_SOCKET_UNSUPPORTED_TRANSPORT = 22000;
 }

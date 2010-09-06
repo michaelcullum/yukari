@@ -21,7 +21,7 @@
  */
 
 namespace Failnet\Core;
-use Failnet;
+use Failnet as Root;
 use Failnet\Lang as Lang;
 
 /**

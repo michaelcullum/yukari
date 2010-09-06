@@ -26,7 +26,7 @@
  */
 
 namespace Failnet\Node;
-use Failnet;
+use Failnet as Root;
 
 /**
  * Failnet - Ignore handling class,

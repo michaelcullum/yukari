@@ -21,7 +21,7 @@
  */
 
 namespace Failnet\Lib;
-use Failnet;
+use Failnet as Root;
 
 /**
  * Failnet - Hostmask class,

@@ -21,7 +21,7 @@
  */
 
 namespace Failnet\Node;
-use Failnet;
+use Failnet as Root;
 
 /**
  * Failnet - Help class,

@@ -62,6 +62,13 @@ class UI extends Root\Base
 	 */
 	protected $enable_colors = false;
 
+	/**
+	 * Constructor
+	 * @param string $output_level - The output level to use
+	 * @return void
+	 *
+	 * @throws Failnet\Core\UIException
+	 */
 	public function __construct($output_level = 'normal')
 	{
 		if(Root\Bot::getOption('ui.enable_colors', false) && $this->checkColorSupport())

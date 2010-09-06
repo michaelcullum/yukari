@@ -24,7 +24,7 @@
  */
 
 namespace Failnet\Node;
-use Failnet;
+use Failnet as Root;
 
 /**
  * Failnet - Server syncronization class,
