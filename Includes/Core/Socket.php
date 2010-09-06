@@ -50,7 +50,7 @@ class Socket extends Base
 	/**
 	 * Initiates a connection with the server.
 	 * @return void
-	 * 
+	 *
 	 * @throws Failnet\Core\SocketException
 	 */
 	public function connect()
@@ -292,9 +292,9 @@ class Socket extends Base
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  *
- * @note reserves 220xx error codes
+ * @note reserves 202xx error codes
  */
 class SocketException extends Root\FailnetException
 {
-	const ERR_SOCKET_UNSUPPORTED_TRANSPORT = 22000;
+	const ERR_SOCKET_UNSUPPORTED_TRANSPORT = 20200;
 }

@@ -72,11 +72,11 @@ class StartupException extends FailnetException
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  *
- * @note reserves 110xx error codes
+ * @note reserves 101xx error codes
  */
 class AutoloadException extends FailnetException
 {
-	const ERR_AUTOLOAD_CLASS_INVALID = 11000;
+	const ERR_AUTOLOAD_CLASS_INVALID = 10100;
 }
 
 /**
@@ -90,17 +90,17 @@ class AutoloadException extends FailnetException
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  *
- * @note reserves 120xx error codes
+ * @note reserves 102xx error codes
  */
 class EnvironmentException extends FailnetException
 {
-	const ERR_ENVIRONMENT_LOAD_FAILED = 12000;
-	const ERR_ENVIRONMENT_NO_SUCH_OBJECT = 12001;
-	const ERR_ENVIRONMENT_FAILED_CONFIG_LOAD = 12002;
-	const ERR_ENVIRONMENT_CONFIG_MISSING = 12003;
-	const ERR_ENVIRONMENT_UNSUPPORTED_CONFIG = 12004;
-	const ERR_ENVIRONMENT_NO_ACCESS_CFG_DIR = 12005;
-	const ERR_ENVIRONMENT_NO_ACCESS_DB_DIR = 12006;
+	const ERR_ENVIRONMENT_LOAD_FAILED = 10200;
+	const ERR_ENVIRONMENT_NO_SUCH_OBJECT = 10201;
+	const ERR_ENVIRONMENT_FAILED_CONFIG_LOAD = 10202;
+	const ERR_ENVIRONMENT_CONFIG_MISSING = 10203;
+	const ERR_ENVIRONMENT_UNSUPPORTED_CONFIG = 10204;
+	const ERR_ENVIRONMENT_NO_ACCESS_CFG_DIR = 10205;
+	const ERR_ENVIRONMENT_NO_ACCESS_DB_DIR = 10206;
 }
 
 /**
@@ -114,9 +114,9 @@ class EnvironmentException extends FailnetException
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  *
- * @note reserves 130xx error codes
+ * @note reserves 103xx error codes
  */
 class HookableException extends FailnetException
 {
-	const ERR_HOOKABLE_UNDEFINED_METHOD_CALL = 13000;
+	const ERR_HOOKABLE_UNDEFINED_METHOD_CALL = 10300;
 }

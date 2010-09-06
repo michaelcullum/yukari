@@ -131,8 +131,8 @@ class Exception extends \Exception
 			self::ERR_SOCKET_NO_CONNECTION => 'Cannot send to server - no connection present',
 			self::ERR_SOCKET_UNSUPPORTED_TRANSPORT => 'Transport type "%1$s" is not supported by this PHP installation',
 
-			self::ERR_LANGUAGE_FILE_LOAD_FAILED => 'Failed to load language file: %1$s',
-			self::ERR_LANGUAGE_CORE_NO_PARAMS => 'Invalid parameters provided for Bot::lang()',
+			//self::ERR_LANGUAGE_FILE_LOAD_FAILED => 'Failed to load language file: %1$s',
+			//self::ERR_LANGUAGE_CORE_NO_PARAMS => 'Invalid parameters provided for Bot::lang()',
 
 			self::ERR_INVALID_HOSTMASK => 'Invalid hostmask "%1$s" specified',
 

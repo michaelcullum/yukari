@@ -54,17 +54,7 @@ class Language extends Base
 
 	public function __construct()
 	{
-		$this->setDir(FAILNET_ROOT . 'Data/Language');
-	}
-
-	/**
-	 * Sets the directory to load language files from.
-	 * @param string $path - The path to use.
-	 * @return void
-	 */
-	public function setDir($path)
-	{
-		$this->language_dir = (string) $path;
+		$this->language_dir = Root\Bot::getOption('language.file_dir', FAILNET_ROOT . 'Data/Language');
 	}
 
 	/**
@@ -74,7 +64,7 @@ class Language extends Base
 	public function collectEntries()
 	{
 		$files = scandir($this->language_dir);
-		Bot::core('ui')->status('- Loading language files');
+		Bot::core('ui')->status('- Loading language files'); // @todo recode
 		foreach($files as $file)
 		{
 			// ignore useless files
@@ -86,9 +76,9 @@ class Language extends Base
 			{
 				$this->loadFile($this->language_dir . '/' . $file);
 			}
-			catch(Exception $e) // @todo -> LanguageException
+			catch(LanguageException $e)
 			{
-				Bot::core('ui')->debug('Failed to load language file ' . substr(strrchr($file, '.'), 1));
+				Bot::core('ui')->debug('Failed to load language file ' . substr(strrchr($file, '.'), 1)); // @todo recode
 			}
 		}
 	}
@@ -106,17 +96,17 @@ class Language extends Base
 		$filename = substr(strrchr(basename($file), '.'), 1);
 		if(in_array($filename, $this->files))
 		{
-			Bot::core('ui')->debug('ignoring call to Failnet\\Core\\Language::loadFile() - language file already loaded');
+			Bot::core('ui')->debug('ignoring call to Failnet\\Core\\Language::loadFile() - language file already loaded'); // @todo recode
 			return;
 		}
 
 		// Okay, time to include the file.  We use include on language files in case something blows up.
 		if(($include = @include($file)) === false)
-			throw new Exception(ex(Exception::ERR_LANGUAGE_FILE_LOAD_FAILED, $file)); // @todo -> LanguageException
+			throw new LanguageException(sprintf('Language file "%1$s" could not be loaded', $file), LanguageException::ERR_LANGUAGE_FILE_LOAD_FAILED);
 
 		// Add this language file to the list of loaded language files
 		$this->files[] = $filename;
-		Bot::core('ui')->system('--- Loaded language file' . $filename);
+		Bot::core('ui')->system('--- Loaded language file' . $filename); // @todo recode
 	}
 
 	/**
@@ -174,4 +164,22 @@ class Language extends Base
 	{
 		return $this->getEntry($key, $arguments);
 	}
+}
+
+/**
+ * Failnet - Subordinate exception class
+ *      Extension of the Failnet exception class.
+ *
+ *
+ * @category    Failnet
+ * @package     Failnet
+ * @author      Damian Bushong
+ * @license     MIT License
+ * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
+ *
+ * @note reserves 204xx error codes
+ */
+class LanguageException extends Root\FailnetException
+{
+	const ERR_LANGUAGE_FILE_LOAD_FAILED = 20400;
 }

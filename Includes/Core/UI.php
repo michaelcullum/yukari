@@ -348,9 +348,9 @@ class UI extends Root\Base
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  *
- * @note reserves 230xx error codes
+ * @note reserves 203xx error codes
  */
 class UIException extends Root\FailnetException
 {
-	const ERR_UI_INVALID_OUTPUT_LEVEL = 23000;
+	const ERR_UI_INVALID_OUTPUT_LEVEL = 20300;
 }
