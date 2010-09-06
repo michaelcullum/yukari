@@ -112,15 +112,13 @@ class Socket extends Base
 		{
 			// Parse the user hostmask, command, and arguments
 			list($prefix, $cmd, $args) = array_pad(explode(' ', ltrim($buffer, ':'), 3), 3, NULL);
-			// @todo replace with proper calls here
-			$hostmask = Hostmask::load(((strpos($prefix, '@') !== false) ? $prefix : 'unknown' . ((strpos($prefix, '!') === false) ? '!unknown' : '') . '@' . $prefix));
+			$hostmask = Lib\Hostmask::load(((strpos($prefix, '@') !== false) ? $prefix : 'unknown' . ((strpos($prefix, '!') === false) ? '!unknown' : '') . '@' . $prefix));
 		}
 		else // If the event is from the server...
 		{
 			// Parse the command and arguments
 			list($cmd, $args) = array_pad(explode(' ', $buffer, 2), 2, NULL);
-			// @todo replace with proper calls here
-			$hostmask = Hostmask::load('server!server@' . Bot::core()->config('server'));
+			$hostmask = new Lib\Hostmask('server', 'server', Root\Bot::getOption('server.server_uri'));
 		}
 
 		// Parse the event arguments depending on the event type
