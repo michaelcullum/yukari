@@ -70,10 +70,25 @@ class Cron extends Root\Base
 	public function toggleTask($task_name, $status)
 	{
 		if(!in_array($status, array(TASK_ACTIVE, TASK_MANUAL, TASK_ZOMBIE)))
-			throw new Exception(ex(Exception::ERR_CRON_INVALID_STATE));
-		if(!Bot::checkCronLoaded($task_name))
-			return false;
-		Bot::cron($task_name)->status = $status;
+			throw new Exception(ex(Exception::ERR_CRON_INVALID_STATE)); // @todo CronException
+		try
+		{
+			$cron_task = Bot::getObject("cron.$task_name");
+			$cron_task->status = $status;
+		}
+		catch(Root\EnvironmentException $e)
+		{
+			// Check to see if the cron task even existed.
+			if($e->getCode() == Root\EnvironmentException::ERR_ENVIRONMENT_NO_SUCH_OBJECT)
+			{
+				return false;
+			}
+			else
+			{
+				// rethrow the exception if it isn't what we are expecting
+				throw new Root\EnvironmentException($e->getMessage(), $e->getCode());
+			}
+		}
 		return true;
 	}
 
