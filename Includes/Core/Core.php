@@ -22,7 +22,8 @@
 
 namespace Failnet\Core;
 use Failnet as Root;
-use Failnet\Lib;
+use Failnet\Bot as Bot;
+use Failnet\Lib as Lib;
 
 /**
  * Failnet - Core class,
@@ -35,7 +36,7 @@ use Failnet\Lib;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class Core extends Base
+class Core extends Root\Base
 {
 /**
  * Failnet core class properties
