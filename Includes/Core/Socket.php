@@ -89,7 +89,7 @@ class Socket extends Base
 
 	/**
 	 * Listens for an event on the current connection.
-	 * @return Failnet\Event\Base - Event instance if an event was received, NULL otherwise
+	 * @return Failnet\Event\EventBase - Event instance if an event was received, NULL otherwise
 	 *
 	 * @throws Failnet\Core\SocketException
 	 */
@@ -216,37 +216,26 @@ class Socket extends Base
 
 	/**
 	 * Handles construction of command strings and their transmission to the server.
-	 * @param string $command - Command to send
-	 * @param mixed $args - Optional string or array of sequential arguments
+	 * @param Failnet\Event\EventBase $event - Event to send.
 	 * @return string - Command string that was sent
-	 * @throws Failnet\Exception
+	 *
+	 * @throws Failnet\Core\SocketException
 	 */
-	public function send($command, $args = '')
+	public function send(Failnet\Event\EventBase $event)
 	{
 		// Require an open socket connection to continue
 		if(empty($this->socket))
-			throw new Exception(ex(Exception::ERR_SOCKET_NO_CONNECTION));
+			throw new SocketException('Cannot send to server, no connection present', SocketException::ERR_SOCKET_NO_CONNECTION);
 
-		$buffer = strtoupper($command);
-		// Add arguments
-		if(!empty($args))
-		{
-			// Apply formatting if arguments are passed in as an array
-			if (is_array($args))
-			{
-				$end = count($args) - 1;
-				$args[$end] = ':' . $args[$end];
-				$args = implode(' ', $args);
-			}
-			$buffer .= ' ' . $args;
-		}
+		// Get the buffer to write.
+		$buffer = $event->getBuffer();
 
 		// Transmit the command over the socket connection
 		$attempts = 0;
 		do
 		{
 			if(++$attempts > 5)
-				throw new Exception(ex(Exception::ERR_SOCKET_FWRITE_FAILED));
+				throw new SocketException('fwrite() call failed, socket connection lost', SocketException::ERR_SOCKET_FWRITE_FAILED);
 
 			$success = @fwrite($this->socket, $buffer . "\r\n");
 		}
@@ -263,8 +252,8 @@ class Socket extends Base
 	 */
 	public function close()
 	{
-		Bot::core('ui')->system('-!- Quitting from server "' . Bot::core()->config('server') . '"');
-		Bot::core('log')->add('--- Quitting from server "' . Bot::core()->config('server') . '" ---');
+		Bot::getObject('core.ui')->system('-!- Quitting from server "' . Bot::getOption('server.server_uri') . '"');
+		Bot::core('log')->add('--- Quitting from server "' . Bot::core()->config('server') . '" ---'); // @todo rewrite
 
 		// Terminate the socket connection
 		fclose($this->socket);
@@ -301,4 +290,5 @@ class SocketException extends Root\FailnetException
 	const ERR_SOCKET_UNSUPPORTED_TRANSPORT = 20200;
 	const ERR_SOCKET_ERROR = 20201;
 	const ERR_SOCKET_FGETS_FAILED = 20202;
+	const ERR_SOCKET_NO_CONNECTION = 20203;
 }
