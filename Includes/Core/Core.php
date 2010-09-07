@@ -65,21 +65,6 @@ class Core extends Base
 	 */
 	public function __construct()
 	{
-		// Set the time that Failnet was started.
-		$this->start = time();
-		$this->base_mem = memory_get_usage();
-		$this->base_mem_peak = memory_get_peak_usage();
-
-		// Load the config file
-		$this->load(CONFIG_FILE);
-
-		// Load the UI out of cycle so we can do this the right way
-		Bot::setCore('ui', 'Failnet\\Core\\UI');
-		Bot::core('ui')->output_level = $this->config('output');
-
-		// Fire off the startup text.
-		Bot::core('ui')->startup();
-
 		// Begin loading our core objects
 		$core_objects = array(
 			'lang'		=> 'Failnet\\Core\\Language',
@@ -133,32 +118,6 @@ class Core extends Base
 
 		usleep(500); // In case of restart/reload, to prevent 'Nick already in use' (which asplodes everything)
 		Bot::core('ui')->ready();
-	}
-
-	/**
-	 * Failnet configuration file settings load method
-	 * @param string $file - The configuration file to load
-	 * @return void
-	 * @throws Failnet\Exception
-	 */
-	private function load($file)
-	{
-		if(!file_exists(FAILNET_ROOT . "Data/Config/{$file}.php") || !is_readable(FAILNET_ROOT . "Data/Config/{$file}.php"))
-			throw new Exception(ex(Exception::ERR_NO_CONFIG));
-
-		$settings = require FAILNET_ROOT . $file . '.php';
-
-		foreach($settings as $setting => $value)
-		{
-			if(property_exists($this, $setting))
-			{
-				$this->$setting = $value;
-			}
-			else
-			{
-				$this->config[$setting] = $value;
-			}
-		}
 	}
 
 	/**
@@ -351,44 +310,6 @@ class Core extends Base
 			Bot::core('ui')->shutdown();
 			exit(1);
 		}
-	}
-
-	/**
-	 * Get a setting from Failnet's configuration settings
-	 * @param string $setting - The config setting that we want to pull the value for.
-	 * @param boolean $config_only - Is this an entry that only appears in the config file?
-	 * @return mixed - The setting's value, or null if no such setting.
-	 */
-	public function config($setting, $config_only = false)
-	{
-		if(property_exists($this, $setting))
-			return $this->$setting;
-		if(!$config_only && isset($this->settings[$setting]))
-			return $this->settings[$setting];
-		if(isset($this->config[$setting]))
-			return $this->config[$setting];
-		return NULL;
-	}
-
-	/**
-	 * Create or update a database config setting for Failnet
-	 * @param string $setting - The name of the setting
-	 * @param mixed $value - What should the setting be...set...to?
-	 * @return boolean - Whether or not the setting change was successful.
-	 */
-	public function setConfig($setting, $value)
-	{
-		if($this->config($setting) !== NULL)
-		{
-			$success = Bot::core('db')->useQuery('config', 'update')->execute(array(':name' => $setting, ':value' => $value));
-			$this->settings[$setting] = $value;
-		}
-		else
-		{
-			$success = Bot::core('db')->useQuery('config', 'create')->execute(array(':name' => $setting, ':value' => $value));
-			$this->settings[$setting] = $value;
-		}
-		return $success;
 	}
 
 	/**
