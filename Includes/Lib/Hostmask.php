@@ -36,7 +36,7 @@ use Failnet as Root;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class Hostmask extends Root\Base
+class Hostmask extends Root\Base implements \ArrayAccess
 {
 	/**
 	 * @var string - The host of the hostmask
@@ -99,6 +99,58 @@ class Hostmask extends Root\Base
 	{
 		return (preg_match('#^' . str_replace('*', '.*', $regex) . '$#i', (string) $this) > 0) ? true : false;
 	}
+
+	/**
+	 * ArrayAccess stuff
+	 */
+
+	/**
+	 * Check if an "array" offset exists in this object.
+	 * @param mixed $offset - The offset to check.
+	 * @return boolean - Does anything exist for this offset?
+	 */
+	public function offsetExists($offset)
+	{
+		return property_exists($this, $offset)
+	}
+
+	/**
+	 * Get an "array" offset for this object.
+	 * @param mixed $offset - The offset to grab from.
+	 * @return mixed - The value of the offset, or null if the offset does not exist.
+	 */
+	public function offsetGet($offset)
+	{
+		return property_exists($this, $offset) ? $this->$offset : NULL;
+	}
+
+	/**
+	 * Set an "array" offset to a certain value, if the offset exists
+	 * @param mixed $offset - The offset to set.
+	 * @param mixed $value - The value to set to the offset.
+	 * @return void
+	 */
+	public function offsetSet($offset, $value)
+	{
+		if(property_exists($this, $offset))
+		{
+			$this->$offset = $value;
+		}
+		else
+		{
+			throw new HostmaskException('Attempt to access an invalid property in a hostmask object failed', HostmaskException::ERR_INVALID_PROPERTY);
+		}
+	}
+
+	/**
+	 * Unset an "array" offset.
+	 * @param mixed $offset - The offset to clear out.
+	 * @return void
+	 */
+	public function offsetUnset($offset)
+	{
+		$this->$offset = NULL;
+	}
 }
 
 /**
@@ -117,4 +169,5 @@ class Hostmask extends Root\Base
 class HostmaskException extends Root\FailnetException
 {
 	const ERR_INVALID_HOSTMASK = 30000;
+	const ERR_INVALID_PROPERTY = 30001;
 }
