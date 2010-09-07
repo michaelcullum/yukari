@@ -18,6 +18,8 @@
  * This source file is subject to the MIT license that is bundled
  * with this package in the file LICENSE.
  *
+ * @todo ArrayAccess support
+ *
  */
 
 namespace Failnet\Lib;
@@ -25,7 +27,7 @@ use Failnet as Root;
 
 /**
  * Failnet - Hostmask class,
- * 	    Used as a class for housing hostmask data
+ * 	    Used as an object for housing hostmask data
  *
  *
  * @category    Failnet
@@ -34,7 +36,7 @@ use Failnet as Root;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class Hostmask extends Base
+class Hostmask extends Root\Base
 {
 	/**
 	 * @var string - The host of the hostmask
@@ -66,13 +68,14 @@ class Hostmask extends Base
 	/**
 	 * Parses a string containing the entire hostmask into a new instance of this class.
 	 * @param string $hostmask - Entire hostmask including the nick, username, and host components
-	 * @return object Failnet\Hostmask - New object instance populated with the data parsed from the provided hostmask string
-	 * @throws Failnet\Exception
+	 * @return object Failnet\Lib\Hostmask - New object instance populated with the data parsed from the provided hostmask string
+	 *
+	 * @throws Failnet\Lib\HostmaskException
 	 */
 	public static function load($hostmask)
 	{
 		if(!preg_match('/^([^!@]+)!(?:[ni]=)?([^@]+)@([^ ]+)/', $hostmask, $match))
-			throw new Exception(ex(Exception::ERR_INVALID_HOSTMASK, $hostmask));
+			throw new HostmaskException(sprintf('Invalid hostmask "%1$s" specified', $hostmask), HostmaskException::ERR_INVALID_HOSTMASK);
 
 		list(, $nick, $username, $host) = $match;
 		return new Hostmask($nick, $username, $host);
@@ -94,6 +97,24 @@ class Hostmask extends Base
 	 */
 	public function checkMatch($regex)
 	{
-		return (preg_match('#^' . str_replace('*', '.*', $regex) . '$#i', (string) $this) > 0);
+		return (preg_match('#^' . str_replace('*', '.*', $regex) . '$#i', (string) $this) > 0) ? true : false;
 	}
+}
+
+/**
+ * Failnet - Subordinate exception class
+ *      Extension of the Failnet exception class.
+ *
+ *
+ * @category    Failnet
+ * @package     Failnet
+ * @author      Damian Bushong
+ * @license     MIT License
+ * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
+ *
+ * @note reserves 300xx error codes
+ */
+class HostmaskException extends Root\FailnetException
+{
+	const ERR_INVALID_HOSTMASK = 30000;
 }
