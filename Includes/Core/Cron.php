@@ -22,6 +22,7 @@
 
 namespace Failnet\Core;
 use Failnet as Root;
+use Failnet\Bot as Bot;
 
 /**
  * Failnet - Cron core class,
@@ -34,7 +35,7 @@ use Failnet as Root;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class Cron extends Base
+class Cron extends Root\Base
 {
 	//public $last_event = 0;
 
@@ -51,9 +52,11 @@ class Cron extends Base
 	 */
 	public function addTask($task_name)
 	{
-		if(!Autoload::fileExists('Failnet\\Cron\\' . ucfirst($task_name)))
+		$task_class = "Failnet\\Cron\\$task_name";
+		if(!Bot::getObject('core.autoload')->fileExists($task_class))
 			throw new Exception(ex(Exception::ERR_CRON_LOAD_FAILED, $task_name));
-		Bot::setCron($task_name, 'Failnet\\Cron\\' . ucfirst($task_name));
+
+		Bot::getEnvironment()->setObject("cron.$task_name", 'Failnet\\Cron\\' . ucfirst($task_name));
 		$this->getTaskQueue($task_name);
 	}
 
