@@ -48,13 +48,13 @@ class Cron extends Root\Base
 	 * Loads a task and prepares it for use
 	 * @param string $task_name - The name of the task to load
 	 * @return void
-	 * @throws Failnet\Exception
+	 * @throws Failnet\Core\CronException
 	 */
 	public function addTask($task_name)
 	{
 		$task_class = "Failnet\\Cron\\$task_name";
 		if(!Bot::getObject('core.autoload')->fileExists($task_class))
-			throw new Exception(ex(Exception::ERR_CRON_LOAD_FAILED, $task_name));
+			throw new CronException(sprintf('No class file found for cron task "%1$s"', $task_name), CronException::ERR_CRON_NO_SUCH_TASK);
 
 		Bot::getEnvironment()->setObject("cron.$task_name", 'Failnet\\Cron\\' . ucfirst($task_name));
 		$this->getTaskQueue($task_name);
@@ -63,14 +63,15 @@ class Cron extends Root\Base
 	/**
 	 * Changes the state of the specified task
 	 * @param string $task_name - The name of the task to change the state of
-	 * @param integer $status - The state to set the task to (must be a TASK_* constant)
+	 * @param integer $status - The state to set the task to (must be a Failnet\TASK_* constant)
 	 * @return boolean - Whether or not we were successful
-	 * @throws Failnet\Exception
+	 *
+	 * @throws Failnet\Core\CronException
 	 */
 	public function toggleTask($task_name, $status)
 	{
-		if(!in_array($status, array(TASK_ACTIVE, TASK_MANUAL, TASK_ZOMBIE)))
-			throw new Exception(ex(Exception::ERR_CRON_INVALID_STATE)); // @todo CronException
+		if(!in_array($status, array(Root\TASK_ACTIVE, Root\TASK_MANUAL, Root\TASK_ZOMBIE)))
+			throw new CronException(sprintf('Attempted to set an invalid state on cron task "%1$s"', $task_name), CronException::ERR_CRON_INVALID_STATE);
 		try
 		{
 			$cron_task = Bot::getObject("cron.$task_name");
@@ -104,7 +105,7 @@ class Cron extends Root\Base
 		{
 			if($time > time())
 				continue;
-			Bot::cron($task)->autoRunTask();
+			Bot::getObject("cron.$task")->autoRunTask();
 		}
 
 	}
@@ -116,7 +117,7 @@ class Cron extends Root\Base
 	 */
 	public function triggerTask($task_name)
 	{
-		return Bot::cron($task_name)->manualRunTask();
+		return Bot::getObject("cron.$task")->manualRunTask();
 	}
 
 	/**
@@ -128,11 +129,43 @@ class Cron extends Root\Base
 	{
 		// get the next time a task must be run
 		// If we're a zombie task or a manual task, we should not be queued into the task list.
-		if(Bot::cron($task_name)->status !== TASK_ACTIVE)
+		$task = Bot::getOption("cron.$task_name");
+		if($task->status !== Root\TASK_ACTIVE)
 			return false;
 
-		$next_run = (int) Bot::cron($task_name)->getNextRun();
+		$next_run = (int) $task->getNextRun();
 		$this->task_times[$task_name] = $next_run;
 		return true;
 	}
+
+	/**
+	 * Manually run a cron task.
+	 * @param string $task - The task to run
+	 * @return mixed - Whatever the task returns.
+	 */
+	public function __invoke($task)
+	{
+		return Bot::getObject("cron.$task")->manualRunTask();
+	}
+}
+
+/**
+ * Failnet - Subordinate exception class
+ *      Extension of the Failnet exception class.
+ *
+ *
+ * @category    Failnet
+ * @package     Failnet
+ * @author      Damian Bushong
+ * @license     MIT License
+ * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
+ *
+ * @note reserves 205xx error codes
+ */
+class CronException extends Root\FailnetException
+{
+	const ERR_CRON_LOAD_FAILED = 20500;
+	const ERR_CRON_NO_SUCH_TASK = 20501;
+	const ERR_CRON_TASK_ALREADY_LOADED = 20502;
+	const ERR_CRON_INVALID_STATE = 20503;
 }

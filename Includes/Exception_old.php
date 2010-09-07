@@ -136,10 +136,10 @@ class Exception extends \Exception
 
 			self::ERR_INVALID_HOSTMASK => 'Invalid hostmask "%1$s" specified',
 
-			self::ERR_CRON_LOAD_FAILED => 'Cron system load failed for unknown reason.',
-			self::ERR_CRON_NO_SUCH_TASK => 'No class file found for cron task "%1$s"',
+			//self::ERR_CRON_LOAD_FAILED => 'Cron system load failed for unknown reason.',
+			//self::ERR_CRON_NO_SUCH_TASK => 'No class file found for cron task "%1$s"',
 			self::ERR_CRON_TASK_ALREADY_LOADED => 'Cron task "%1$s" is already loaded',
-			self::ERR_CRON_INVALID_STATE => 'Attempted to set an invalid state on a cron task',
+			//self::ERR_CRON_INVALID_STATE => 'Attempted to set an invalid state on a cron task',
 
 			self::ERR_CRON_INVALID_TASK => 'Invalid cron task "%1$s" specified',
 			self::ERR_CRON_TASK_STATUS_INVALID => 'Cron task "%1$s" has an invalid status code [%2$s]',
