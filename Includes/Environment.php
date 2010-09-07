@@ -113,6 +113,7 @@ class Environment extends Failnet\Base
 			{
 				// stuff for the dynamic installer goes here
 				$this->setObject('core.ui', new Failnet\Install\UI($this->getOption('ui.output_level', 'normal')));
+
 				/* @var Failnet\Install\UI */
 				$ui = $this->getObject('core.ui');
 
@@ -146,6 +147,8 @@ class Environment extends Failnet\Base
 				$this->setObject('core.core', new Failnet\Core\Core());
 				$ui->system('Loading core.language object');
 				$this->setObject('core.language', new Failnet\Core\Language());
+				$ui->system('Loading core.hash object');
+				$this->setObject('core.hash', new Failnet\Core\Hash(8, true));
 
 			}
 		}

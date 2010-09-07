@@ -7,7 +7,7 @@
  *-------------------------------------------------------------------
  * @version		3.0.0 DEV
  * @category	Failnet
- * @package		libs
+ * @package		core
  * @author		Damian Bushong
  * @copyright	(c) 2009 - 2010 -- Damian Bushong
  * @license		MIT License
@@ -20,14 +20,16 @@
  *
  */
 
-namespace Failnet\Lib;
+namespace Failnet\Core;
+use Failnet as Root;
+use Failnet\Bot as Bot;
 
 /**
  * Failnet - Password hashing framework,
  * 		Used as Failnet's password hashing system.
  *
- * @package libs
- * @version Version 0.1 / slightly modified for Failnet (using $F$ as hash type identifier)
+ * @package core
+ * @version Version 0.1 / slightly modified for Failnet (using $F$ as hash type identifier, and using hash() + SHA512 instead of MD5)
  *
  * Portable PHP password hashing framework.
  *
@@ -83,8 +85,8 @@ class Hash
 			$output = '';
 			for ($i = 0; $i < $count; $i += 16)
 			{
-				$this->random_state = md5(microtime() . $this->random_state);
-				$output .= pack('H*', md5($this->random_state));
+				$this->random_state = hash('sha256', microtime() . $this->random_state);
+				$output .= pack('H*', hash('sha256', $this->random_state));
 			}
 			$output = substr($output, 0, $count);
 		}
@@ -145,16 +147,10 @@ class Hash
 		if (strlen($salt) != 8)
 			return $output;
 
-		# We're kind of forced to use MD5 here since it's the only
-		# cryptographic primitive available in all versions of PHP
-		# currently in use.  To implement our own low-level crypto
-		# in PHP would result in much worse performance and
-		# consequently in lower iteration counts and hashes that are
-		# quicker to crack (by non-PHP code).
-		$hash = md5($salt . $password, TRUE);
+		$hash = hash('sha512', $salt . $password, TRUE);
 		do
 		{
-			$hash = md5($hash . $password, TRUE);
+			$hash = hash('sha512', $hash . $password, TRUE);
 		}
 		while (--$count);
 
