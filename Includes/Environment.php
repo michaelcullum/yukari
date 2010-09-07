@@ -155,7 +155,7 @@ class Environment extends Failnet\Base
 		}
 		elseif($file_extension == 'json')
 		{
-			// @todo json integration
+			$data = Lib\JSON::decode(FAILNET_ROOT . "Data/Config/$config");
 			$this->setOptions($data);
 		}
 		else
