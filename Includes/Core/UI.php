@@ -22,6 +22,7 @@
 
 namespace Failnet\Core;
 use Failnet as Root;
+use Failnet\Bot as Bot;
 
 
 /**
@@ -71,7 +72,7 @@ class UI extends Root\Base
 	 */
 	public function __construct($output_level = 'normal')
 	{
-		if(Root\Bot::getOption('ui.enable_colors', false) && $this->checkColorSupport())
+		if(Bot::getOption('ui.enable_colors', false) && $this->checkColorSupport())
 		{
 			$this->fg_colors = array('black' => '30', 'blue' => '34', 'green' => '32', 'cyan' => '36', 'red' => '31', 'purple' => '35', 'brown' => '33', 'yellow' => '33', 'white' => '37');
 			$this->bg_colors = array('black' => '40', 'red' => '41', 'green' => '42', 'yellow' => '43', 'blue' => '44', 'magenta' => '45', 'cyan' => '46', 'light_gray' => '47');

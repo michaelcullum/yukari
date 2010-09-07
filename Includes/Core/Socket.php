@@ -22,7 +22,8 @@
 
 namespace Failnet\Core;
 use Failnet as Root;
-use Failnet\Lib;
+use Failnet\Bot as Bot;
+use Failnet\Lib as Lib;
 
 /**
  * Failnet - Socket connection handling class,
@@ -56,12 +57,12 @@ class Socket extends Base
 	public function connect()
 	{
 		// Check to see if the transport method we are using is allowed
-		$transport = Root\Bot::getOption('socket.use_ssl', false) ? 'ssl' : 'tcp';
+		$transport = Bot::getOption('socket.use_ssl', false) ? 'ssl' : 'tcp';
 		if(!in_array($transport, stream_get_transports()))
 			throw new SocketException(sprintf('', $transport), SocketException::ERR_SOCKET_UNSUPPORTED_TRANSPORT);
 
 		// Establish and configure the socket connection
-		$remote = "$transport://" . Root\Bot::getOption('server.server_uri', '') . ':' . Root\Bot::getOption('server.port', 6667);
+		$remote = "$transport://" . Bot::getOption('server.server_uri', '') . ':' . Bot::getOption('server.port', 6667);
 
 		// Try a few times to connect to the server, and if we can't, we dai.
 		$attempts = 0;
@@ -79,12 +80,12 @@ class Socket extends Base
 		stream_set_timeout($this->socket, (int) $this->timeout, (($this->timeout - (int) $this->timeout) * 1000000));
 
 		// Send the server password if one is specified
-		if(Root\Bot::getOption('socket.server_pass', ''))
-			$this->send('PASS', Root\Bot::getOption('server.server_pass', ''));
+		if(Bot::getOption('socket.server_pass', ''))
+			$this->send('PASS', Bot::getOption('server.server_pass', ''));
 
 		// Send user information
-		$this->send('USER', array(Root\Bot::getOption('server.username', 'Failnet'), Root\Bot::getOption('server.server_uri', ''), Root\Bot::getOption('server.server_uri', ''), Root\Bot::getOption('server.realname', 'Failnet')));
-		$this->send('NICK', Root\Bot::getOption('socket.nickname', 'Failnet_'));
+		$this->send('USER', array(Bot::getOption('server.username', 'Failnet'), Bot::getOption('server.server_uri', ''), Bot::getOption('server.server_uri', ''), Bot::getOption('server.realname', 'Failnet')));
+		$this->send('NICK', Bot::getOption('socket.nickname', 'Failnet_'));
 	}
 
 	/**
@@ -118,7 +119,7 @@ class Socket extends Base
 		{
 			// Parse the command and arguments
 			list($cmd, $args) = array_pad(explode(' ', $buffer, 2), 2, NULL);
-			$hostmask = new Lib\Hostmask('server', 'server', Root\Bot::getOption('server.server_uri'));
+			$hostmask = new Lib\Hostmask('server', 'server', Bot::getOption('server.server_uri'));
 		}
 
 		// Parse the event arguments depending on the event type
