@@ -36,7 +36,7 @@ use Failnet\Lang as Lang;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class Language extends Base
+class Language extends Root\Hookable
 {
 	/**
 	 * @var array - Array containing all language variables that have been loaded.
