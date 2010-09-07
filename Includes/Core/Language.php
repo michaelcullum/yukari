@@ -22,6 +22,7 @@
 
 namespace Failnet\Core;
 use Failnet as Root;
+use Failnet\Bot as Bot;
 use Failnet\Lang as Lang;
 
 /**
@@ -52,9 +53,13 @@ class Language extends Base
 	 */
 	protected $language_dir = '';
 
+	/**
+	 * Constructor
+	 * @return void
+	 */
 	public function __construct()
 	{
-		$this->language_dir = Root\Bot::getOption('language.file_dir', FAILNET_ROOT . 'Data/Language');
+		$this->language_dir = Bot::getOption('language.file_dir', FAILNET_ROOT . 'Data/Language');
 	}
 
 	/**
@@ -63,8 +68,11 @@ class Language extends Base
 	 */
 	public function collectEntries()
 	{
+		/* @var Failnet\Core\UI */
+		$ui = Bot::getOption('core.ui');
+
 		$files = scandir($this->language_dir);
-		Bot::core('ui')->status('- Loading language files'); // @todo recode
+		$ui->status('- Loading language files'); // @todo recode
 		foreach($files as $file)
 		{
 			// ignore useless files
@@ -78,7 +86,7 @@ class Language extends Base
 			}
 			catch(LanguageException $e)
 			{
-				Bot::core('ui')->debug('Failed to load language file ' . substr(strrchr($file, '.'), 1)); // @todo recode
+				$ui->debug('Failed to load language file ' . substr(strrchr($file, '.'), 1)); // @todo recode
 			}
 		}
 	}
@@ -87,16 +95,20 @@ class Language extends Base
 	 * Load a language file
 	 * @param string $file - The full filepath of the language file to load.
 	 * @return void
-	 * @throws Failnet\Exception
+	 *
+	 * @throws Failnet\Core\LanguageException
 	 *
 	 * @note This method will not allow reloading a language file
 	 */
 	public function loadFile($file)
 	{
+		/* @var Failnet\Core\UI */
+		$ui = Bot::getOption('core.ui');
+
 		$filename = substr(strrchr(basename($file), '.'), 1);
 		if(in_array($filename, $this->files))
 		{
-			Bot::core('ui')->debug('ignoring call to Failnet\\Core\\Language::loadFile() - language file already loaded'); // @todo recode
+			$ui->debug('ignoring call to Failnet\\Core\\Language::loadFile() - language file already loaded');
 			return;
 		}
 
@@ -106,7 +118,7 @@ class Language extends Base
 
 		// Add this language file to the list of loaded language files
 		$this->files[] = $filename;
-		Bot::core('ui')->system('--- Loaded language file' . $filename); // @todo recode
+		$ui->system('--- Loaded language file' . $filename);
 	}
 
 	/**
