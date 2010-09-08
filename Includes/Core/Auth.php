@@ -26,8 +26,8 @@ use Failnet\Bot as Bot;
 use Failnet\Lib as Lib;
 
 /**
- * Failnet - Core class,
- *      Failnet in a nutshell.  Faster, smarter, better, and with a sexier voice.
+ * Failnet - Auth object,
+ *      Manages user sessions within Failnet.
  *
  *
  * @category    Failnet
@@ -39,7 +39,7 @@ use Failnet\Lib as Lib;
 class Auth extends Root\Hookable implements Iterator, ArrayAccess
 {
 	/**
-	 * @var array - Array containing pointers to user session objects
+	 * @var array - Array containing pointers to user session objects, allows session keys to be used with usernames
 	 */
 	protected $pointers = array();
 
@@ -68,6 +68,13 @@ class Auth extends Root\Hookable implements Iterator, ArrayAccess
 			define('Failnet\SESSION_SALT', hash('sha256', uniqid() . Failnet\BASE_MEMORY . ':' . Failnet\BASE_MEMORY_PEAK));
 	}
 
+	/**
+	 * Create a new session for the specified hostmask
+	 * @param Failnet\Lib\Hostmask $hostmask - The hostmask to create the session for.
+	 * @return Failnet\User\Session - The new session we wanted.
+	 *
+	 * @throws Failnet\Core\AuthException
+	 */
 	public function newSession(Failnet\Lib\Hostmask $hostmask)
 	{
 		// Build a pointer to use for this session
@@ -75,8 +82,6 @@ class Auth extends Root\Hookable implements Iterator, ArrayAccess
 		$session_key = hash('sha512', Failnet\SESSION_SALT . ':' . $hostmask['nick'] . ':' . time());
 		$this->pointers[$pointer] = $session_key;
 
-		// Workaround for derp php
-		$user_object = $this->user_object;
 		$session = new Failnet\User\Session($hostmask);
 		$this->sessions[$session_key] = $session;
 
@@ -86,9 +91,22 @@ class Auth extends Root\Hookable implements Iterator, ArrayAccess
 		return $session;
 	}
 
-	public function getSession(Failnet\Lib\Hostmask $hostmask)
+	/**
+	 * Get a session object by hostmask
+	 * @param Failnet\Lib\Hostmask $hostmask - The hostmask to get the session object for.
+	 * @param boolean $new_session - If no session exists, do we want to create a new one?
+	 * @return mixed - The desired session (Failnet\User\Session) or false if $new_session is false and there is no session.
+	 */
+	public function getSession(Failnet\Lib\Hostmask $hostmask, $new_session = true)
 	{
-		return $this->sessions[$this->getSessionKey($hostmask)];
+		$session_key = $this->getSessionKey($hostmask);
+		if($session_key === false || !isset($this->sessions[$session_key]))
+		{
+			if($new_session)
+				return $this->newSession($hostmask);
+			return false;
+		}
+		return $this->sessions[$session_key];
 	}
 
 	public function deleteSession(Failnet\Lib\Hostmask $hostmask)
@@ -96,12 +114,14 @@ class Auth extends Root\Hookable implements Iterator, ArrayAccess
 		unset($this->sessions[$this->getSessionKey($hostmask)], $this->pointers[$this->getPointer($hostmask)]);
 	}
 
-	protected function getSessionKey(Failnet\Lib\Hostmask $hostmask)
+	public function getSessionKey(Failnet\Lib\Hostmask $hostmask)
 	{
+		if(!isset($this->pointers[$this->getPointer($hostmask)]))
+			return false;
 		return $this->pointers[$this->getPointer($hostmask)];
 	}
 
-	protected function getPointer(Failnet\Lib\Hostmask $hostmask)
+	public function getPointer(Failnet\Lib\Hostmask $hostmask)
 	{
 		return hash('md5', $hostmask['nick'] . ':' . $hostmask['username'] . ':' . $hostmask['host']);
 	}
