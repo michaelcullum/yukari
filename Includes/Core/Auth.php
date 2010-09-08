@@ -38,10 +38,13 @@ use Failnet\Lib as Lib;
  */
 class Auth extends Root\Hookable implements Iterator, ArrayAccess
 {
+	/**
+	 * @var array - Array containing pointers to user session objects
+	 */
 	protected $pointers = array();
 
 	/**
-	 * @var array - Array of users logged in
+	 * @var array - Array containing user session objects
 	 */
 	protected $sessions = array();
 
@@ -50,45 +53,65 @@ class Auth extends Root\Hookable implements Iterator, ArrayAccess
 	 */
 	protected $user_object = '';
 
+	/**
+	 * Constructor
+	 * @return void
+	 */
 	public function __construct()
 	{
+		// Store the name of the user object that we'll be using for the user class
 		$this->user_object = Bot::getOption('auth.user_object', 'Failnet\\Lib\\User');
 
-		// @todo move to session instantiation code
-		//if(!$this->user_object instanceof Failnet\Lib\UserInterface))
-			//throw new AuthException(); // @todo exception
+		// Build the session key salt
+		$this->buildSessionSalt();
 	}
 
+	/**
+	 * Builds and defines the session key salt if it has not been defined already
+	 * @return void
+	 */
 	public function buildSessionSalt()
 	{
-		// asdf
-		define('Failnet\SESSION_SALT', $salt);
+		if(!defined('Failnet\SESSION_SALT'))
+			define('Failnet\SESSION_SALT', hash('sha256', uniqid() . Failnet\BASE_MEMORY . ':' . Failnet\BASE_MEMORY_PEAK));
 	}
 
 	public function newSession(Failnet\Lib\Hostmask $hostmask)
 	{
-		$pointer = hash('md5', $hostmask['nick'] . ':' . $hostmask['username'] . ':' . $hostmask['host']);
+		// Build a pointer to use for this session
+		$pointer = $this->getPointer($hostmask);
 		$session_key = hash('sha512', Failnet\SESSION_SALT . ':' . $hostmask['nick'] . ':' . time());
 		$this->pointers[$pointer] = $session_key;
 
 		// Workaround for derp php
 		$user_object = $this->user_object;
-		$this->sessions[$session_key] = new $user_object($hostmask);
+		$session = new $user_object($hostmask);
+		$this->sessions[$session_key] = $session;
+
+		if(!$session instanceof Failnet\Lib\UserInterface)
+			throw new AuthException(); // @todo exception
+
+		return $session;
 	}
 
 	public function getSession(Failnet\Lib\Hostmask $hostmask)
 	{
-		// asdf
+		return $this->sessions[$this->getSessionKey($hostmask)];
 	}
 
 	public function deleteSession(Failnet\Lib\Hostmask $hostmask)
 	{
-		// asdf
+		unset($this->sessions[$this->getSessionKey($hostmask)], $this->pointers[$this->getPointer($hostmask)]);
 	}
 
-	public function getSessionKey(Failnet\Lib\Hostmask $hostmask)
+	protected function getSessionKey(Failnet\Lib\Hostmask $hostmask)
 	{
-		return $this->pointers[hash('md5', $hostmask['nick'] . ':' . $hostmask['username'] . ':' . $hostmask['host'])];
+		return $this->pointers[$this->getPointer($hostmask)];
+	}
+
+	protected function getPointer(Failnet\Lib\Hostmask $hostmask)
+	{
+		return hash('md5', $hostmask['nick'] . ':' . $hostmask['username'] . ':' . $hostmask['host']);
 	}
 
 	/**
