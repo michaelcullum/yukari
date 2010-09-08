@@ -22,6 +22,7 @@
 
 namespace Failnet\Core;
 use Failnet as Root;
+use Failnet\Bot as Bot;
 
 
 /**
