@@ -111,7 +111,7 @@ class Hostmask extends Root\Base implements \ArrayAccess
 	 */
 	public function offsetExists($offset)
 	{
-		return property_exists($this, $offset)
+		return property_exists($this, $offset);
 	}
 
 	/**
