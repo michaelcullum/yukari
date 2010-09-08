@@ -49,19 +49,11 @@ class Auth extends Root\Hookable implements Iterator, ArrayAccess
 	protected $sessions = array();
 
 	/**
-	 * @var string - The class that will be used to manage user sessions (this must implement Failnet\Lib\UserInterface!)
-	 */
-	protected $user_object = '';
-
-	/**
 	 * Constructor
 	 * @return void
 	 */
 	public function __construct()
 	{
-		// Store the name of the user object that we'll be using for the user class
-		$this->user_object = Bot::getOption('auth.user_object', 'Failnet\\Lib\\User');
-
 		// Build the session key salt
 		$this->buildSessionSalt();
 	}
@@ -85,10 +77,10 @@ class Auth extends Root\Hookable implements Iterator, ArrayAccess
 
 		// Workaround for derp php
 		$user_object = $this->user_object;
-		$session = new $user_object($hostmask);
+		$session = new Failnet\User\Session($hostmask);
 		$this->sessions[$session_key] = $session;
 
-		if(!$session instanceof Failnet\Lib\UserInterface)
+		if(!$session instanceof Failnet\ObjectInterface\Session)
 			throw new AuthException(); // @todo exception
 
 		return $session;
