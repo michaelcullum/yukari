@@ -36,7 +36,7 @@ use Failnet\Lib as Lib;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class Auth extends Root\Hookable implements Iterator
+class Auth extends Root\Hookable implements Iterator, ArrayAccess
 {
 	protected $pointers = array();
 
@@ -59,20 +59,41 @@ class Auth extends Root\Hookable implements Iterator
 			//throw new AuthException(); // @todo exception
 	}
 
-	public function newSession()
+	public function buildSessionSalt()
+	{
+		// asdf
+		define('Failnet\SESSION_SALT', $salt);
+	}
+
+	public function newSession(Failnet\Lib\Hostmask $hostmask)
+	{
+		$pointer = hash('md5', $hostmask['nick'] . ':' . $hostmask['username'] . ':' . $hostmask['host']);
+		$session_key = hash('sha512', Failnet\SESSION_SALT . ':' . $hostmask['nick'] . ':' . time());
+		$this->pointers[$pointer] = $session_key;
+
+		// Workaround for derp php
+		$user_object = $this->user_object;
+		$this->sessions[$session_key] = new $user_object($hostmask);
+	}
+
+	public function getSession(Failnet\Lib\Hostmask $hostmask)
 	{
 		// asdf
 	}
 
-	public function getSession($session_number)
+	public function deleteSession(Failnet\Lib\Hostmask $hostmask)
 	{
 		// asdf
 	}
 
-	public function deleteSession($session_number)
+	public function getSessionKey(Failnet\Lib\Hostmask $hostmask)
 	{
-		// asdf
+		return $this->pointers[hash('md5', $hostmask['nick'] . ':' . $hostmask['username'] . ':' . $hostmask['host'])];
 	}
+
+	/**
+	 * Iterator methods
+	 */
 
 	/**
 	 * Iterator method, rewinds the array back to the first element.
@@ -118,4 +139,8 @@ class Auth extends Root\Hookable implements Iterator
 	{
 		next($this->sessions);
 	}
+
+	/**
+	 * ArrayAccess methods
+	 */
 }
