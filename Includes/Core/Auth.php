@@ -80,7 +80,7 @@ class Auth extends Root\Hookable implements Iterator, ArrayAccess
 		$session = new Failnet\User\Session($hostmask);
 		$this->sessions[$session_key] = $session;
 
-		if(!$session instanceof Failnet\ObjectInterface\Session)
+		if(!$session instanceof Failnet\User\SessionInterface)
 			throw new AuthException(); // @todo exception
 
 		return $session;
