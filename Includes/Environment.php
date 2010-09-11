@@ -269,12 +269,17 @@ class Environment extends Failnet\Base
 	 * Grab an option, or return the default if the option isn't set
 	 * @param string $option - The option name to grab.
 	 * @param mixed $default - The default value to use if the option is not set.
+	 * @param boolean $is_required - Is this option required, or can it flip to the default?
 	 * @return mixed - The value of the option we're grabbing, or the default if it's not set.
+	 *
+	 * @throws Failnet\EnvironmentException
 	 */
-	public function getOption($option, $default)
+	public function getOption($option, $default, $is_required = false)
 	{
 		if(isset($this->options[$option]))
 			return $this->options[$option];
+		if($is_required)
+			throw new EnvironmentException(sprintf('The required option "%1$s" is not set', $option), EnvironmentException::ERR_ENVIRONMENT_OPTION_NOT_SET);
 		return $default;
 	}
 

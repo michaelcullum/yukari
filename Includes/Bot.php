@@ -78,10 +78,11 @@ abstract class Bot
 	 * Get configuration options from the Failnet environment
 	 * @param string $option - The option name.
 	 * @param mixed $default - The default value to use if the option is not set.
+	 * @param boolean $is_required - Is this option required, or can it flip to the default?
 	 * @return mixed - The value of the option we're grabbing.
 	 */
-	public static function getOption($option, $default)
+	public static function getOption($option, $default, $is_required = false)
 	{
-		return self::$environment->getOption($option, $default);
+		return self::$environment->getOption($option, $default, $is_required);
 	}
 }
