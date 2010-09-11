@@ -86,7 +86,7 @@ class Language extends Root\Hookable
 			}
 			catch(LanguageException $e)
 			{
-				$ui->debug('Failed to load language file ' . substr(strrchr($file, '.'), 1)); // @todo recode
+				$ui->debug('Failed to load language file ' . substr(strrchr($file, '.'), 1)); // @todo recode, add in $e->getMessage()
 			}
 		}
 	}
@@ -108,6 +108,7 @@ class Language extends Root\Hookable
 		$filename = substr(strrchr(basename($file), '.'), 1);
 		if(in_array($filename, $this->files))
 		{
+			// @todo throw exception, not debug notice
 			$ui->debug('ignoring call to Failnet\\Core\\Language::loadFile() - language file already loaded');
 			return;
 		}

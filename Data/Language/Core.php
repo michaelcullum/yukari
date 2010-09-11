@@ -22,10 +22,11 @@
 
 namespace Failnet\Lang;
 use Failnet as Root;
+use Failnet\Bot as Bot;
 
 /**
  * @ignore
  */
-Bot::core('lang')->setEntries(array(
+Bot::getObject('core.language')->setEntries(array(
 	'LANGUAGE_VAR'	=> 'Some language variable: %1$s'
 ));
