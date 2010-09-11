@@ -13,10 +13,10 @@
 
 ### Socket
 
+* *server.server_uri* **REQUIRED** - string - The server we are connecting to.
+* *server.nickname* **REQUIRED** - string - IRC nickname to use.
 * *socket.use_ssl* - boolean - Do we want to connect via SSL, or just plain old TCP?
 * *server.server_pass* - string - A password to connect to the specified server with, if we need one.
-* *server.server_uri* - string - The server we are connecting to.
 * *server.port* - integer - The port on the remote server to connect to.
 * *server.username* - string - IRC username to use (note: NOT nickname, username).
 * *server.realname* - string - IRC realname to use.
-* *server.nickname* - string - IRC nickname to use.

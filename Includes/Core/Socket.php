@@ -62,7 +62,7 @@ class Socket extends Base
 			throw new SocketException(sprintf('', $transport), SocketException::ERR_SOCKET_UNSUPPORTED_TRANSPORT);
 
 		// Establish and configure the socket connection
-		$remote = "$transport://" . Bot::getOption('server.server_uri', '') . ':' . Bot::getOption('server.port', 6667);
+		$remote = "$transport://" . Bot::getOption('server.server_uri', '', true) . ':' . Bot::getOption('server.port', 6667);
 
 		// Try a few times to connect to the server, and if we can't, we dai.
 		$attempts = 0;
@@ -84,8 +84,8 @@ class Socket extends Base
 			$this->send('PASS', Bot::getOption('server.server_pass', ''));
 
 		// Send user information
-		$this->send('USER', array(Bot::getOption('server.username', 'Failnet'), Bot::getOption('server.server_uri', ''), Bot::getOption('server.server_uri', ''), Bot::getOption('server.realname', 'Failnet')));
-		$this->send('NICK', Bot::getOption('socket.nickname', 'Failnet_'));
+		$this->send('USER', array(Bot::getOption('server.username', 'Failnet'), Bot::getOption('server.server_uri', '', true), Bot::getOption('server.server_uri', '', true), Bot::getOption('server.realname', 'Failnet')));
+		$this->send('NICK', Bot::getOption('socket.nickname', '', true));
 	}
 
 	/**
@@ -119,7 +119,7 @@ class Socket extends Base
 		{
 			// Parse the command and arguments
 			list($cmd, $args) = array_pad(explode(' ', $buffer, 2), 2, NULL);
-			$hostmask = new Lib\Hostmask('server', 'server', Bot::getOption('server.server_uri'));
+			$hostmask = new Lib\Hostmask('server', 'server', Bot::getOption('server.server_uri', '', true));
 		}
 
 		// Parse the event arguments depending on the event type
@@ -253,7 +253,7 @@ class Socket extends Base
 	 */
 	public function close()
 	{
-		Bot::getObject('core.ui')->system('-!- Quitting from server "' . Bot::getOption('server.server_uri') . '"');
+		Bot::getObject('core.ui')->system('-!- Quitting from server "' . Bot::getOption('server.server_uri', '', true) . '"');
 		Bot::core('log')->add('--- Quitting from server "' . Bot::core()->config('server') . '" ---'); // @todo rewrite
 
 		// Terminate the socket connection

@@ -15,4 +15,3 @@
 * deprecate the Core\Plugin object
 * toss in the dispatcher core object
 * figure out what the hell we still need the Core\Core object for
-* update Core\Socket object to use the new "required" param in Failnet\Bot::getOption() / Failnet\Environment->getOption()
