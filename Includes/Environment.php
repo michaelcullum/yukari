@@ -150,7 +150,7 @@ class Environment extends Failnet\Base
 		}
 		catch(FailnetException $e)
 		{
-			throw new EnvironmentException(sprintf('Failnet environment initialization encountered a fatal exception (%1$s::%2$s)' . PHP_EOL . 'Exception message: %1$s', get_class($e), $e->getCode(), $e->getMessage()), EnvironmentException::ERR_ENVIRONMENT_LOAD_FAILED, $e);
+			throw new EnvironmentException(sprintf('Failnet environment initialization encountered a fatal exception (%1$s::%2$s)' . PHP_EOL . 'Exception message: %3$s', get_class($e), $e->getCode(), $e->getMessage()), EnvironmentException::ERR_ENVIRONMENT_LOAD_FAILED, $e);
 		}
 	}
 
