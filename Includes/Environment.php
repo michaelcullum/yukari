@@ -83,10 +83,6 @@ class Environment extends Failnet\Base
 		if(!ini_get('date.timezone'))
 			@date_default_timezone_set(@date_default_timezone_get());
 
-		// Set our error and exception handlers
-		@set_error_handler('Failnet\\errorHandler');
-		// @set_exception_handler('Failnet\\exceptionHandler'); // @todo uncomment when an exception handler is written
-
 		// Run indefinitely...
 		set_time_limit(0);
 

@@ -53,5 +53,9 @@ require FAILNET_ROOT . 'Includes/Hookable.php';
 require FAILNET_ROOT . 'Includes/Autoload.php';
 require FAILNET_ROOT . 'Includes/Environment.php';
 
+// Set our error and exception handlers
+@set_error_handler('Failnet\\errorHandler');
+// @set_exception_handler('Failnet\\exceptionHandler'); // @todo uncomment when an exception handler is written
+
 $environment = new Failnet\Environment();
 $environment->runBot();
