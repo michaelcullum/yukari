@@ -7,7 +7,6 @@
 * document configurations as work progresses
 * add invoke() on cron tasks for manually triggering them, instead of relying on manualRunTask()
 * write the standard ACL layer, add in authorization levels within it
-* rm unneeded constants in the constants file
 * look at using Doctrine with Failnet, to replace the plain PDO involved
 * update cron object
 * deprecate the Core\IRC object
