@@ -36,7 +36,7 @@ use Failnet\Lib as Lib;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class Auth extends Root\Hookable implements Iterator, ArrayAccess
+class Auth extends Root\Hookable implements \Iterator, \ArrayAccess
 {
 	/**
 	 * @var array - Array containing pointers to user session objects, allows session keys to be used with usernames
@@ -82,6 +82,8 @@ class Auth extends Root\Hookable implements Iterator, ArrayAccess
 		$session_key = hash('sha512', Failnet\SESSION_SALT . ':' . $hostmask['nick'] . ':' . time());
 		$this->pointers[$pointer] = $session_key;
 
+		// @todo link to pointer within session object
+
 		$session = new Failnet\User\Session($hostmask);
 		$this->sessions[$session_key] = $session;
 
@@ -111,6 +113,8 @@ class Auth extends Root\Hookable implements Iterator, ArrayAccess
 
 	public function deleteSession(Failnet\Lib\Hostmask $hostmask)
 	{
+		// Allow the session to flush changes back to the DB.
+		$this->sessions[$this->getSessionKey($hostmask)]->onDestroy();
 		unset($this->sessions[$this->getSessionKey($hostmask)], $this->pointers[$this->getPointer($hostmask)]);
 	}
 
@@ -178,4 +182,47 @@ class Auth extends Root\Hookable implements Iterator, ArrayAccess
 	/**
 	 * ArrayAccess methods
 	 */
+
+	/**
+	 * Check if an "array" offset exists in this object.
+	 * @param mixed $offset - The offset to check.
+	 * @return boolean - Does anything exist for this offset?
+	 */
+	public function offsetExists($offset)
+	{
+		return isset($this->sessions[$offset]);
+	}
+
+	/**
+	 * Get an "array" offset for this object.
+	 * @param mixed $offset - The offset to grab from.
+	 * @return mixed - The value of the offset, or null if the offset does not exist.
+	 */
+	public function offsetGet($offset)
+	{
+		return isset($this->sessions[$offset]) ? $this->sessions[$offset] : NULL;
+	}
+
+	/**
+	 * Set an "array" offset to a certain value, if the offset exists
+	 * @param mixed $offset - The offset to set.
+	 * @param mixed $value - The value to set to the offset.
+	 * @return void
+	 */
+	public function offsetSet($offset, $value)
+	{
+		$this->sessions[$offset] = $value;
+	}
+
+	/**
+	 * Unset an "array" offset.
+	 * @param mixed $offset - The offset to clear out.
+	 * @return void
+	 */
+	public function offsetUnset($offset)
+	{
+		// Allow the session to flush changes back to the DB.
+		$this->sessions[$offset]->onDestroy();
+		unset($this->sessions[$offset]);
+	}
 }
