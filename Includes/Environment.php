@@ -167,7 +167,7 @@ class Environment extends Failnet\Base
 		$file_extension = substr(strrchr($config, '.'), 1);
 		if($file_extension == 'php')
 		{
-			if(($include = @include(FAILNET_ROOT . "Data/Config/$config")) === false)
+			if(($include = @include(FAILNET_ROOT . "Data/Config/$config")) === false || !isset($data) || !is_array($data))
 				throw new EnvironmentException('Failed to load the specified config file "%1$s"', EnvironmentException::ERR_ENVIRONMENT_FAILED_CONFIG_LOAD);
 			$this->setOptions($data);
 		}
