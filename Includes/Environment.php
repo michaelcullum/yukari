@@ -147,6 +147,8 @@ class Environment extends Failnet\Base
 				$this->setObject('core.hash', new Failnet\Core\Hash(8, true));
 				$ui->system('Loading core.dispatcher object');
 				$this->setObject('core.dispatcher', new Failnet\Core\Dispatcher());
+				$ui->system('Loading core.auth object');
+				$this->setObject('core.auth', new Failnet\Core\Auth());
 
 				// Load our language files
 				$ui->system('Loading language files');
@@ -366,7 +368,6 @@ class Environment extends Failnet\Base
 			$queue = array();
 
 			$queue = array_merge($cron->runTasks(), $queue);
-
 			$event = $socket->get();
 			if($event)
 			{
@@ -377,6 +378,7 @@ class Environment extends Failnet\Base
 			if(!empty($queue))
 			{
 				// handle externally-bound data here
+				// detect quit events and delay them for last, then break out of the loop
 			}
 		}
 
