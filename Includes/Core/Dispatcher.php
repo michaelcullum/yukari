@@ -84,16 +84,19 @@ class Dispatcher extends Root\Base
 	/**
 	 * Dispatch an event to registered listeners
 	 * @param Failnet\Event\EventBase $event - The event to dispatch.
-	 * @return void
+	 * @return array - Array of returned information from each listener.
 	 */
 	public function dispatch(Failnet\Event\EventBase $event)
 	{
 		if(!$this->hasListeners($event->getType()))
 			return;
 
+		$result = array();
 		foreach($this->listeners[$event->getType()] as $listener)
 		{
-			call_user_func_array($listener['listener'], array_merge(array($event), $listener['params']));
+			$result[] = call_user_func_array($listener['listener'], array_merge(array($event), $listener['params']));
 		}
+
+		return $result;
 	}
 }
