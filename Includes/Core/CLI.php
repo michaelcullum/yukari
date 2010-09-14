@@ -25,7 +25,7 @@ use Failnet as Root;
 
 
 /**
- * Failnet - CLI handling class,
+ * Failnet - CLI handling object,
  * 	    Used to provide access to parameters passed to Failnet via argv.
  *
  *
