@@ -53,6 +53,6 @@ class Raw extends Failnet\Event\EventBase
 	 */
 	public function buildCommand()
 	{
-		return $this->arg_message;
+		return $this['message'];
 	}
 }
