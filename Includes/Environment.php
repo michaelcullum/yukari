@@ -232,6 +232,28 @@ class Environment extends Failnet\Base
 	}
 
 	/**
+	 * Remove an object from the global class.
+	 * @param mixed $object - The object's location and name.  Either an array of format array('type'=>'objecttype','name'=>'objectname'), or a string of format 'objecttype.objectname'
+	 * @return void
+	 */
+	public function removeObject($object)
+	{
+		if(!is_array($object))
+			$object = $this->resolveObject($object);
+		extract($object);
+		if(property_exists($this, $type))
+		{
+			if(isset($this->$type[$name]))
+				unset($this->$type[$name]);
+		}
+		else
+		{
+			if(isset($this->objects[$type][$name]))
+				unset($this->objects[$type][$name]);
+		}
+	}
+
+	/**
 	 * Check to see if an object has been loaded or not
 	 * @param mixed $object - The object's location and name.  Either an array of format array('type'=>'objecttype','name'=>'objectname'), or a string of format 'objecttype.objectname'
 	 * @return boolean - Do we have this object?
