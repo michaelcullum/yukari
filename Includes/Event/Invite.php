@@ -59,6 +59,6 @@ class Invite extends Failnet\Event\EventBase
 	 */
 	public function buildCommand()
 	{
-		return 'INVITE ' . $this->arg_target . ' ' . $this->arg_channel;
+		return sprintf('INVITE %1$s %2$s', $this['target'], $this['channel']);
 	}
 }
