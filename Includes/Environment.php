@@ -349,6 +349,41 @@ class Environment extends Failnet\Base
 
 	public function runBot()
 	{
-		// asdf
+		/* @var Failnet\Core\Socket */
+		$socket = $this->getObject('core.socket');
+		/* @var Failnet\Core\Dispatcher */
+		$dispatcher = $this->getObject('core.dispatcher');
+		/* @var Failnet\Core\Cron */
+		$cron = $this->getObject('core.cron');
+
+		// @todo generate "event" for connection trigger
+		/*if($dispatcher->hasListeners('runtime_connect'))
+			$dispatcher->dispatch()*/
+
+		// Now we go around in endless circles until someone lays down a bear trap and catches us.
+		while(true)
+		{
+			$queue = array();
+
+			$queue = array_merge($cron->runTasks(), $queue);
+
+			$event = $socket->get();
+			if($event)
+			{
+				if($dispatcher->hasListeners($event->getType()))
+					$queue = array_merge($dispatcher->dispatch($event), $queue);
+			}
+
+			if(!empty($queue))
+			{
+				// handle externally-bound data here
+			}
+		}
+
+		// @todo generate "event" for disconnect trigger
+		/*if($dispatcher->hasListeners('runtime_disconnect'))
+			$dispatcher->dispatch()*/
+
+		// handle exit gracefully here
 	}
 }
