@@ -59,6 +59,13 @@ class Part extends Failnet\Event\EventBase
 	 */
 	public function buildCommand()
 	{
-		return 'PART ' . $this->arg_channel . (!empty($this->arg_reason)) ? ' :' . $this->arg_reason : '';
+		if(!empty($this['reason']))
+		{
+			return sprintf('PART %1$s :%2$s', $this['channel'], $this['reason']);
+		}
+		else
+		{
+			return sprintf('PART %1$s', $this['channel']);
+		}
 	}
 }
