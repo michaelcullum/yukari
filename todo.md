@@ -6,7 +6,6 @@
 * plugin handling should be replaced by allowing "listeners" to be registered with a dispatcher object, for listener-specified event types
 * document configurations as work progresses
 * add invoke() on cron tasks for manually triggering them, instead of relying on manualRunTask()
-* update cron to use arrayaccess for accessing cron tasks instead of invoke()
 * write the standard ACL layer, add in authorization levels within it
 * look at using Doctrine with Failnet, to replace the plain PDO involved
 * update cron object

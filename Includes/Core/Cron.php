@@ -56,7 +56,7 @@ class Cron extends Root\Base
 		if(!Bot::getObject('core.autoload')->fileExists($task_class))
 			throw new CronException(sprintf('No class file found for cron task "%1$s"', $task_name), CronException::ERR_CRON_NO_SUCH_TASK);
 
-		Bot::getEnvironment()->setObject("cron.$task_name", 'Failnet\\Cron\\' . ucfirst($task_name));
+		$this[$task_name] = new $task_class();
 		$this->getTaskQueue($task_name);
 	}
 
@@ -74,8 +74,7 @@ class Cron extends Root\Base
 			throw new CronException(sprintf('Attempted to set an invalid state on cron task "%1$s"', $task_name), CronException::ERR_CRON_INVALID_STATE);
 		try
 		{
-			$cron_task = Bot::getObject("cron.$task_name");
-			$cron_task->status = $status;
+			$this[$task_name]->status = $status;
 		}
 		catch(Root\EnvironmentException $e)
 		{
@@ -105,7 +104,7 @@ class Cron extends Root\Base
 		{
 			if($time > time())
 				continue;
-			Bot::getObject("cron.$task")->autoRunTask();
+			$this[$task]->autoRunTask();
 		}
 
 	}
@@ -117,7 +116,7 @@ class Cron extends Root\Base
 	 */
 	public function triggerTask($task_name)
 	{
-		return Bot::getObject("cron.$task")->manualRunTask();
+		return $this[$task_name]->manualRunTask();
 	}
 
 	/**
@@ -129,23 +128,57 @@ class Cron extends Root\Base
 	{
 		// get the next time a task must be run
 		// If we're a zombie task or a manual task, we should not be queued into the task list.
-		$task = Bot::getOption("cron.$task_name");
-		if($task->status !== Root\TASK_ACTIVE)
+		if($this[$task_name]->status !== Root\TASK_ACTIVE)
 			return false;
 
-		$next_run = (int) $task->getNextRun();
+		$next_run = (int) $this[$task_name]->getNextRun();
 		$this->task_times[$task_name] = $next_run;
 		return true;
 	}
 
 	/**
-	 * Manually run a cron task.
-	 * @param string $task - The task to run
-	 * @return mixed - Whatever the task returns.
+	 * ArrayAccess methods
 	 */
-	public function __invoke($task)
+
+	/**
+	 * Check if an "array" offset exists in this object.
+	 * @param mixed $offset - The offset to check.
+	 * @return boolean - Does anything exist for this offset?
+	 */
+	public function offsetExists($offset)
 	{
-		return Bot::getObject("cron.$task")->manualRunTask();
+		return Bot::getEnvironment()->checkObjectLoaded("cron.$offset");
+	}
+
+	/**
+	 * Get an "array" offset for this object.
+	 * @param mixed $offset - The offset to grab from.
+	 * @return mixed - The value of the offset, or null if the offset does not exist.
+	 */
+	public function offsetGet($offset)
+	{
+		return Bot::getObject("cron.$offset");
+	}
+
+	/**
+	 * Set an "array" offset to a certain value, if the offset exists
+	 * @param mixed $offset - The offset to set.
+	 * @param mixed $value - The value to set to the offset.
+	 * @return void
+	 */
+	public function offsetSet($offset, $value)
+	{
+		Bot::getEnvironment()->setObject("cron.$offset", $value);
+	}
+
+	/**
+	 * Unset an "array" offset.
+	 * @param mixed $offset - The offset to clear out.
+	 * @return void
+	 */
+	public function offsetUnset($offset)
+	{
+		Bot::getEnvironment()->removeObject("cron.$offset");
 	}
 }
 
