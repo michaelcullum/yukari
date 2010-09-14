@@ -34,7 +34,7 @@ use Failnet as Root;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-abstract class EventBase extends Root\Base implements EventInterface
+abstract class EventBase extends Root\Base implements EventInterface, \ArrayAccess
 {
 	/**
 	 * @var Failnet\Lib\Hostmask - The hostmask for the originating server or user
@@ -82,12 +82,62 @@ abstract class EventBase extends Root\Base implements EventInterface
 	}
 
 	/**
-	 * Get the command buffer (if no buffer available, we build the command from stored args)
+	 * Get the raw buffer
 	 * @return string - Raw IRC buffer for the event
 	 */
 	public function getBuffer()
 	{
-		return (!isset($this->buffer)) ? $this->buildCommand() : $this->buffer;
+		return $this->buffer;
+	}
+
+	/**
+	 * ArrayAccess methods
+	 */
+
+	/**
+	 * Check if an "array" offset exists in this object.
+	 * @param mixed $offset - The offset to check.
+	 * @return boolean - Does anything exist for this offset?
+	 */
+	public function offsetExists($offset)
+	{
+		$arg = "arg_$offset";
+		return property_exists($this, $arg);
+	}
+
+	/**
+	 * Get an "array" offset for this object.
+	 * @param mixed $offset - The offset to grab from.
+	 * @return mixed - The value of the offset, or null if the offset does not exist.
+	 */
+	public function offsetGet($offset)
+	{
+		$arg = "arg_$offset";
+		return property_exists($this, $arg) ? $this->$arg : NULL;
+	}
+
+	/**
+	 * Set an "array" offset to a certain value, if the offset exists
+	 * @param mixed $offset - The offset to set.
+	 * @param mixed $value - The value to set to the offset.
+	 * @return void
+	 */
+	public function offsetSet($offset, $value)
+	{
+		$arg = "arg_$offset";
+		if(property_exists($this, $arg))
+			$this->$arg = $value;
+	}
+
+	/**
+	 * Unset an "array" offset.
+	 * @param mixed $offset - The offset to clear out.
+	 * @return void
+	 */
+	public function offsetUnset($offset)
+	{
+		$arg = "arg_$offset";
+		$this->$arg = NULL;
 	}
 }
 
