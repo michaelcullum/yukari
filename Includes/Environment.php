@@ -194,7 +194,7 @@ class Environment extends Failnet\Base
 		// If this is not an array, we need to resolve the object name for something usable.
 		if(!is_array($object))
 			$object = $this->resolveObject($object);
-		extract($object);
+		list($name, $type) = $object;
 		if(property_exists($this, $type))
 		{
 			if(isset($this->$type[$name]))
@@ -218,7 +218,7 @@ class Environment extends Failnet\Base
 	{
 		if(!is_array($object))
 			$object = $this->resolveObject($object);
-		extract($object);
+		list($name, $type) = $object;
 		if(property_exists($this, $type))
 		{
 			if(isset($this->$type[$name]))
@@ -240,7 +240,7 @@ class Environment extends Failnet\Base
 	{
 		if(!is_array($object))
 			$object = $this->resolveObject($object);
-		extract($object);
+		list($name, $type) = $object;
 		if(property_exists($this, $type))
 		{
 			if(isset($this->$type[$name]))
@@ -262,7 +262,7 @@ class Environment extends Failnet\Base
 	{
 		if(!is_array($object))
 			$object = $this->resolveObject($object);
-		extract($object);
+		list($name, $type) = $object;
 		if(property_exists($this, $type))
 			return isset($this->$type[$name]);
 		return isset($this->objects[$type][$name]);
