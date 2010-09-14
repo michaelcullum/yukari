@@ -55,11 +55,22 @@ class Language extends Root\Hookable
 
 	/**
 	 * Constructor
+	 * @param string $language_dir - The directory to load language files from.
 	 * @return void
 	 */
-	public function __construct()
+	public function __construct($language_dir)
 	{
-		$this->language_dir = Bot::getOption('language.file_dir', FAILNET_ROOT . 'Data/Language');
+		$this->setPath($language_dir);
+	}
+
+	/**
+	 * Set the path to search for language files in
+	 * @param string $language_dir - The directory to load language files from.
+	 * @return void
+	 */
+	public function setPath($language_dir)
+	{
+		$this->language_dir = $language_dir;
 	}
 
 	/**
@@ -69,10 +80,9 @@ class Language extends Root\Hookable
 	public function collectEntries()
 	{
 		/* @var Failnet\Core\UI */
-		$ui = Bot::getOption('core.ui');
+		$ui = Bot::getObject('core.ui');
 
 		$files = scandir($this->language_dir);
-		$ui->status('- Loading language files'); // @todo recode
 		foreach($files as $file)
 		{
 			// ignore useless files
