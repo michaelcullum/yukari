@@ -15,3 +15,4 @@
 * deprecate the Core\Plugin object
 * toss in the dispatcher core object
 * figure out what the hell we still need the Core\Core object for
+* add arrayaccess support to event base
