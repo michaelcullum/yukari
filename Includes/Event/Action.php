@@ -59,6 +59,7 @@ class Action extends Failnet\Event\EventBase
 	 */
 	public function buildCommand()
 	{
-		return 'PRIVMSG ' . $this->arg_target . ' :' . chr(1) . 'ACTION ' . rtrim($this->arg_text) . ' ' . chr(1);
+		// @todo use something other than chr() here, make this one solid string
+		return sprintf('PRIVMSG %1$s : ' . chr(1) . 'ACTION %2$s ' . chr(1), $this['target'], rtrim($this['text']));
 	}
 }
