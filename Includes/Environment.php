@@ -349,6 +349,10 @@ class Environment extends Failnet\Base
 		return $this->getObject('core.autoload')->loadFile($class);
 	}
 
+	/**
+	 * Run the bot and begin remote server interaction
+	 * @return void
+	 */
 	public function runBot()
 	{
 		/* @var Failnet\Core\Socket */
@@ -358,34 +362,78 @@ class Environment extends Failnet\Base
 		/* @var Failnet\Core\Cron */
 		$cron = $this->getObject('core.cron');
 
-		// @todo generate "event" for connection trigger
-		/*if($dispatcher->hasListeners('runtime_connect'))
-			$dispatcher->dispatch()*/
+		// Dispatch a pre-connection event
+		if($dispatcher->hasListeners('RuntimeConnect'))
+		{
+			$trigger = new Failnet\Event\RuntimeConnect();
+			$trigger['event'] = $outbound;
+			$dispatcher->dispatch($trigger);
+		}
+
+		// @todo try/catch block this
+
+		// Connect to the remote server, assuming nothing blows up of course.
+		$socket->connect();
 
 		// Now we go around in endless circles until someone lays down a bear trap and catches us.
 		while(true)
 		{
 			$queue = array();
+			$quit = '';
 
 			$queue = array_merge($cron->runTasks(), $queue);
 			$event = $socket->get();
 			if($event)
 			{
+				// Verify that this event type has listeners assigned, then dispatch it to those registered for it.
 				if($dispatcher->hasListeners($event->getType()))
 					$queue = array_merge($dispatcher->dispatch($event), $queue);
 			}
 
 			if(!empty($queue))
 			{
-				// handle externally-bound data here
-				// detect quit events and delay them for last, then break out of the loop
+				foreach($queue as $outbound)
+				{
+					// If this is a quit event, we'll quit after all other events have processed.
+					if($outbound->getType() === 'Quit')
+					{
+						$quit = $outbound;
+						continue;
+					}
+
+					// Fire off a predispatch event, to allow listeners to modify events before they are sent.
+					// Useful for features like self-censoring.
+					if($dispatcher->hasListeners('RuntimePreDispatch'))
+					{
+						$trigger = new Failnet\Event\RuntimePreDispatch();
+						$trigger['event'] = $outbound;
+						$dispatcher->dispatch($trigger);
+					}
+
+					// Send off the event!
+					$socket->send($outbound);
+
+					// Fire off a postdispatch event, to allow listeners to react to events being sent.
+					// Useful for things like logging.
+					if($dispatcher->hasListeners('RuntimePostDispatch'))
+					{
+						$trigger = new Failnet\Event\RuntimePostDispatch();
+						$trigger['event'] = $outbound;
+						$dispatcher->dispatch($trigger);
+					}
+				}
+
+				// @todo handle the quit event here, and break out of the loop
 			}
 		}
 
-		// @todo generate "event" for disconnect trigger
-		/*if($dispatcher->hasListeners('runtime_disconnect'))
-			$dispatcher->dispatch()*/
+		// Dispatch a pre-shutdown event.
+		if($dispatcher->hasListeners('RuntimeShutdown'))
+		{
+			$trigger = new Failnet\Event\RuntimeShutdown();
+			$dispatcher->dispatch($trigger);
+		}
 
-		// handle exit gracefully here
+		// @todo handle exit gracefully here
 	}
 }
