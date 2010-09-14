@@ -229,7 +229,7 @@ class Socket extends Base
 			throw new SocketException('Cannot send to server, no connection present', SocketException::ERR_SOCKET_NO_CONNECTION);
 
 		// Get the buffer to write.
-		$buffer = $event->getBuffer();
+		$buffer = $event->buildCommand();
 
 		// Transmit the command over the socket connection
 		$attempts = 0;
