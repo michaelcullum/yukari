@@ -53,6 +53,6 @@ class Nick extends Failnet\Event\EventBase
 	 */
 	public function buildCommand()
 	{
-		return 'NICK ' . $this->arg_nick;
+		return sprintf('NICK %1$s', $this['nick']);
 	}
 }
