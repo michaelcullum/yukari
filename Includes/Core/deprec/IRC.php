@@ -13,6 +13,8 @@
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  *
+ * @deprecated  since 3.0.0 - will be removed soon
+ *
  *===================================================================
  *
  * This source file is subject to the MIT license that is bundled
