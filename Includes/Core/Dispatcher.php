@@ -38,38 +38,59 @@ use Failnet\Bot as Bot;
 class Dispatcher extends Root\Base
 {
 	/**
-	 * @var array - Our array of stored listeners and their data.
+	 * @var array - Our array of stored listeners and any extra data.
 	 */
 	protected $listeners = array();
 
-	// @todo document
+	/**
+	 * Register a new listener with the dispatcher
+	 * @param string $event_type - The type of event type to attach the listener to.
+	 * @param callable $listener - The callable reference for the listener.
+	 * @param array $listener_params - Any extra parameters to pass to the listener.
+	 * @return void
+	 */
 	public function register($event_type, $listener, array $listener_params = array())
 	{
-		$this->listeners[$event_type][] = array(
+		$this->listeners[$event_type][hash('md5', (string) $listener)] = array(
 			'listener'		=> $listener,
 			'params'		=> $listener_params,
 		);
 	}
 
+	/**
+	 * Drop a listener from the dispatcher
+	 * @param string $event_type - The type of event to remove the listener from.
+	 * @param callable $listener - The callable reference to identify the listener with.
+	 * @return void
+	 */
 	public function unregister($event_type, $listener)
 	{
 		if(!$this->hasListeners($event_type))
 			return;
 
-		foreach($this->listeners[$event_type] as $key => $entry)
-		{
-			if($entry['listener'] === $listener)
-				unset($this->listeners[$event_type][$key]);
-		}
+		unset($this->listeners[$event_type][hash('md5', (string) $listener)]);
 	}
 
+	/**
+	 * Check to see if an event has any listeners registered to it
+	 * @param string $event_type - The type of event to check.
+	 * @return boolean - Does the event have listeners attached?
+	 */
 	public function hasListeners($event_type)
 	{
 		return !empty($this->listeners[$event_type]);
 	}
 
+	/**
+	 * Dispatch an event to registered listeners
+	 * @param Failnet\Event\EventBase $event - The event to dispatch.
+	 * @return void
+	 */
 	public function dispatch(Failnet\Event\EventBase $event)
 	{
+		if(!$this->hasListeners($event->getType()))
+			return;
+
 		foreach($this->listeners[$event->getType()] as $listener)
 		{
 			call_user_func_array($listener['listener'], array_merge(array($event), $listener['params']));

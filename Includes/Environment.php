@@ -142,10 +142,20 @@ class Environment extends Failnet\Base
 				$ui->system('Loading core.core object');
 				$this->setObject('core.core', new Failnet\Core\Core());
 				$ui->system('Loading core.language object');
-				$this->setObject('core.language', new Failnet\Core\Language());
+				$this->setObject('core.language', new Failnet\Core\Language(Bot::getOption('language.file_dir', FAILNET_ROOT . 'Data/Language')));
 				$ui->system('Loading core.hash object');
 				$this->setObject('core.hash', new Failnet\Core\Hash(8, true));
+				$ui->system('Loading core.dispatcher object');
+				$this->setObject('core.dispatcher', new Failnet\Core\Dispatcher());
 
+				// Load our language files
+				$ui->system('Loading language files');
+				$this->getObject('core.language')->collectEntries();
+
+				// Register our event listeners to the dispatcher
+				/* @var Failnet\Core\Dispatcher */
+				$dispatcher = $this->getObject('core.dispatcher');
+				//foreach(Bot::getOption('dispatcher.listeners', array()) as $listener)
 			}
 		}
 		catch(FailnetException $e)
