@@ -59,6 +59,6 @@ class Privmsg extends Failnet\Event\EventBase
 	 */
 	public function buildCommand()
 	{
-		return 'PRIVMSG ' . $this->arg_target . ' :' . $this->arg_text;
+		return sprintf('PRIVMSG %1$s :%2$s', $this['target'], $this['text']);
 	}
 }
