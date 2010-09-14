@@ -21,6 +21,7 @@
  */
 
 namespace Failnet\Event;
+use Failnet as Root;
 
 /**
  * Failnet - Event base class,
@@ -33,7 +34,7 @@ namespace Failnet\Event;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-abstract class EventBase extends Failnet\Base implements EventInterface
+abstract class EventBase extends Root\Base implements EventInterface
 {
 	/**
 	 * @var Failnet\Lib\Hostmask - The hostmask for the originating server or user
