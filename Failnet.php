@@ -29,6 +29,6 @@ define('FAILNET_ROOT', dirname(__FILE__));
 define('FAILNET_MIN_PHP', '5.3.0');
 
 if(version_compare(FAILNET_MIN_PHP, PHP_VERSION, '>'))
-	throw new Exception('Failnet requires PHP ' . FAILNET_MIN_PHP . ' or better, while the currently installed PHP version is ' . PHP_VERSION, 1000);
+	throw new Exception('Failnet requires PHP ' . FAILNET_MIN_PHP . ' or better, while the currently installed PHP version is ' . PHP_VERSION, 10000);
 
 require FAILNET_ROOT . 'Includes/Bootstrap.php';
