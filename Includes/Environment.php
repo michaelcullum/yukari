@@ -155,7 +155,8 @@ class Environment extends Failnet\Base
 				// Register our event listeners to the dispatcher
 				/* @var Failnet\Core\Dispatcher */
 				$dispatcher = $this->getObject('core.dispatcher');
-				//foreach(Bot::getOption('dispatcher.listeners', array()) as $listener)
+				foreach(Bot::getOption('dispatcher.listeners', array()) as $listener)
+					$dispatcher->register($listener['event'], $listener['listener'], (isset($listener['params']) ? $listener['params'] : NULL));
 			}
 		}
 		catch(FailnetException $e)
