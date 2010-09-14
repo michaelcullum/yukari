@@ -10,3 +10,4 @@
 * deprecate the Core\IRC object
 * deprecate the current Core\Log object, replace with something more OOP-ish probably
 * update socket to make use of newer event objects
+* update the cron task base, use a mixture of interface and base class
