@@ -34,7 +34,7 @@ use Failnet as Root;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-abstract class EventBase extends Root\Base implements EventInterface, \ArrayAccess
+abstract class EventBase extends Root\Base implements Failnet\Event\EventInterface, \ArrayAccess
 {
 	/**
 	 * @var Failnet\Lib\Hostmask - The hostmask for the originating server or user
@@ -141,6 +141,17 @@ abstract class EventBase extends Root\Base implements EventInterface, \ArrayAcce
 	}
 }
 
+/**
+ * Failnet - Event interface,
+ * 	    Prototype that defines methods that all events must declare.
+ *
+ *
+ * @category    Failnet
+ * @package     event
+ * @author      Damian Bushong
+ * @license     MIT License
+ * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
+ */
 interface EventInterface
 {
 	public function getType();
