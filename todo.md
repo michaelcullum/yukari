@@ -7,9 +7,6 @@
 * add invoke() on cron tasks for manually triggering them, instead of relying on manualRunTask()
 * write the standard ACL layer, add in authorization levels within it
 * look at using Doctrine with Failnet, to replace the plain PDO involved
-* update cron object
 * deprecate the Core\IRC object
 * deprecate the current Core\Log object, replace with something more OOP-ish probably
 * update socket to make use of newer event objects
-* deprecate the Core\Plugin object
-* figure out what the hell we still need the Core\Core object for
