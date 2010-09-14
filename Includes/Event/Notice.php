@@ -59,6 +59,6 @@ class Notice extends Failnet\Event\EventBase
 	 */
 	public function buildCommand()
 	{
-		return 'NOTICE ' . $this->arg_target . ' :' . $this->arg_text;
+		return sprintf('NOTICE %1$s :%2$s', $this['target'], rtrim($this['text']));
 	}
 }
