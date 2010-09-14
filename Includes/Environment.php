@@ -102,8 +102,8 @@ class Environment extends Failnet\Base
 			$this->setObject('core.cli', new Failnet\Core\CLI($_SERVER['argv']));
 			/* @var Failnet\Core\CLI */
 			$cli = $this->getObject('core.cli');
-			define('Failnet\\IN_INSTALL', ($cli('mode') === 'install') ? true : false);
-			define('Failnet\\CONFIG_FILE', ($cli('config') ? $cli('config') : 'Config.php'));
+			define('Failnet\\IN_INSTALL', ($cli['mode'] === 'install') ? true : false);
+			define('Failnet\\CONFIG_FILE', ($cli['config'] ? $cli['config'] : 'Config.php'));
 
 			if(!Failnet\IN_INSTALL)
 			{
@@ -205,6 +205,7 @@ class Environment extends Failnet\Base
 		if(!is_array($object))
 			$object = $this->resolveObject($object);
 		list($name, $type) = $object;
+
 		if(property_exists($this, $type))
 		{
 			if(isset($this->$type[$name]))
@@ -229,6 +230,7 @@ class Environment extends Failnet\Base
 		if(!is_array($object))
 			$object = $this->resolveObject($object);
 		list($name, $type) = $object;
+
 		if(property_exists($this, $type))
 		{
 			if(isset($this->$type[$name]))
@@ -251,6 +253,7 @@ class Environment extends Failnet\Base
 		if(!is_array($object))
 			$object = $this->resolveObject($object);
 		list($name, $type) = $object;
+
 		if(property_exists($this, $type))
 		{
 			if(isset($this->$type[$name]))
@@ -273,6 +276,7 @@ class Environment extends Failnet\Base
 		if(!is_array($object))
 			$object = $this->resolveObject($object);
 		list($name, $type) = $object;
+
 		if(property_exists($this, $type))
 			return isset($this->$type[$name]);
 		return isset($this->objects[$type][$name]);

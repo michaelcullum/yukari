@@ -35,7 +35,7 @@ use Failnet as Root;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class CLI extends Root\Base
+class CLI extends Root\Base implements \ArrayAccess
 {
 	/**
 	 * @var array - The args loaded.
@@ -89,23 +89,47 @@ class CLI extends Root\Base
 	}
 
 	/**
-	 * Pull a specific arg that should have been passed to the script, it was sent.
-	 * @param string $arg_name - The name of the CLI arg to grab.
-	 * @return mixed - NULL if no such arg, the arg if present.
+	 * ArrayAccess methods
 	 */
-	public function getArg($arg)
+
+	/**
+	 * Check if an "array" offset exists in this object.
+	 * @param mixed $offset - The offset to check.
+	 * @return boolean - Does anything exist for this offset?
+	 */
+	public function offsetExists($offset)
 	{
-		if(isset($this->args[$arg_name]))
-			return $this->args[$arg_name];
-		return NULL;
+		return isset($this->args[$offset]);
 	}
 
 	/**
-	 * Aliases to Failnet\Core\CLI->getArg()
-	 * @see Failnet\Core\CLI->getArg()
+	 * Get an "array" offset for this object.
+	 * @param mixed $offset - The offset to grab from.
+	 * @return mixed - The value of the offset, or null if the offset does not exist.
 	 */
-	public function __invoke($arg)
+	public function offsetGet($offset)
 	{
-		return $this->getArg($arg);
+		return isset($this->args[$offset]) ? $this->args[$offset] : NULL;
+	}
+
+	/**
+	 * Set an "array" offset to a certain value, if the offset exists
+	 * @param mixed $offset - The offset to set.
+	 * @param mixed $value - The value to set to the offset.
+	 * @return void
+	 */
+	public function offsetSet($offset, $value)
+	{
+		$this->args[$offset] = $value;
+	}
+
+	/**
+	 * Unset an "array" offset.
+	 * @param mixed $offset - The offset to clear out.
+	 * @return void
+	 */
+	public function offsetUnset($offset)
+	{
+		unset($this->args[$offset]);
 	}
 }
