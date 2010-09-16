@@ -51,7 +51,8 @@ class Dispatcher extends Root\Base
 	 */
 	public function register($event_type, $listener, array $listener_params = array())
 	{
-		$this->listeners[$event_type][hash('md5', (string) $listener)] = array(
+		$hash = hash('md5', ((is_array($listener)) ? implode('::', $listener) : $listener));
+		$this->listeners[$event_type][$hash] = array(
 			'listener'		=> $listener,
 			'params'		=> $listener_params,
 		);
@@ -68,7 +69,8 @@ class Dispatcher extends Root\Base
 		if(!$this->hasListeners($event_type))
 			return;
 
-		unset($this->listeners[$event_type][hash('md5', (string) $listener)]);
+		$hash = hash('md5', ((is_array($listener)) ? implode('::', $listener) : $listener));
+		unset($this->listeners[$event_type][$hash]);
 	}
 
 	/**
