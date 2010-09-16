@@ -150,9 +150,19 @@ class Environment extends Failnet\Base
 				$ui->system('Loading core.auth object');
 				$this->setObject('core.auth', new Failnet\Core\Auth());
 
+				// Include any extra files that the user has specified
+				foreach(Bot::getOption('environment.extra_files', array()) as $file)
+				{
+					// Load the file, or asplode if it fails to load
+					if(($include = @include($file)) === false)
+						throw new EnvironmentException(sprintf('Failed to load extra file "%1$s"', $file), EnvironmentException::ERR_ENVIRONMENT_EXTRA_FILE_LOAD_FAIL);
+				}
+
 				// Load our language files
 				$ui->system('Loading language files');
 				$this->getObject('core.language')->collectEntries();
+
+				// @todo load nodes here
 
 				// Register our event listeners to the dispatcher
 				/* @var Failnet\Core\Dispatcher */
