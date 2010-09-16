@@ -379,7 +379,7 @@ class Environment extends Failnet\Base
 		while(true)
 		{
 			$queue = array();
-			$quit = '';
+			$quit = NULL;
 
 			$queue = array_merge($cron->runTasks(), $queue);
 			$event = $socket->get();
@@ -423,7 +423,9 @@ class Environment extends Failnet\Base
 					}
 				}
 
-				// @todo handle the quit event here, and break out of the loop
+				// If we have a quit event, break out of the loop.
+				if($quit)
+					break;
 			}
 		}
 
@@ -433,6 +435,9 @@ class Environment extends Failnet\Base
 			$trigger = new Failnet\Event\RuntimeShutdown();
 			$dispatcher->dispatch($trigger);
 		}
+
+		// Send the quit event.
+		$socket->send($quit);
 
 		// @todo handle exit gracefully here
 	}
