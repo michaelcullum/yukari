@@ -20,3 +20,7 @@
 * *server.port* - integer - The port on the remote server to connect to.
 * *server.username* - string - IRC username to use (note: NOT nickname, username).
 * *server.realname* - string - IRC realname to use.
+
+### Dispatcher
+
+* *dispatcher.listeners* - array - Array of listener callables to register with the dispatcher on runtime startup.  Each listener entry should be an array containing the event type to register to and the listener callback information (and optionally, any additional parameters to supply the listener with)
