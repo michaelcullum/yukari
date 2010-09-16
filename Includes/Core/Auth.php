@@ -36,7 +36,7 @@ use Failnet\Lib as Lib;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class Auth extends Root\Hookable implements \Iterator, \ArrayAccess
+class Auth implements \Iterator, \ArrayAccess
 {
 	/**
 	 * @var array - Array containing pointers to user session objects, allows session keys to be used with usernames

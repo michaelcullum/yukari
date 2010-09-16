@@ -48,8 +48,6 @@ if(!extension_loaded('pdo_sqlite'))
 // Load up the common files, and get going.
 require FAILNET_ROOT . 'Includes/Bot.php';
 require FAILNET_ROOT . 'Includes/Functions.php';
-require FAILNET_ROOT . 'Includes/Base.php';
-require FAILNET_ROOT . 'Includes/Hookable.php';
 require FAILNET_ROOT . 'Includes/Autoload.php';
 require FAILNET_ROOT . 'Includes/Environment.php';
 

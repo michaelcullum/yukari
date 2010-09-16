@@ -33,7 +33,7 @@ namespace Failnet;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class Autoload extends Failnet\Base
+class Autoload
 {
 	/**
 	 * @var array - The paths that Failnet will attempt to load class files from.

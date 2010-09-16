@@ -35,7 +35,7 @@ use Failnet as Root;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class CLI extends Root\Base implements \ArrayAccess
+class CLI implements \ArrayAccess
 {
 	/**
 	 * @var array - The args loaded.

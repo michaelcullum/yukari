@@ -35,7 +35,7 @@ use Failnet\Bot as Bot;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class Cron extends Root\Base implements \ArrayAccess
+class Cron implements \ArrayAccess
 {
 	//public $last_event = 0;
 

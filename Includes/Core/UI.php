@@ -36,7 +36,7 @@ use Failnet\Bot as Bot;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class UI extends Root\Base
+class UI
 {
 	/**
 	 * @var integer - Our current output level

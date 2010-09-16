@@ -36,7 +36,7 @@ use Failnet\Lib as Lib;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class Socket extends Base
+class Socket
 {
 	/**
 	 * @var float - The socket timeout setting

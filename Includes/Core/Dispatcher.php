@@ -35,7 +35,7 @@ use Failnet\Bot as Bot;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
  */
-class Dispatcher extends Root\Base
+class Dispatcher
 {
 	/**
 	 * @var array - Our array of stored listeners and any extra data.
