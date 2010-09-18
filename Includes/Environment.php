@@ -34,7 +34,7 @@ use Failnet\Lib as Lib;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet3
  */
-class Environment extends Failnet\Base
+class Environment
 {
 	/**
 	 * @var array - The core objects, which will also include the core class.
