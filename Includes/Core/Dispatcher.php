@@ -51,6 +51,7 @@ class Dispatcher
 	 */
 	public function register($event_type, $listener, array $listener_params = array())
 	{
+		// @todo lambda support
 		$hash = hash('md5', ((is_array($listener)) ? implode('::', $listener) : $listener));
 		$this->listeners[$event_type][$hash] = array(
 			'listener'		=> $listener,
@@ -69,6 +70,7 @@ class Dispatcher
 		if(!$this->hasListeners($event_type))
 			return;
 
+		// @todo lambda support
 		$hash = hash('md5', ((is_array($listener)) ? implode('::', $listener) : $listener));
 		unset($this->listeners[$event_type][$hash]);
 	}
