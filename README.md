@@ -1,41 +1,19 @@
-# Failnet -- PHP-based IRC Bot
+# Failnet 3
 
-Failnet is an IRC bot built in PHP 5.3 Object Oriented Programming,
-and mainly designed for use with channel management.
+Failnet is a flexible IRC bot built in PHP 5.3 Object Oriented Programming.
 
 ## WARNING
 
-Failnet is currently pending a complete codebase rewrite, but is on the back burner while work on other projects commences.  I'm currently figuring out new coding techniques and methods that can and should probably be applied to Failnet on these other projects; check back later for when I return to working on Failnet primarily!
+Failnet is currently undergoing a complete codebase rewrite, and as such I have been picking the project up and setting it back down as I learn new coding techniques.
 
 **Version**:	*3.0.0*
 
 **Copyright**: *(c) 2009 - 2010 -- Damian Bushong*
 
-**License**: MIT License
+**License**: *MIT License*
 
 ## Failnet's Requirements
 
 * PHP 5.3
 * SQLite
 * SQLite extension for PDO
-
-## Failnet was inspired by the following works:
-
-**PHPBot**
-
-Copyright (c) 2009 - Kai Tamkun
-
-- - -
-
-**Phergie**
-
-*IRC Bot written in PHP 5 code with OO API.*
-
-Copyright (c) 2009 - tobias382
-
-
-## How do I use Failnet?
-
-For complete and up-to-date instructions, please refer to Failnet's
-wiki at <http://wiki.github.com/Obsidian1510/Failnet-PHP-IRC-Bot/> and read through
-the "Failnet Setup" page, and any applicable subpages.
