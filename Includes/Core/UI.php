@@ -11,7 +11,7 @@
  * @author      Damian Bushong
  * @copyright   (c) 2009 - 2010 -- Damian Bushong
  * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
+ * @link        http://github.com/Obsidian1510/Failnet3
  *
  *===================================================================
  *
@@ -34,7 +34,7 @@ use Failnet\Bot as Bot;
  * @package     core
  * @author      Damian Bushong
  * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
+ * @link        http://github.com/Obsidian1510/Failnet3
  */
 class UI
 {
@@ -347,7 +347,7 @@ class UI
  * @package     Failnet
  * @author      Damian Bushong
  * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
+ * @link        http://github.com/Obsidian1510/Failnet3
  *
  * @note reserves 203xx error codes
  */

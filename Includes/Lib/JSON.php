@@ -11,7 +11,7 @@
  * @author      Damian Bushong
  * @copyright   (c) 2009 - 2010 -- Damian Bushong
  * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
+ * @link        http://github.com/Obsidian1510/Failnet3
  *
  *===================================================================
  *
@@ -32,7 +32,7 @@ use Failnet as Root;
  * @package     libs
  * @author      Damian Bushong
  * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
+ * @link        http://github.com/Obsidian1510/Failnet3
  */
 abstract class JSON extends Root\Base
 {
@@ -111,7 +111,7 @@ abstract class JSON extends Root\Base
  * @package     Failnet
  * @author      Damian Bushong
  * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
+ * @link        http://github.com/Obsidian1510/Failnet3
  *
  * @note reserves 300xx error codes
  */

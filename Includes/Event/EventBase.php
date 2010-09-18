@@ -11,7 +11,7 @@
  * @author      Damian Bushong
  * @copyright   (c) 2009 - 2010 -- Damian Bushong
  * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
+ * @link        http://github.com/Obsidian1510/Failnet3
  *
  *===================================================================
  *
@@ -32,7 +32,7 @@ use Failnet as Root;
  * @package     event
  * @author      Damian Bushong
  * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
+ * @link        http://github.com/Obsidian1510/Failnet3
  */
 abstract class EventBase extends Root\Base implements Failnet\Event\EventInterface, \ArrayAccess
 {
@@ -150,7 +150,7 @@ abstract class EventBase extends Root\Base implements Failnet\Event\EventInterfa
  * @package     event
  * @author      Damian Bushong
  * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
+ * @link        http://github.com/Obsidian1510/Failnet3
  */
 interface EventInterface
 {

@@ -11,7 +11,7 @@
  * @author      Damian Bushong
  * @copyright   (c) 2009 - 2010 -- Damian Bushong
  * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
+ * @link        http://github.com/Obsidian1510/Failnet3
  *
  *===================================================================
  *
@@ -33,7 +33,7 @@ namespace Failnet;
  * @package     Failnet
  * @author      Damian Bushong
  * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
+ * @link        http://github.com/Obsidian1510/Failnet3
  */
 class FailnetException extends \Exception
 {
@@ -49,7 +49,7 @@ class FailnetException extends \Exception
  * @package     Failnet
  * @author      Damian Bushong
  * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
+ * @link        http://github.com/Obsidian1510/Failnet3
  *
  * @note reserves 100xx error codes
  */
@@ -70,7 +70,7 @@ class StartupException extends FailnetException
  * @package     Failnet
  * @author      Damian Bushong
  * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
+ * @link        http://github.com/Obsidian1510/Failnet3
  *
  * @note reserves 101xx error codes
  */
@@ -88,7 +88,7 @@ class AutoloadException extends FailnetException
  * @package     Failnet
  * @author      Damian Bushong
  * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
+ * @link        http://github.com/Obsidian1510/Failnet3
  *
  * @note reserves 102xx error codes
  */
@@ -114,7 +114,7 @@ class EnvironmentException extends FailnetException
  * @package     Failnet
  * @author      Damian Bushong
  * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
+ * @link        http://github.com/Obsidian1510/Failnet3
  *
  * @note reserves 103xx error codes
  */

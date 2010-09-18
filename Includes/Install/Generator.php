@@ -11,7 +11,7 @@
  * @author      Damian Bushong
  * @copyright   (c) 2009 - 2010 -- Damian Bushong
  * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
+ * @link        http://github.com/Obsidian1510/Failnet3
  *
  *===================================================================
  *
@@ -34,7 +34,7 @@ use Failnet\Lib as Lib;
  * @package     install
  * @author      Damian Bushong
  * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot
+ * @link        http://github.com/Obsidian1510/Failnet3
  */
 class Generator extends Base
 {
@@ -54,7 +54,7 @@ class Generator extends Base
 			' * @author      Damian Bushong',
 			' * @copyright   (c) 2009 - 2010 -- Damian Bushong',
 			' * @license     MIT License',
-			' * @link        http://github.com/Obsidian1510/Failnet-PHP-IRC-Bot',
+			' * @link        http://github.com/Obsidian1510/Failnet3',
 			' *',
 			' *===================================================================',
 			' *',
