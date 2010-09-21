@@ -24,6 +24,7 @@ namespace Failnet\Core;
 use Failnet as Root;
 use Failnet\Bot as Bot;
 use Failnet\Lib as Lib;
+use Failnet\Core\Session as Session;
 
 /**
  * Failnet - Auth object,
@@ -75,18 +76,18 @@ class Auth implements \Iterator, \ArrayAccess
 	 *
 	 * @throws Failnet\Core\AuthException
 	 */
-	public function newSession(Failnet\Lib\Hostmask $hostmask)
+	public function newSession(Lib\Hostmask $hostmask)
 	{
 		// Build a pointer to use for this session
 		$pointer = $this->getPointer($hostmask);
 		$session_key = hash('sha512', Failnet\SESSION_SALT . ':' . $hostmask['nick'] . ':' . time());
 		$this->pointers[$pointer] = $session_key;
 
-		$session = new Failnet\User\Session($hostmask, $session_key, $pointer);
+		$session = new Session\Standard($hostmask, $session_key, $pointer);
 		$this->sessions[$session_key] = $session;
 
-		if(!$session instanceof Failnet\User\SessionInterface)
-			throw new AuthException(); // @todo exception
+		if(!$session instanceof Session\SessionBase)
+			throw new AuthException('Session object does not extend session base class', AuthException::ERR_AUTH_SESSION_NOT_SESSIONBASE_CHILD);
 
 		return $session;
 	}
@@ -130,14 +131,14 @@ class Auth implements \Iterator, \ArrayAccess
 	 * @param Failnet\Lib\Hostmask $hostmask - The hostmask to grab the session ID for.
 	 * @return string - The session ID for the sessions specified.
 	 */
-	public function getSessionKey(Failnet\Lib\Hostmask $hostmask)
+	public function getSessionKey(Lib\Hostmask $hostmask)
 	{
 		if(!isset($this->pointers[$this->getPointer($hostmask)]))
 			return false;
 		return $this->pointers[$this->getPointer($hostmask)];
 	}
 
-	public function getPointer(Failnet\Lib\Hostmask $hostmask)
+	public function getPointer(Lib\Hostmask $hostmask)
 	{
 		return hash('md5', $hostmask['nick'] . ':' . $hostmask['username'] . ':' . $hostmask['host']);
 	}
@@ -233,8 +234,29 @@ class Auth implements \Iterator, \ArrayAccess
 	 */
 	public function offsetUnset($offset)
 	{
+		if(!isset($this->sessions[$offset]))
+			return;
+
 		// Allow the session to flush changes back to the DB.
 		$this->sessions[$offset]->onDestroy();
-		unset($this->sessions[$offset]);
+		unset($this->pointers[$this->sessions[$offset]->pointer], $this->sessions[$offset]);
 	}
+}
+
+/**
+ * Failnet - Subordinate exception class
+ *      Extension of the Failnet exception class.
+ *
+ *
+ * @category    Failnet
+ * @package     Failnet
+ * @author      Damian Bushong
+ * @license     MIT License
+ * @link        http://github.com/Obsidian1510/Failnet3
+ *
+ * @note reserves 206xx error codes
+ */
+class AuthException extends Root\FailnetException
+{
+	const ERR_AUTH_SESSION_NOT_SESSIONBASE_CHILD = 20600;
 }
