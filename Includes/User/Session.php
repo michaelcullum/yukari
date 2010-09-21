@@ -38,6 +38,8 @@ use Failnet\Lib as Lib;
  */
 class Session extends Root\Hookable implements SessionInterface
 {
+	public $acl;
+
 	public function __construct(Failnet\Lib\Hostmask $hostmask)
 	{
 		// asdf
