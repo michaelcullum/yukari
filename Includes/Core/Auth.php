@@ -83,6 +83,7 @@ class Auth implements \Iterator, \ArrayAccess
 		$session_id = hash('sha512', Failnet\SESSION_SALT . ':' . $hostmask['nick'] . ':' . time());
 		$this->pointers[$pointer] = $session_id;
 
+		// @todo provide override for session object to instantiate
 		$session = new Session\Standard($hostmask, $session_id, $pointer);
 		$this->sessions[$session_id] = $session;
 
