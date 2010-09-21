@@ -34,23 +34,8 @@ use Failnet as Root;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet3
  */
-abstract class EventBase extends Root\Base implements Failnet\Event\EventInterface, \ArrayAccess
+abstract class EventBase implements EventInterface, \ArrayAccess
 {
-	/**
-	 * @var Failnet\Lib\Hostmask - The hostmask for the originating server or user
-	 */
-	public $origin;
-
-	/**
-	 * @var boolean - Was this recieved from a channel perspective?
-	 */
-	public $from_channel = false;
-
-	/**
-	 * @var string - The raw buffer of the event
-	 */
-	public $buffer = '';
-
 	/**
 	 * @var array - The map of the various arguments for the event
 	 */
@@ -79,15 +64,6 @@ abstract class EventBase extends Root\Base implements Failnet\Event\EventInterfa
 		$arg_key = 'arg_' . $this->map[$arg_number];
 		$this->$arg_key = $arg_value;
 		return true;
-	}
-
-	/**
-	 * Get the raw buffer
-	 * @return string - Raw IRC buffer for the event
-	 */
-	public function getBuffer()
-	{
-		return $this->buffer;
 	}
 
 	/**
