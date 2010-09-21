@@ -20,7 +20,7 @@
  *
  */
 
-namespace Failnet\Event;
+namespace Failnet\Event\IRC;
 
 /**
  * Failnet - Event object,
@@ -33,12 +33,19 @@ namespace Failnet\Event;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet3
  */
-class Time extends Failnet\Event\CTCP
+class Pong extends IRCBase
 {
+	/**
+	 * @var array - Array mapping args for quick setting later
+	 */
+	protected $map = array(
+		'daemon',
+	);
+
 	/**
 	 * @var string - Event arg.
 	 */
-	public $arg_time = '';
+	public $arg_daemon = '';
 
 	/**
 	 * Build the IRC command from the args included
@@ -46,11 +53,6 @@ class Time extends Failnet\Event\CTCP
 	 */
 	public function buildCommand()
 	{
-		$this['command'] = 'TIME';
-
-		if(!empty($this['time']))
-			$this['args'][] = $this['time'];
-
-		parent::buildCommand();
+		return sprintf('PONG %1$s', $this['daemon']);
 	}
 }

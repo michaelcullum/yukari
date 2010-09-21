@@ -20,7 +20,7 @@
  *
  */
 
-namespace Failnet\Event;
+namespace Failnet\Event\IRC;
 
 /**
  * Failnet - Event object,
@@ -33,19 +33,25 @@ namespace Failnet\Event;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet3
  */
-class Pong extends Failnet\Event\EventBase
+class Join extends IRCBase
 {
 	/**
 	 * @var array - Array mapping args for quick setting later
 	 */
 	protected $map = array(
-		'daemon',
+		'channel',
+		'key',
 	);
 
 	/**
 	 * @var string - Event arg.
 	 */
-	public $arg_daemon = '';
+	public $arg_channel = '';
+
+	/**
+	 * @var string - Event arg.
+	 */
+	public $arg_key = '';
 
 	/**
 	 * Build the IRC command from the args included
@@ -53,6 +59,13 @@ class Pong extends Failnet\Event\EventBase
 	 */
 	public function buildCommand()
 	{
-		return sprintf('PONG %1$s', $this['daemon']);
+		if(!empty($this['key']))
+		{
+			return sprintf('JOIN %1$s :%2$s', $this['channel'], $this['key']);
+		}
+		else
+		{
+			return sprintf('JOIN %1$s', $this['channel']);
+		}
 	}
 }

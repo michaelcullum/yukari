@@ -20,7 +20,7 @@
  *
  */
 
-namespace Failnet\Event;
+namespace Failnet\Event\IRC;
 
 /**
  * Failnet - Event object,
@@ -33,7 +33,7 @@ namespace Failnet\Event;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet3
  */
-class Invite extends Failnet\Event\EventBase
+class Invite extends IRCBase
 {
 	/**
 	 * @var array - Array mapping args for quick setting later

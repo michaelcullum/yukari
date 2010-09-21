@@ -20,7 +20,7 @@
  *
  */
 
-namespace Failnet\Event;
+namespace Failnet\Event\IRC;
 
 /**
  * Failnet - Event object,
@@ -33,7 +33,7 @@ namespace Failnet\Event;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet3
  */
-class Action extends Failnet\Event\EventBase
+class Notice extends IRCBase
 {
 	/**
 	 * @var array - Array mapping args for quick setting later
@@ -59,7 +59,6 @@ class Action extends Failnet\Event\EventBase
 	 */
 	public function buildCommand()
 	{
-		// @todo use something other than chr() here, make this one solid string
-		return sprintf('PRIVMSG %1$s :' . chr(1) . 'ACTION %2$s ' . chr(1), $this['target'], rtrim($this['text']));
+		return sprintf('NOTICE %1$s :%2$s', $this['target'], rtrim($this['text']));
 	}
 }

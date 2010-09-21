@@ -20,7 +20,7 @@
  *
  */
 
-namespace Failnet\Event;
+namespace Failnet\Event\IRC;
 
 /**
  * Failnet - Event object,
@@ -33,25 +33,19 @@ namespace Failnet\Event;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet3
  */
-class Privmsg extends Failnet\Event\EventBase
+class Quit extends IRCBase
 {
 	/**
 	 * @var array - Array mapping args for quick setting later
 	 */
 	protected $map = array(
-		'target',
-		'text'
+		'reason',
 	);
 
 	/**
 	 * @var string - Event arg.
 	 */
-	public $arg_target = '';
-
-	/**
-	 * @var string - Event arg.
-	 */
-	public $arg_text = '';
+	public $arg_reason = '';
 
 	/**
 	 * Build the IRC command from the args included
@@ -59,6 +53,13 @@ class Privmsg extends Failnet\Event\EventBase
 	 */
 	public function buildCommand()
 	{
-		return sprintf('PRIVMSG %1$s :%2$s', $this['target'], $this['text']);
+		if(!empty($this['reason']))
+		{
+			return sprintf('QUIT :%1$s', $this['reason']);
+		}
+		else
+		{
+			return 'QUIT';
+		}
 	}
 }

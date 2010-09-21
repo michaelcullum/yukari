@@ -20,7 +20,7 @@
  *
  */
 
-namespace Failnet\Event;
+namespace Failnet\Event\IRC;
 
 /**
  * Failnet - Event object,
@@ -33,19 +33,12 @@ namespace Failnet\Event;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet3
  */
-class Whois extends Failnet\Event\EventBase
+class Finger extends CTCP
 {
-	/**
-	 * @var array - Array mapping args for quick setting later
-	 */
-	protected $map = array(
-		'target',
-	);
-
 	/**
 	 * @var string - Event arg.
 	 */
-	public $arg_target = '';
+	public $arg_finger = '';
 
 	/**
 	 * Build the IRC command from the args included
@@ -53,6 +46,11 @@ class Whois extends Failnet\Event\EventBase
 	 */
 	public function buildCommand()
 	{
-		return sprintf('WHOIS %1$s', $this['target']);
+		$this['command'] = 'FINGER';
+
+		if(!empty($this['finger']))
+			$this['args'][] = $this['finger'];
+
+		parent::buildCommand();
 	}
 }

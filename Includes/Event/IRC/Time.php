@@ -20,7 +20,7 @@
  *
  */
 
-namespace Failnet\Event;
+namespace Failnet\Event\IRC;
 
 /**
  * Failnet - Event object,
@@ -33,25 +33,12 @@ namespace Failnet\Event;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet3
  */
-class Topic extends Failnet\Event\EventBase
+class Time extends CTCP
 {
 	/**
-	 * @var array - Array mapping args for quick setting later
-	 */
-	protected $map = array(
-		'channel',
-		'topic',
-	);
-
-	/**
 	 * @var string - Event arg.
 	 */
-	public $arg_channel = '';
-
-	/**
-	 * @var string - Event arg.
-	 */
-	public $arg_topic = '';
+	public $arg_time = '';
 
 	/**
 	 * Build the IRC command from the args included
@@ -59,13 +46,11 @@ class Topic extends Failnet\Event\EventBase
 	 */
 	public function buildCommand()
 	{
-		if(!empty($this['topic']))
-		{
-			return sprintf('TOPIC %1$s :%2$s', $this['channel'], $this['topic']);
-		}
-		else
-		{
-			return sprintf('TOPIC %1$s', $this['channel']);
-		}
+		$this['command'] = 'TIME';
+
+		if(!empty($this['time']))
+			$this['args'][] = $this['time'];
+
+		parent::buildCommand();
 	}
 }

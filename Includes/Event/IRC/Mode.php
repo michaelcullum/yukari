@@ -20,7 +20,7 @@
  *
  */
 
-namespace Failnet\Event;
+namespace Failnet\Event\IRC;
 
 /**
  * Failnet - Event object,
@@ -33,21 +33,33 @@ namespace Failnet\Event;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet3
  */
-class Kick extends Failnet\Event\EventBase
+class Mode extends IRCBase
 {
 	/**
 	 * @var array - Array mapping args for quick setting later
 	 */
 	protected $map = array(
-		'channel',
+		'target',
+		'mode',
+		'limit',
 		'user',
-		'reason',
+		'banmask',
 	);
 
 	/**
 	 * @var string - Event arg.
 	 */
-	public $arg_channel = '';
+	public $arg_target = '';
+
+	/**
+	 * @var string - Event arg.
+	 */
+	public $arg_mode = '';
+
+	/**
+	 * @var string - Event arg.
+	 */
+	public $arg_limit = '';
 
 	/**
 	 * @var string - Event arg.
@@ -57,7 +69,7 @@ class Kick extends Failnet\Event\EventBase
 	/**
 	 * @var string - Event arg.
 	 */
-	public $arg_reason = '';
+	public $arg_banmask = '';
 
 	/**
 	 * Build the IRC command from the args included
@@ -65,14 +77,8 @@ class Kick extends Failnet\Event\EventBase
 	 */
 	public function buildCommand()
 	{
-		if(!empty($this['reason']))
-		{
-			return sprintf('KICK %1$s %2$s :%3$s', $this['channel'], $this['user'], $this['reason']);
-		}
-		else
-		{
-			return sprintf('KICK %1$s %2$s', $this['channel'], $this['user']);
-		}
-
+		// asdf
+		// return sprintf('')
+		// @todo look up RFC on mode command, attempt to piece together a sprintf() pattern that will work for this
 	}
 }

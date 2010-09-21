@@ -20,10 +20,10 @@
  *
  */
 
-namespace Failnet\Event;
+namespace Failnet\Event\IRC;
 
 /**
- * Failnet - Event base class,
+ * Failnet - Event object,
  * 	    A class to define ene of the various event types.
  *
  *
@@ -33,33 +33,21 @@ namespace Failnet\Event;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet3
  */
-class Mode extends Failnet\Event\EventBase
+class Kick extends IRCBase
 {
 	/**
 	 * @var array - Array mapping args for quick setting later
 	 */
 	protected $map = array(
-		'target',
-		'mode',
-		'limit',
+		'channel',
 		'user',
-		'banmask',
+		'reason',
 	);
 
 	/**
 	 * @var string - Event arg.
 	 */
-	public $arg_target = '';
-
-	/**
-	 * @var string - Event arg.
-	 */
-	public $arg_mode = '';
-
-	/**
-	 * @var string - Event arg.
-	 */
-	public $arg_limit = '';
+	public $arg_channel = '';
 
 	/**
 	 * @var string - Event arg.
@@ -69,7 +57,7 @@ class Mode extends Failnet\Event\EventBase
 	/**
 	 * @var string - Event arg.
 	 */
-	public $arg_banmask = '';
+	public $arg_reason = '';
 
 	/**
 	 * Build the IRC command from the args included
@@ -77,8 +65,14 @@ class Mode extends Failnet\Event\EventBase
 	 */
 	public function buildCommand()
 	{
-		// asdf
-		// return sprintf('')
-		// @todo look up RFC on mode command, attempt to piece together a sprintf() pattern that will work for this
+		if(!empty($this['reason']))
+		{
+			return sprintf('KICK %1$s %2$s :%3$s', $this['channel'], $this['user'], $this['reason']);
+		}
+		else
+		{
+			return sprintf('KICK %1$s %2$s', $this['channel'], $this['user']);
+		}
+
 	}
 }
