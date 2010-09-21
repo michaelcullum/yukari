@@ -82,9 +82,7 @@ class Auth implements \Iterator, \ArrayAccess
 		$session_key = hash('sha512', Failnet\SESSION_SALT . ':' . $hostmask['nick'] . ':' . time());
 		$this->pointers[$pointer] = $session_key;
 
-		// @todo link to pointer within session object
-
-		$session = new Failnet\User\Session($hostmask);
+		$session = new Failnet\User\Session($hostmask, $session_key, $pointer);
 		$this->sessions[$session_key] = $session;
 
 		if(!$session instanceof Failnet\User\SessionInterface)
@@ -111,13 +109,27 @@ class Auth implements \Iterator, \ArrayAccess
 		return $this->sessions[$session_key];
 	}
 
+	/**
+	 * Deletes the session registered to a specific hostmask
+	 * @param Failnet\Lib\Hostmask $hostmask - The hostmask to delete the session for.
+	 * @return void
+	 */
 	public function deleteSession(Failnet\Lib\Hostmask $hostmask)
 	{
-		// Allow the session to flush changes back to the DB.
-		$this->sessions[$this->getSessionKey($hostmask)]->onDestroy();
-		unset($this->sessions[$this->getSessionKey($hostmask)], $this->pointers[$this->getPointer($hostmask)]);
+		$session_key = $this->getSessionKey($hostmask);
+		if($session_key === false)
+			return;
+
+		// Allow the session to flush changes, last seen info, etc. first.
+		$this->sessions[$session_key]->onDestroy();
+		unset($this->sessions[$session_key], $this->pointers[$this->getPointer($hostmask)]);
 	}
 
+	/**
+	 * Get the session key for a specific hostmask
+	 * @param Failnet\Lib\Hostmask $hostmask - The hostmask to grab the session ID for.
+	 * @return string - The session ID for the sessions specified.
+	 */
 	public function getSessionKey(Failnet\Lib\Hostmask $hostmask)
 	{
 		if(!isset($this->pointers[$this->getPointer($hostmask)]))
