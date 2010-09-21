@@ -20,7 +20,7 @@
  *
  */
 
-namespace Failnet\User;
+namespace Failnet\Core\Session;
 use Failnet as Root;
 use Failnet\Bot as Bot;
 use Failnet\Lib as Lib;
@@ -36,12 +36,32 @@ use Failnet\Lib as Lib;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet3
  */
-interface SessionInterface extends \ArrayAccess
+class Standard implements SessionInterface	// @todo arrayaccess implementation
 {
-	public function __construct(Failnet\Lib\Hostmask $hostmask);
-	public function login($password);
-	public function logout();
-	public function getLastActive();
-	public function setLastActive($time);
-	public function onDestroy();
+	public $acl;
+
+	public function login($password)
+	{
+		// asdf
+	}
+
+	public function logout()
+	{
+		// asdf
+	}
+
+	public function getLastActive()
+	{
+		// asdf
+	}
+
+	public function setLastActive($time)
+	{
+		// asdf
+	}
+
+	public function onDestroy()
+	{
+		// asdf
+	}
 }

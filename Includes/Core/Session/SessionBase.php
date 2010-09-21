@@ -20,10 +20,26 @@
  *
  */
 
-namespace Failnet\User;
+namespace Failnet\Core\Session;
 use Failnet as Root;
 use Failnet\Bot as Bot;
 use Failnet\Lib as Lib;
+
+class SessionBase implements SessionInterface
+{
+	public $acl;
+
+	public $hostmask;
+
+	public $pointer = '';
+
+	public $session_key = '';
+
+	public function __construct(Failnet\Lib\Hostmask $hostmask, $session_key, $pointer)
+	{
+		list($this->hostmask, $this->session_key, $this->pointer) = array($hostmask, $session_key, $pointer);
+	}
+}
 
 /**
  * Failnet - Session interface,
@@ -36,37 +52,12 @@ use Failnet\Lib as Lib;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet3
  */
-class Session extends Root\Hookable implements SessionInterface
+interface SessionInterface extends \ArrayAccess
 {
-	public $acl;
-
-	public function __construct(Failnet\Lib\Hostmask $hostmask)
-	{
-		// asdf
-	}
-
-	public function login($password)
-	{
-		// asdf
-	}
-
-	public function logout()
-	{
-		// asdf
-	}
-
-	public function getLastActive()
-	{
-		// asdf
-	}
-
-	public function setLastActive($time)
-	{
-		// asdf
-	}
-
-	public function onDestroy()
-	{
-		// asdf
-	}
+	public function __construct(Failnet\Lib\Hostmask $hostmask, $session_key, $pointer);
+	public function login($password);
+	public function logout();
+	public function getLastActive();
+	public function setLastActive($time);
+	public function onDestroy();
 }
