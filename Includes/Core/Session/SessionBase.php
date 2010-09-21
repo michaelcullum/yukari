@@ -35,7 +35,7 @@ class SessionBase implements SessionInterface
 
 	public $session_key = '';
 
-	public function __construct(Failnet\Lib\Hostmask $hostmask, $session_key, $pointer)
+	public function __construct(Lib\Hostmask $hostmask, $session_key, $pointer)
 	{
 		list($this->hostmask, $this->session_key, $this->pointer) = array($hostmask, $session_key, $pointer);
 	}
@@ -54,7 +54,7 @@ class SessionBase implements SessionInterface
  */
 interface SessionInterface extends \ArrayAccess
 {
-	public function __construct(Failnet\Lib\Hostmask $hostmask, $session_key, $pointer);
+	public function __construct(Lib\Hostmask $hostmask, $session_key, $pointer);
 	public function login($password);
 	public function logout();
 	public function getLastActive();
