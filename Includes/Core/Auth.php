@@ -80,11 +80,11 @@ class Auth implements \Iterator, \ArrayAccess
 	{
 		// Build a pointer to use for this session
 		$pointer = $this->getPointer($hostmask);
-		$session_key = hash('sha512', Failnet\SESSION_SALT . ':' . $hostmask['nick'] . ':' . time());
-		$this->pointers[$pointer] = $session_key;
+		$session_id = hash('sha512', Failnet\SESSION_SALT . ':' . $hostmask['nick'] . ':' . time());
+		$this->pointers[$pointer] = $session_id;
 
-		$session = new Session\Standard($hostmask, $session_key, $pointer);
-		$this->sessions[$session_key] = $session;
+		$session = new Session\Standard($hostmask, $session_id, $pointer);
+		$this->sessions[$session_id] = $session;
 
 		if(!$session instanceof Session\SessionBase)
 			throw new AuthException('Session object does not extend session base class', AuthException::ERR_AUTH_SESSION_NOT_SESSIONBASE_CHILD);
@@ -100,14 +100,14 @@ class Auth implements \Iterator, \ArrayAccess
 	 */
 	public function getSession(Failnet\Lib\Hostmask $hostmask, $new_session = true)
 	{
-		$session_key = $this->getSessionKey($hostmask);
-		if($session_key === false || !isset($this->sessions[$session_key]))
+		$session_id = $this->getSessionID($hostmask);
+		if($session_id === false || !isset($this->sessions[$session_id]))
 		{
 			if($new_session)
 				return $this->newSession($hostmask);
 			return false;
 		}
-		return $this->sessions[$session_key];
+		return $this->sessions[$session_id];
 	}
 
 	/**
@@ -117,27 +117,32 @@ class Auth implements \Iterator, \ArrayAccess
 	 */
 	public function deleteSession(Failnet\Lib\Hostmask $hostmask)
 	{
-		$session_key = $this->getSessionKey($hostmask);
-		if($session_key === false)
+		$session_id = $this->getSessionID($hostmask);
+		if($session_id === false)
 			return;
 
 		// Allow the session to flush changes, last seen info, etc. first.
-		$this->sessions[$session_key]->onDestroy();
-		unset($this->sessions[$session_key], $this->pointers[$this->getPointer($hostmask)]);
+		$this->sessions[$session_id]->onDestroy();
+		unset($this->sessions[$session_id], $this->pointers[$this->getPointer($hostmask)]);
 	}
 
 	/**
-	 * Get the session key for a specific hostmask
+	 * Get the session ID for a specific hostmask
 	 * @param Failnet\Lib\Hostmask $hostmask - The hostmask to grab the session ID for.
 	 * @return string - The session ID for the sessions specified.
 	 */
-	public function getSessionKey(Lib\Hostmask $hostmask)
+	public function getSessionID(Lib\Hostmask $hostmask)
 	{
 		if(!isset($this->pointers[$this->getPointer($hostmask)]))
 			return false;
 		return $this->pointers[$this->getPointer($hostmask)];
 	}
 
+	/**
+	 * Gets the pointer string used to refer to a specific session based on hostmask data
+	 * @param Failnet\Lib\Hostmask $hostmask - The hostmask to obtain the pointer for
+	 * @return string - The pointer string for the specific session
+	 */
 	public function getPointer(Lib\Hostmask $hostmask)
 	{
 		return hash('md5', $hostmask['nick'] . ':' . $hostmask['username'] . ':' . $hostmask['host']);
