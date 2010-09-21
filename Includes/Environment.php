@@ -52,11 +52,6 @@ class Environment
 	protected $cron = array();
 
 	/**
-	 * @var array - Array of loaded plugins
-	 */
-	protected $plugins = array();
-
-	/**
 	 * @var array - Array of various loaded objects
 	 */
 	protected $objects = array();
