@@ -113,14 +113,14 @@ abstract class JSON extends Root\Base
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet3
  *
- * @note reserves 300xx error codes
+ * @note reserves 301xx error codes
  */
 class JSONException extends Root\FailnetException
 {
-	const ERR_JSON_NO_FILE = 4000;
-	const ERR_JSON_UNKNOWN = 4100;
-	const ERR_JSON_NO_ERROR = 4101;
-	const ERR_JSON_DEPTH = 4102;
-	const ERR_JSON_CTRL_CHAR = 4103;
-	const ERR_JSON_SYNTAX = 4104;
+	const ERR_JSON_NO_FILE = 30100;
+	const ERR_JSON_UNKNOWN = 30101;
+	const ERR_JSON_NO_ERROR = 30102;
+	const ERR_JSON_DEPTH = 30103;
+	const ERR_JSON_CTRL_CHAR = 30104;
+	const ERR_JSON_SYNTAX = 30105;
 }
