@@ -9,7 +9,6 @@
 * deprecate the current Core\Log object, replace with something more OOP-ish probably
 * update socket to make use of newer event objects
 * update the cron task base, use a mixture of interface and base class
-* update cron to work via the dispatcher
 * alter event base to be more general
 * alter IRC-based events to extend Event\IRC\IRCBase
 * alter runtime-based events to extend Event\Runtime\RuntimeBase
