@@ -40,12 +40,6 @@ const OUTPUT_DEBUG_FULL = 3;
 const OUTPUT_RAW = 4;
 const OUTPUT_SPAM = 4; // ;D
 
-// Hook types
-const HOOK_NULL = 0;
-const HOOK_STACK = 1;
-const HOOK_OVERRIDE = 2;
-const HOOK_LAMBDA = 3;
-
 // Auth classes
 const AUTH_OWNER = 6;
 const AUTH_SUPERADMIN = 5;
@@ -54,8 +48,3 @@ const AUTH_TRUSTEDUSER = 3;
 const AUTH_KNOWNUSER = 2;
 const AUTH_REGISTEREDUSER = 1;
 const AUTH_UNKNOWNUSER = 0;
-
-// Cron task states
-const TASK_ACTIVE = 10;
-const TASK_MANUAL = 20;
-const TASK_ZOMBIE = 30;

@@ -37,7 +37,9 @@ use Failnet\Bot as Bot;
  */
 class Cron implements \ArrayAccess
 {
-	//public $last_event = 0;
+	const TASK_ZOMBIE = 0;
+	const TASK_ACTIVE = 1;
+	const TASK_MANUAL = 2;
 
 	/**
 	 * @var array - The list of times when each task is scheduled to run next
