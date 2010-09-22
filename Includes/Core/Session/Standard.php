@@ -38,16 +38,6 @@ use Failnet\Lib as Lib;
  */
 class Standard extends SessionBase
 {
-	public function login($password)
-	{
-		// asdf
-	}
-
-	public function logout()
-	{
-		// asdf
-	}
-
 	public function getLastActive()
 	{
 		// asdf

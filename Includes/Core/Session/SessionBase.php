@@ -174,8 +174,6 @@ interface SessionInterface extends \ArrayAccess
 	public function __construct(Lib\Hostmask $hostmask, $session_id, $pointer);
 	public function flash($flash_key, $flash_value = NULL);
 	public function getHostmask();
-	public function login($password);
-	public function logout();
 	public function getLastActive();
 	public function setLastActive($time);
 	public function onDestroy();
