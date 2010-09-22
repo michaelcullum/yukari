@@ -72,7 +72,7 @@ class Auth implements \Iterator, \ArrayAccess
 	/**
 	 * Create a new session for the specified hostmask
 	 * @param Failnet\Lib\Hostmask $hostmask - The hostmask to create the session for.
-	 * @return Failnet\User\Session - The new session we wanted.
+	 * @return Failnet\Core\Session\SessionBase - The new session we wanted.
 	 *
 	 * @throws Failnet\Core\AuthException
 	 */
@@ -99,7 +99,7 @@ class Auth implements \Iterator, \ArrayAccess
 	 * @param boolean $new_session - If no session exists, do we want to create a new one?
 	 * @return mixed - The desired session (Failnet\User\Session) or false if $new_session is false and there is no session.
 	 */
-	public function getSession(Failnet\Lib\Hostmask $hostmask, $new_session = true)
+	public function getSession(Lib\Hostmask $hostmask, $new_session = true)
 	{
 		$session_id = $this->getSessionID($hostmask);
 		if($session_id === false || !isset($this->sessions[$session_id]))
