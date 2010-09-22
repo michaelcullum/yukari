@@ -245,7 +245,7 @@ class Auth implements \Iterator, \ArrayAccess
 
 		// Allow the session to flush changes back to the DB.
 		$this->sessions[$offset]->onDestroy();
-		unset($this->pointers[$this->sessions[$offset]->pointer], $this->sessions[$offset]);
+		unset($this->pointers[$this->sessions[$offset]['pointer']], $this->sessions[$offset]);
 	}
 }
 
