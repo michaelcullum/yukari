@@ -46,22 +46,12 @@ class SessionBase implements SessionInterface
 	/**
 	 * @var Failnet\Lib\Hostmask - The hostmask that this session object represents
 	 */
-	public $hostmask;
-
-	/**
-	 * @var string - The pointer string that is used to refer to this session with
-	 */
-	public $pointer = '';
-
-	/**
-	 * @var string - The session ID that is assigned to this session
-	 */
-	public $session_id = '';
+	protected $hostmask;
 
 	/**
 	 * @var integer - The timestamp that the session was last active
 	 */
-	public $last_active = 0;
+	protected $last_active = 0;
 
 	/**
 	 * @var array - Array of various snips of data related to this session to store while the session is active
@@ -82,7 +72,17 @@ class SessionBase implements SessionInterface
 	 */
 	public function __construct(Lib\Hostmask $hostmask, $session_id, $pointer)
 	{
-		list($this->hostmask, $this->session_id, $this->pointer) = array($hostmask, $session_id, $pointer);
+		$this->hostmask = $hostmask;
+		$this->data = array_merge($this->data, array('session_id' => $session_id, 'pointer'=> $pointer));
+	}
+
+	/**
+	 * Grab the hostmask that this session object is for
+	 * @return Failnet\Lib\Hostmask - The hostmask this session is assigned to.
+	 */
+	public function getHostmask()
+	{
+		return $this->hostmask;
 	}
 
 	/**
@@ -173,6 +173,7 @@ interface SessionInterface extends \ArrayAccess
 {
 	public function __construct(Lib\Hostmask $hostmask, $session_id, $pointer);
 	public function flash($flash_key, $flash_value = NULL);
+	public function getHostmask();
 	public function login($password);
 	public function logout();
 	public function getLastActive();
