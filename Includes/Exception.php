@@ -104,21 +104,3 @@ class EnvironmentException extends FailnetException
 	const ERR_ENVIRONMENT_OPTION_NOT_SET = 10207;
 	const ERR_ENVIRONMENT_EXTRA_FILE_LOAD_FAIL = 10208;
 }
-
-/**
- * Failnet - Subordinate exception class
- *      Extension of the Failnet exception class.
- *
- *
- * @category    Failnet
- * @package     Failnet
- * @author      Damian Bushong
- * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet3
- *
- * @note reserves 103xx error codes
- */
-class HookableException extends FailnetException
-{
-	const ERR_HOOKABLE_UNDEFINED_METHOD_CALL = 10300;
-}
