@@ -131,18 +131,18 @@ class Environment
 
 				// Fire off the UI's startup text.
 				$ui->startup();
-				$ui->status('Loading Failnet core objects');
+				$ui->status('Loading the Failnet core system');
 
 				// Start loading stuff.
 				$ui->system('Loading core.core object');
 				$this->setObject('core.core', new Failnet\Core\Core());
-				$ui->system('Loading core.language object');
+				$ui->system('Loading internationalization object');
 				$this->setObject('core.language', new Failnet\Core\Language(Bot::getOption('language.file_dir', FAILNET . 'Data/Language')));
-				$ui->system('Loading core.hash object');
+				$ui->system('Loading hash compiler');
 				$this->setObject('core.hash', new Failnet\Core\Hash(8, true));
-				$ui->system('Loading core.dispatcher object');
+				$ui->system('Loading event dispatcher');
 				$this->setObject('core.dispatcher', new Failnet\Event\Dispatcher());
-				$ui->system('Loading core.session object');
+				$ui->system('Loading session manager');
 				$this->setObject('core.session', new Failnet\Session\Manager());
 
 				// Include any extra files that the user has specified
@@ -157,13 +157,19 @@ class Environment
 				$ui->system('Loading language files');
 				$this->getObject('core.language')->collectEntries();
 
-				// @todo load nodes here
-
 				// Register our event listeners to the dispatcher
-				/* @var Failnet\Core\Dispatcher */
+				/* @var Failnet\Event\Dispatcher */
 				$dispatcher = $this->getObject('core.dispatcher');
 				foreach(Bot::getOption('dispatcher.listeners', array()) as $listener)
 					$dispatcher->register($listener['event'], $listener['listener'], (isset($listener['params']) ? $listener['params'] : NULL));
+
+				// Dispatch a load event
+				// This is useful for having a listener registered, waiting for startup to complete before loading in an addon or extra library.
+				if($dispatcher->hasListeners('Runtime\\Startup'))
+				{
+					$trigger = new Event\Runtime\Startup();
+					$dispatcher->dispatch($trigger);
+				}
 			}
 		}
 		catch(FailnetException $e)
@@ -371,7 +377,6 @@ class Environment
 		if($dispatcher->hasListeners('Runtime\\Connect'))
 		{
 			$trigger = new Event\Runtime\Connect();
-			$trigger['event'] = $outbound;
 			$dispatcher->dispatch($trigger);
 		}
 
