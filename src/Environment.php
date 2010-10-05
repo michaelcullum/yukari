@@ -382,7 +382,7 @@ class Environment
 
 		try
 		{
-			// Now we go around in endless circles until someone lays down a bear trap and catches us.
+			// Now we go around in endless circles until someone lays down a giant bear trap and catches us.
 			while(true)
 			{
 				$queue = array();
@@ -402,7 +402,7 @@ class Environment
 					foreach($queue as $outbound)
 					{
 						// If this is a quit event, we'll quit after all other events have processed.
-						if($outbound->getType() === 'Quit')
+						if($outbound->getType() === 'IRC\\Quit')
 						{
 							$quit = $outbound;
 							continue;
