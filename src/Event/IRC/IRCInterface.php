@@ -20,12 +20,13 @@
  *
  */
 
-namespace Failnet\Event;
+namespace Failnet\Event\IRC;
 use Failnet as Root;
+use Failnet\Event as Event;
 
 /**
- * Failnet - Event interface,
- * 	    Prototype that defines methods that all events must declare.
+ * Failnet - IRC Event interface,
+ * 	    Prototype that defines methods that all IRC events must declare.
  *
  *
  * @category    Failnet
@@ -34,8 +35,10 @@ use Failnet as Root;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet3
  */
-interface EventInterface
+interface IRCInterface extends Event\EventInterface
 {
-	public function getType();
-	public function setArgNumber($arg_number, $arg_value);
+	public function getSource();
+	public function getBuffer();
+	public function buildCommand();
+	public function fromChannel();
 }

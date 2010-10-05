@@ -43,14 +43,23 @@ abstract class IRCBase extends Event\EventBase implements Event\EventInterface
 	public $origin;
 
 	/**
-	 * @var boolean - Was this recieved from a channel perspective?
-	 */
-	public $from_channel = false;
-
-	/**
 	 * @var string - The raw buffer of the event
 	 */
 	public $buffer = '';
+
+	/**
+	 * @var string - The channel that originated the event, if event was recieved from a channel perspective.
+	 */
+	public $channel = '';
+
+	/**
+	 * Get the "originator" of this event.
+	 * @return Failnet\Lib\Hostmask - The hostmask object for the event's originator.
+	 */
+	public function getSource()
+	{
+		return $this->origin;
+	}
 
 	/**
 	 * Get the raw buffer
@@ -59,5 +68,18 @@ abstract class IRCBase extends Event\EventBase implements Event\EventInterface
 	public function getBuffer()
 	{
 		return $this->buffer;
+	}
+
+	abstract public function buildCommand();
+
+	/**
+	 * Check to see if the event was recieved from a channel.
+	 * @return boolean - True if event is from a channel, false if otherwise.
+	 */
+	public function fromChannel()
+	{
+		if(isset($this->channel) && in_array($this->channel[0], array('#', '&'))) // @todo update with all known channel prefixes
+			return true;
+		return false;
 	}
 }
