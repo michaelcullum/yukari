@@ -4,31 +4,34 @@
  *
  *===================================================================
  *
- *  Verifier - Build script
+ *  Failnet -- PHP-based IRC Bot
  *-------------------------------------------------------------------
- * @category    Verifier
+ * @version     3.0.0 DEV
+ * @category    Failnet
  * @package     build
- * @author      Damian Bushong ("Obsidian")
- * @copyright   (c) 2010 - Codebite.net
+ * @author      Damian Bushong
+ * @copyright   (c) 2009 - 2010 -- Damian Bushong
  * @license     MIT License
+ * @link        http://github.com/Obsidian1510/Failnet3
  *
  *===================================================================
  *
+ * This source file is subject to the MIT license that is bundled
+ * with this package in the file LICENSE.
+ *
  */
 
+use Failnet\Lib as Lib;
+
 // This file checks to see if a PHAR archive rebuild is in order.
-define('VERIFIER', dirname(__FILE__) . '/../');
-define('OF_ROOT', VERIFIER . 'src/vendor/Of-Framework/src/');
-require OF_ROOT . 'Of.php';
-require OF_ROOT . 'OfHandler.php';
-require OF_ROOT . 'OfException.php';
-spl_autoload_register('Of::loader');
+define('FAILNET', dirname(__FILE__) . '/../');
+require FAILNET . 'src/Lib/JSON.php';
 
 // Make it quick.  If there's no JSON file containing file states, then we ought to build anyways.
-if(!file_exists(VERIFIER . 'build/filestate.json'))
+if(!file_exists(FAILNET . 'build/filestate.json'))
 {
 	echo "No previous filestate set, rebuild required." . PHP_EOL;
-	file_put_contents(VERIFIER . 'build/rebuild', '1');
+	file_put_contents(FAILNET . 'build/rebuild', '1');
 	exit(1);
 }
 
@@ -104,20 +107,20 @@ try {
         }
     }
 
-	$filestates = OfJSON::decode(VERIFIER . 'build/filestate.json');
+	$filestates = Lib\JSON::decode(FAILNET . 'build/filestate.json');
 
 	foreach($checksums as $file => $checksum) {
 		// On the first different thing, bail out and flag this as needing a rebuild.
 		if(!isset($filestates[$file]))
 		{
 			echo "New file '$file' detected, rebuild required.";
-			file_put_contents(VERIFIER . 'build/rebuild', '1');
+			file_put_contents(FAILNET . 'build/rebuild', '1');
 			exit(1);
 		}
 		if($filestates[$file] !== $checksum)
 		{
 			echo "File '$file' has changed." . PHP_EOL . "Previous checksum: {$filestates[$file]}" . PHP_EOL . "Current checksum: $checksum" . PHP_EOL;
-			file_put_contents(VERIFIER . 'build/rebuild', '1');
+			file_put_contents(FAILNET . 'build/rebuild', '1');
 			echo "Rebuild required." . PHP_EOL;
 			exit(1);
 		}
@@ -129,11 +132,11 @@ try {
 	if(!empty($checksums) || !empty($filestates))
 	{
 		echo "One or more files were deleted or added, rebuild required.";
-		file_put_contents(VERIFIER . 'build/rebuild', '1');
+		file_put_contents(FAILNET . 'build/rebuild', '1');
 		exit(1);
 	}
 
-	file_put_contents(VERIFIER . 'build/rebuild', '0');
+	file_put_contents(FAILNET . 'build/rebuild', '0');
 	echo "Rebuild not required." . PHP_EOL;
 
 } catch (Exception $e) {

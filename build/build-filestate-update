@@ -4,25 +4,28 @@
  *
  *===================================================================
  *
- *  Verifier - Build script
+ *  Failnet -- PHP-based IRC Bot
  *-------------------------------------------------------------------
- * @category    Verifier
+ * @version     3.0.0 DEV
+ * @category    Failnet
  * @package     build
- * @author      Damian Bushong ("Obsidian")
- * @copyright   (c) 2010 - Codebite.net
+ * @author      Damian Bushong
+ * @copyright   (c) 2009 - 2010 -- Damian Bushong
  * @license     MIT License
+ * @link        http://github.com/Obsidian1510/Failnet3
  *
  *===================================================================
  *
+ * This source file is subject to the MIT license that is bundled
+ * with this package in the file LICENSE.
+ *
  */
 
+use Failnet\Lib as Lib;
+
 // This file checks to see if a PHAR archive rebuild is in order.
-define('VERIFIER', dirname(__FILE__) . '/../');
-define('OF_ROOT', VERIFIER . 'src/vendor/Of-Framework/src/');
-require OF_ROOT . 'Of.php';
-require OF_ROOT . 'OfHandler.php';
-require OF_ROOT . 'OfException.php';
-spl_autoload_register('Of::loader');
+define('FAILNET', dirname(__FILE__) . '/../');
+require FAILNET . 'src/Lib/JSON.php';
 
 // @note code borrowed from phar-utils
 require_once 'Console/CommandLine.php';
@@ -97,9 +100,9 @@ try {
     }
 
 	echo "Storing filestate checksums." . PHP_EOL;
-	file_put_contents(VERIFIER . 'build/filestate.json', OfJSON::encode($checksums));
+	file_put_contents(FAILNET . 'build/filestate.json', Lib\JSON::encode($checksums));
 
-	$filestates = OfJSON::decode(VERIFIER . 'build/filestate.json');
+	$filestates = Lib\JSON::decode(FAILNET . 'build/filestate.json');
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage() . "\n";
 }
