@@ -44,7 +44,7 @@ Make changes to the files in the **src/** directory, then build the package (wit
 	$ ./build/unsigned-build.sh
 
 Using the compile-on-commit script (without signing it)
-	$ cp hooks/autobuild-unsigned .git/hooks/pre-commit
+	$ cp build/hooks/autobuild-unsigned .git/hooks/pre-commit
 
 ### Running Failnet
 
