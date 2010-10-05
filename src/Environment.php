@@ -451,10 +451,10 @@ class Environment
 			}
 			catch(FailnetException $e)
 			{
-				// @todo just terminate immediately.  No sense going on.
+				// Another exception?  FFFUUUUUUU--
+				// CRASH BANG BOOM.
+				exit;
 			}
-
-			// CRASH BANG BOOM.
 			exit;
 		}
 
