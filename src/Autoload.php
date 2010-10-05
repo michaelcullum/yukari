@@ -47,9 +47,9 @@ class Autoload
 	public function __construct()
 	{
 		$this->paths = array(
-			FAILNET_ROOT . 'Includes/',
-			FAILNET_ROOT . 'Addons/Autoload/',
-			FAILNET_ROOT . 'Addons/',
+			FAILNET . 'src/',
+			//FAILNET . 'addons/autoload/',
+			FAILNET . 'addons/',
 		);
 	}
 
@@ -90,7 +90,7 @@ class Autoload
 			if($file[0] == '.' || substr(strrchr($file, '.'), 1) != 'php')
 				continue;
 
-			$prefix = (!$prefix) ? 'Failnet\\' . str_replace('/', '\\', substr($path, strlen(FAILNET_ROOT . $strip) + 1)) : $prefix;
+			$prefix = (!$prefix) ? 'Failnet\\' . str_replace('/', '\\', substr($path, strlen(FAILNET . $strip) + 1)) : $prefix;
 			$return[] = $prefix . (substr($prefix, -1, 1) != '\\' ? '\\' : '') . ucfirst(substr($file, 0, strrpos($file, '.')));
 		}
 		return $return;

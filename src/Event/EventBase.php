@@ -34,7 +34,7 @@ use Failnet as Root;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet3
  */
-abstract class EventBase implements EventInterface, \ArrayAccess
+abstract class EventBase implements \ArrayAccess
 {
 	/**
 	 * @var array - The map of the various arguments for the event
@@ -43,12 +43,12 @@ abstract class EventBase implements EventInterface, \ArrayAccess
 
 	/**
 	 * Grabs this event object's event type
-	 * @return string - The current event's type
+	 * @return string - The current event's type (omitting Failnet\Event\ of course)
 	 */
 	public function getType()
 	{
 		$class = get_class($this);
-		return substr($class, strrpos($class, '\\'));
+		return str_replace('Failnet\\Event\\', '', $class);
 	}
 
 	/**
@@ -115,24 +115,4 @@ abstract class EventBase implements EventInterface, \ArrayAccess
 		$arg = "arg_$offset";
 		$this->$arg = NULL;
 	}
-}
-
-/**
- * Failnet - Event interface,
- * 	    Prototype that defines methods that all events must declare.
- *
- *
- * @category    Failnet
- * @package     event
- * @author      Damian Bushong
- * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet3
- */
-interface EventInterface
-{
-	public function getType();
-	public function setArgNumber($arg_number, $arg_value);
-	public function getSource();
-	public function getBuffer();
-	public function buildCommand();
 }

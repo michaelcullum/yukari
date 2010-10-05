@@ -7,7 +7,7 @@
  *-------------------------------------------------------------------
  * @version     3.0.0 DEV
  * @category    Failnet
- * @package     core
+ * @package     session
  * @author      Damian Bushong
  * @copyright   (c) 2009 - 2010 -- Damian Bushong
  * @license     MIT License
@@ -20,7 +20,7 @@
  *
  */
 
-namespace Failnet\Core\Session;
+namespace Failnet\Session;
 use Failnet as Root;
 use Failnet\Bot as Bot;
 use Failnet\Lib as Lib;
@@ -31,15 +31,15 @@ use Failnet\Lib as Lib;
  *
  *
  * @category    Failnet
- * @package     core
+ * @package     session
  * @author      Damian Bushong
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet3
  */
-class SessionBase implements SessionInterface
+class SessionBase
 {
 	/**
-	 * @var Failnet\Core\ACL\ACLBase - The ACL object that accompanies this session
+	 * @var Failnet\ACL\ACLBase - The ACL object that accompanies this session
 	 */
 	public $acl;
 
@@ -156,25 +156,4 @@ class SessionBase implements SessionInterface
 	{
 		unset($this->data[$offset]);
 	}
-}
-
-/**
- * Failnet - Session interface,
- *      Prototype that defines methods that session objects must implement.
- *
- *
- * @category    Failnet
- * @package     core
- * @author      Damian Bushong
- * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet3
- */
-interface SessionInterface extends \ArrayAccess
-{
-	public function __construct(Lib\Hostmask $hostmask, $session_id, $pointer);
-	public function flash($flash_key, $flash_value = NULL);
-	public function getHostmask();
-	public function getLastActive();
-	public function setLastActive($time);
-	public function onDestroy();
 }

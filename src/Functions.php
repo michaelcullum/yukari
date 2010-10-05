@@ -50,21 +50,21 @@ function errorHandler($errno, $msg_text, $errfile, $errline)
 	   case E_USER_DEPRECATED:
 		   $handled = true;
 		   Bot::core('ui')->php("notice: $error");
-		   file_put_contents(FAILNET_ROOT . 'Data/Logs/Error_' . date('m-d-Y', time()) . '.log', date('D m/d/Y - h:i:s A') . ' - [PHP Notice] ' . $error, FILE_APPEND | LOCK_EX);
+		   file_put_contents(FAILNET . 'Data/Logs/Error_' . date('m-d-Y', time()) . '.log', date('D m/d/Y - h:i:s A') . ' - [PHP Notice] ' . $error, FILE_APPEND | LOCK_EX);
 	   break;
 
 	   case E_WARNING:
 	   case E_USER_WARNING:
 		   $handled = true;
 		   Bot::core('ui')->php("warning: $error");
-		   file_put_contents(FAILNET_ROOT . 'Data/Logs/Error_' . date('m-d-Y', time()) . '.log', date('D m/d/Y - h:i:s A') . ' - [PHP Warning] ' . $error, FILE_APPEND | LOCK_EX);
+		   file_put_contents(FAILNET . 'Data/Logs/Error_' . date('m-d-Y', time()) . '.log', date('D m/d/Y - h:i:s A') . ' - [PHP Warning] ' . $error, FILE_APPEND | LOCK_EX);
 	   break;
 
 	   case E_ERROR:
 	   case E_USER_ERROR:
 		   $handled = true;
 		   Bot::core('ui')->php("error: $error");
-		   file_put_contents(FAILNET_ROOT . 'Data/Logs/Error_' . date('m-d-Y', time()) . '.log', date('D m/d/Y - h:i:s A') . ' - [PHP Error] ' . $error, FILE_APPEND | LOCK_EX);
+		   file_put_contents(FAILNET . 'Data/Logs/Error_' . date('m-d-Y', time()) . '.log', date('D m/d/Y - h:i:s A') . ' - [PHP Error] ' . $error, FILE_APPEND | LOCK_EX);
 	   break;
    }
 

@@ -176,7 +176,7 @@ class failnet_plugin_weather extends failnet_plugin_common
 
 		if($this->enable_cache && !empty($this->cache_path))
 		{
-			$this->cache_file = FAILNET_ROOT . $this->cache_path . "/{$this->zip}.dat";
+			$this->cache_file = FAILNET . $this->cache_path . "/{$this->zip}.dat";
 			$return = $this->load_cache();
 			if($return !== false)
 				return $return;

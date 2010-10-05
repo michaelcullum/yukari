@@ -7,7 +7,7 @@
  *-------------------------------------------------------------------
  * @version     3.0.0 DEV
  * @category    Failnet
- * @package     event
+ * @package     session
  * @author      Damian Bushong
  * @copyright   (c) 2009 - 2010 -- Damian Bushong
  * @license     MIT License
@@ -20,44 +20,36 @@
  *
  */
 
-namespace Failnet\Event\IRC;
+namespace Failnet\Session;
 use Failnet as Root;
-use Failnet\Event as Event;
+use Failnet\Bot as Bot;
+use Failnet\Lib as Lib;
 
 /**
- * Failnet - IRC Event base class,
- * 	    Base class that all IRC events must extend.
+ * Failnet - Session interface,
+ *      Prototype that defines methods that session objects must implement.
  *
  *
  * @category    Failnet
- * @package     event
+ * @package     session
  * @author      Damian Bushong
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet3
  */
-abstract class IRCBase extends Event\EventBase
+class StandarSession extends SessionBase implements SessionInterface
 {
-	/**
-	 * @var Failnet\Lib\Hostmask - The hostmask for the originating server or user
-	 */
-	public $origin;
-
-	/**
-	 * @var boolean - Was this recieved from a channel perspective?
-	 */
-	public $from_channel = false;
-
-	/**
-	 * @var string - The raw buffer of the event
-	 */
-	public $buffer = '';
-
-	/**
-	 * Get the raw buffer
-	 * @return string - Raw IRC buffer for the event
-	 */
-	public function getBuffer()
+	public function getLastActive()
 	{
-		return $this->buffer;
+		// asdf
+	}
+
+	public function setLastActive($time)
+	{
+		// asdf
+	}
+
+	public function onDestroy()
+	{
+		// asdf
 	}
 }

@@ -27,8 +27,8 @@ namespace Failnet;
  */
 
 // Absolute essentials first
-require FAILNET_ROOT . 'Includes/Constants.php';
-require FAILNET_ROOT . 'Includes/Exception.php';
+require FAILNET . 'src/Constants.php';
+require FAILNET . 'src/Exception.php';
 
 /**
  * We need to start checking to see if the requirements for Failnet can be met
@@ -46,10 +46,10 @@ if(!extension_loaded('pdo_sqlite'))
 	throw new StartupException('Failnet requires the SQLite PDO extension to be loaded', StartupException::ERR_STARTUP_NO_PDO_SQLITE);
 
 // Load up the common files, and get going.
-require FAILNET_ROOT . 'Includes/Bot.php';
-require FAILNET_ROOT . 'Includes/Functions.php';
-require FAILNET_ROOT . 'Includes/Autoload.php';
-require FAILNET_ROOT . 'Includes/Environment.php';
+require FAILNET . 'src/Bot.php';
+require FAILNET . 'src/Functions.php';
+require FAILNET . 'src/Autoload.php';
+require FAILNET . 'src/Environment.php';
 
 // Set our error and exception handlers
 @set_error_handler('Failnet\\errorHandler');

@@ -106,7 +106,7 @@ class Log extends Base
 	 */
 	public function write($type, $time, $msg)
 	{
-		return file_put_contents(FAILNET_ROOT . "logs/{$type}_log_" . date('m-d-Y', $time) . '.log', $msg, FILE_APPEND | LOCK_EX);
+		return file_put_contents(FAILNET . "logs/{$type}_log_" . date('m-d-Y', $time) . '.log', $msg, FILE_APPEND | LOCK_EX);
 	}
 
 	/**
@@ -117,6 +117,6 @@ class Log extends Base
 	 */
 	public function wipe($type, $time)
 	{
-		return @unlink(FAILNET_ROOT . "logs/{$type}_log_" . date('m-d-Y', $time) . '.log');
+		return @unlink(FAILNET . "logs/{$type}_log_" . date('m-d-Y', $time) . '.log');
 	}
 }

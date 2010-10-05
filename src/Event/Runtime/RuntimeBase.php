@@ -35,7 +35,7 @@ use Failnet\Event as Event;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet3
  */
-abstract class RuntimeBase extends Event\EventBase
+abstract class RuntimeBase extends Event\EventBase implements Event\EventInterface
 {
 	// asdf
 }

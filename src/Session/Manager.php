@@ -7,7 +7,7 @@
  *-------------------------------------------------------------------
  * @version     3.0.0 DEV
  * @category    Failnet
- * @package     core
+ * @package     session
  * @author      Damian Bushong
  * @copyright   (c) 2009 - 2010 -- Damian Bushong
  * @license     MIT License
@@ -20,24 +20,23 @@
  *
  */
 
-namespace Failnet\Core;
+namespace Failnet\Session;
 use Failnet as Root;
 use Failnet\Bot as Bot;
 use Failnet\Lib as Lib;
-use Failnet\Core\Session as Session;
 
 /**
- * Failnet - Auth object,
+ * Failnet - Session manager object,
  *      Manages user sessions within Failnet.
  *
  *
  * @category    Failnet
- * @package     core
+ * @package     session
  * @author      Damian Bushong
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet3
  */
-class Auth implements \Iterator, \ArrayAccess
+class Manager implements \Iterator, \ArrayAccess
 {
 	/**
 	 * @var array - Array containing pointers to user session objects, allows session keys to be used with usernames
@@ -84,11 +83,11 @@ class Auth implements \Iterator, \ArrayAccess
 		$this->pointers[$pointer] = $session_id;
 
 		// @todo provide override for session object to instantiate
-		$session = new Session\Standard($hostmask, $session_id, $pointer);
+		$session = new StandardSession($hostmask, $session_id, $pointer);
 		$this->sessions[$session_id] = $session;
 
-		if(!$session instanceof Session\SessionBase)
-			throw new AuthException('Session object does not extend session base class', AuthException::ERR_AUTH_SESSION_NOT_SESSIONBASE_CHILD);
+		if(!$session instanceof SessionBase)
+			throw new ManagerException('Session object does not extend session base class', ManagerException::ERR_AUTH_SESSION_NOT_SESSIONBASE_CHILD);
 
 		return $session;
 	}
@@ -116,7 +115,7 @@ class Auth implements \Iterator, \ArrayAccess
 	 * @param Failnet\Lib\Hostmask $hostmask - The hostmask to delete the session for.
 	 * @return void
 	 */
-	public function deleteSession(Failnet\Lib\Hostmask $hostmask)
+	public function deleteSession(Lib\Hostmask $hostmask)
 	{
 		$session_id = $this->getSessionID($hostmask);
 		if($session_id === false)
@@ -247,22 +246,4 @@ class Auth implements \Iterator, \ArrayAccess
 		$this->sessions[$offset]->onDestroy();
 		unset($this->pointers[$this->sessions[$offset]['pointer']], $this->sessions[$offset]);
 	}
-}
-
-/**
- * Failnet - Subordinate exception class
- *      Extension of the Failnet exception class.
- *
- *
- * @category    Failnet
- * @package     Failnet
- * @author      Damian Bushong
- * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet3
- *
- * @note reserves 206xx error codes
- */
-class AuthException extends Root\FailnetException
-{
-	const ERR_AUTH_SESSION_NOT_SESSIONBASE_CHILD = 20600;
 }

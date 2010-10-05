@@ -69,9 +69,9 @@ class Environment
 	 */
 	public function __construct()
 	{
-		if(!file_exists(FAILNET_ROOT . 'Data/Config/') || !is_readable(FAILNET_ROOT . 'Data/Config/') || !is_writeable(FAILNET_ROOT . 'Data/Config/') || !is_dir(FAILNET_ROOT . 'Data/Config/'))
+		if(!file_exists(FAILNET . 'data/config/') || !is_readable(FAILNET . 'data/config/') || !is_writeable(FAILNET . 'data/config/') || !is_dir(FAILNET . 'Data/Config/'))
 			throw new EnvironmentException('Configuration file directory does not exist, or is not readable/writeable', EnvironmentException::ERR_ENVIRONMENT_NO_ACCESS_CFG_DIR);
-		if(!file_exists(FAILNET_ROOT . 'Data/DB/') || !is_readable(FAILNET_ROOT . 'Data/DB/') || !is_writeable(FAILNET_ROOT . 'Data/DB/') || !is_dir(FAILNET_ROOT . 'Data/DB/'))
+		if(!file_exists(FAILNET . 'data/DB/') || !is_readable(FAILNET . 'data/DB/') || !is_writeable(FAILNET . 'data/DB/') || !is_dir(FAILNET . 'data/DB/'))
 			throw new EnvironmentException('Database directory does not exist, or is not readable/writeable', EnvironmentException::ERR_ENVIRONMENT_NO_ACCESS_DB_DIR);
 
 		// Check to see if date.timezone is empty in the PHP.ini; if so, set the timezone with some Hax to prevent strict errors.
@@ -117,7 +117,7 @@ class Environment
 			}
 			else
 			{
-				if(!file_exists(FAILNET_ROOT . 'Data/Config/' . Failnet\CONFIG_FILE))
+				if(!file_exists(FAILNET . 'Data/Config/' . Failnet\CONFIG_FILE))
 					throw new EnvironmentException(sprintf('The configuration file "%1$s" could not be loaded, as it does not exist.', Failnet\CONFIG_FILE), EnvironmentException::ERR_ENVIRONMENT_CONFIG_MISSING);
 
 				// load the config file up next
@@ -137,13 +137,13 @@ class Environment
 				$ui->system('Loading core.core object');
 				$this->setObject('core.core', new Failnet\Core\Core());
 				$ui->system('Loading core.language object');
-				$this->setObject('core.language', new Failnet\Core\Language(Bot::getOption('language.file_dir', FAILNET_ROOT . 'Data/Language')));
+				$this->setObject('core.language', new Failnet\Core\Language(Bot::getOption('language.file_dir', FAILNET . 'Data/Language')));
 				$ui->system('Loading core.hash object');
 				$this->setObject('core.hash', new Failnet\Core\Hash(8, true));
 				$ui->system('Loading core.dispatcher object');
-				$this->setObject('core.dispatcher', new Failnet\Core\Dispatcher());
-				$ui->system('Loading core.auth object');
-				$this->setObject('core.auth', new Failnet\Core\Auth());
+				$this->setObject('core.dispatcher', new Failnet\Event\Dispatcher());
+				$ui->system('Loading core.session object');
+				$this->setObject('core.session', new Failnet\Session\Manager());
 
 				// Include any extra files that the user has specified
 				foreach(Bot::getOption('environment.extra_files', array()) as $file)
@@ -185,13 +185,13 @@ class Environment
 		$file_extension = substr(strrchr($config, '.'), 1);
 		if($file_extension == 'php')
 		{
-			if(($include = @include(FAILNET_ROOT . "Data/Config/$config")) === false || !isset($data) || !is_array($data))
+			if(($include = @include(FAILNET . "Data/Config/$config")) === false || !isset($data) || !is_array($data))
 				throw new EnvironmentException('Failed to load the specified config file "%1$s"', EnvironmentException::ERR_ENVIRONMENT_FAILED_CONFIG_LOAD);
 			$this->setOptions($data);
 		}
 		elseif($file_extension == 'json')
 		{
-			$data = Lib\JSON::decode(FAILNET_ROOT . "Data/Config/$config");
+			$data = Lib\JSON::decode(FAILNET . "Data/Config/$config");
 			$this->setOptions($data);
 		}
 		else
