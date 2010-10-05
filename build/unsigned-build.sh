@@ -1,12 +1,12 @@
 #! /bin/bash
 
 SCRIPT=`dirname $(readlink -f $0)`
-$SCRIPT/build-check --src ./src/ --exclude "~$ .*\.txt$ .*\.markdown$ .*\.md$"
+$SCRIPT/build-check --src ./src/ --exclude "~$ .*\.txt$ .*\.markdown$ .*\.md$ .*\.json$"
 RESULT=`cat $SCRIPT/rebuild`
 if [ $RESULT = '1' ]; then
 	echo 'updating phar file'
-	phar-build --phar $SCRIPT/failnet.phar --src ./src/ --exclude "~$ .*\.txt$ .*\.markdown$ .*\.md$" --ns
-	$SCRIPT/build-filestate-update --src ./src/ --exclude "~$ .*\.txt$ .*\.markdown$ .*\.md$"
+	phar-build --phar $SCRIPT/failnet.phar --src ./src/ --exclude "~$ .*\.txt$ .*\.markdown$ .*\.md$ .*\.json$" --ns
+	$SCRIPT/build-filestate-update --src ./src/ --exclude "~$ .*\.txt$ .*\.markdown$ .*\.md$ .*\.json$"
 	cp $SCRIPT/failnet.phar $SCRIPT/../failnet.phar
     rm $SCRIPT/failnet.phar
 	rm $SCRIPT/rebuild
