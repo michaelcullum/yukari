@@ -185,8 +185,8 @@ class Manager
 	}
 
 	/**
-	 * Alias of Failnet\Core\Language->getEntry()
-	 * @see Failnet\Core\Language->getEntry()
+	 * Alias of Failnet\Language\Manager->getEntry()
+	 * @see Failnet\Language\Manager->getEntry()
 	 */
 	public function __invoke($key, array $arguments = array())
 	{
