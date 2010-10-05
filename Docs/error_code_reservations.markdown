@@ -14,7 +14,7 @@
 * 203xx - **Failnet\Core\UIException** - */Includes/Core/UI.php*
 * 204xx - **Failnet\Core\LanguageException** - */Includes/Core/Language.php*
 * 205xx - **Failnet\Core\CronException** - */Includes/Core/Cron.php*
-* 206xx - **Failnet\Core\AuthException** - */Includes/Core/Auth.php*
+* 206xx - **Failnet\Session\ManagerException** - */Includes/Session/ManagerException.php*
 
 
 * 300xx - **Failnet\Lib\HostmaskException** - */Includes/Lib/Hostmask.php*
