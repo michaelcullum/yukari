@@ -21,6 +21,7 @@
  */
 
 namespace Failnet;
+use Failnet\Bot as Bot;
 
 /**
  * Error handler function for Failnet.  Modified from the phpBB 3.0.x msg_handler() function.
@@ -32,49 +33,54 @@ namespace Failnet;
  */
 function errorHandler($errno, $msg_text, $errfile, $errline)
 {
-   // Do not display notices if we suppress them via @
-   if (error_reporting() == 0)
-	   return;
+	/* @var Failnet\Core\UI */
+	$ui = Bot::getObject('core.ui');
 
-   // Strip the current directory from the offending file
-   $errfile = (!empty($errfile)) ? substr(str_replace(array(__DIR__, '\\'), array('', '/'), $errfile), 1) : '';
-   $error = 'in file ' . $errfile . ' on line ' . $errline . ': ' . $msg_text . PHP_EOL;
-   $handled = false;
 
-   switch ($errno)
-   {
-	   case E_NOTICE:
-	   case E_STRICT:
-	   case E_DEPRECATED:
-	   case E_USER_NOTICE:
-	   case E_USER_DEPRECATED:
-		   $handled = true;
-		   Bot::core('ui')->php("notice: $error");
-		   file_put_contents(FAILNET . 'data/logs/Error_' . date('m-d-Y', time()) . '.log', date('D m/d/Y - h:i:s A') . ' - [PHP Notice] ' . $error, FILE_APPEND | LOCK_EX);
-	   break;
 
-	   case E_WARNING:
-	   case E_USER_WARNING:
-		   $handled = true;
-		   Bot::core('ui')->php("warning: $error");
-		   file_put_contents(FAILNET . 'data/logs/Error_' . date('m-d-Y', time()) . '.log', date('D m/d/Y - h:i:s A') . ' - [PHP Warning] ' . $error, FILE_APPEND | LOCK_EX);
-	   break;
+	// Do not display notices if we suppress them via @
+	if (error_reporting() == 0)
+		return;
 
-	   case E_ERROR:
-	   case E_USER_ERROR:
-		   $handled = true;
-		   Bot::core('ui')->php("error: $error");
-		   file_put_contents(FAILNET . 'data/logs/Error_' . date('m-d-Y', time()) . '.log', date('D m/d/Y - h:i:s A') . ' - [PHP Error] ' . $error, FILE_APPEND | LOCK_EX);
-	   break;
+	// Strip the current directory from the offending file
+	$errfile = (!empty($errfile)) ? substr(str_replace(array(__DIR__, '\\'), array('', '/'), $errfile), 1) : '';
+	$error = 'in file ' . $errfile . ' on line ' . $errline . ': ' . $msg_text . PHP_EOL;
+	$handled = false;
+
+	switch ($errno)
+	{
+		case E_NOTICE:
+		case E_STRICT:
+		case E_DEPRECATED:
+		case E_USER_NOTICE:
+		case E_USER_DEPRECATED:
+			$handled = true;
+			$ui->php("notice: $error");
+			file_put_contents(FAILNET . 'data/logs/Error_' . date('m-d-Y', time()) . '.log', date('D m/d/Y - h:i:s A') . ' - [PHP Notice] ' . $error, FILE_APPEND | LOCK_EX);
+		break;
+
+		case E_WARNING:
+		case E_USER_WARNING:
+			$handled = true;
+			$ui->php("warning: $error");
+			file_put_contents(FAILNET . 'data/logs/Error_' . date('m-d-Y', time()) . '.log', date('D m/d/Y - h:i:s A') . ' - [PHP Warning] ' . $error, FILE_APPEND | LOCK_EX);
+		break;
+
+		case E_ERROR:
+		case E_USER_ERROR:
+			$handled = true;
+			$ui->php("error: $error");
+			file_put_contents(FAILNET . 'data/logs/Error_' . date('m-d-Y', time()) . '.log', date('D m/d/Y - h:i:s A') . ' - [PHP Error] ' . $error, FILE_APPEND | LOCK_EX);
+		break;
    }
 
-   // Fatal error? DAI.
-   if($errno === E_USER_ERROR)
-	   Bot::core()->terminate(false); // @todo recode
+	// Fatal error? DAI.
+	if($errno === E_USER_ERROR)
+		exit;
 
-   // If we notice an error not handled here we pass this back to PHP by returning false
-   // This may not work for all php versions
-   return ($handled) ? true : false;
+	// If we notice an error not handled here we pass this back to PHP by returning false
+	// This may not work for all php versions
+	return ($handled) ? true : false;
 }
 
 /**
