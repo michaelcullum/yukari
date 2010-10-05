@@ -44,7 +44,7 @@ abstract class TaskBase implements TaskInterface
 	 * Automatically run this cron task, and make sure that it should be run in the first place
 	 * @return mixed - Whatever $this->runTask() returns in the cron task that extends this class
 	 *
-	 * @throws Failnet\Cron\CronTaskException
+	 * @throws Failnet\Cron\Task\TaskException
 	 */
 	final public function autorun()
 	{
@@ -69,7 +69,7 @@ abstract class TaskBase implements TaskInterface
 	 * Manually trigger a cron task
 	 * @return mixed - Whatever $this->runTask() returns in the cron task that extends this class
 	 *
-	 * @throws Failnet\Cron\CronTaskException
+	 * @throws Failnet\Cron\Task\TaskException
 	 */
 	final public function __invoke()
 	{

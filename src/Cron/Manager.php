@@ -50,13 +50,13 @@ class Manager implements \ArrayAccess
 	 * Loads a task and prepares it for use
 	 * @param string $task_name - The name of the task to load
 	 * @return void
-	 * @throws Failnet\Core\CronException
+	 * @throws Failnet\Cron\ManagerException
 	 */
 	public function addTask($task_name)
 	{
 		$task_class = "Failnet\\Cron\\Task\\$task_name";
 		if(!Bot::getObject('core.autoload')->fileExists($task_class))
-			throw new CronException(sprintf('No class file found for cron task "%1$s"', $task_name), CronException::ERR_CRON_NO_SUCH_TASK);
+			throw new ManagerException(sprintf('No class file found for cron task "%1$s"', $task_name), ManagerException::ERR_CRON_NO_SUCH_TASK);
 
 		$this[$task_name] = new $task_class();
 		$this->getTaskQueue($task_name);
@@ -68,12 +68,12 @@ class Manager implements \ArrayAccess
 	 * @param integer $status - The state to set the task to (must be a Failnet\TASK_* constant)
 	 * @return boolean - Whether or not we were successful
 	 *
-	 * @throws Failnet\Core\CronException
+	 * @throws Failnet\Cron\ManagerException
 	 */
 	public function toggleTask($task_name, $status)
 	{
 		if(!in_array($status, array(self::TASK_ACTIVE, self::TASK_MANUAL, self::TASK_ZOMBIE)))
-			throw new CronException(sprintf('Attempted to set an invalid state on cron task "%1$s"', $task_name), CronException::ERR_CRON_INVALID_STATE);
+			throw new ManagerException(sprintf('Attempted to set an invalid state on cron task "%1$s"', $task_name), ManagerException::ERR_CRON_INVALID_STATE);
 		try
 		{
 			$this[$task_name]->status = $status;
