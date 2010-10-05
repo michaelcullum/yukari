@@ -1,0 +1,4 @@
+build/cert/priv.pem
+build/failnet.phar*
+build/tmp/*
+build/verified/*
