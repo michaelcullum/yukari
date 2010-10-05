@@ -7,7 +7,7 @@
  *-------------------------------------------------------------------
  * @version     3.0.0 DEV
  * @category    Failnet
- * @package     core
+ * @package     language
  * @author      Damian Bushong
  * @copyright   (c) 2009 - 2010 -- Damian Bushong
  * @license     MIT License
@@ -20,23 +20,23 @@
  *
  */
 
-namespace Failnet\Core;
+namespace Failnet\Language;
 use Failnet as Root;
 use Failnet\Bot as Bot;
-use Failnet\Lang as Lang;
+use Failnet\Lib as Lib;
 
 /**
- * Failnet - Language class,
+ * Failnet - Language manager class,
  * 	    Collects and provides access to all of the language entries for Failnet.
  *
  *
  * @category    Failnet
- * @package     core
+ * @package     language
  * @author      Damian Bushong
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet3
  */
-class Language
+class Manager
 {
 	/**
 	 * @var array - Array containing all language variables that have been loaded.
@@ -70,7 +70,7 @@ class Language
 	 */
 	public function setPath($language_dir)
 	{
-		$this->language_dir = $language_dir;
+		$this->language_dir = rtrim($language_dir, '/\\');
 	}
 
 	/**
@@ -86,13 +86,13 @@ class Language
 		foreach($files as $file)
 		{
 			// ignore useless files
-			if($file[0] == '.' || substr(strrchr($file, '.'), 1) != 'php')
+			if($file[0] == '.' || substr(strrchr($file, '.'), 1) != 'json')
 				continue;
 
 			// We're using a try+catch block here in case a language file fails to load
 			try
 			{
-				$this->loadFile($this->language_dir . '/' . $file);
+				$this->loadFile($file);
 			}
 			catch(LanguageException $e)
 			{
@@ -106,30 +106,35 @@ class Language
 	 * @param string $file - The full filepath of the language file to load.
 	 * @return void
 	 *
-	 * @throws Failnet\Core\LanguageException
+	 * @throws Failnet\Language\ManagerException
 	 *
 	 * @note This method will not allow reloading a language file
 	 */
 	public function loadFile($file)
 	{
 		/* @var Failnet\Core\UI */
-		$ui = Bot::getOption('core.ui');
+		$ui = Bot::getObject('core.ui');
 
-		$filename = substr(strrchr(basename($file), '.'), 1);
-		if(in_array($filename, $this->files))
+		$file = basename($file);
+		if(in_array($file, $this->files))
+			throw new ManagerException(sprintf('Language file "%1$s" cannot be reloaded', $file), ManagerException::ERR_LANGUAGE_FILE_RELOAD_FAILED);
+
+		// Let's try to load the language file...we use try/catch in case something goes nuclear with the JSON processing, here.
+		try
 		{
-			// @todo throw exception, not debug notice
-			$ui->debug('ignoring call to Failnet\\Core\\Language::loadFile() - language file already loaded');
-			return;
+			$entries = Lib\JSON::decode($this->language_dir . $file);
+		}
+		catch(Lib\JSONException $e)
+		{
+			throw new ManagerException(sprintf('Language file "%1$s" could not be loaded', $file), ManagerException::ERR_LANGUAGE_FILE_LOAD_FAILED);
 		}
 
-		// Okay, time to include the file.  We use include on language files in case something blows up.
-		if(($include = @include($file)) === false)
-			throw new LanguageException(sprintf('Language file "%1$s" could not be loaded', $file), LanguageException::ERR_LANGUAGE_FILE_LOAD_FAILED);
+		// Store the new language entries
+		$this->setEntries($entries);
 
 		// Add this language file to the list of loaded language files
-		$this->files[] = $filename;
-		$ui->system('--- Loaded language file' . $filename);
+		$this->files[] = $file;
+		$ui->system('--- Loaded language file' . $file);
 	}
 
 	/**
@@ -187,22 +192,4 @@ class Language
 	{
 		return $this->getEntry($key, $arguments);
 	}
-}
-
-/**
- * Failnet - Subordinate exception class
- *      Extension of the Failnet exception class.
- *
- *
- * @category    Failnet
- * @package     Failnet
- * @author      Damian Bushong
- * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet3
- *
- * @note reserves 204xx error codes
- */
-class LanguageException extends Root\FailnetException
-{
-	const ERR_LANGUAGE_FILE_LOAD_FAILED = 20400;
 }
