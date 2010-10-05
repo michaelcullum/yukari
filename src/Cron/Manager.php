@@ -54,7 +54,7 @@ class Manager implements \ArrayAccess
 	 */
 	public function addTask($task_name)
 	{
-		$task_class = "Failnet\\Cron\\$task_name";
+		$task_class = "Failnet\\Cron\\Task\\$task_name";
 		if(!Bot::getObject('core.autoload')->fileExists($task_class))
 			throw new CronException(sprintf('No class file found for cron task "%1$s"', $task_name), CronException::ERR_CRON_NO_SUCH_TASK);
 
@@ -72,7 +72,7 @@ class Manager implements \ArrayAccess
 	 */
 	public function toggleTask($task_name, $status)
 	{
-		if(!in_array($status, array(Root\TASK_ACTIVE, Root\TASK_MANUAL, Root\TASK_ZOMBIE)))
+		if(!in_array($status, array(self::TASK_ACTIVE, self::TASK_MANUAL, self::TASK_ZOMBIE)))
 			throw new CronException(sprintf('Attempted to set an invalid state on cron task "%1$s"', $task_name), CronException::ERR_CRON_INVALID_STATE);
 		try
 		{
@@ -130,7 +130,7 @@ class Manager implements \ArrayAccess
 	{
 		// get the next time a task must be run
 		// If we're a zombie task or a manual task, we should not be queued into the task list.
-		if($this[$task_name]->status !== Root\TASK_ACTIVE)
+		if($this[$task_name]->status !== self::TASK_ACTIVE)
 			return false;
 
 		$next_run = (int) $this[$task_name]->getNextRun();
@@ -182,25 +182,4 @@ class Manager implements \ArrayAccess
 	{
 		Bot::getEnvironment()->removeObject("cron.$offset");
 	}
-}
-
-/**
- * Failnet - Subordinate exception class
- *      Extension of the Failnet exception class.
- *
- *
- * @category    Failnet
- * @package     Failnet
- * @author      Damian Bushong
- * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet3
- *
- * @note reserves 205xx error codes
- */
-class CronException extends Root\FailnetException
-{
-	const ERR_CRON_LOAD_FAILED = 20500;
-	const ERR_CRON_NO_SUCH_TASK = 20501;
-	const ERR_CRON_TASK_ALREADY_LOADED = 20502;
-	const ERR_CRON_INVALID_STATE = 20503;
 }

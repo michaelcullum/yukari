@@ -20,9 +20,10 @@
  *
  */
 
-namespace Failnet\Cron;
+namespace Failnet\Cron\Task;
 use Failnet as Root;
 use Failnet\Bot as Bot;
+use Failnet\Cron as Cron;
 
 /**
  * Failnet - Cron task base class,
@@ -35,9 +36,9 @@ use Failnet\Bot as Bot;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet3
  */
-abstract class CronBase implements CronInterface
+abstract class TaskBase implements TaskInterface
 {
-	public $status = Root\Core\Cron::TASK_ZOMBIE;
+	public $status = Cron\Manager::TASK_ZOMBIE;
 
 	/**
 	 * Automatically run this cron task, and make sure that it should be run in the first place
@@ -47,10 +48,10 @@ abstract class CronBase implements CronInterface
 	 */
 	final public function autorun()
 	{
-		if($this->status === Root\Core\Cron::TASK_ZOMBIE)
-			throw new CronTaskException(sprintf('Attempted to run zombie cron task "%1$s"', $this->getTaskName()), CronTaskException::ERR_CRON_TASK_ACCESS_ZOMBIE);
-		if($this->status === Root\Core\Cron::TASK_MANUAL)
-			throw new CronTaskException(sprintf('Attempted to automatically run a manually-triggered cron task "%1$s"', $this->getTaskName()), CronTaskException::ERR_CRON_TASK_ACCESS_MANUAL);
+		if($this->status === Cron\Manager::TASK_ZOMBIE)
+			throw new TaskException(sprintf('Attempted to run zombie cron task "%1$s"', $this->getTaskName()), TaskException::ERR_CRON_TASK_ACCESS_ZOMBIE);
+		if($this->status === Cron\Manager::TASK_MANUAL)
+			throw new TaskException(sprintf('Attempted to automatically run a manually-triggered cron task "%1$s"', $this->getTaskName()), TaskException::ERR_CRON_TASK_ACCESS_MANUAL);
 		return $this->runTask(false);
 	}
 
@@ -72,47 +73,8 @@ abstract class CronBase implements CronInterface
 	 */
 	final public function __invoke()
 	{
-		if($this->status === Root\Core\Cron::TASK_ZOMBIE)
-			throw new CronTaskException(sprintf('Attempted to run zombie cron task "%1$s"', $this->getTaskName()), CronTaskException::ERR_CRON_TASK_ACCESS_ZOMBIE);
+		if($this->status === Cron\Manager::TASK_ZOMBIE)
+			throw new TaskException(sprintf('Attempted to run zombie cron task "%1$s"', $this->getTaskName()), TaskException::ERR_CRON_TASK_ACCESS_ZOMBIE);
 		return $this->runTask();
 	}
-}
-
-/**
- * Failnet - Cron task interface,
- * 	    Prototype that defines methods that all cron tasks must declare.
- *
- *
- * @category    Failnet
- * @package     cron
- * @author      Damian Bushong
- * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet3
- */
-interface CronInterface
-{
-	public function getNextRun();
-	public function autorun();
-	public function getTaskName();
-	public function runTask($manual_invoke = true);
-	public function __invoke();
-}
-
-/**
- * Failnet - Subordinate exception class
- *      Extension of the Failnet exception class.
- *
- *
- * @category    Failnet
- * @package     Failnet
- * @author      Damian Bushong
- * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet3
- *
- * @note reserves 400xx error codes
- */
-class CronTaskException extends Root\FailnetException
-{
-	const ERR_CRON_TASK_ACCESS_MANUAL = 40000;
-	const ERR_CRON_TASK_ACCESS_ZOMBIE = 40001;
 }
