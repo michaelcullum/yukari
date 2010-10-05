@@ -7,3 +7,4 @@
 * deprecate the current Core\Log object, replace with something more OOP-ish probably
 * update socket to make use of newer event objects
 * alter runtime-based events to extend Event\Runtime\RuntimeBase
+* write Failnet\Event\IRC\Response
