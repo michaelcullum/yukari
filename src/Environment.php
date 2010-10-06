@@ -137,7 +137,7 @@ class Environment
 				$ui->system('Loading core.core object');
 				$this->setObject('core.core', new Failnet\Core\Core());
 				$ui->system('Loading internationalization object');
-				$this->setObject('core.language', new Failnet\Core\Language(Bot::getOption('language.file_dir', FAILNET . 'Data/Language')));
+				$this->setObject('core.language', new Failnet\Language\Manager(Bot::getOption('language.file_dir', FAILNET . 'Data/Language')));
 				$ui->system('Loading hash compiler');
 				$this->setObject('core.hash', new Failnet\Core\Hash(8, true));
 				$ui->system('Loading event dispatcher');
