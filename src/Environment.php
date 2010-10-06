@@ -72,6 +72,7 @@ class Environment
 	{
 		if(!file_exists(FAILNET . 'data/config/') || !is_readable(FAILNET . 'data/config/') || !is_writeable(FAILNET . 'data/config/') || !is_dir(FAILNET . 'Data/Config/'))
 			throw new EnvironmentException('Configuration file directory does not exist, or is not readable/writeable', EnvironmentException::ERR_ENVIRONMENT_NO_ACCESS_CFG_DIR);
+		// @note if doctrine is used, this code must be removed
 		if(!file_exists(FAILNET . 'data/DB/') || !is_readable(FAILNET . 'data/DB/') || !is_writeable(FAILNET . 'data/DB/') || !is_dir(FAILNET . 'data/DB/'))
 			throw new EnvironmentException('Database directory does not exist, or is not readable/writeable', EnvironmentException::ERR_ENVIRONMENT_NO_ACCESS_DB_DIR);
 
@@ -99,7 +100,7 @@ class Environment
 			/* @var Failnet\Core\CLI */
 			$cli = $this->getObject('core.cli');
 			define('Failnet\\IN_INSTALL', ($cli['mode'] === 'install') ? true : false);
-			define('Failnet\\CONFIG_FILE', ($cli['config'] ? $cli['config'] : 'Config.php'));
+			define('Failnet\\CONFIG_FILE', ($cli['config'] ? $cli['config'] : 'config.php'));
 
 			if(Failnet\IN_INSTALL)
 			{
@@ -118,7 +119,7 @@ class Environment
 			}
 			else
 			{
-				if(!file_exists(FAILNET . 'Data/Config/' . Failnet\CONFIG_FILE))
+				if(!file_exists(FAILNET . 'data/config/' . Failnet\CONFIG_FILE))
 					throw new EnvironmentException(sprintf('The configuration file "%1$s" could not be loaded, as it does not exist.', Failnet\CONFIG_FILE), EnvironmentException::ERR_ENVIRONMENT_CONFIG_MISSING);
 
 				// load the config file up next
@@ -137,7 +138,7 @@ class Environment
 				$ui->system('Loading core.core object');
 				$this->setObject('core.core', new Failnet\Core\Core());
 				$ui->system('Loading internationalization object');
-				$this->setObject('core.language', new Failnet\Language\Manager(Bot::getOption('language.file_dir', FAILNET . 'Data/Language')));
+				$this->setObject('core.language', new Failnet\Language\Manager(Bot::getOption('language.file_dir', FAILNET . 'data/language')));
 				$ui->system('Loading hash compiler');
 				$this->setObject('core.hash', new Failnet\Core\Hash(8, true));
 				$ui->system('Loading event dispatcher');
