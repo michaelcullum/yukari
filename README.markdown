@@ -25,8 +25,6 @@ Failnet is currently undergoing a complete codebase rewrite, and as such I have 
 Via git:
     git clone http://github.com/Obsidian1510/Failnet3.git
 	cd ./Failnet3
-	git submodule init
-	git submodule update
 
 Via gzip tarball package:
 	tar xzf failnet-3.0.0-dev.tgz
