@@ -70,7 +70,7 @@ class Manager
 	 */
 	public function setPath($language_dir)
 	{
-		$this->language_dir = rtrim($language_dir, '/\\');
+		$this->language_dir = rtrim($language_dir, '/\\') . '/';
 	}
 
 	/**
