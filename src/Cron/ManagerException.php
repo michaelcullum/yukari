@@ -34,12 +34,12 @@ use Failnet\Bot as Bot;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet3
  *
- * @note reserves 205xx error codes
+ * @note reserves 206xx error codes
  */
 class ManagerException extends Failnet\FailnetException
 {
-	const ERR_CRON_LOAD_FAILED = 20500;
-	const ERR_CRON_NO_SUCH_TASK = 20501;
-	const ERR_CRON_TASK_ALREADY_LOADED = 20502;
-	const ERR_CRON_INVALID_STATE = 20503;
+	const ERR_CRON_LOAD_FAILED = 20600;
+	const ERR_CRON_NO_SUCH_TASK = 20601;
+	const ERR_CRON_TASK_ALREADY_LOADED = 20602;
+	const ERR_CRON_INVALID_STATE = 20603;
 }

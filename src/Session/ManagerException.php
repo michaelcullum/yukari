@@ -34,9 +34,9 @@ use Failnet as Root;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet3
  *
- * @note reserves 206xx error codes
+ * @note reserves 207xx error codes
  */
 class ManagerException extends Failnet\FailnetException
 {
-	const ERR_AUTH_SESSION_NOT_SESSIONBASE_CHILD = 20600;
+	const ERR_AUTH_SESSION_NOT_SESSIONBASE_CHILD = 20700;
 }
