@@ -20,8 +20,9 @@
  *
  */
 
-namespace Failnet\Language\Package;
+namespace Failnet\Language\Package\en_US;
 use Failnet\Bot as Bot;
+use Failnet\Language\Package as Package;
 use Failnet\Language as Language;
 
 /**
@@ -35,7 +36,7 @@ use Failnet\Language as Language;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet3
  */
-class Core extends PackageBase implements PackageInterface
+class Core extends Package\PackageBase implements Package\PackageInterface
 {
 	protected $entries = array(
 		'LANGUAGE_VAR'	=> 'Some language variable: %1$s',
