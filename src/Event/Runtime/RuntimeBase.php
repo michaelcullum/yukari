@@ -21,7 +21,6 @@
  */
 
 namespace Failnet\Event\Runtime;
-use Failnet as Root;
 use Failnet\Event as Event;
 
 /**

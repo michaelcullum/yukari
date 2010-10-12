@@ -21,7 +21,6 @@
  */
 
 namespace Failnet\Cron\Task;
-use Failnet as Root;
 use Failnet\Bot as Bot;
 use Failnet\Cron as Cron;
 
@@ -38,7 +37,7 @@ use Failnet\Cron as Cron;
  *
  * @note reserves 400xx error codes
  */
-class TaskException extends Root\FailnetException
+class TaskException extends Failnet\FailnetException
 {
 	const ERR_CRON_TASK_ACCESS_MANUAL = 40000;
 	const ERR_CRON_TASK_ACCESS_ZOMBIE = 40001;

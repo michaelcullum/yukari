@@ -21,7 +21,6 @@
  */
 
 namespace Failnet\Core;
-use Failnet as Root;
 use Failnet\Bot as Bot;
 
 
@@ -148,13 +147,13 @@ class UI
 	 */
 	public function level($level)
 	{
-		if($level === Root\OUTPUT_RAW)
+		if($level === Failnet\OUTPUT_RAW)
 		{
-			return ($this->output_level === Root\OUTPUT_RAW);
+			return ($this->output_level === Failnet\OUTPUT_RAW);
 		}
 		else
 		{
-			return ($this->output_level >= $level && $this->output_level !== Root\OUTPUT_RAW);
+			return ($this->output_level >= $level && $this->output_level !== Failnet\OUTPUT_RAW);
 		}
 	}
 
@@ -164,13 +163,13 @@ class UI
 	 */
 	public function startup()
 	{
-		if($this->level(Root\OUTPUT_NORMAL))
+		if($this->level(Failnet\OUTPUT_NORMAL))
 		{
 			$this->output('===================================================================', 'STATUS');
 			$this->output('', 'STATUS');
 			$this->output('  Failnet -- PHP-based IRC Bot', 'STATUS');
 			$this->output('---------------------------------------------------------------------', 'STATUS');
-			$this->output('@version:      ' . Root\FAILNET_VERSION, 'STATUS');
+			$this->output('@version:      ' . Failnet\FAILNET_VERSION, 'STATUS');
 			$this->output('@copyright:    (c) 2009 - 2010 -- Damian Bushong', 'STATUS');
 			$this->output('@license:      MIT License', 'STATUS');
 			$this->output('', 'STATUS');
@@ -190,7 +189,7 @@ class UI
 	 */
 	public function ready()
 	{
-		if($this->level(Root\OUTPUT_NORMAL))
+		if($this->level(Failnet\OUTPUT_NORMAL))
 		{
 			$this->output('---------------------------------------------------------------------', 'STATUS');
 			$this->output('Failnet loaded and ready!', 'STATUS');
@@ -204,7 +203,7 @@ class UI
 	 */
 	public function shutdown()
 	{
-		if($this->level(Root\OUTPUT_NORMAL))
+		if($this->level(Failnet\OUTPUT_NORMAL))
 		{
 			$this->output('---------------------------------------------------------------------', 'STATUS');
 			$this->output('Failnet shutting down...', 'STATUS');
@@ -218,7 +217,7 @@ class UI
 	 */
 	public function message($data)
 	{
-		if($this->level(Root\OUTPUT_NORMAL))
+		if($this->level(Failnet\OUTPUT_NORMAL))
 		{
 			$this->output('[irc] ' . $data);
 		}
@@ -230,7 +229,7 @@ class UI
 	 */
 	public function status($data)
 	{
-		if($this->level(Root\OUTPUT_NORMAL))
+		if($this->level(Failnet\OUTPUT_NORMAL))
 		{
 			$this->output('[system] ' . $data);
 		}
@@ -242,7 +241,7 @@ class UI
 	 */
 	public function system($data)
 	{
-		if($this->level(Root\OUTPUT_DEBUG))
+		if($this->level(Failnet\OUTPUT_DEBUG))
 		{
 			$this->output('[system] ' . $data);
 		}
@@ -255,7 +254,7 @@ class UI
 	 */
 	public function event($data)
 	{
-		if($this->level(Root\OUTPUT_DEBUG_FULL))
+		if($this->level(Failnet\OUTPUT_DEBUG_FULL))
 		{
 			$this->output('[event] ' . $data);
 		}
@@ -268,7 +267,7 @@ class UI
 	 */
 	public function notice($data)
 	{
-		if($this->level(Root\OUTPUT_DEBUG))
+		if($this->level(Failnet\OUTPUT_DEBUG))
 		{
 			$this->output('[notice] ' . $data);
 		}
@@ -281,7 +280,7 @@ class UI
 	 */
 	public function warning($data)
 	{
-		if($this->level(Root\OUTPUT_DEBUG))
+		if($this->level(Failnet\OUTPUT_DEBUG))
 		{
 			$this->output('[warning] ' . $data, 'WARNING');
 		}
@@ -294,7 +293,7 @@ class UI
 	 */
 	public function error($data)
 	{
-		if($this->level(Root\OUTPUT_DEBUG))
+		if($this->level(Failnet\OUTPUT_DEBUG))
 		{
 			$this->output('[error] ' . $data, 'ERROR');
 		}
@@ -307,7 +306,7 @@ class UI
 	 */
 	public function php($data)
 	{
-		if($this->level(Root\OUTPUT_DEBUG))
+		if($this->level(Failnet\OUTPUT_DEBUG))
 		{
 			$this->output('[php] ' . $data, 'ERROR');
 		}
@@ -319,7 +318,7 @@ class UI
 	 */
 	public function debug($data)
 	{
-		if($this->level(Root\OUTPUT_DEBUG_FULL))
+		if($this->level(Failnet\OUTPUT_DEBUG_FULL))
 		{
 			$this->output('[debug] ' . $data);
 		}
@@ -331,7 +330,7 @@ class UI
 	 */
 	public function raw($data)
 	{
-		if($this->level(Root\OUTPUT_RAW))
+		if($this->level(Failnet\OUTPUT_RAW))
 		{
 			$this->output('[SOCKET] ' . $data);
 		}
@@ -351,7 +350,7 @@ class UI
  *
  * @note reserves 203xx error codes
  */
-class UIException extends Root\FailnetException
+class UIException extends Failnet\FailnetException
 {
 	const ERR_UI_INVALID_OUTPUT_LEVEL = 20300;
 }

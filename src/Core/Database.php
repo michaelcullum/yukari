@@ -21,7 +21,6 @@
  */
 
 namespace Failnet\Core;
-use Failnet as Root;
 
 /**
  * Failnet - Database class,

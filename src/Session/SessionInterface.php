@@ -21,7 +21,6 @@
  */
 
 namespace Failnet\Session;
-use Failnet as Root;
 use Failnet\Bot as Bot;
 use Failnet\Lib as Lib;
 

@@ -21,7 +21,6 @@
  */
 
 namespace Failnet\Cron;
-use Failnet as Root;
 use Failnet\Bot as Bot;
 
 /**
@@ -78,17 +77,17 @@ class Manager implements \ArrayAccess
 		{
 			$this[$task_name]->status = $status;
 		}
-		catch(Root\EnvironmentException $e)
+		catch(Failnet\EnvironmentException $e)
 		{
 			// Check to see if the cron task even existed.
-			if($e->getCode() == Root\EnvironmentException::ERR_ENVIRONMENT_NO_SUCH_OBJECT)
+			if($e->getCode() == Failnet\EnvironmentException::ERR_ENVIRONMENT_NO_SUCH_OBJECT)
 			{
 				return false;
 			}
 			else
 			{
 				// rethrow the exception if it isn't what we are expecting
-				throw new Root\EnvironmentException($e->getMessage(), $e->getCode());
+				throw new Failnet\EnvironmentException($e->getMessage(), $e->getCode());
 			}
 		}
 		return true;

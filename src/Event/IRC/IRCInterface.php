@@ -21,7 +21,6 @@
  */
 
 namespace Failnet\Event\IRC;
-use Failnet as Root;
 use Failnet\Event as Event;
 
 /**

@@ -21,7 +21,6 @@
  */
 
 namespace Failnet\Lib;
-use Failnet as Root;
 
 /**
  * Failnet - JSON Integration class,
@@ -34,7 +33,7 @@ use Failnet as Root;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet3
  */
-abstract class JSON extends Root\Base
+abstract class JSON extends Failnet\Base
 {
 	/**
 	 * Builds a JSON string based on input.
@@ -115,7 +114,7 @@ abstract class JSON extends Root\Base
  *
  * @note reserves 301xx error codes
  */
-class JSONException extends Root\FailnetException
+class JSONException extends Failnet\FailnetException
 {
 	const ERR_JSON_NO_FILE = 30100;
 	const ERR_JSON_UNKNOWN = 30101;

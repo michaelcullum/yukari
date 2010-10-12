@@ -21,7 +21,6 @@
  */
 
 namespace Failnet\Language\Package;
-use Failnet as Root;
 use Failnet\Bot as Bot;
 use Failnet\Language as Language;
 

@@ -21,7 +21,6 @@
  */
 
 namespace Failnet\Cron;
-use Failnet as Root;
 use Failnet\Bot as Bot;
 
 /**
@@ -37,7 +36,7 @@ use Failnet\Bot as Bot;
  *
  * @note reserves 205xx error codes
  */
-class ManagerException extends Root\FailnetException
+class ManagerException extends Failnet\FailnetException
 {
 	const ERR_CRON_LOAD_FAILED = 20500;
 	const ERR_CRON_NO_SUCH_TASK = 20501;

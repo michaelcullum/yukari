@@ -23,7 +23,6 @@
  */
 
 namespace Failnet\Lib;
-use Failnet as Root;
 
 /**
  * Failnet - Hostmask class,
@@ -36,7 +35,7 @@ use Failnet as Root;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet3
  */
-class Hostmask extends Root\Base implements \ArrayAccess
+class Hostmask extends Failnet\Base implements \ArrayAccess
 {
 	/**
 	 * @var string - The host of the hostmask
@@ -166,7 +165,7 @@ class Hostmask extends Root\Base implements \ArrayAccess
  *
  * @note reserves 300xx error codes
  */
-class HostmaskException extends Root\FailnetException
+class HostmaskException extends Failnet\FailnetException
 {
 	const ERR_INVALID_HOSTMASK = 30000;
 	const ERR_INVALID_PROPERTY = 30001;

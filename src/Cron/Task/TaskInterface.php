@@ -21,7 +21,6 @@
  */
 
 namespace Failnet\Cron\Task;
-use Failnet as Root;
 use Failnet\Bot as Bot;
 use Failnet\Cron as Cron;
 

@@ -21,7 +21,6 @@
  */
 
 namespace Failnet\Event;
-use Failnet as Root;
 use Failnet\Bot as Bot;
 
 /**

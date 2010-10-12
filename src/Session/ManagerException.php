@@ -36,7 +36,7 @@ use Failnet as Root;
  *
  * @note reserves 206xx error codes
  */
-class ManagerException extends Root\FailnetException
+class ManagerException extends Failnet\FailnetException
 {
 	const ERR_AUTH_SESSION_NOT_SESSIONBASE_CHILD = 20600;
 }

@@ -21,7 +21,6 @@
  */
 
 namespace Failnet\Core;
-use Failnet as Root;
 use Failnet\Bot as Bot;
 use Failnet\Lib as Lib;
 
@@ -286,7 +285,7 @@ class Socket
  *
  * @note reserves 202xx error codes
  */
-class SocketException extends Root\FailnetException
+class SocketException extends Failnet\FailnetException
 {
 	const ERR_SOCKET_UNSUPPORTED_TRANSPORT = 20200;
 	const ERR_SOCKET_ERROR = 20201;

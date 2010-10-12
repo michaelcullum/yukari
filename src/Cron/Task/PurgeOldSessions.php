@@ -21,7 +21,6 @@
  */
 
 namespace Failnet\Cron;
-use Failnet as Root;
 
 /**
  * Failnet - Expired session purge cron task class,

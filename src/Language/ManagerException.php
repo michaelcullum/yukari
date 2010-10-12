@@ -21,7 +21,6 @@
  */
 
 namespace Failnet\Language;
-use Failnet as Root;
 use Failnet\Bot as Bot;
 
 /**
@@ -37,7 +36,7 @@ use Failnet\Bot as Bot;
  *
  * @note reserves 204xx error codes
  */
-class ManagerException extends Root\FailnetException
+class ManagerException extends Failnet\FailnetException
 {
 	const ERR_LANGUAGE_FILE_LOAD_FAILED = 20400;
 	const ERR_LANGUAGE_FILE_RELOAD_FAILED = 20401;
