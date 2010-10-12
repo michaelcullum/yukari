@@ -192,13 +192,13 @@ class Environment
 		$file_extension = substr(strrchr($config, '.'), 1);
 		if($file_extension == 'php')
 		{
-			if(($include = @include(FAILNET . "Data/Config/$config")) === false || !isset($data) || !is_array($data))
+			if(($include = @include(FAILNET . "data/config/$config")) === false || !isset($data) || !is_array($data))
 				throw new EnvironmentException('Failed to load the specified config file "%1$s"', EnvironmentException::ERR_ENVIRONMENT_FAILED_CONFIG_LOAD);
 			$this->setOptions($data);
 		}
 		elseif($file_extension == 'json')
 		{
-			$data = Lib\JSON::decode(FAILNET . "Data/Config/$config");
+			$data = Lib\JSON::decode(FAILNET . "data/config/$config");
 			$this->setOptions($data);
 		}
 		else
