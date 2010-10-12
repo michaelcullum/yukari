@@ -10,4 +10,5 @@
 * write Failnet\Event\Runtime\RuntimeBase
 * write Failnet\Event\Runtime\(all)
 * write Failnet\Language\Compiler
+* overhaul autoloader for proper addon autoloading support
 * remove the ambiguous "core" namespace
