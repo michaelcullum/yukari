@@ -2,23 +2,16 @@
 
 ## Exception code reservations
 
-* 0 - **Failnet\FailnetException** - */Includes/Exception.php*
-
-
-* 100xx - **Failnet\StartupException** - */Includes/Exception.php*
-* 101xx - **Failnet\AutoloadException** - */Includes/Exception.php*
-* 102xx - **Failnet\EnvironmentException** - */Includes/Exception.php*
-
-
-* 202xx - **Failnet\Core\SocketException** - */Includes/Core/Socket.php*
-* 203xx - **Failnet\Core\UIException** - */Includes/Core/UI.php*
-* 204xx - **Failnet\Core\LanguageException** - */Includes/Core/Language.php*
-* 205xx - **Failnet\Core\CronException** - */Includes/Core/Cron.php*
-* 206xx - **Failnet\Session\ManagerException** - */Includes/Session/ManagerException.php*
-
-
-* 300xx - **Failnet\Lib\HostmaskException** - */Includes/Lib/Hostmask.php*
-* 301xx - **Failnet\Lib\JSONException** - */Includes/Lib/JSON.php*
-
-
-* 400xx - **Failnet\Cron\CronTaskException** - */Includes/Cron/CronBase.php*
+* 0 - **Failnet\FailnetException** - */src/Exception.php*
+* 100xx - **Failnet\StartupException** - */src/Exception.php*
+* 101xx - **Failnet\AutoloadException** - */src/Exception.php*
+* 102xx - **Failnet\EnvironmentException** - */src/Exception.php*
+* 202xx - **Failnet\Core\SocketException** - */src/Core/Socket.php*
+* 203xx - **Failnet\Core\UIException** - */src/Core/UI.php*
+* 204xx - **Failnet\Language\ManagerException** - */src/Language/ManagerException.php*
+* 205xx - **Failnet\Language\CompilerException** - */src/Language/CompilerException.php*
+* 206xx - **Failnet\Cron\ManagerException** - */src/Cron/ManagerException.php*
+* 207xx - **Failnet\Session\ManagerException** - */src/Session/ManagerException.php*
+* 300xx - **Failnet\Lib\HostmaskException** - */src/Lib/HostmaskException.php*
+* 301xx - **Failnet\Lib\JSONException** - */src/Lib/JSONException.php*
+* 400xx - **Failnet\Cron\Task\TaskException** - */src/Cron/Task/TaskException.php*
