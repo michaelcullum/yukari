@@ -39,4 +39,5 @@ use Failnet\Language as Language;
 interface PackageInterface extends \Countable, \Iterator
 {
 	public function buildJSON();
+	public function getLocale();
 }

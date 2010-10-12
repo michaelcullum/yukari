@@ -38,6 +38,14 @@ use Failnet\Language as Language;
  */
 class PackageBase implements PackageInterface
 {
+	/**
+	 * @var string - The locale for this package.
+	 */
+	protected $locale = '';
+
+	/**
+	 * @var array - The array of language entries.
+	 */
 	protected $entries = array();
 
 	/**
@@ -49,6 +57,17 @@ class PackageBase implements PackageInterface
 		if(!$this->entries)
 			return false;
 		return Lib\JSON::encode($this->entries);
+	}
+
+	/**
+	 * Get the locale for this package.
+	 * @return string - The locale for this package.
+	 */
+	public function getLocale()
+	{
+		if(!$this->locale)
+			return 'unknown';
+		return $this->locale;
 	}
 
 	/**

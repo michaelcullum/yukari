@@ -38,6 +38,8 @@ use Failnet\Language\Package as Package;
  */
 class Core extends Package\PackageBase implements Package\PackageInterface
 {
+	protected $locale = 'en-US';
+
 	protected $entries = array(
 		'LANGUAGE_VAR'	=> 'Some language variable: %1$s',
 	);
