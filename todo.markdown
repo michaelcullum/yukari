@@ -9,6 +9,5 @@
 * write Failnet\Event\IRC\Response
 * write Failnet\Event\Runtime\RuntimeBase
 * write Failnet\Event\Runtime\(all)
-* write Failnet\Language\Package\PackageBase (provide automatic json building support, for constructing the JSON language files that will be held within data/language/)
-* write Failnet\Language\Package\PackageInterface
+* write Failnet\Language\Compiler
 * remove the ambiguous "core" namespace
