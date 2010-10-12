@@ -18,8 +18,6 @@
  * This source file is subject to the MIT license that is bundled
  * with this package in the file LICENSE.
  *
- * @todo ArrayAccess support
- *
  */
 
 namespace Failnet\Lib;
@@ -150,23 +148,4 @@ class Hostmask extends Failnet\Base implements \ArrayAccess
 	{
 		$this->$offset = NULL;
 	}
-}
-
-/**
- * Failnet - Subordinate exception class
- *      Extension of the Failnet exception class.
- *
- *
- * @category    Failnet
- * @package     Failnet
- * @author      Damian Bushong
- * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet3
- *
- * @note reserves 300xx error codes
- */
-class HostmaskException extends Failnet\FailnetException
-{
-	const ERR_INVALID_HOSTMASK = 30000;
-	const ERR_INVALID_PROPERTY = 30001;
 }
