@@ -121,7 +121,7 @@ class Manager
 		// Let's try to load the language file...we use try/catch in case something goes nuclear with the JSON processing, here.
 		try
 		{
-			$entries = Lib\JSON::decode($this->language_dir . $file);
+			$json = Lib\JSON::decode($this->language_dir . $file);
 		}
 		catch(Lib\JSONException $e)
 		{
@@ -129,7 +129,7 @@ class Manager
 		}
 
 		// Store the new language entries
-		$this->setEntries($entries);
+		$this->setEntries($json['locale'], $json['entries']);
 
 		// Add this language file to the list of loaded language files
 		$this->files[] = $file;
@@ -138,48 +138,54 @@ class Manager
 
 	/**
 	 * Pulls a language variable from Failnet, and will vsprintf() extra strings into the language variable if desired
+	 * @param string $locale - The locale to grab the entry under.
 	 * @param string $key - The language key of the variable to fetch
 	 * @param array $arguments - Any parameters that should be passed to vsprintf() if desired
 	 * @return string - The desired language variable, parsed by vsprintf() if desired
 	 */
-	public function getEntry($key, array $arguments = array())
+	public function getEntry($locale, $key, array $arguments = array())
 	{
+		if(!isset($this->entries[$locale]))
+			$locale = Bot::getOption('language.default_locale', 'en-US');
+
 		// If there's no such language key, we'll return an empty string
-		if(!isset($this->entries[$key]))
+		if(!isset($this->entries[$locale][$key]))
 			return $key;
 
 		if(!empty($arguments))
-			return $this->entries[$key];
+			return $this->entries[$locale][$key];
 
 		// Okay, someone's gotta be difficult.  We need to vsprintf(), yay.
-		return vsprintf($this->entries[$key], $arguments);
+		return vsprintf($this->entries[$locale][$key], $arguments);
 	}
 
 	/**
 	 * Load a language variable into Failnet for future use.
+	 * @param string $locale - The locale for this language entry.
 	 * @param string $key - The language key to use this language variable with.
 	 * @param string $value - A plain or sprintf() formatted string to use for a language variable.
 	 * @return void
 	 *
 	 * @note This method WILL overwrite previously loaded language variables!
 	 */
-	public function setEntry($key, $value)
+	public function setEntry($locale, $key, $value)
 	{
-		$this->entries[strtoupper($key)] = $value;
+		$this->entries[$locale][strtoupper($key)] = $value;
 	}
 
 	/**
-	 * Load up an array of language variables
-	 * @param array $entries - The array of entries to load
+	 * Load up an array of language variables.
+	 * @param string $locale - The locale to store the variables for.
+	 * @param array $entries - The array of entries to load.
 	 * @return void
 	 *
 	 * @note This method WILL overwrite previously loaded language variables!
 	 */
-	public function setEntries(array $entries)
+	public function setEntries($locale, array $entries)
 	{
 		foreach($entries as $key => $value)
 		{
-			$this->setEntry($key, $value);
+			$this->setEntry($locale, $key, $value);
 		}
 	}
 
@@ -187,8 +193,8 @@ class Manager
 	 * Alias of Failnet\Language\Manager->getEntry()
 	 * @see Failnet\Language\Manager->getEntry()
 	 */
-	public function __invoke($key, array $arguments = array())
+	public function __invoke($locale, $key, array $arguments = array())
 	{
-		return $this->getEntry($key, $arguments);
+		return $this->getEntry($locale, $key, $arguments);
 	}
 }
