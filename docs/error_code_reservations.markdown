@@ -12,6 +12,7 @@
 * 205xx - **Failnet\Language\CompilerException** - */src/Language/CompilerException.php*
 * 206xx - **Failnet\Cron\ManagerException** - */src/Cron/ManagerException.php*
 * 207xx - **Failnet\Session\ManagerException** - */src/Session/ManagerException.php*
+* 208xx - **Failnet\Addon\ManagerException** - */src/Addon/ManagerException.php*
 * 300xx - **Failnet\Lib\HostmaskException** - */src/Lib/HostmaskException.php*
 * 301xx - **Failnet\Lib\JSONException** - */src/Lib/JSONException.php*
 * 400xx - **Failnet\Cron\Task\TaskException** - */src/Cron/Task/TaskException.php*
