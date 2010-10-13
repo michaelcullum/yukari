@@ -52,7 +52,7 @@ class PackageBase implements PackageInterface
 	 * Build the JSON string for our language entries.
 	 * @return mixed - Either the JSON string for our language entries, or false if we have no entries in this package.
 	 */
-	public function buildJSON()
+	final public function buildJSON()
 	{
 		if(!$this->entries)
 			return false;
@@ -63,7 +63,7 @@ class PackageBase implements PackageInterface
 	 * Get the locale for this package.
 	 * @return string - The locale for this package.
 	 */
-	public function getLocale()
+	final public function getLocale()
 	{
 		if(!$this->locale)
 			return 'unknown';
@@ -78,7 +78,7 @@ class PackageBase implements PackageInterface
 	 * Get the number of entries in this language package.
 	 * @return integer - The number of entries.
 	 */
-	public function count()
+	final public function count()
 	{
 		return sizeof($this->entries);
 	}
@@ -91,7 +91,7 @@ class PackageBase implements PackageInterface
 	 * Iterator method, rewinds the array back to the first element.
 	 * @return void
 	 */
-	public function rewind()
+	final public function rewind()
 	{
 		return reset($this->entries);
 	}
@@ -100,7 +100,7 @@ class PackageBase implements PackageInterface
 	 * Iterator method, returns the key of the current element
 	 * @return scalar - The key of the current element.
 	 */
-	public function key()
+	final public function key()
 	{
 		return key($this->entries);
 	}
@@ -109,7 +109,7 @@ class PackageBase implements PackageInterface
 	 * Iterator method, checks to see if the current position is valid.
 	 * @return boolean - Whether or not the current array position is valid.
 	 */
-	public function valid()
+	final public function valid()
 	{
 		return (!is_null(key($this->entries)));
 	}
@@ -118,7 +118,7 @@ class PackageBase implements PackageInterface
 	 * Iterator method, gets the current element
 	 * @return Failnet\Lib\UserInterface - The current session of focus.
 	 */
-	public function current()
+	final public function current()
 	{
 		return current($this->entries);
 	}
@@ -127,7 +127,7 @@ class PackageBase implements PackageInterface
 	 * Iterator method, moves to the next session available.
 	 * @return void
 	 */
-	public function next()
+	final public function next()
 	{
 		next($this->entries);
 	}
