@@ -28,7 +28,11 @@
 define('FAILNET', dirname(__FILE__));
 define('FAILNET_MIN_PHP', '5.3.0');
 
+// Check running PHP version against the minimum supported PHP version...
 if(version_compare(FAILNET_MIN_PHP, PHP_VERSION, '>'))
-	throw new Exception('Failnet requires PHP ' . FAILNET_MIN_PHP . ' or better, while the currently installed PHP version is ' . PHP_VERSION, 10000);
+{
+	echo sprintf('Failnet requires PHP version %1$s or better, while the currently installed PHP version is %2$s', FAILNET_MIN_PHP, PHP_VERSION);
+	exit(1);
+}
 
 require FAILNET . 'src/Bootstrap.php';
