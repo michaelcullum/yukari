@@ -5,6 +5,7 @@
 ### Language
 
 * *language.file_dir* - string - The directory to load language files from, no trailing slash.
+* *language.default_locale* - string - The locale to use by default, for pulling language entries from. (e.g. en-US, fr-FR, en)
 
 ### UI
 
