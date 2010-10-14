@@ -42,15 +42,16 @@ class Autoload
 
 	/**
 	 * Constructor
+	 * @param array $paths - Extra paths to include in the autoload search
 	 * @return void
 	 */
-	public function __construct()
+	public function __construct(array $paths = array())
 	{
-		$this->paths = array(
+		$paths = array_merge($paths, array(
 			FAILNET . 'src/',
-			//FAILNET . 'addons/autoload/',
-			FAILNET . 'addons/',
-		);
+		));
+		foreach($paths as $path)
+			$this->setPath($path);
 	}
 
 	/**
@@ -103,7 +104,8 @@ class Autoload
 	 */
 	public function setPath($include_path)
 	{
-		$this->paths[] = $include_path;
+		// We use array_unshift here so that newer autoloading paths take top priority.
+		array_unshift($this->paths, $include_path);
 	}
 
 	/**
