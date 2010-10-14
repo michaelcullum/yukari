@@ -36,7 +36,7 @@ use Failnet\Bot as Bot;
  *
  * @note reserves 208xx error codes
  */
-class ManagerException extends Failnet\FailnetException
+class LoaderException extends Failnet\FailnetException
 {
 	// asdf
 }
