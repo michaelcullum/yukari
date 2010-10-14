@@ -83,30 +83,30 @@ class Loader
 		{
 			$metadata_path = FAILNET . 'addons/' . $addon . '/Addon/Metadata/' . $addon . '.php';
 			if(!file_exists($metadata_path))
-				throw new LoaderException(); // @todo exception
+				throw new LoaderException('Could not locate the addon metadata file', LoaderException::ERR_METADATA_FILE_MISSING);
 
 			require $metadata_path;
 		}
 
 		$metadata_class = "Failnet\\Addon\\Metadata\\$addon";
 		if(!class_exists($metadata_class))
-			throw new LoaderException(); // @todo exception
+			throw new LoaderException('Addon metadata class could not be located', LoaderException::ERR_METADATA_CLASS_MISSING);
 
 		// Here we instantiate the addon's metadata object, and make sure it's the right type of object.
 		/* @var $metadata Failnet\Addon\Metadata\MetadataBase */
 		$metadata = new $metadata_class;
 		if(!($metadata instanceof Metadata\MetadataBase))
-			throw new LoaderException(); // @todo exception
+			throw new LoaderException('Addon metadata class does not extend class MetadataBase', LoaderException::ERR_METADATA_NOT_BASE_CHILD);
 
 		if(!($metadata instanceof Metadata\MetadataInterface))
-			throw new LoaderException(); // @todo exception
+			throw new LoaderException('Addon metadata class does not implement interface MetadataInterface', LoaderException::ERR_METADATA_NOT_INTERFACE_CHILD);
 
 		// Check dependencies and requirements here.
 		if(!$metadata->meetsTargetVersion())
-			throw new LoaderException(); // @todo exception
+			throw new LoaderException('Installed version of Failnet does not meet the required version for the addon', LoaderException::ERR_METADATA_MINIMUM_TARGET_NOT_MET);
 
 		if(!$metadata->checkDependencies())
-			throw new LoaderException(); // @todo exception
+			throw new LoaderException('Addon metadata object declares that its required dependencies have not been met', LoaderException::ERR_METADATA_CUSTOM_DEPENDENCY_FAIL);
 
 		if(!$using_phar)
 		{

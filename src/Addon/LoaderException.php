@@ -38,5 +38,10 @@ use Failnet\Bot as Bot;
  */
 class LoaderException extends Failnet\FailnetException
 {
-	// asdf
+	const ERR_METADATA_FILE_MISSING = 20800;
+	const ERR_METADATA_CLASS_MISSING = 20801;
+	const ERR_METADATA_NOT_BASE_CHILD = 20802;
+	const ERR_METADATA_NOT_INTERFACE_CHILD = 20803;
+	const ERR_METADATA_MINIMUM_TARGET_NOT_MET = 20804;
+	const ERR_METADATA_CUSTOM_DEPENDENCY_FAIL = 20805;
 }
