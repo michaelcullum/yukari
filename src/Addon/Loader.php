@@ -52,7 +52,7 @@ class Loader
 			{
 				if($this->loadAddon($addon))
 				{
-					$ui->status(sprintf('Loaded addon "%1$s" successfully', $addon));
+					$ui->system(sprintf('Loaded addon "%1$s" successfully', $addon));
 				}
 				else
 				{
