@@ -20,7 +20,7 @@
  *
  */
 
-namespace Failnet\addon;
+namespace Failnet\Addon;
 use Failnet\Bot as Bot;
 use Failnet\Lib as Lib;
 
@@ -50,11 +50,12 @@ class Loader
 		{
 			foreach($addons as $addon)
 			{
-				if($this->loadAddon($addon))
+				try
 				{
+					$this->loadAddon($addon);
 					$ui->system(sprintf('Loaded addon "%1$s" successfully', $addon));
 				}
-				else
+				catch(LoaderException $e)
 				{
 					$ui->warning(sprintf('Failed to load addon "%1$s"', $addon));
 					$ui->warning(sprintf('Failure message:  %1$s', $e->getMessage()));
@@ -71,44 +72,49 @@ class Loader
 	 */
 	public function loadAddon($addon)
 	{
-		// @todo phar addon support
-		try
+		$using_phar = false;
+		$phar_path = FAILNET . 'addons/' . $addon . '/' . $addon . '.phar';
+		if(file_exists($phar_path))
+		{
+			require $phar_path;
+			$using_phar = true;
+		}
+		else
 		{
 			$metadata_path = FAILNET . 'addons/' . $addon . '/Addon/Metadata/' . $addon . '.php';
 			if(!file_exists($metadata_path))
 				throw new LoaderException(); // @todo exception
 
 			require $metadata_path;
-			$metadata_class = "Failnet\\Addon\\Metadata\\$addon";
-			if(!class_exists($metadata_class))
-				throw new LoaderException(); // @todo exception
-
-			// Here we instantiate the addon's metadata object, and make sure it's the right type of object.
-			/* @var $metadata Failnet\Addon\Metadata\MetadataBase */
-			$metadata = new $metadata_class;
-			if(!($metadata instanceof Metadata\MetadataBase))
-				throw new LoaderException(); // @todo exception
-
-			if(!($metadata instanceof Metadata\MetadataInterface))
-				throw new LoaderException(); // @todo exception
-
-			// Check dependencies and such here.
-
-			if(!$metadata->meetsTargetVersion())
-				throw new LoaderException(); // @todo exception
-
-			if(!$metadata->checkDependencies())
-				throw new LoaderException();
-
-			// If the addon's metadata object passes all checks, then we add the addon's directory to the autoloader include path, and initialize the addon itself.
-			Bot::getObject('core.autoload')->setPath(FAILNET . "addons/$addon/");
-			$metadata->initialize();
-
-			return true;
 		}
-		catch(LoaderException $e)
+
+		$metadata_class = "Failnet\\Addon\\Metadata\\$addon";
+		if(!class_exists($metadata_class))
+			throw new LoaderException(); // @todo exception
+
+		// Here we instantiate the addon's metadata object, and make sure it's the right type of object.
+		/* @var $metadata Failnet\Addon\Metadata\MetadataBase */
+		$metadata = new $metadata_class;
+		if(!($metadata instanceof Metadata\MetadataBase))
+			throw new LoaderException(); // @todo exception
+
+		if(!($metadata instanceof Metadata\MetadataInterface))
+			throw new LoaderException(); // @todo exception
+
+		// Check dependencies and requirements here.
+		if(!$metadata->meetsTargetVersion())
+			throw new LoaderException(); // @todo exception
+
+		if(!$metadata->checkDependencies())
+			throw new LoaderException(); // @todo exception
+
+		if(!$using_phar)
 		{
-			return false;
+			// If the addon's metadata object passes all checks and we're not using a phar file, then we add the addon's directory to the autoloader include path
+			Bot::getObject('core.autoload')->setPath(FAILNET . "addons/$addon/");
 		}
+
+		// Initialize the addon
+		$metadata->initialize();
 	}
 }
