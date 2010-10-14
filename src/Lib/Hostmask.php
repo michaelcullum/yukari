@@ -33,7 +33,7 @@ namespace Failnet\Lib;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet3
  */
-class Hostmask extends Failnet\Base implements \ArrayAccess
+class Hostmask implements \ArrayAccess
 {
 	/**
 	 * @var string - The host of the hostmask

@@ -33,7 +33,7 @@ namespace Failnet\Lib;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet3
  */
-abstract class JSON extends Failnet\Base
+abstract class JSON
 {
 	/**
 	 * Builds a JSON string based on input.
