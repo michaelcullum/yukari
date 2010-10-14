@@ -105,7 +105,7 @@ class Autoload
 	public function setPath($include_path)
 	{
 		// We use array_unshift here so that newer autoloading paths take top priority.
-		array_unshift($this->paths, $include_path);
+		array_unshift($this->paths, rtrim($include_path, '/') . '/');
 	}
 
 	/**
