@@ -35,8 +35,13 @@ use Failnet\Lib as Lib;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet3
  */
-class Loader
+class Loader implements Iterator // @todo iterator methods
 {
+	/**
+	 * @var array - Array of instantiated metadata objects.
+	 */
+	protected $metadata = array();
+
 	/**
 	 * Constructor.
 	 * @param array $addons - The addons we want to load.
@@ -116,5 +121,8 @@ class Loader
 
 		// Initialize the addon
 		$metadata->initialize();
+
+		// Store the metadata object in a predictable slot.
+		$this->metadata[hash('md5', $metadata->getName())] = $metadata;
 	}
 }
