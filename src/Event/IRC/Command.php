@@ -20,12 +20,11 @@
  *
  */
 
-namespace Failnet\Event\Runtime;
-use Failnet\Event as Event;
+namespace Failnet\Event\IRC;
 
 /**
- * Failnet - Runtime Event base class,
- * 	    Base class that all Runtime events must extend.
+ * Failnet - Event object,
+ * 	    A class to define ene of the various event types.
  *
  *
  * @category    Failnet
@@ -34,10 +33,37 @@ use Failnet\Event as Event;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet3
  */
-abstract class RuntimeBase extends Event\EventBase implements Event\EventInterface
+class Command extends IRCBase
 {
 	/**
 	 * @var boolean - Can this event be sent externally?
 	 */
 	protected $sendable = false;
+
+	/**
+	 * @var array - Array mapping args for quick setting later
+	 */
+	protected $map = array(
+		'target',
+		'text'
+	);
+
+	/**
+	 * @var string - Event arg.
+	 */
+	public $arg_target = '';
+
+	/**
+	 * @var string - Event arg.
+	 */
+	public $arg_text = '';
+
+	/**
+	 * Build the IRC command from the args included
+	 * @return string - The raw command to send.
+	 */
+	public function buildCommand()
+	{
+		return '';
+	}
 }

@@ -41,6 +41,11 @@ abstract class EventBase implements \ArrayAccess
 	protected $map = array();
 
 	/**
+	 * @var boolean - Can this event be sent externally?
+	 */
+	protected $sendable = true;
+
+	/**
 	 * Grabs this event object's event type
 	 * @return string - The current event's type (omitting Failnet\Event\ of course)
 	 */
@@ -63,6 +68,15 @@ abstract class EventBase implements \ArrayAccess
 		$arg_key = 'arg_' . $this->map[$arg_number];
 		$this->$arg_key = $arg_value;
 		return true;
+	}
+
+	/**
+	 * Returns whether or not this event is sendable.
+	 * @return boolean - Can this event be sent?
+	 */
+	public function getSendable()
+	{
+		return (bool) $this->sendable;
 	}
 
 	/**

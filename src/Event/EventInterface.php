@@ -37,4 +37,5 @@ interface EventInterface
 {
 	public function getType();
 	public function setArgNumber($arg_number, $arg_value);
+	public function getSendable();
 }

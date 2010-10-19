@@ -227,6 +227,10 @@ class Socket
 		if(empty($this->socket))
 			throw new SocketException('Cannot send to server, no connection present', SocketException::ERR_SOCKET_NO_CONNECTION);
 
+		// Make sure this event can be sent in the first place.
+		if(!$event->sendable())
+			throw new SocketException('Attempt to send unsendable event failed', SocketException::ERR_SOCKET_SEND_UNSENDABLE_EVENT);
+
 		// Get the buffer to write.
 		$buffer = $event->buildCommand();
 
@@ -291,4 +295,5 @@ class SocketException extends Failnet\FailnetException
 	const ERR_SOCKET_ERROR = 20201;
 	const ERR_SOCKET_FGETS_FAILED = 20202;
 	const ERR_SOCKET_NO_CONNECTION = 20203;
+	const ERR_SOCKET_SEND_UNSENDABLE_EVENT = 20204;
 }
