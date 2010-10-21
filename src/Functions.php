@@ -36,7 +36,9 @@ function errorHandler($errno, $msg_text, $errfile, $errline)
 	/* @var Failnet\CLI\UI */
 	$ui = Bot::getObject('core.ui');
 
-
+	// If the UI isn't present yet, just seppuku.
+	if(is_null($ui))
+		exit;
 
 	// Do not display notices if we suppress them via @
 	if (error_reporting() == 0)
@@ -78,9 +80,18 @@ function errorHandler($errno, $msg_text, $errfile, $errline)
 	if($errno === E_USER_ERROR)
 		exit;
 
-	// If we notice an error not handled here we pass this back to PHP by returning false
-	// This may not work for all php versions
+	// If we didn't handle it, we return false so that PHP can try handling it.
 	return ($handled) ? true : false;
+}
+
+/**
+ * Exception handler for Failnet.
+ * @param Exception $e - The exception to handle.
+ * @return void
+ */
+function exceptionHandler(Exception $e)
+{
+	// asdf
 }
 
 /**
