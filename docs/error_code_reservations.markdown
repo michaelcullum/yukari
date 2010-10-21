@@ -13,6 +13,8 @@
 * 206xx - **Failnet\Cron\ManagerException** - */src/Cron/ManagerException.php*
 * 207xx - **Failnet\Session\ManagerException** - */src/Session/ManagerException.php*
 * 208xx - **Failnet\Addon\LoaderException** - */src/Addon/LoaderException.php*
+* 209xx - **Failnet\Mailer\ReplacementsException** - */src/Mailer/ReplacementsException.php*
+* 210xx - **Failnet\Mailer\Profile\ProfileException** - */src/Mailer/Profile/ProfileException.php*
 * 300xx - **Failnet\Lib\HostmaskException** - */src/Lib/HostmaskException.php*
 * 301xx - **Failnet\Lib\JSONException** - */src/Lib/JSONException.php*
 * 400xx - **Failnet\Cron\Task\TaskException** - */src/Cron/Task/TaskException.php*
