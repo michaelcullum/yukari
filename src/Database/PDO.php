@@ -20,7 +20,7 @@
  *
  */
 
-namespace Failnet\Core;
+namespace Failnet\Database;
 
 /**
  * Failnet - Database class,
@@ -33,7 +33,7 @@ namespace Failnet\Core;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet3
  */
-class Database extends \PDO
+class PDO extends \PDO
 {
 	/**
 	 * @var array - Stores all prepared query objects

@@ -21,7 +21,7 @@
  */
 
 namespace Failnet\Install;
-use Failnet\Core as Core;
+use Failnet\CLI as CLI;
 use Failnet\Lib as Lib;
 
 /**
@@ -35,7 +35,7 @@ use Failnet\Lib as Lib;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet3
  */
-class UI extends Core\UI
+class UI extends CLI\UI
 {
 	/**
 	 * @var array - Array of valid strings that can be used as input for boolean true values.

@@ -20,7 +20,7 @@
  *
  */
 
-namespace Failnet\Core;
+namespace Failnet\CLI;
 
 
 /**
@@ -34,7 +34,7 @@ namespace Failnet\Core;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet3
  */
-class CLI implements \ArrayAccess
+class CLIArgs implements \ArrayAccess
 {
 	/**
 	 * @var array - The args loaded.

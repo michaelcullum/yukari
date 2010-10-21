@@ -99,8 +99,8 @@ class Environment
 			spl_autoload_register(array($this, 'autoloadClass'));
 
 			// Setup our CLI object, and grab any passed args
-			$this->setObject('core.cli', new Failnet\Core\CLI($_SERVER['argv']));
-			/* @var Failnet\Core\CLI */
+			$this->setObject('core.cli', new Failnet\CLI\CLIArgs($_SERVER['argv']));
+			/* @var Failnet\CLI\CLIArgs */
 			$cli = $this->getObject('core.cli');
 			define('Failnet\\IN_INSTALL', ($cli['mode'] === 'install') ? true : false);
 			define('Failnet\\CONFIG_FILE', ($cli['config'] ? $cli['config'] : 'config.php'));
@@ -128,7 +128,7 @@ class Environment
 				// load the config file up next
 				$this->loadConfig(Failnet\CONFIG_FILE);
 
-				$this->setObject('core.ui', new Failnet\Core\UI($this->getOption('ui.output_level', 'normal')));
+				$this->setObject('core.ui', new Failnet\CLI\UI($this->getOption('ui.output_level', 'normal')));
 
 				/* @var Failnet\Core\UI */
 				$ui = $this->getObject('core.ui');
@@ -142,7 +142,7 @@ class Environment
 				$this->setObject('core.core', new Failnet\Core\Core());
 				$ui->system('Loading internationalization object');
 				$this->setObject('core.language', new Failnet\Language\Manager(Bot::getOption('language.file_dir', FAILNET . 'data/language')));
-				$ui->system('Loading hash compiler');
+				$ui->system('Loading password hashing library');
 				$this->setObject('core.hash', new Failnet\Lib\Hash(8, true));
 				$ui->system('Loading event dispatcher');
 				$this->setObject('core.dispatcher', new Failnet\Event\Dispatcher());

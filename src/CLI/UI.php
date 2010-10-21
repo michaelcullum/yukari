@@ -20,7 +20,7 @@
  *
  */
 
-namespace Failnet\Core;
+namespace Failnet\CLI;
 use Failnet\Bot as Bot;
 
 
@@ -335,22 +335,4 @@ class UI
 			$this->output('[SOCKET] ' . $data);
 		}
 	}
-}
-
-/**
- * Failnet - Subordinate exception class
- *      Extension of the Failnet exception class.
- *
- *
- * @category    Failnet
- * @package     Failnet
- * @author      Damian Bushong
- * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet3
- *
- * @note reserves 203xx error codes
- */
-class UIException extends Failnet\FailnetException
-{
-	const ERR_UI_INVALID_OUTPUT_LEVEL = 20300;
 }
