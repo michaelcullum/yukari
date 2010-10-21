@@ -8,7 +8,9 @@ Below are the files as they should be included for a release of Failnet 3.
 * data/DB/Schemas/(all)
 * data/config/
 * data/logs/
-* docs/(all doc files)
+* docs/(all)
+* vendor/swiftmailer/docs/(all)
+* vendor/swiftmailer/lib/(all)
 * LICENSE
 * README.markdown
 * failnet.cmd
