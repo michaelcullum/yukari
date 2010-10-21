@@ -41,6 +41,7 @@ class Core extends Package\PackageBase implements Package\PackageInterface
 	protected $locale = 'en-US';
 
 	protected $entries = array(
-		'LANGUAGE_VAR'	=> 'Some language variable: %1$s',
+		'NOT_AUTHED'			=> 'You are not authorized to use that command.',
+		'RUNNING_VERSION'		=> 'Failnet IRC Bot v%1$s',
 	);
 }
