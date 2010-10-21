@@ -56,7 +56,7 @@ abstract class ProfileBase implements ProfileInterface
 			{
 				// Enforce required replacements...
 				if(isset($replacement_ary['required']) && $replacement_ary['required'] === true)
-					throw new ProfileException(); // @todo exception
+					throw new ProfileException(sprintf('Required mailer replacement "%1$s" not defined', $token), ProfileException::ERR_REQUIRED_REPLACEMENT_UNDEFINED);
 
 				// If the default isn't null for this replacement, we'll use it...otherwise we'll leave it alone.
 				if(!isset($replacement_ary['default']) || !is_null($replacement_ary['default']))

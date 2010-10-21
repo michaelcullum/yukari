@@ -89,7 +89,7 @@ class Replacements implements Swift_Plugins_Decorator_Replacements
 	public function setReplacements($address, array $replacements)
 	{
 		if(filter_var($address, FILTER_VALIDATE_EMAIL) === false)
-			throw new ReplacementsException(); // @todo exception
+			throw new ReplacementsException(sprintf('Failed to set replacements, invalid email address "%1$s" specified', $address), ReplacementsException::ERR_INVALID_EMAIL);
 
 		$this->replacements[hash('md5', $address)] = $replacements;
 	}
