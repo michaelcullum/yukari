@@ -33,7 +33,7 @@ use Failnet\Bot as Bot;
  */
 function errorHandler($errno, $msg_text, $errfile, $errline)
 {
-	/* @var Failnet\Core\UI */
+	/* @var Failnet\CLI\UI */
 	$ui = Bot::getObject('core.ui');
 
 

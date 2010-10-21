@@ -130,7 +130,7 @@ class Environment
 
 				$this->setObject('core.ui', new Failnet\CLI\UI($this->getOption('ui.output_level', 'normal')));
 
-				/* @var Failnet\Core\UI */
+				/* @var Failnet\CLI\UI */
 				$ui = $this->getObject('core.ui');
 
 				// Fire off the UI's startup text.
@@ -138,8 +138,6 @@ class Environment
 				$ui->status('Loading the Failnet core system');
 
 				// Start loading stuff.
-				$ui->system('Loading core.core object');
-				$this->setObject('core.core', new Failnet\Core\Core());
 				$ui->system('Loading internationalization object');
 				$this->setObject('core.language', new Failnet\Language\Manager(Bot::getOption('language.file_dir', FAILNET . 'data/language')));
 				$ui->system('Loading password hashing library');

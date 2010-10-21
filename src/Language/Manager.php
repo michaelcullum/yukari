@@ -78,7 +78,7 @@ class Manager
 	 */
 	public function collectEntries()
 	{
-		/* @var Failnet\Core\UI */
+		/* @var Failnet\CLI\UI */
 		$ui = Bot::getObject('core.ui');
 
 		$files = scandir($this->language_dir);
@@ -111,7 +111,7 @@ class Manager
 	 */
 	public function loadFile($file)
 	{
-		/* @var Failnet\Core\UI */
+		/* @var Failnet\CLI\UI */
 		$ui = Bot::getObject('core.ui');
 
 		$file = basename($file);

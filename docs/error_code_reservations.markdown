@@ -7,7 +7,7 @@
 * 101xx - **Failnet\AutoloadException** - */src/Exception.php*
 * 102xx - **Failnet\EnvironmentException** - */src/Exception.php*
 * 202xx - **Failnet\Connection\SocketException** - */src/Connection/SocketException.php*
-* 203xx - **Failnet\Core\UIException** - */src/Core/UI.php*
+* 203xx - **Failnet\CLI\UIException** - */src/CLI/UIException.php*
 * 204xx - **Failnet\Language\ManagerException** - */src/Language/ManagerException.php*
 * 205xx - **Failnet\Language\CompilerException** - */src/Language/CompilerException.php*
 * 206xx - **Failnet\Cron\ManagerException** - */src/Cron/ManagerException.php*

@@ -48,7 +48,7 @@ class Loader implements Iterator // @todo iterator methods
 	 */
 	public function __construct(array $addons = array())
 	{
-		/* @var $ui Failnet\Core\UI */
+		/* @var $ui Failnet\CLI\UI */
 		$ui = Bot::getObject('core.ui');
 
 		if(!empty($addons))

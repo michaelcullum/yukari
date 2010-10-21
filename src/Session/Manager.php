@@ -70,9 +70,9 @@ class Manager implements \Iterator, \ArrayAccess
 	/**
 	 * Create a new session for the specified hostmask
 	 * @param Failnet\Lib\Hostmask $hostmask - The hostmask to create the session for.
-	 * @return Failnet\Core\Session\SessionBase - The new session we wanted.
+	 * @return Failnet\Session\SessionBase - The new session we wanted.
 	 *
-	 * @throws Failnet\Core\AuthException
+	 * @throws Failnet\Session\ManagerException
 	 */
 	public function newSession(Lib\Hostmask $hostmask)
 	{
