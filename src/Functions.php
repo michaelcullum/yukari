@@ -24,7 +24,7 @@ namespace Failnet;
 use Failnet\Bot as Bot;
 
 /**
- * Error handler function for Failnet.  Modified from the phpBB 3.0.x msg_handler() function.
+ * Error handler function for Failnet.
  * @param integer $errno - Level of the error encountered
  * @param string $msg_text - The error message recieved
  * @param string $errfile - The file that the error was encountered at
