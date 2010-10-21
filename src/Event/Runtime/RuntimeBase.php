@@ -21,6 +21,7 @@
  */
 
 namespace Failnet\Event\Runtime;
+use Failnet\Bot as Bot;
 use Failnet\Event as Event;
 
 /**
@@ -40,4 +41,25 @@ abstract class RuntimeBase extends Event\EventBase implements Event\EventInterfa
 	 * @var boolean - Can this event be sent externally?
 	 */
 	protected $sendable = false;
+
+	/**
+	 * @var array - Array mapping args for quick setting later
+	 */
+	protected $map = array(
+		'time',
+	);
+
+	/**
+	 * @var DateTime - Event arg.
+	 */
+	public $arg_time;
+
+	/**
+	 * Constructor
+	 * @return void
+	 */
+	public function __construct()
+	{
+		$this->arg_time = new DateTime('now', Bot::getObject('core.timezone'));
+	}
 }
