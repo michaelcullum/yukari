@@ -7,8 +7,6 @@
 * deprecate the current Core\Log object, replace with something more OOP-ish probably
 * update socket to make use of newer event objects
 * write Failnet\Event\IRC\Response
-* write Failnet\Event\Runtime\RuntimeBase
-* write Failnet\Event\Runtime\(all)
+* write Failnet\Event\IRC\Command
 * write Failnet\Language\Compiler
-* overhaul Failnet\Addon\Loader to add support for addons packaged as PHAR files
 * remove the ambiguous "core" namespace
