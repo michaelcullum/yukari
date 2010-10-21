@@ -370,11 +370,11 @@ class Environment
 	 */
 	public function runBot()
 	{
-		/* @var Failnet\Core\Socket */
+		/* @var Failnet\Connection\Socket */
 		$socket = $this->getObject('core.socket');
-		/* @var Failnet\Core\Dispatcher */
+		/* @var Failnet\Event\Dispatcher */
 		$dispatcher = $this->getObject('core.dispatcher');
-		/* @var Failnet\Core\Cron */
+		/* @var Failnet\Cron\Manager */
 		$cron = $this->getObject('core.cron');
 
 		// Dispatch a pre-connection event
