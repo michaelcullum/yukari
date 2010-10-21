@@ -20,7 +20,7 @@
  *
  */
 
-namespace Failnet\Core;
+namespace Failnet\Connection;
 use Failnet\Bot as Bot;
 use Failnet\Lib as Lib;
 
@@ -51,7 +51,7 @@ class Socket
 	 * Initiates a connection with the server.
 	 * @return void
 	 *
-	 * @throws Failnet\Core\SocketException
+	 * @throws Failnet\Connection\SocketException
 	 */
 	public function connect()
 	{
@@ -91,7 +91,7 @@ class Socket
 	 * Listens for an event on the current connection.
 	 * @return Failnet\Event\EventBase - Event instance if an event was received, NULL otherwise
 	 *
-	 * @throws Failnet\Core\SocketException
+	 * @throws Failnet\Connection\SocketException
 	 */
 	public function get()
 	{
@@ -219,7 +219,7 @@ class Socket
 	 * @param Failnet\Event\EventBase $event - Event to send.
 	 * @return string - Command string that was sent
 	 *
-	 * @throws Failnet\Core\SocketException
+	 * @throws Failnet\Connection\SocketException
 	 */
 	public function send(Failnet\Event\EventBase $event)
 	{
@@ -274,26 +274,4 @@ class Socket
 	{
 		return preg_split('/ :?/S', $args, $count);
 	}
-}
-
-/**
- * Failnet - Subordinate exception class
- *      Extension of the Failnet exception class.
- *
- *
- * @category    Failnet
- * @package     Failnet
- * @author      Damian Bushong
- * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet3
- *
- * @note reserves 202xx error codes
- */
-class SocketException extends Failnet\FailnetException
-{
-	const ERR_SOCKET_UNSUPPORTED_TRANSPORT = 20200;
-	const ERR_SOCKET_ERROR = 20201;
-	const ERR_SOCKET_FGETS_FAILED = 20202;
-	const ERR_SOCKET_NO_CONNECTION = 20203;
-	const ERR_SOCKET_SEND_UNSENDABLE_EVENT = 20204;
 }
