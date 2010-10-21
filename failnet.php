@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#! /usr/bin/php
 <?php
 /**
  *
@@ -27,6 +27,7 @@
 
 define('FAILNET', dirname(__FILE__));
 define('FAILNET_MIN_PHP', '5.3.0');
+//define('Failnet\\RUN_PHAR', true);
 
 // Check running PHP version against the minimum supported PHP version...
 if(version_compare(FAILNET_MIN_PHP, PHP_VERSION, '>'))
@@ -35,4 +36,12 @@ if(version_compare(FAILNET_MIN_PHP, PHP_VERSION, '>'))
 	exit(1);
 }
 
-require FAILNET . 'src/Bootstrap.php';
+// If we are running Failnet using the Phar archive, then
+if(defined('Failnet\\RUN_PHAR'))
+{
+	require FAILNET . 'failnet.phar';
+}
+else
+{
+	require FAILNET . 'src/Bootstrap.php';
+}
