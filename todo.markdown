@@ -7,3 +7,5 @@
 * write Failnet\Event\IRC\Response
 * write Failnet\Event\IRC\Command
 * write Failnet\Language\Compiler
+* write Failnet\Mailer\Template\*
+* Figure out how to handle creation of the Swiftmailer transports.
