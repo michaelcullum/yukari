@@ -20,7 +20,7 @@
  *
  */
 
-namespace Failnet\Core;
+namespace Failnet\Lib;
 use Failnet\Bot as Bot;
 
 /**
