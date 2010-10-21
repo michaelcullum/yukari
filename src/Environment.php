@@ -169,7 +169,7 @@ class Environment
 				foreach(Bot::getOption('dispatcher.listeners', array()) as $listener)
 					$dispatcher->register($listener['event'], $listener['listener'], (isset($listener['params']) ? $listener['params'] : NULL));
 
-				// Dispatch a load event
+				// Dispatch a startup event
 				// This is useful for having a listener registered, waiting for startup to complete before loading in an addon or extra library.
 				if($dispatcher->hasListeners('Runtime\\Startup'))
 				{
@@ -193,12 +193,12 @@ class Environment
 	 */
 	public function loadConfig($config)
 	{
-		// grab the file extension of the config file, see if it is PHP or JSON...we'll react appropriately based on which we're working with.
+		// Grab the file extension of the config file, see if it is PHP or JSON...we'll react appropriately based on which we're working with.
 		$file_extension = substr(strrchr($config, '.'), 1);
 		if($file_extension == 'php')
 		{
 			if(($include = @include(FAILNET . "data/config/$config")) === false || !isset($data) || !is_array($data))
-				throw new EnvironmentException('Failed to load the specified config file "%1$s"', EnvironmentException::ERR_ENVIRONMENT_FAILED_CONFIG_LOAD);
+				throw new EnvironmentException(sprintf('Failed to load the specified config file "%1$s"', $config), EnvironmentException::ERR_ENVIRONMENT_FAILED_CONFIG_LOAD);
 			$this->setOptions($data);
 		}
 		elseif($file_extension == 'json')
@@ -379,15 +379,15 @@ class Environment
 		/* @var Failnet\Cron\Manager */
 		$cron = $this->getObject('core.cron');
 
-		// Dispatch a pre-connection event
+		// Connect to the remote server, assuming nothing blows up of course.
+		$socket->connect();
+
+		// Dispatch a connection event
 		if($dispatcher->hasListeners('Runtime\\Connect'))
 		{
 			$trigger = new Event\Runtime\Connect();
 			$dispatcher->dispatch($trigger);
 		}
-
-		// Connect to the remote server, assuming nothing blows up of course.
-		$socket->connect();
 
 		try
 		{
