@@ -89,8 +89,12 @@ class Environment
 		// Nerf the pyro, then init the Bot with a reference back to the environment.
 		Bot::init($this);
 
-		// Create our timezone object and store it for now.
+		// Create our timezone object and store it for now, along with storing our starting DateTime object.
 		$this->setObject('core.timezone', new DateTimeZone(date_default_timezone_get()));
+		$this->setObject('core.start', new DateTime('now', $this->getObject('core.timezone')));
+
+		// Define the base memory usage here.
+		define('Failnet\\BASE_MEMORY', memory_get_usage());
 
 		try
 		{
