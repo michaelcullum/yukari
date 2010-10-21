@@ -38,7 +38,7 @@ use Failnet\Event as Event;
 class Environment
 {
 	/**
-	 * @var array - The core objects, which will also include the core class.
+	 * @var array - The core objects.
 	 */
 	protected $core = array();
 
@@ -46,11 +46,6 @@ class Environment
 	 * @var array - Array of loaded cron objects
 	 */
 	protected $cron = array();
-
-	/**
-	 * @var array - Array of loaded addon objects
-	 */
-	protected $addons = array();
 
 	/**
 	 * @var array - Array of various loaded objects
