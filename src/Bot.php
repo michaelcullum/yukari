@@ -24,7 +24,7 @@ namespace Failnet;
 
 /**
  * Failnet - Master class,
- *      Used as the master static class that will contain all node objects, core objects, etc.
+ *      Used as the master static class that will provides easy access to the Failnet environment.
  *
  *
  * @category    Failnet
