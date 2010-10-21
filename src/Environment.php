@@ -86,8 +86,11 @@ class Environment
 		// The first chunk always gets in the way, so we drop it.
 		array_shift($_SERVER['argv']);
 
-		// nerf the pyro, then init the Bot with a reference back to the environment.
+		// Nerf the pyro, then init the Bot with a reference back to the environment.
 		Bot::init($this);
+
+		// Create our timezone object and store it for now.
+		$this->setObject('core.timezone', new DateTimeZone(date_default_timezone_get()));
 
 		try
 		{
@@ -380,8 +383,6 @@ class Environment
 			$trigger = new Event\Runtime\Connect();
 			$dispatcher->dispatch($trigger);
 		}
-
-		// @todo try/catch block this
 
 		// Connect to the remote server, assuming nothing blows up of course.
 		$socket->connect();
