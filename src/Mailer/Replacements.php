@@ -52,13 +52,11 @@ class Replacements implements Swift_Plugins_Decorator_Replacements
 	 */
 	public function getReplacementsFor($address)
 	{
-		$replaced = array_keys($this->replacements[hash('md5', $address)]);
-
 		/**
 		 * We use Failnet\Mailer\Profile\ProfileBase->getReplacementPayload() here so that any replacements not fulfilled are replaced
 		 * by their default values, or an exception is thrown accordingly (depending on if the replacement is marked as required).
 		 */
-		return $this->profile->getReplacementPayload($replaced);
+		return $this->profile->getReplacementPayload($this->replacements[hash('md5', $address)]);
 	}
 
 	/**
