@@ -159,7 +159,7 @@ class Environment
 				$this->getObject('core.language')->collectEntries();
 
 				// Register our event listeners to the dispatcher
-				/* @var Failnet\Event\Dispatcher */
+				/* @var $dispatcher Failnet\Event\Dispatcher */
 				$dispatcher = $this->getObject('core.dispatcher');
 				foreach(Bot::getOption('dispatcher.listeners', array()) as $listener)
 					$dispatcher->register($listener['event'], $listener['listener'], (isset($listener['params']) ? $listener['params'] : NULL));
@@ -170,6 +170,24 @@ class Environment
 				{
 					$trigger = new Event\Runtime\Startup();
 					$dispatcher->dispatch($trigger);
+				}
+
+				// Load any addons we want.
+				$this->setObject('core.addon', new Failnet\Addon\Loader());
+				/* @var $addon_loader Failnet\Addon\Loader */
+				$addon_loader = $this->getObject('core.addon');
+				foreach(Bot::getOption('environment.addons', array()) as $addon)
+				{
+					try
+					{
+						$addon_loader->loadAddon($addon);
+						$ui->system(sprintf('Loaded addon "%1$s" successfully', $addon));
+					}
+					catch(Failnet\Addon\LoaderException $e)
+					{
+						$ui->warning(sprintf('Failed to load addon "%1$s"', $addon));
+						$ui->warning(sprintf('Failure message:  %1$s', $e->getMessage()));
+					}
 				}
 			}
 		}
