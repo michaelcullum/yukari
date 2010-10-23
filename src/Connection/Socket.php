@@ -45,7 +45,7 @@ class Socket
 	/**
 	 * @var stream resource - The stream resource used for communicating with the server
 	 */
-	public $socket = NULL;
+	protected $socket = NULL;
 
 	/**
 	 * Initiates a connection with the server.
@@ -96,29 +96,43 @@ class Socket
 	public function get()
 	{
 		// Check for a new event on the current connection
-		$buffer = fgets($this->socket, 512);
-		if($buffer === false)
-			throw new SocketException('fgets() call failed, socket connection lost', SocketException::ERR_SOCKET_FGETS_FAILED);
+		$attempts = 0;
+		do
+		{
+			if(++$attempts > 5)
+				throw new SocketException('fgets() call failed, socket connection lost', SocketException::ERR_SOCKET_FGETS_FAILED);
 
-		// If no new event was found, return NULL
-		if (empty($buffer))
-			return NULL;
+			$buffer = fgets($this->socket, 512);
+		}
+		while($buffer === false);
+
 
 		// Strip the trailing newline from the buffer
 		$buffer = rtrim($buffer);
 
-		// If the event is from a user...
+		// If no new event was found we will just return NULL
+		if (empty($buffer))
+			return NULL;
+
+		$prefix = '';
 		if(substr($buffer, 0, 1) == ':')
 		{
-			// Parse the user hostmask, command, and arguments
-			list($prefix, $cmd, $args) = array_pad(explode(' ', ltrim($buffer, ':'), 3), 3, NULL);
-			$hostmask = Lib\Hostmask::load(((strpos($prefix, '@') !== false) ? $prefix : 'unknown' . ((strpos($prefix, '!') === false) ? '!unknown' : '') . '@' . $prefix));
+			$chunks = explode(' ', $buffer, 3);
+			$prefix = substr(array_shift($chunks), 1);
+			$buffer = implode(' ', $chunks);
 		}
-		else // If the event is from the server...
+
+		list($cmd, $args) = array_pad(explode(' ', $buffer, 2), 2, NULL);
+
+		// Parse the hostmask.
+		if(strpos($prefix, '@') === false)
+		{
+			$hostmask = new Lib\Hostmask('server', Bot::getOption('server.server_uri', '', true), $prefix);
+		}
+		else
 		{
 			// Parse the command and arguments
-			list($cmd, $args) = array_pad(explode(' ', $buffer, 2), 2, NULL);
-			$hostmask = new Lib\Hostmask('server', 'server', Bot::getOption('server.server_uri', '', true));
+			$hostmask = Lib\Hostmask::load($prefix);
 		}
 
 		// Parse the event arguments depending on the event type
@@ -130,38 +144,32 @@ class Socket
 			case 'nick':
 			case 'quit':
 			case 'ping':
-			case 'join':
+			case 'pong':
 			case 'error':
-				$args = array(ltrim($args, ':'));
+				$args = array_filter(array(ltrim($args, ':')));
 			break;
 
 			case 'privmsg':
 			case 'notice':
-				$ctcp = substr(strstr($args, ':'), 1);
+				$args = $this->args($args, 2);
+				list($source, $ctcp) = $args;
 				if (substr($ctcp, 0, 1) === chr(1) && substr($ctcp, -1) === chr(1))
 				{
 					$ctcp = substr($ctcp, 1, -1);
 					$reply = ($cmd == 'notice');
-					list($cmd, $args) = array_pad(explode(' ', $ctcp, 2), 2, NULL);
+					list($cmd, $args) = array_pad(explode(' ', $ctcp, 2), 2, array());
 					$cmd = strtolower($cmd);
 					switch ($cmd)
 					{
 						case 'version':
 						case 'time':
-							if ($reply)
-								$args = $ctcp;
+						case 'finger':
 						case 'ping':
-							if ($reply)
-								$cmd .= 'reply';
-						case 'action':
-							$args = array($hostmask->nick, $args);
+							if($reply)
+								$args = array($args);
 						break;
-
-						default:
-							$cmd = 'ctcp';
-							if ($reply)
-								$cmd .= 'reply';
-							$args = array($hostmask->nick, $ctcp);
+						case 'action':
+							$args = array($source, $args);
 						break;
 					}
 				}
@@ -171,46 +179,44 @@ class Socket
 				}
 			break;
 
-			case 'oper':
 			case 'topic':
-			case 'mode':
-				$args = $this->args($args);
-			break;
-
 			case 'part':
-			case 'kill':
 			case 'invite':
+			case 'join':
 				$args = $this->args($args, 2);
 			break;
 
 			case 'kick':
+			case 'mode':
 				$args = $this->args($args, 3);
 			break;
 
 			// Remove the target from responses
 			default:
-				$args = substr($args, strpos($args, ' ') + 1);
+				$args = substr($args, strpos($args, ' ') + 2);
 			break;
 		}
 
 		// Create, populate, and return an event object
 		if(ctype_digit($cmd))
 		{
-			$event = new Failnet\Event\Response;
-			$event->code = $cmd;
-			$event->description = $args;
-			$event->buffer = $buffer;
+			$event = new Failnet\Event\IRC\Response();
+			$event['code'] = $cmd;
+			$event['description'] = $args;
+
 		}
 		else
 		{
-			$event = new Failnet\Event\Request;
-			$event->type = $cmd;
-			$event->arguments = $args;
-			if (isset($hostmask))
-				$event->hostmask = $hostmask;
-			$event->fromchannel = (substr($event->arguments[0], 0, 1) == '#') ? true : false;
-			$event->buffer = $buffer;
+			$event_class = 'Failnet\\Event\\IRC\\' . ucfirst($cmd);
+			$event = new $event_class();
+			$event['type'] = $cmd;
+			$event['arguments'] = $args;
+			if(isset($hostmask))
+				$event['hostmask'] = $hostmask;
+			$event->channel = $arguments[0];
 		}
+		$event->buffer = $buffer;
+
 		return $event;
 	}
 
