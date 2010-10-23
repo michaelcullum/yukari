@@ -43,33 +43,6 @@ class Loader implements Iterator
 	protected $metadata = array();
 
 	/**
-	 * Constructor.
-	 * @param array $addons - The addons we want to load.
-	 */
-	public function __construct(array $addons = array())
-	{
-		/* @var $ui Failnet\CLI\UI */
-		$ui = Bot::getObject('core.ui');
-
-		if(!empty($addons))
-		{
-			foreach($addons as $addon)
-			{
-				try
-				{
-					$this->loadAddon($addon);
-					$ui->system(sprintf('Loaded addon "%1$s" successfully', $addon));
-				}
-				catch(LoaderException $e)
-				{
-					$ui->warning(sprintf('Failed to load addon "%1$s"', $addon));
-					$ui->warning(sprintf('Failure message:  %1$s', $e->getMessage()));
-				}
-			}
-		}
-	}
-
-	/**
 	 * Loads an addon's metadata object, verifies dependencies, and initializes the addon
 	 * @return void
 	 *
