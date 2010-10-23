@@ -7,7 +7,7 @@
  *-------------------------------------------------------------------
  * @version		3.0.0 DEV
  * @category	Failnet
- * @package		core
+ * @package		lib
  * @author		Damian Bushong
  * @copyright	(c) 2009 - 2010 -- Damian Bushong
  * @license		MIT License
@@ -27,7 +27,7 @@ use Failnet\Bot as Bot;
  * Failnet - Password hashing framework,
  * 		Used as Failnet's password hashing system.
  *
- * @package core
+ * @package lib
  * @version Version 0.1 / slightly modified for Failnet (using $F$ as hash type identifier, and using hash() + SHA512 instead of MD5)
  *
  * Portable PHP password hashing framework.
