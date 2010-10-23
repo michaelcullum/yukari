@@ -103,15 +103,14 @@ class Compiler
 		if(!file_exists($path) || !is_dir($path))
 			throw new CompilerException(sprintf('Language compiler import path "%1$s" does not exist or is not a directory', $path), CompilerException::ERR_COMPILER_IMPORT_PATH_MISSING);
 
-		if(!is_writeable($path))
-			throw new CompilerException(sprintf('Language compiler import path "%1$s" is unwriteable', $path), CompilerException::ERR_COMPILER_IMPORT_PATH_UNWRITEABLE);
-
 		$this->import_paths[] = $path;
 	}
 
 	public function compile()
 	{
 		// asdf
+		// store as {$locale}_{$package_name}.json
+		// e.g. en-US_Core.json, fr-FR_SomeAddonPackageNameHere.json
 	}
 
 	public function compilePackages($locale)
