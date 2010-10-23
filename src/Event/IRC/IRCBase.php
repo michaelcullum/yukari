@@ -34,7 +34,7 @@ use Failnet\Event as Event;
  * @license     MIT License
  * @link        http://github.com/Obsidian1510/Failnet3
  */
-abstract class IRCBase extends Event\EventBase implements Event\EventInterface
+abstract class IRCBase extends Event\EventBase implements IRCInterface
 {
 	/**
 	 * @var Failnet\Lib\Hostmask - The hostmask for the originating server or user
