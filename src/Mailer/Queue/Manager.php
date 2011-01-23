@@ -52,11 +52,30 @@ class Manager
 
 	public function sendMail(Swift_Message $message)
 	{
+		// Wrap the new message as a queue entry whether or not queueing is needed (or even enabled)
 		$entry = new Failnet\Mailer\Queue\Entry($message);
-		// this method will toss messages onto the queue stack if we have hit our hourly throttle limit, or it will immediately send it if there is an opening.
 
-		// @note use array_push() to add to the end of the queue, also wrap new mail in a Failnet\Mailer\Queue\Entry object
-		// we MUST consider the behavior of Swift_Mailer::batchSend()!  Each to address is one email with batchSend, which must be avoided as it will ruin the implementation of the queue!
+		// Check to see if we have a throttle at all.
+		if($this->throttle !== 0)
+		{
+			$send_limit = $this->throttle - sizeof($this->dispatch_times);
+		}
+		else
+		{
+			$send_limit = sizeof($this->dispatch_times);
+		}
+
+		// Do we need to queue?
+		if($send_limit > 0)
+		{
+			// We can send immediately...
+			$this->dispatchEntry($entry);
+		}
+		else
+		{
+			// We need to queue the message, we're throttling at the moment.
+			array_push($this->queue, $entry);
+		}
 	}
 
 	/**
@@ -72,7 +91,8 @@ class Manager
 		$now = new DateTime('now', Bot::getObject('core.timezone'));
 		foreach($this->dispatch_times as $key => $dispatch_time)
 		{
-			$diff = DateTime::diff($now, true);
+			$diff = $dispatch_time->diff($now, true);
+
 			/* @var $diff DateInterval */
 			if($diff->h >= 1)
 				unset($this->dispatch_times[$key]);
@@ -93,7 +113,7 @@ class Manager
 			$send_limit = sizeof($this->dispatch_times);
 		}
 
-		for($i = 0; $i < $send_limit; ++$i)
+		for($i = 0; $i < $send_limit; $i++)
 		{
 			$this->dispatchNextEntry();
 		}
@@ -104,7 +124,8 @@ class Manager
 
 	protected function dispatchNextEntry()
 	{
-		// will route to $this->dispatchEntry()
+		$entry = array_shift($this->queue);
+		return $this->dispatchEntry($entry);
 	}
 
 	/**
