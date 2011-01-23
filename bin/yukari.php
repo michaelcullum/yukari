@@ -24,7 +24,8 @@
  * @ignore
  */
 
-define('YUKARI', dirname(__FILE__) . '/../');
+define('YUKARI', dirname(__FILE__) . '/..');
+define('YUKARI_PHAR', 'lib/yukari.phar');
 define('YUKARI_MIN_PHP', '5.3.0');
 //define('Yukari\\RUN_PHAR', true);
 
@@ -38,9 +39,9 @@ if(version_compare(YUKARI_MIN_PHP, PHP_VERSION, '>'))
 // If we are running Yukari using the Phar archive, then
 if(defined('Yukari\\RUN_PHAR'))
 {
-	require YUKARI . 'lib/yukari.phar';
+	require YUKARI . '/' . YUKARI_PHAR;
 }
 else
 {
-	require YUKARI . 'src/Bootstrap.php';
+	require YUKARI . '/src/Bootstrap.php';
 }
