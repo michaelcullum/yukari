@@ -1,36 +1,40 @@
-# Failnet 3
+# Yukari
 
-Failnet is a flexible IRC bot built in PHP 5.3 Object Oriented Programming.
+Yukari is a flexible IRC bot built in PHP 5.3 Object Oriented Programming.
 
 ## WARNING
 
-Failnet is currently undergoing a complete codebase rewrite, and as such I have been picking the project up and setting it back down as I learn new coding techniques.
+Yukari is currently undergoing a complete codebase rewrite, and as such I have been picking the project up and setting it back down as I learn new coding techniques.
 
-**Version**:    *3.0.0-DEV*
-
-**Copyright**: *(c) 2009 - 2010 -- Damian Bushong*
+**Copyright**: *(c) 2009 - 2011 -- Damian Bushong*
 
 **License**: *MIT License*
 
-## Failnet's Requirements
+## Requirements
 
 * PHP 5.3.0
+* PHAR read access
 * SQLite
 * SQLite extension for PDO
+
+## Dependencies
+
+* Swiftmailer 4.0.6 (packaged)
+* sfYaml (packaged)
 
 ## Instructions
 
 ### Installation
 
 Via git:
-    git clone http://github.com/Obsidian1510/Failnet3.git
-    cd ./Failnet3
+    git clone https://github.com/damianb/yukari.git
+    cd ./yukari
     git submodule init
     git submodule update
 
 Via gzip tarball package:
-    tar xzf failnet-3.0.0-dev.tgz
-    cd ./Failnet3
+    tar xzf yukari-dev.tgz
+    cd ./yukari
 
 Optionally, you may verify the package if you have the phar-util package installed via PEAR.
 
@@ -46,6 +50,6 @@ Make changes to the files in the **src/** directory, then build the package (wit
 Using the compile-on-commit script (without signing it)
     $ cp build/hooks/autobuild-unsigned .git/hooks/pre-commit
 
-### Running Failnet
+### Running the script
 
 @todo writeme
