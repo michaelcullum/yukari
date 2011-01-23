@@ -3,15 +3,15 @@
  *
  *===================================================================
  *
- *  Failnet -- PHP-based IRC Bot
+ *  Yukari
  *-------------------------------------------------------------------
  * @version     3.0.0 DEV
- * @category    Failnet
+ * @category    Yukari
  * @package     cli
  * @author      Damian Bushong
- * @copyright   (c) 2009 - 2010 -- Damian Bushong
+ * @copyright   (c) 2009 - 2011 -- Damian Bushong
  * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet3
+ * @link        https://github.com/damianb/yukari
  *
  *===================================================================
  *
@@ -28,11 +28,11 @@ namespace Failnet\CLI;
  * 	    Used to provide access to parameters passed to Failnet via argv.
  *
  *
- * @category    Failnet
+ * @category    Yukari
  * @package     cli
  * @author      Damian Bushong
  * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet3
+ * @link        https://github.com/damianb/yukari
  */
 class CLIArgs implements \ArrayAccess
 {

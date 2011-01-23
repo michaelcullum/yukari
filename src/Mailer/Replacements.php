@@ -3,15 +3,15 @@
  *
  *===================================================================
  *
- *  Failnet -- PHP-based IRC Bot
+ *  Yukari
  *-------------------------------------------------------------------
  * @version     3.0.0 DEV
- * @category    Failnet
+ * @category    Yukari
  * @package     mailer
  * @author      Damian Bushong
- * @copyright   (c) 2009 - 2010 -- Damian Bushong
+ * @copyright   (c) 2009 - 2011 -- Damian Bushong
  * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet3
+ * @link        https://github.com/damianb/yukari
  *
  *===================================================================
  *
@@ -27,11 +27,11 @@ use Failnet\Bot as Bot;
  * Failnet - Swiftmailer Decorator Replacements override,
  * 	    Provides on-the-fly decorator replacement access for Swiftmailer's Decorator plugin.
  *
- * @category    Failnet
+ * @category    Yukari
  * @package     mailer
  * @author      Damian Bushong
  * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet3
+ * @link        https://github.com/damianb/yukari
  */
 class Replacements implements Swift_Plugins_Decorator_Replacements
 {

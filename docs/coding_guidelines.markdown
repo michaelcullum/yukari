@@ -1,4 +1,4 @@
-# Failnet -- PHP-based IRC Bot
+# Yukari
 
 ## Failnet Coding Guidelines
 
@@ -179,15 +179,15 @@ Examples:
 	 *
 	 *===================================================================
 	 *
-	 *  Failnet -- PHP-based IRC Bot
+	 *  Yukari
 	 *-------------------------------------------------------------------
 	 * @version     3.0.0 DEV
-	 * @category    Failnet
+	 * @category    Yukari
 	 * @package     core
 	 * @author      Damian Bushong
 	 * @copyright   (c) 2010 -- Damian Bushong
 	 * @license     MIT License
-	 * @link        http://github.com/Obsidian1510/Failnet3
+	 * @link        https://github.com/damianb/yukari
 	 *
 	 *===================================================================
 	 *
@@ -203,11 +203,11 @@ Examples:
 	 *      Failnet in a nutshell.  Faster, smarter, better, and with a sexier voice.
 	 *
 	 *
-	 * @category    Failnet
+	 * @category    Yukari
 	 * @package     core
 	 * @author      Damian Bushong
 	 * @license     MIT License
-	 * @link        http://github.com/Obsidian1510/Failnet3
+	 * @link        https://github.com/damianb/yukari
 	 */
 	class Core extends Base
 	{

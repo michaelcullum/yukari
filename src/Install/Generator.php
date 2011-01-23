@@ -3,15 +3,15 @@
  *
  *===================================================================
  *
- *  Failnet -- PHP-based IRC Bot
+ *  Yukari
  *-------------------------------------------------------------------
  * @version     3.0.0 DEV
- * @category    Failnet
+ * @category    Yukari
  * @package     install
  * @author      Damian Bushong
- * @copyright   (c) 2009 - 2010 -- Damian Bushong
+ * @copyright   (c) 2009 - 2011 -- Damian Bushong
  * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet3
+ * @link        https://github.com/damianb/yukari
  *
  *===================================================================
  *
@@ -28,11 +28,11 @@ use Failnet\Lib as Lib;
  *      Generates the config files for Failnet's installer.
  *
  *
- * @category    Failnet
+ * @category    Yukari
  * @package     install
  * @author      Damian Bushong
  * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet3
+ * @link        https://github.com/damianb/yukari
  */
 class Generator extends Base
 {
@@ -44,15 +44,15 @@ class Generator extends Base
 			' *',
 			' *===================================================================',
 			' *',
-			' *  Failnet -- PHP-based IRC Bot',
+			' *  Yukari',
 			' *-------------------------------------------------------------------',
 			' * @version     3.0.x',
-			' * @category    Failnet',
+			' * @category    Yukari',
 			' * @package     config',
 			' * @author      Damian Bushong',
-			' * @copyright   (c) 2009 - 2010 -- Damian Bushong',
+			' * @copyright   (c) 2009 - 2011 -- Damian Bushong',
 			' * @license     MIT License',
-			' * @link        http://github.com/Obsidian1510/Failnet3',
+			' * @link        https://github.com/damianb/yukari',
 			' *',
 			' *===================================================================',
 			' *',

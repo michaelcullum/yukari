@@ -3,15 +3,15 @@
  *
  *===================================================================
  *
- *  Failnet -- PHP-based IRC Bot
+ *  Yukari
  *-------------------------------------------------------------------
  * @version     3.0.0 DEV
- * @category    Failnet
- * @package     Failnet
+ * @category    Yukari
+ * @package     Yukari
  * @author      Damian Bushong
- * @copyright   (c) 2009 - 2010 -- Damian Bushong
+ * @copyright   (c) 2009 - 2011 -- Damian Bushong
  * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet3
+ * @link        https://github.com/damianb/yukari
  *
  *===================================================================
  *
@@ -29,11 +29,11 @@ namespace Failnet;
  * 	    Extension of the default Exception class, adapted to suit Failnet's needs.
  *
  *
- * @category    Failnet
- * @package     Failnet
+ * @category    Yukari
+ * @package     Yukari
  * @author      Damian Bushong
  * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet3
+ * @link        https://github.com/damianb/yukari
  */
 class FailnetException extends \Exception
 {
@@ -45,11 +45,11 @@ class FailnetException extends \Exception
  *      Extension of the Failnet exception class.
  *
  *
- * @category    Failnet
- * @package     Failnet
+ * @category    Yukari
+ * @package     Yukari
  * @author      Damian Bushong
  * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet3
+ * @link        https://github.com/damianb/yukari
  *
  * @note reserves 100xx error codes
  */
@@ -66,11 +66,11 @@ class StartupException extends FailnetException
  *      Extension of the Failnet exception class.
  *
  *
- * @category    Failnet
- * @package     Failnet
+ * @category    Yukari
+ * @package     Yukari
  * @author      Damian Bushong
  * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet3
+ * @link        https://github.com/damianb/yukari
  *
  * @note reserves 101xx error codes
  */
@@ -84,11 +84,11 @@ class AutoloadException extends FailnetException
  *      Extension of the Failnet exception class.
  *
  *
- * @category    Failnet
- * @package     Failnet
+ * @category    Yukari
+ * @package     Yukari
  * @author      Damian Bushong
  * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet3
+ * @link        https://github.com/damianb/yukari
  *
  * @note reserves 102xx error codes
  */

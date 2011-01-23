@@ -3,15 +3,14 @@
  *
  *===================================================================
  *
- *  Failnet -- PHP-based IRC Bot
+ *  Yukari
  *-------------------------------------------------------------------
- * @version     3.0.0 DEV
- * @category    Failnet
- * @package     Failnet
+ * @category    Yukari
+ * @package     Yukari
  * @author      Damian Bushong
- * @copyright   (c) 2009 - 2010 -- Damian Bushong
+ * @copyright   (c) 2009 - 2011 -- Damian Bushong
  * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet3
+ * @link        https://github.com/damianb/yukari
  *
  *===================================================================
  *
@@ -20,21 +19,17 @@
  *
  */
 
-namespace Failnet;
+namespace Yukari;
 
-/**
- * @ignore
- */
+// Set the root path
+define('Yukari\ROOT_PATH', (defined('Yukari\RUN_PHAR')) ? YUKARI : 'phar://' . YUKARI_PHAR);
 
 // Absolute essentials first
-if(!defined('Failnet\RUN_PHAR'))
-{
-	require FAILNET . 'src/Constants.php';
-	require FAILNET . 'src/Exception.php';
-}
+require Yukari\ROOT_PATH . '/Constants.php';
+require Yukari\ROOT_PATH . '/Exception.php';
 
 /**
- * We need to start checking to see if the requirements for Failnet can be met
+ * We need to start checking to see if the requirements for Yukari have been met
  *
  * Things we check:
  *  - PHP_SAPI
@@ -42,24 +37,31 @@ if(!defined('Failnet\RUN_PHAR'))
  *  - PDO+SQlite availability
  */
 if(strtolower(PHP_SAPI) !== 'cli')
-	throw new StartupException('Failnet must be run in the CLI SAPI', StartupException::ERR_STARTUP_PHP_SAPI);
+	throw new \RuntimeException('Yukari must be run in the CLI SAPI');
 if(!extension_loaded('PDO'))
-	throw new StartupException('Failnet requires the PDO PHP extension to be loaded', StartupException::ERR_STARTUP_NO_PDO);
+	throw new \RuntimeException('Yukari requires PDO');
 if(!extension_loaded('pdo_sqlite'))
-	throw new StartupException('Failnet requires the SQLite PDO extension to be loaded', StartupException::ERR_STARTUP_NO_PDO_SQLITE);
+	throw new \RuntimeException('Yukari requires the SQLite PDO extension');
 
 // Load up the common files, and get going.
-if(!defined('Failnet\RUN_PHAR'))
-{
-	require FAILNET . 'src/Bot.php';
-	require FAILNET . 'src/Functions.php';
-	require FAILNET . 'src/Autoload.php';
-	require FAILNET . 'src/Environment.php';
-}
+require Yukari\ROOT_PATH . '/Bot.php';
+require Yukari\ROOT_PATH . '/Functions.php';
+require Yukari\ROOT_PATH . '/Autoload.php';
+require Yukari\ROOT_PATH . '/Environment.php';
 
 // Set our error and exception handlers
-@set_error_handler('Failnet\\errorHandler');
-// @set_exception_handler('Failnet\\exceptionHandler'); // @todo uncomment when an exception handler is written
+@set_error_handler('Yukari\\errorHandler');
+// @set_exception_handler('Yukari\\exceptionHandler'); // @todo uncomment when an exception handler is written
 
-$environment = new Failnet\Environment();
+// Check to see if date.timezone is empty in the PHP.ini; if so, set the timezone with some Hax to prevent strict errors.
+if(!ini_get('date.timezone'))
+	@date_default_timezone_set(@date_default_timezone_get());
+
+// Run indefinitely...
+set_time_limit(0);
+
+// The first chunk always gets in the way, so we drop it.
+array_shift($_SERVER['argv']);
+
+$environment = new Yukari\Environment();
 $environment->runBot();

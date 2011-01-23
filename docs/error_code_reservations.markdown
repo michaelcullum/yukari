@@ -1,4 +1,4 @@
-# Failnet -- PHP-based IRC Bot
+# Yukari
 
 ## Exception code reservations
 

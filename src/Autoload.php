@@ -3,15 +3,14 @@
  *
  *===================================================================
  *
- *  Failnet -- PHP-based IRC Bot
+ *  Yukari
  *-------------------------------------------------------------------
- * @version     3.0.0 DEV
- * @category    Failnet
- * @package     Failnet
+ * @category    Yukari
+ * @package     Yukari
  * @author      Damian Bushong
- * @copyright   (c) 2009 - 2010 -- Damian Bushong
+ * @copyright   (c) 2009 - 2011 -- Damian Bushong
  * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet3
+ * @link        https://github.com/damianb/yukari
  *
  *===================================================================
  *
@@ -20,23 +19,23 @@
  *
  */
 
-namespace Failnet;
+namespace Yukari;
 
 /**
- * Failnet - Autoloading class,
+ * Yukari - Autoloading class,
  * 	    Handles automatic loading of class files based on their names.
  *
  *
- * @category    Failnet
- * @package     Failnet
+ * @category    Yukari
+ * @package     Yukari
  * @author      Damian Bushong
  * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet3
+ * @link        https://github.com/damianb/yukari
  */
 class Autoload
 {
 	/**
-	 * @var array - The paths that Failnet will attempt to load class files from.
+	 * @var array - The paths that Yukari will attempt to load class files from.
 	 */
 	private $paths = array();
 
@@ -48,7 +47,7 @@ class Autoload
 	public function __construct(array $paths = array())
 	{
 		$paths = array_merge($paths, array(
-			FAILNET . 'src/',
+			YUKARI . 'src/',
 		));
 		foreach($paths as $path)
 			$this->setPath($path);
@@ -91,7 +90,7 @@ class Autoload
 			if($file[0] == '.' || substr(strrchr($file, '.'), 1) != 'php')
 				continue;
 
-			$prefix = (!$prefix) ? 'Failnet\\' . str_replace('/', '\\', substr($path, strlen(FAILNET . $strip) + 1)) : $prefix;
+			$prefix = (!$prefix) ? 'Yukari\\' . str_replace('/', '\\', substr($path, strlen(YUKARI . $strip) + 1)) : $prefix;
 			$return[] = $prefix . (substr($prefix, -1, 1) != '\\' ? '\\' : '') . ucfirst(substr($file, 0, strrpos($file, '.')));
 		}
 		return $return;
@@ -126,14 +125,14 @@ class Autoload
 	}
 
 	/**
-	 * Drop the Failnet base namespace if it is there, and replace any backslashes with slashes.
+	 * Drop the base namespace if it is there, and replace any backslashes with slashes.
 	 * @param string $class_name - The name of the class to spit-polish.
 	 * @return string - The cleaned class name.
 	 */
 	public function cleanName($class)
 	{
 		$class = ($class[0] == '\\') ? substr($class, 1) : $class;
-		$class = (substr($class, 0, 7) == 'Failnet') ? substr($class, 7) : $class;
+		$class = (substr($class, 0, 6) == 'Yukari') ? substr($class, 6) : $class;
 		return str_replace('\\', '/', $class);
 	}
 }

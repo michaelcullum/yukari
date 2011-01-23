@@ -1,4 +1,4 @@
-# Failnet -- PHP-based IRC Bot
+# Yukari
 
 ## Failnet Environment - Object storage
 

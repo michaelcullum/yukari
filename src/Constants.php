@@ -3,15 +3,14 @@
  *
  *===================================================================
  *
- *  Failnet -- PHP-based IRC Bot
+ *  Yukari
  *-------------------------------------------------------------------
- * @version     3.0.0 DEV
- * @category    Failnet
- * @package     Failnet
+ * @category    Yukari
+ * @package     Yukari
  * @author      Damian Bushong
- * @copyright   (c) 2009 - 2010 -- Damian Bushong
+ * @copyright   (c) 2009 - 2011 -- Damian Bushong
  * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet3
+ * @link        https://github.com/damianb/yukari
  *
  *===================================================================
  *
@@ -20,10 +19,10 @@
  *
  */
 
-namespace Failnet;
+namespace Yukari;
 
 // Version constant
-const FAILNET_VERSION = '3.0.0-DEV';
+const YUKARI_VERSION = '3.0.0-DEV';
 
 /**
  * DO NOT _EVER_ CHANGE THESE, FOR THE SAKE OF HUMANITY.

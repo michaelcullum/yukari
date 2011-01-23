@@ -3,15 +3,15 @@
  *
  *===================================================================
  *
- *  Failnet -- PHP-based IRC Bot
+ *  Yukari
  *-------------------------------------------------------------------
  * @version     3.0.0 DEV
- * @category    Failnet
+ * @category    Yukari
  * @package     install
  * @author      Damian Bushong
- * @copyright   (c) 2009 - 2010 -- Damian Bushong
+ * @copyright   (c) 2009 - 2011 -- Damian Bushong
  * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet3
+ * @link        https://github.com/damianb/yukari
  *
  *===================================================================
  *
@@ -29,11 +29,11 @@ use Failnet\Lib as Lib;
  *      Handles the prompts and the output shiz for Failnet's installer.
  *
  *
- * @category    Failnet
+ * @category    Yukari
  * @package     install
  * @author      Damian Bushong
  * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet3
+ * @link        https://github.com/damianb/yukari
  */
 class UI extends CLI\UI
 {
@@ -150,7 +150,7 @@ class UI extends CLI\UI
 		{
 			$this->output('===================================================================', 'STATUS');
 			$this->output('', 'STATUS');
-			$this->output('  Failnet -- PHP-based IRC Bot', 'STATUS');
+			$this->output('  Yukari', 'STATUS');
 			$this->output('---------------------------------------------------------------------', 'STATUS');
 			$this->output('@version:      ' . FAILNET_VERSION, 'STATUS');
 			$this->output('@copyright:    (c) 2009 - 2010 -- Damian Bushong', 'STATUS');

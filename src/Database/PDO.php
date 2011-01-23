@@ -3,15 +3,15 @@
  *
  *===================================================================
  *
- *  Failnet -- PHP-based IRC Bot
+ *  Yukari
  *-------------------------------------------------------------------
  * @version     3.0.0 DEV
- * @category    Failnet
+ * @category    Yukari
  * @package     core
  * @author      Damian Bushong
- * @copyright   (c) 2009 - 2010 -- Damian Bushong
+ * @copyright   (c) 2009 - 2011 -- Damian Bushong
  * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet3
+ * @link        https://github.com/damianb/yukari
  *
  *===================================================================
  *
@@ -20,18 +20,18 @@
  *
  */
 
-namespace Failnet\Database;
+namespace Yukari\Database;
 
 /**
- * Failnet - Database class,
- * 	    Extension of PDO, adapted to suit Failnet's needs.
+ * Yukari - Database class,
+ * 	    Extension of PDO, adapted to suit our needs.
  *
  *
- * @category    Failnet
+ * @category    Yukari
  * @package     core
  * @author      Damian Bushong
  * @license     MIT License
- * @link        http://github.com/Obsidian1510/Failnet3
+ * @link        https://github.com/damianb/yukari
  */
 class PDO extends \PDO
 {
@@ -67,27 +67,27 @@ class PDO extends \PDO
 
 	/**
 	 * Prepared query object generation and storage
-	 * @param string $table - The table that we are looking at
-	 * @param string $type - The type of statement we are looking at
-	 * @param string $statement - The actual PDO statement that is to be prepared (if we are preparing a statement)
+	 * @param string $table - The table that we are working with
+	 * @param string $type - The "name" of the query
+	 * @param string $statement - The query that is to be stored for later use
 	 * @return void
 	 */
 	public function armQuery($table, $type, $statement)
 	{
-		$this->statements[$table][$type] = $this->prepare($statement);
+		$this->statements[$table][$type] = $statement;
 	}
 
 	/**
 	 * Prepared query object retrieval and execution
-	 * @param string $table - The table that we are looking at
-	 * @param string $type - The type of statement we are looking at
+	 * @param string $table - The table that we are working with
+	 * @param string $type - The "name" of the query
 	 * @return PDO_Statement - An instance of PDO_Statement.
-	 * @throws Failnet\Exception
+	 * @throws \InvalidArgumentException
 	 */
 	public function useQuery($table, $type)
 	{
 		if(!isset($this->statements[$table][$type]))
-			throw new Exception(ex(Exception::ERR_INVALID_PREP_QUERY));
-		return $this->statements[$table][$type];
+			throw new \InvalidArgumentException('The query "%s" has not been defined');
+		return $this->prepare($this->statements[$table][$type]);
 	}
 }
