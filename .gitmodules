@@ -1,6 +1,6 @@
 [submodule "src/vendor/swiftmailer"]
 	path = src/vendor/swiftmailer
-	url = http://github.com/swiftmailer/swiftmailer.git
+	url = https://github.com/swiftmailer/swiftmailer.git
 [submodule "src/vendor/sfYaml"]
 	path = src/vendor/sfYaml
 	url = https://github.com/fabpot/yaml.git
