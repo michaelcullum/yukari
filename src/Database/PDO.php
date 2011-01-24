@@ -21,6 +21,7 @@
  */
 
 namespace Yukari\Database;
+use Yukari\Kernel;
 
 /**
  * Yukari - Database class,
@@ -56,6 +57,18 @@ class PDO extends \PDO
 	}
 
 	/**
+	 * Run a specific database schema file
+	 * @param string $filename - The filename to execute, will look in all already-defined autoload paths
+	 * @return void
+	 */
+	public function runSchema($filename)
+	{
+		/* @var \Yukari\Autoloader */
+		$autoloader = Kernel::getObject('core.autoloader');
+		$this->exec(file_get_contents($autoloader->getFile($filename)));
+	}
+
+	/**
 	 * Checks to see if a specified table exists.
 	 * @param string $table_name - The name of the table to check.
 	 * @return boolean - Whether or not the table exists
@@ -81,7 +94,8 @@ class PDO extends \PDO
 	 * Prepared query object retrieval and execution
 	 * @param string $table - The table that we are working with
 	 * @param string $type - The "name" of the query
-	 * @return PDO_Statement - An instance of PDO_Statement.
+	 * @return \PDO_Statement - An instance of \PDO_Statement.
+	 *
 	 * @throws \InvalidArgumentException
 	 */
 	public function useQuery($table, $type)
