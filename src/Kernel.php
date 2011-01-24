@@ -35,16 +35,45 @@ namespace Yukari;
 abstract class Kernel
 {
 	/**
-	 * @var Yukari\Environment - The environment object
+	 * @const - Version stamp string for Yukari.
+	 */
+	const VERSION = '3.0.0-DEV';
+
+	/**
+	 * @var \Yukari\Environment - The environment object
 	 */
 	protected static $environment;
+
+	/**
+	 * @var \Yukari\Autoloader - The autoloader object.
+	 */
+	protected static $autoloader;
+
+	/**
+	 * Load the kernel up, and get the basics loaded alongside
+	 * @return void
+	 */
+	public static function load()
+	{
+		// Load the Environment object
+		self::setEnvironment(\Yukari\Environment::newInstance());
+	}
+
+	/**
+	 * Initiate the environment object
+	 * @return void
+	 */
+	public static function initEnvironment()
+	{
+		self::$environment->init();
+	}
 
 	/**
 	 * Stores the environment object
 	 * @param Yukari\Environment $environment - The environment object.
 	 * @return void
 	 */
-	public static function setEnvironment(Yukari\Environment $environment)
+	public static function setEnvironment(\Yukari\Environment $environment)
 	{
 		/* @var Yukari\Environment */
 		self::$environment = $environment;
@@ -60,24 +89,75 @@ abstract class Kernel
 	}
 
 	/**
-	 * Get a loaded object from the environment
-	 * @param mixed $object - The object's location and name.  Either an array of format array('type'=>'objecttype','name'=>'objectname'), or a string of format 'objecttype.objectname'
-	 * @return object - The desired object.
+	 * Set the autoloader object in the kernel.
+	 * @param \Yukari\Autoloader $autoloader - The autoloader object
+	 * @return void
 	 */
-	public static function getObject($object)
+	public static function setAutoloader(\Yukari\Autoloader $autoloader)
 	{
-		return self::$environment->getObject($object);
+		self::$autoloader = $autoloader;
 	}
 
 	/**
-	 * Get configuration options from the environment
-	 * @param string $option - The option name.
-	 * @param mixed $default - The default value to use if the option is not set.
-	 * @param boolean $is_required - Is this option required, or can it flip to the default?
-	 * @return mixed - The value of the option we're grabbing.
+	 * Get the current Docile autoloader object stored in the kernel.
+	 * @return \Docile\Autoloader - The Docile autoloader object
 	 */
-	public static function getOption($option, $default, $is_required = false)
+	public static function getAutoloader()
 	{
-		return self::$environment->getOption($option, $default, $is_required);
+		return self::$autoloader;
+	}
+
+	/**
+	 * Get an object that is currently being stored in the kernel.
+	 * @param string $slot - The slot to look in.
+	 * @return mixed - NULL if the slot specified is unused, or the object present in the slot specified.
+	 */
+	public static function get($slot)
+	{
+		return self::$environment->getObject($slot);
+	}
+
+	/**
+	 * Store an object in the kernel.
+	 * @param string $slot - The slot to store the object in.
+	 * @param object $object - The object to store.
+	 * @return object - The object just set.
+	 *
+	 * @throws Exception
+	 */
+	public static function set($slot, $object)
+	{
+		return self::$environment->setObject($slot, $object);
+	}
+
+	/**
+	 * Get a specified configuration setting from the kernel.
+	 * @param string $slot - The configuration setting's slot name.
+	 * @return mixed - NULL if the slot specified is unused, or the configuration setting we wanted.
+	 */
+	public static function getConfig($slot)
+	{
+		return self::$environment->getConfig($slot);
+	}
+
+	/**
+	 * Set a configuration setting in the kernel.
+	 * @param string $slot - The configuration setting's slot name.
+	 * @param mixed $value - The configuration value to set.
+	 * @return void
+	 */
+	public static function setConfig($slot, $value)
+	{
+		return self::$environment->setConfig($slot, $value);
+	}
+
+	/**
+	 * Import an array of configuration options into the kernel.
+	 * @param array $config_array - The array of options to import.
+	 * @return void
+	 */
+	public static function importConfig(array $config_array)
+	{
+		return self::$environment->importConfig($config_array);
 	}
 }

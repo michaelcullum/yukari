@@ -38,14 +38,9 @@ use Yukari\Event as Event;
 class Environment
 {
 	/**
-	 * @var array - The core objects.
+	 * @var Yukari\Environment - The single environment instance.
 	 */
-	protected $core = array();
-
-	/**
-	 * @var array - Array of loaded cron objects
-	 */
-	protected $cron = array();
+	protected static $instance;
 
 	/**
 	 * @var array - Array of various loaded objects
@@ -55,16 +50,177 @@ class Environment
 	/**
 	 * @var array - Array of loaded configuration options
 	 */
-	protected $options = array();
+	protected $config = array();
 
 	/**
 	 * Constructor
 	 * @return void
-	 *
-	 * @throws \RuntimeException
 	 */
 	public function __construct()
 	{
+		$this->config = array(
+			// asdf
+		);
+	}
+
+	/**
+	 * Singleton instance management method, creates the instance of the Environment if it's not available yet, or returns the existing instance
+	 * @return Yukari\Environment - The single environment instance.
+	 */
+	public static function newInstance()
+	{
+		if(is_null(self::$instance))
+			self::$instance = new self();
+
+		return self::$instance;
+	}
+
+	/**
+	 * Get an object that is currently being stored in the kernel.
+	 * @param string $slot - The slot to look in.
+	 * @return mixed - NULL if the slot specified is unused, or the object present in the slot specified.
+	 */
+	public function getObject($slot)
+	{
+		if(!isset($this->objects[$slot]))
+			return NULL;
+		return $this->objects[$slot];
+	}
+
+	/**
+	 * Store an object in the kernel.
+	 * @param string $slot - The slot to store the object in.
+	 * @param object $object - The object to store.
+	 * @return object - The object just set.
+	 *
+	 * @throws \LogicException
+	 */
+	public function setObject($slot, $object)
+	{
+		if(!is_object($object))
+			throw new \LogicException('Cannot store non-objects in Yukari kernel');
+		$this->objects[$slot] = $object;
+
+		return $this->objects[$slot];
+	}
+
+	/**
+	 * Get a specified configuration setting from the kernel.
+	 * @param string $slot - The configuration setting's slot name.
+	 * @return mixed - NULL if the slot specified is unused, or the configuration setting we wanted.
+	 */
+	public function getConfig($slot)
+	{
+		if(!isset($this->config[$slot]))
+			return NULL;
+		return $this->config[$slot];
+	}
+
+	/**
+	 * Set a configuration setting in the kernel.
+	 * @param string $slot - The configuration setting's slot name.
+	 * @param mixed $value - The configuration value to set.
+	 * @return void
+	 */
+	public function setConfig($slot, $value)
+	{
+		$this->config[$slot] = $value;
+	}
+
+	/**
+	 * Import an array of configuration options into the kernel.
+	 * @param array $config_array - The array of options to import.
+	 * @return void
+	 */
+	public function importConfig(array $config_array)
+	{
+		foreach($config_array as $key => $value)
+		{
+			if(is_array($this->config[$key]))
+			{
+				if(!is_array($value))
+					$value = array($value);
+				$this->config[$key] = array_merge($this->config[$key], $value);
+			}
+			else
+			{
+				$this->config[$key] = $value;
+			}
+		}
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public function init()
+	{
+		// load config file here
+
+		// check for missing required configs
+		$required_configs = array(
+			// asdf
+		);
+
+		foreach($required_configs as $required_config_name)
+		{
+			if(!isset($this->config[$required_config_name]))
+				throw new \RuntimeException(sprintf('Required config entry "%s" not defined', $required_config_name));
+		}
+
+
+
+
+
+
+
+
+
+
+
 		if(!file_exists(YUKARI . 'data/config/') || !is_readable(YUKARI . 'data/config/') || !is_writeable(YUKARI . 'data/config/') || !is_dir(YUKARI . 'Data/Config/'))
 			throw new \RuntimeException('Configuration file directory does not exist, or is not readable/writeable');
 		// @note if doctrine is used, this code must be removed
@@ -75,8 +231,8 @@ class Environment
 		Kernel::setEnvironment($this);
 
 		// Create our timezone object and store it for now, along with storing our starting DateTime object.
-		$this->setObject('core.timezone', new \DateTimeZone(date_default_timezone_get()));
-		$this->setObject('core.start', new \DateTime('now', $this->getObject('core.timezone')));
+		$this->setObject('time.timezone', new \DateTimeZone(date_default_timezone_get()));
+		$this->setObject('time.start', new \DateTime('now', $this->getObject('core.timezone')));
 
 		// Define the base memory usage here.
 		define('Yukari\\BASE_MEMORY', memory_get_usage());
@@ -84,8 +240,9 @@ class Environment
 		try
 		{
 			// Register our autoloader
-			$this->setObject('core.autoload', new Yukari\Autoload());
-			spl_autoload_register(array($this, 'autoloadClass'));
+			$autoloader = Yukari\Autoloader::register();
+			$this->setObject('core.autoload', $autoloader);
+			//spl_autoload_register(array($this, 'autoloadClass'));
 
 			// Setup our CLI object, and grab any passed args
 			$this->setObject('core.cli', new Yukari\CLI\CLIArgs($_SERVER['argv']));
@@ -213,160 +370,6 @@ class Environment
 		{
 			throw new EnvironmentException('The specified config file\'s file type is not supported', EnvironmentException::ERR_ENVIRONMENT_UNSUPPORTED_CONFIG);
 		}
-	}
-
-	/**
-	 * Get an object for whatever purpose
-	 * @param mixed $object - The object's location and name.  Either an array of format array('type'=>'objecttype','name'=>'objectname'), or a string of format 'objecttype.objectname'
-	 * @return mixed - The desired object.
-	 *
-	 * @throws Failnet\EnvironmentException
-	 */
-	public function getObject($object)
-	{
-		// If this is not an array, we need to resolve the object name for something usable.
-		if(!is_array($object))
-			$object = $this->resolveObject($object);
-		list($name, $type) = $object;
-
-		if(property_exists($this, $type))
-		{
-			if(isset($this->$type[$name]))
-				return $this->$type[$name];
-		}
-		else
-		{
-			if(isset($this->objects[$type][$name]))
-				return $this->objects[$type][$name];
-		}
-		throw new EnvironmentException(sprintf('The object "%1$s" was unable to be fetched.', "$type.$name"), EnvironmentException::ERR_ENVIRONMENT_NO_SUCH_OBJECT);
-	}
-
-	/**
-	 * Load an object into the global class.
-	 * @param mixed $object - The object's location and name.  Either an array of format array('type'=>'objecttype','name'=>'objectname'), or a string of format 'objecttype.objectname'
-	 * @param mixed $value - The object to load.
-	 * @return void
-	 */
-	public function setObject($object, $value)
-	{
-		if(!is_array($object))
-			$object = $this->resolveObject($object);
-		list($name, $type) = $object;
-
-		if(property_exists($this, $type))
-		{
-			if(isset($this->$type[$name]))
-				$this->$type[$name] = $value;
-		}
-		else
-		{
-			if(isset($this->objects[$type][$name]))
-				$this->objects[$type][$name] = $value;
-		}
-	}
-
-	/**
-	 * Remove an object from the global class.
-	 * @param mixed $object - The object's location and name.  Either an array of format array('type'=>'objecttype','name'=>'objectname'), or a string of format 'objecttype.objectname'
-	 * @return void
-	 */
-	public function removeObject($object)
-	{
-		if(!is_array($object))
-			$object = $this->resolveObject($object);
-		list($name, $type) = $object;
-
-		if(property_exists($this, $type))
-		{
-			if(isset($this->$type[$name]))
-				unset($this->$type[$name]);
-		}
-		else
-		{
-			if(isset($this->objects[$type][$name]))
-				unset($this->objects[$type][$name]);
-		}
-	}
-
-	/**
-	 * Check to see if an object has been loaded or not
-	 * @param mixed $object - The object's location and name.  Either an array of format array('type'=>'objecttype','name'=>'objectname'), or a string of format 'objecttype.objectname'
-	 * @return boolean - Do we have this object?
-	 */
-	public function checkObjectLoaded($object)
-	{
-		if(!is_array($object))
-			$object = $this->resolveObject($object);
-		list($name, $type) = $object;
-
-		if(property_exists($this, $type))
-			return isset($this->$type[$name]);
-		return isset($this->objects[$type][$name]);
-	}
-
-	/**
-	 * Resolves an object's name
-	 * @param string $object - The object's name we want to resolve into a workable array
-	 * @return array - The resolved name location for the object.
-	 */
-	protected function resolveObject($object)
-	{
-		$object = explode('.', $object, 1);
-		$return = array(
-			'name' => isset($object[1]) ? $object[1] : $object[0],
-			'type' => isset($object[1]) ? $object[0] : 'core',
-		);
-		return $return;
-	}
-
-	/**
-	 * Grab an option, or return the default if the option isn't set
-	 * @param string $option - The option name to grab.
-	 * @param mixed $default - The default value to use if the option is not set.
-	 * @param boolean $is_required - Is this option required, or can it flip to the default?
-	 * @return mixed - The value of the option we're grabbing, or the default if it's not set.
-	 *
-	 * @throws Failnet\EnvironmentException
-	 */
-	public function getOption($option, $default, $is_required = false)
-	{
-		if(isset($this->options[$option]))
-			return $this->options[$option];
-		if($is_required)
-			throw new EnvironmentException(sprintf('The required option "%1$s" is not set', $option), EnvironmentException::ERR_ENVIRONMENT_OPTION_NOT_SET);
-		return $default;
-	}
-
-	/**
-	 * Set an option to a specified value
-	 * @param string $option - The option name to set.
-	 * @param mixed $value - The value to set.
-	 * @return void
-	 */
-	public function setOption($option, $value)
-	{
-		$this->options[$option] = $value;
-	}
-
-	/**
-	 * Set multiple options at once.
-	 * @param array $options - The array of options to set, with the array keys being the option names, and array values being the option values.
-	 * @return void
-	 */
-	public function setOptions(array $options)
-	{
-		$this->options = array_merge($this->options, $options);
-	}
-
-	/**
-	 * Autoload a class file up.
-	 * @param string $class - The class to load the file for.
-	 * @return mixed - Whatever the autoloader's loadFile() call returned.
-	 */
-	public function autoloadClass($class)
-	{
-		return $this->getObject('core.autoload')->loadFile($class);
 	}
 
 	/**
