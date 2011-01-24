@@ -32,7 +32,7 @@ namespace Yukari;
  * @license     MIT License
  * @link        https://github.com/damianb/yukari
  */
-class Autoload
+class Autoloader
 {
 	/**
 	 * @var array - The paths that Yukari will attempt to load class files from.
@@ -57,20 +57,38 @@ class Autoload
 	 * Autoload callback for loading class files.
 	 * @param string $class - Class to load
 	 * @return void
+	 *
+	 * @throws \RuntimeException
 	 */
 	public function loadFile($class)
 	{
 		$name = $this->cleanName($class);
 
+		$filepath = $this->getFile($name . '.php');
+		if($filepath !== false)
+		{
+			require $filepath;
+			if(!class_exists($class))
+				throw new \RuntimeException(sprintf('Invalid class contained within file %1$s', $filepath));
+			return;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	/**
+	 * Get the correct load path for a specified file
+	 * @param string $file - The name of the file to look for
+	 * @return mixed - String with the full filepath and name to use for loading, or false if no such file on all registered paths
+	 */
+	public function getFile($file)
+	{
 		foreach($this->paths as $path)
 		{
-			if(file_exists($path . $name . '.php'))
-			{
-				require $path . $name . '.php';
-				if(!class_exists($class))
-					throw new AutoloadException(sprintf('Invalid class contained within file %1$s', $path . $name . '.php'), AutoloadException::ERR_AUTOLOAD_CLASS_INVALID);
-				return;
-			}
+			if(file_exists($path . $file))
+				return $path . $file;
 		}
 		return false;
 	}
@@ -134,5 +152,16 @@ class Autoload
 		$class = ($class[0] == '\\') ? substr($class, 1) : $class;
 		$class = (substr($class, 0, 6) == 'Yukari') ? substr($class, 6) : $class;
 		return str_replace('\\', '/', $class);
+	}
+
+	/**
+	 * Register this class as an autoloader within the autoloader stack.
+	 * @return Yukari\Autoloader - The newly created autoloader instance.
+	 */
+	public static function register()
+	{
+		$self = new self();
+		spl_autoload_register(array($self, 'loadFile'));
+		return $self;
 	}
 }
