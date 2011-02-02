@@ -1,0 +1,14 @@
+#
+# Yukari default configuration file
+#
+
+# language component settings
+language.file_dir: /data/language/
+# language file compiler stuff
+language.locales:
+  - en_US
+language.packages:
+  - core
+language.default_locale: en_US
+dispatcher.listeners:
+  ui.debug: core.ui->debug

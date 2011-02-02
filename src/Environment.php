@@ -59,7 +59,10 @@ class Environment
 	public function __construct()
 	{
 		$this->config = array(
-			// asdf
+			'language.default_locale'	=> 'en-US',
+			'ui.output_level'			=> 'normal',
+			'environment.addons'		=> array(),
+			'core.timezonestring'		=> date_default_timezone_get(),
 		);
 	}
 
@@ -125,6 +128,7 @@ class Environment
 	public function setConfig($slot, $value)
 	{
 		$this->config[$slot] = $value;
+		return $value;
 	}
 
 	/**
@@ -198,23 +202,105 @@ class Environment
 
 	public function init()
 	{
-		// load config file here
-
-		// check for missing required configs
-		$required_configs = array(
-			// asdf
-		);
-
-		foreach($required_configs as $required_config_name)
+		try
 		{
-			if(!isset($this->config[$required_config_name]))
-				throw new \RuntimeException(sprintf('Required config entry "%s" not defined', $required_config_name));
+			// load config file here, load CLI args parser
+			$cli = Kernel::set('core.cli', new \Yukari\CLI\CLIArgs($_SERVER['argv']));
+			$config = (isset($cli['config'])) ? $cli['config'] : 'config.yml';
+
+			// Make sure that the config file is usable.
+			if(!file_exists(YUKARI . "/data/config/{$config}") || !is_readable(YUKARI . "/data/config/{$config}"))
+				throw new \RuntimeException('Configuration file directory does not exist, or is not readable/writeable');
+
+			// Load the configs
+			Kernel::importConfig(\sfYaml::load(YUKARI . "/data/config/{$config}"));
+
+			// check for missing required configs
+			$required_configs = array(
+				'language.file_dir',
+				'ui.output_level',
+			);
+
+			foreach($required_configs as $required_config_name)
+			{
+				if(!isset($this->config[$required_config_name]))
+					throw new \RuntimeException(sprintf('Required config entry "%s" not defined', $required_config_name));
+			}
+
+			// Load up the event dispatcher for the very basic core functionality
+			$dispatcher = Kernel::set('core.dispatcher', new \Yukari\Event\Dispatcher());
+
+			// Instantiate the UI object
+			$ui = Kernel::set('core.ui', new \Yukari\CLI\UI());
+			$ui->setOutputLevel(Kernel::getConfig('ui.output_level'))
+				->registerListeners();
+
+			// Startup message
+			$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.startup'));
+			$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.system')
+				->setDataPoint('message', 'Loading the Yukari core'));
+
+			// Create our timezone object and store it for now, along with storing our starting DateTime object.
+			$timezone = Kernel::set('core.timezone', new \DateTimeZone(Kernel::getConfig('core.timezonestring')));
+			Kernel::set('core.starttime', new \DateTime('now', $timezone));
+
+			// Define the base memory usage here.
+			define('Yukari\\BASE_MEMORY', memory_get_usage());
+
+			// Load the language manager
+			$language = Kernel::set('core.language', new \Yukari\Language\Manager());
+			$language->setPath(YUKARI . Kernel::getConfig('language.file_dir'))
+				->collectEntries();
+
+			// Load the password hashing library
+			$hash = Kernel::set('lib.hash', new \Yukari\Lib\Hash());
+
+			// Load the session manager
+			$session = Kernel::set('core.session', new \Yukari\Session\Manager());
+
+			// Connect to the database
+			// @todo PDO code here
+
+			// Load any addons we want.
+			$addon_loader = Kernel::set('core.addonloader', new \Yukari\Addon\Loader());
+			foreach(Kernel::getConfig('environment.addons') as $addon)
+			{
+				try
+				{
+					$addon_loader->loadAddon($addon);
+					$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.system')
+						->setDataPoint('message', sprintf('Loaded addon "%s"', $addon)));
+				}
+				catch(\Exception $e)
+				{
+					$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.warning')
+						->setDataPoint('message', sprintf('Failed to load addon "%1$s" - failure message: "%2$s"', $addon, $e->getMessage())));
+				}
+			}
+
+			$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.system')
+						->setDataPoint('message', 'Registering listeners to event dispatcher'));
+			foreach(Kernel::getConfig('dispatcher.listeners') as $event_name => $listener)
+			{
+				$listener = explode('->', $listener);
+				if(sizeof($listener) > 1)
+				{
+					$dispatcher->register($event_name, array(Kernel::get($listener[0]), $listener[1]));
+				}
+				else
+				{
+					$dispatcher->register($event_name, $listener[0]);
+				}
+			}
+
+			// Dispatch a startup event
+			// This is useful for having a listener registered, waiting for startup to complete before loading in one last thing
+			$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'runtime.startup'));
 		}
-
-
-
-
-
+		catch(\Exception $e)
+		{
+			throw new \RuntimeException(sprintf('Yukari environment initialization encountered a fatal exception (%1$s::%2$s)' . PHP_EOL . 'Exception message: %3$s', get_class($e), $e->getCode(), $e->getMessage()), $e);
+		}
 
 
 
@@ -228,7 +314,7 @@ class Environment
 			throw new \RuntimeException('Database directory does not exist, or is not readable/writeable');
 
 		// Nerf the pyro, then init the Bot with a reference back to the environment.
-		Kernel::setEnvironment($this);
+		//Kernel::setEnvironment($this);
 
 		// Create our timezone object and store it for now, along with storing our starting DateTime object.
 		$this->setObject('time.timezone', new \DateTimeZone(date_default_timezone_get()));
@@ -274,7 +360,7 @@ class Environment
 				// load the config file up next
 				$this->loadConfig(Failnet\CONFIG_FILE);
 
-				$this->setObject('core.ui', new Failnet\CLI\UI($this->getOption('ui.output_level', 'normal')));
+				//$this->setObject('core.ui', new Failnet\CLI\UI($this->getOption('ui.output_level', 'normal')));
 
 				/* @var Failnet\CLI\UI */
 				$ui = $this->getObject('core.ui');
@@ -285,9 +371,9 @@ class Environment
 
 				// Start loading stuff.
 				$ui->system('Loading internationalization object');
-				$this->setObject('core.language', new Failnet\Language\Manager(Bot::getOption('language.file_dir', FAILNET . 'data/language')));
+				$this->setObject('core.language', new Failnet\Language\Manager(YUKARI . Kernel::getConfig('language.file_dir', '/data/language')));
 				$ui->system('Loading password hashing library');
-				$this->setObject('core.hash', new Failnet\Lib\Hash(8, true));
+				$this->setObject('core.hash', new Failnet\Lib\Hash(8));
 				$ui->system('Loading event dispatcher');
 				$this->setObject('core.dispatcher', new Failnet\Event\Dispatcher());
 				$ui->system('Loading session manager');
@@ -313,11 +399,7 @@ class Environment
 
 				// Dispatch a startup event
 				// This is useful for having a listener registered, waiting for startup to complete before loading in an addon or extra library.
-				if($dispatcher->hasListeners('Runtime\\Startup'))
-				{
-					$trigger = new Event\Runtime\Startup();
-					$dispatcher->dispatch($trigger);
-				}
+				$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'runtime.startup'));
 
 				// Load any addons we want.
 				$this->setObject('core.addon', new Failnet\Addon\Loader());
@@ -328,19 +410,19 @@ class Environment
 					try
 					{
 						$addon_loader->loadAddon($addon);
-						$ui->system(sprintf('Loaded addon "%1$s" successfully', $addon));
+						$ui->system(sprintf('Loaded addon "%s" successfully', $addon));
 					}
 					catch(Failnet\Addon\LoaderException $e)
 					{
-						$ui->warning(sprintf('Failed to load addon "%1$s"', $addon));
-						$ui->warning(sprintf('Failure message:  %1$s', $e->getMessage()));
+						$ui->warning(sprintf('Failed to load addon "%s"', $addon));
+						$ui->warning(sprintf('Failure message:  %s', $e->getMessage()));
 					}
 				}
 			}
 		}
-		catch(FailnetException $e)
+		catch(\Exception $e)
 		{
-			throw new EnvironmentException(sprintf('Failnet environment initialization encountered a fatal exception (%1$s::%2$s)' . PHP_EOL . 'Exception message: %3$s', get_class($e), $e->getCode(), $e->getMessage()), EnvironmentException::ERR_ENVIRONMENT_LOAD_FAILED, $e);
+			throw new \RuntimeException(sprintf('Yukari environment initialization encountered a fatal exception (%1$s::%2$s)' . PHP_EOL . 'Exception message: %3$s', get_class($e), $e->getCode(), $e->getMessage()), $e);
 		}
 	}
 

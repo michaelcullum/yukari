@@ -20,11 +20,10 @@
  *
  */
 
-namespace Failnet;
-use Failnet\Bot as Bot;
+namespace Yukari;
 
 /**
- * Error handler function for Failnet.
+ * Error handler function for Yukari.
  * @param integer $errno - Level of the error encountered
  * @param string $msg_text - The error message recieved
  * @param string $errfile - The file that the error was encountered at
@@ -33,8 +32,8 @@ use Failnet\Bot as Bot;
  */
 function errorHandler($errno, $msg_text, $errfile, $errline)
 {
-	/* @var Failnet\CLI\UI */
-	$ui = Bot::getObject('core.ui');
+	/* @var Yukari\CLI\UI */
+	$ui = Kernel::get('core.ui');
 
 	// If the UI isn't present yet, just seppuku.
 	if(is_null($ui))
@@ -58,21 +57,21 @@ function errorHandler($errno, $msg_text, $errfile, $errline)
 		case E_USER_DEPRECATED:
 			$handled = true;
 			$ui->php("notice: $error");
-			file_put_contents(FAILNET . 'data/logs/Error_' . date('m-d-Y', time()) . '.log', date('D m/d/Y - h:i:s A') . ' - [PHP Notice] ' . $error, FILE_APPEND | LOCK_EX);
+			file_put_contents(YUKARI . '/data/logs/Error_' . date('m-d-Y', time()) . '.log', date('D m/d/Y - h:i:s A') . ' - [PHP Notice] ' . $error, FILE_APPEND | LOCK_EX);
 		break;
 
 		case E_WARNING:
 		case E_USER_WARNING:
 			$handled = true;
 			$ui->php("warning: $error");
-			file_put_contents(FAILNET . 'data/logs/Error_' . date('m-d-Y', time()) . '.log', date('D m/d/Y - h:i:s A') . ' - [PHP Warning] ' . $error, FILE_APPEND | LOCK_EX);
+			file_put_contents(YUKARI . '/data/logs/Error_' . date('m-d-Y', time()) . '.log', date('D m/d/Y - h:i:s A') . ' - [PHP Warning] ' . $error, FILE_APPEND | LOCK_EX);
 		break;
 
 		case E_ERROR:
 		case E_USER_ERROR:
 			$handled = true;
 			$ui->php("error: $error");
-			file_put_contents(FAILNET . 'data/logs/Error_' . date('m-d-Y', time()) . '.log', date('D m/d/Y - h:i:s A') . ' - [PHP Error] ' . $error, FILE_APPEND | LOCK_EX);
+			file_put_contents(YUKARI . '/data/logs/Error_' . date('m-d-Y', time()) . '.log', date('D m/d/Y - h:i:s A') . ' - [PHP Error] ' . $error, FILE_APPEND | LOCK_EX);
 		break;
    }
 
@@ -85,7 +84,7 @@ function errorHandler($errno, $msg_text, $errfile, $errline)
 }
 
 /**
- * Exception handler for Failnet.
+ * Exception handler for Yukari.
  * @param Exception $e - The exception to handle.
  * @return void
  */
@@ -181,38 +180,6 @@ function timespan($time, $last_comma = false)
 	}
 
 	return $bigtime;
-}
-
-/**
- * Deny function...
- * @return string - The deny message to use. :3
- */
-function deny_message()
-{
-	$rand = rand(0, 9);
-	switch($rand)
-	{
-		case 0:
-		case 1:
-			return 'No.';
-		break;
-		case 2:
-		case 3:
-			return 'Uhm, no.';
-		break;
-		case 4:
-		case 5:
-			return 'Hells no!';
-			break;
-		case 6:
-		case 7:
-		case 8:
-			return 'HELL NOEHS!';
-		break;
-		case 9:
-			return 'The number you are dialing is not available at this time.';
-		break;
-	}
 }
 
 /**
@@ -362,5 +329,5 @@ function cake()
 	'                                          ',
 	);
 	foreach($cake as $line)
-		Bot::core('ui')->output($line, 'CAKE');
+		Kernel::get('ui')->output($line, 'CAKE');
 }

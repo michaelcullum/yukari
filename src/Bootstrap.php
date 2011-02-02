@@ -22,7 +22,7 @@
 namespace Yukari;
 
 // Set the root path
-define('Yukari\ROOT_PATH', (defined('Yukari\RUN_PHAR')) ? YUKARI : 'phar://' . YUKARI_PHAR);
+define('Yukari\ROOT_PATH', (defined('Yukari\RUN_PHAR')) ? YUKARI . '/src' : 'phar://' . YUKARI_PHAR);
 
 /**
  * We need to start checking to see if the requirements for Yukari have been met

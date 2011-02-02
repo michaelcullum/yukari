@@ -47,7 +47,7 @@ class Autoloader
 	public function __construct(array $paths = array())
 	{
 		$paths = array_merge($paths, array(
-			YUKARI . 'src/',
+			Yukari\ROOT_PATH,
 		));
 		foreach($paths as $path)
 			$this->setPath($path);
@@ -64,12 +64,12 @@ class Autoloader
 	{
 		$name = $this->cleanName($class);
 
-		$filepath = $this->getFile($name . '.php');
+		$filepath = $this->getFile("$name.php");
 		if($filepath !== false)
 		{
 			require $filepath;
 			if(!class_exists($class))
-				throw new \RuntimeException(sprintf('Invalid class contained within file %1$s', $filepath));
+				throw new \RuntimeException(sprintf('Invalid class contained within file %s', $filepath));
 			return;
 		}
 		else
@@ -136,7 +136,7 @@ class Autoloader
 
 		foreach($this->paths as $path)
 		{
-			if(file_exists($path . $name . '.php'))
+			if(file_exists("{$path}{$name}.php"))
 				return true;
 		}
 		return false;
