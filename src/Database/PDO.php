@@ -63,9 +63,7 @@ class PDO extends \PDO
 	 */
 	public function runSchema($filename)
 	{
-		/* @var \Yukari\Autoloader */
-		$autoloader = Kernel::getObject('core.autoloader');
-		$this->exec(file_get_contents($autoloader->getFile($filename)));
+		$this->exec(file_get_contents(Kernel::get('core.autoloader')->getFile($filename)));
 	}
 
 	/**
