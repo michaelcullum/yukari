@@ -20,13 +20,12 @@
  *
  */
 
-namespace Failnet\Addon;
-use Failnet\Bot as Bot;
-use Failnet\Lib as Lib;
+namespace Yukari\Addon;
+use Yukari\Kernel;
 
 /**
- * Failnet - Addon manager class,
- * 	    Manages the loading and initialization of Failnet addons.
+ * Yukari - Addon manager class,
+ * 	    Manages the loading and initialization of addons.
  *
  *
  * @category    Yukari
@@ -46,7 +45,8 @@ class Loader implements Iterator
 	 * Loads an addon's metadata object, verifies dependencies, and initializes the addon
 	 * @return void
 	 *
-	 * @throws Failnet\Addon\LoaderException
+	 * @throws \RuntimeException
+	 * @throws \LogicException
 	 */
 	public function loadAddon($addon)
 	{
@@ -56,46 +56,49 @@ class Loader implements Iterator
 
 		$using_phar = false;
 		// Check to see if there's a phar we are dealing with here before moving on to try to load the standard class files.
-		$phar_path = FAILNET . 'addons/' . $addon . '/' . $addon . '.phar';
+		$phar_path = YUKARI . "/addons/{$addon}/{$addon}.phar";
+		$metadata_path = "/Addon/Metadata/{$addon}.php";
 		if(file_exists($phar_path))
 		{
 			require $phar_path;
 			$using_phar = true;
+
+			require $phar_path . $metadata_path;
 		}
 		else
 		{
-			$metadata_path = FAILNET . 'addons/' . $addon . '/Addon/Metadata/' . $addon . '.php';
-			if(!file_exists($metadata_path))
-				throw new LoaderException('Could not locate the addon metadata file', LoaderException::ERR_METADATA_FILE_MISSING);
+			$metadata_path = YUKARI . "/addons/{$addon}/Addon/Metadata/{$addon}.php";
+			if(!file_exists(YUKARI . "/addons{$metadata_path}"))
+				throw new \RuntimeException('Could not locate addon metadata file');
 
-			require $metadata_path;
+			require YUKARI . "/addons{$metadata_path}";
 		}
 
-		$metadata_class = "Failnet\\Addon\\Metadata\\$addon";
+		$metadata_class = "\\Yukari\\Addon\\Metadata\\{$addon}";
 		if(!class_exists($metadata_class))
-			throw new LoaderException('Addon metadata class could not be located', LoaderException::ERR_METADATA_CLASS_MISSING);
+			throw new \RuntimeException('Addon metadata class not defined');
 
-		// Here we instantiate the addon's metadata object, and make sure it's the right type of object.
-		/* @var $metadata Failnet\Addon\Metadata\MetadataBase */
+		// We want to instantiate the addon's metadata object, and make sure it's the right type of object.
+		/* @var $metadata \Yukari\Addon\Metadata\MetadataBase */
 		$metadata = new $metadata_class;
-		if(!($metadata instanceof Metadata\MetadataBase))
-			throw new LoaderException('Addon metadata class does not extend class MetadataBase', LoaderException::ERR_METADATA_NOT_BASE_CHILD);
+		if(!($metadata instanceof \Yukari\Addon\Metadata\MetadataBase))
+			throw new \LogicException('Addon metadata class does not extend class MetadataBase');
 
-		if(!($metadata instanceof Metadata\MetadataInterface))
-			throw new LoaderException('Addon metadata class does not implement interface MetadataInterface', LoaderException::ERR_METADATA_NOT_INTERFACE_CHILD);
+		if(!($metadata instanceof \Yukari\Addon\Metadata\MetadataInterface))
+			throw new \LogicException('Addon metadata class does not implement interface MetadataInterface');
 
 		// Check dependencies and requirements here.
 		if(!$metadata->meetsTargetVersion())
-			throw new LoaderException('Installed version of Failnet does not meet the required version for the addon', LoaderException::ERR_METADATA_MINIMUM_TARGET_NOT_MET);
+			throw new \RuntimeException('Installed version of Yukari does not meet the required version for the addon');
 
 		if(!$metadata->checkDependencies())
-			throw new LoaderException('Addon metadata object declares that its required dependencies have not been met', LoaderException::ERR_METADATA_CUSTOM_DEPENDENCY_FAIL);
+			throw new \RuntimeException('Addon metadata object declares that its required dependencies have not been met');
 
 		// If we aren't using a phar here we need to add the addon's path to the autoload paths.
 		if(!$using_phar)
 		{
 			// If the addon's metadata object passes all checks and we're not using a phar file, then we add the addon's directory to the autoloader include path
-			Bot::getObject('core.autoload')->setPath(FAILNET . "addons/$addon/");
+			Kernel::getAutoloader()->setPath(YUKARI . "/addons/{$addon}/");
 		}
 
 		// Initialize the addon
@@ -138,7 +141,7 @@ class Loader implements Iterator
 
 	/**
 	 * Iterator method, gets the current element
-	 * @return Failnet\Addon\Metadata\MetadataBase - The current addon metadata object of focus.
+	 * @return \Yukari\Addon\Metadata\MetadataBase - The current addon metadata object of focus.
 	 */
 	public function current()
 	{

@@ -20,12 +20,11 @@
  *
  */
 
-namespace Failnet\Addon\Metadata;
-use Failnet\Bot as Bot;
-use Failnet\Lib as Lib;
+namespace Yukari\Addon\Metadata;
+use Yukari\Kernel;
 
 /**
- * Failnet - Addon metadata interface,
+ * Yukari - Addon metadata interface,
  *      Prototype that defines methods that addon metadata objects must implement.
  *
  *

@@ -20,12 +20,11 @@
  *
  */
 
-namespace Failnet\Addon\Metadata;
-use Failnet\Bot as Bot;
-use Failnet\Lib as Lib;
+namespace Yukari\Addon\Metadata;
+use Yukari\Kernel;
 
 /**
- * Failnet - Addon metadata base class,
+ * Yukari - Addon metadata base class,
  *      Defines common methods and properties for addon metadata objects to use.
  *
  *
@@ -113,12 +112,12 @@ abstract class MetadataBase implements MetadataInterface
 	}
 
 	/**
-	 * Determine if the Failnet version we are running meets the minimum version requirement of this addon.
+	 * Determine if the Yukari version we are running meets the minimum version requirement of this addon.
 	 * @return boolean - True if we meet the minimum version, false if we do not.
 	 */
 	final public function meetsTargetVersion()
 	{
-		return version_compare(Failnet\FAILNET_VERSION, $this->getTargetVersion(), '>');
+		return version_compare(Kernel::VERSION, $this->getTargetVersion(), '>');
 	}
 
 	/**
@@ -130,7 +129,7 @@ abstract class MetadataBase implements MetadataInterface
 		return array(
 			sprintf('Addon name:        %1$s', $this->getAddonName()),
 			sprintf('Addon author:      %1$s', $this->getAuthor()),
-			sprintf('Addon version:     %1$s (requires Failnet %2$s minimum)', $this->getVersion(), $this->getTargetVersion()),
+			sprintf('Addon version:     %1$s (requires Yukari %2$s minimum)', $this->getVersion(), $this->getTargetVersion()),
 			sprintf('Addon description: %1$s', $this->getDescription()),
 		);
 	}
