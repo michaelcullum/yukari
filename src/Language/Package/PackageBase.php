@@ -20,13 +20,11 @@
  *
  */
 
-namespace Failnet\Language\Package;
-use Failnet\Bot as Bot;
-use Failnet\Lib as Lib;
-use Failnet\Language as Language;
+namespace Yukari\Language\Package;
+use Yukari\Kernel;
 
 /**
- * Failnet - Language package base class,
+ * Yukari - Language package base class,
  *      Defines common methods and properties for langauge packages to use.
  *
  *
@@ -52,11 +50,11 @@ class PackageBase implements PackageInterface
 	 * Build the JSON string for our language entries.
 	 * @return mixed - Either the JSON string for our language entries, or false if we have no entries in this package.
 	 */
-	final public function buildJSON()
+	final public function toJSON()
 	{
 		if(!$this->entries)
 			return false;
-		return Lib\JSON::encode($this->entries);
+		return \Yukari\Lib\JSON::encode($this->entries);
 	}
 
 	/**

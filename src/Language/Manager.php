@@ -20,13 +20,13 @@
  *
  */
 
-namespace Failnet\Language;
+namespace Yukari\Language;
 use Failnet\Bot as Bot;
 use Failnet\Lib as Lib;
 
 /**
- * Failnet - Language manager class,
- * 	    Collects and provides access to all of the language entries for Failnet.
+ * Yukari - Language manager class,
+ * 	    Collects and provides access to all of the language entries for Yukari.
  *
  *
  * @category    Yukari
@@ -69,7 +69,7 @@ class Manager
 	 */
 	public function setPath($language_dir)
 	{
-		$this->language_dir = rtrim($language_dir, '/\\') . '/';
+		$this->language_dir = rtrim($language_dir, '/') . '/';
 	}
 
 	/**
@@ -146,7 +146,7 @@ class Manager
 	public function getEntry($locale, $key, array $arguments = array())
 	{
 		if(!isset($this->entries[$locale]))
-			$locale = Bot::getOption('language.default_locale', 'en-US');
+			$locale = Kernel::getConfig('language.default_locale');
 
 		// If there's no such language key, we'll return an empty string
 		if(!isset($this->entries[$locale][$key]))

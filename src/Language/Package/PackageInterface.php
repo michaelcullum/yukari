@@ -20,13 +20,10 @@
  *
  */
 
-namespace Failnet\Language\Package;
-use Failnet\Bot as Bot;
-use Failnet\Lib as Lib;
-use Failnet\Language as Language;
+namespace Yukari\Language\Package;
 
 /**
- * Failnet - Language package interface,
+ * Yukari - Language package interface,
  *      Prototype that defines methods that language package objects must implement.
  *
  *
@@ -38,6 +35,6 @@ use Failnet\Language as Language;
  */
 interface PackageInterface extends \Countable, \Iterator
 {
-	public function buildJSON();
+	public function toJSON();
 	public function getLocale();
 }

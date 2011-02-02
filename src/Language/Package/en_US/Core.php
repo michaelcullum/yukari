@@ -20,14 +20,11 @@
  *
  */
 
-namespace Failnet\Language\Package\en_US;
-use Failnet\Bot as Bot;
-use Failnet\Language as Language;
-use Failnet\Language\Package as Package;
+namespace Yukari\Language\Package\en_US;
 
 /**
- * Failnet - Language package object,
- * 	    Contains a collection of language entries for use within Failnet.
+ * Yukari - Language package object,
+ * 	    Contains a collection of language entries for use within Yukari.
  *
  *
  * @category    Yukari
@@ -36,12 +33,12 @@ use Failnet\Language\Package as Package;
  * @license     MIT License
  * @link        https://github.com/damianb/yukari
  */
-class Core extends Package\PackageBase implements Package\PackageInterface
+class Core extends \Yukari\Language\Package\PackageBase implements \Yukari\Language\Package\PackageInterface
 {
 	protected $locale = 'en-US';
 
 	protected $entries = array(
 		'NOT_AUTHED'			=> 'You are not authorized to use that command.',
-		'RUNNING_VERSION'		=> 'Failnet IRC Bot v%1$s',
+		'RUNNING_VERSION'		=> 'Yukari IRC Bot v%1$s',
 	);
 }
