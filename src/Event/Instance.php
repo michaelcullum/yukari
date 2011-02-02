@@ -20,11 +20,11 @@
  *
  */
 
-namespace Failnet\Event;
+namespace Yukari\Event;
 
 /**
- * Failnet - Event base class,
- * 	    Base class that all events must extend.
+ * Yukari - Event instance,
+ * 	    The event instance to dispatch events as.
  *
  *
  * @category    Yukari
@@ -33,50 +33,69 @@ namespace Failnet\Event;
  * @license     MIT License
  * @link        https://github.com/damianb/yukari
  */
-abstract class EventBase implements \ArrayAccess
+abstract class Instance implements \ArrayAccess
 {
-	/**
-	 * @var array - The map of the various arguments for the event
-	 */
-	protected $map = array();
+	protected $name = '';
 
-	/**
-	 * @var boolean - Can this event be sent externally?
-	 */
-	protected $sendable = true;
+	protected $data = array();
 
-	/**
-	 * Grabs this event object's event type
-	 * @return string - The current event's type (omitting Failnet\Event\ of course)
-	 */
-	public function getType()
+	protected $source;
+
+	public function __construct($source, $name, array $data = array())
 	{
-		$class = get_class($this);
-		return str_replace('Failnet\\Event\\', '', $class);
+		$this->setSource($source)->setName($name)->setData($data);
 	}
 
-	/**
-	 * Sets the value of a certain arg to the specified value
-	 * @param $arg_number - The arg number to set
-	 * @param $arg_value - The value of the arg to set
-	 * @return boolean - True if successful, false if no such arg to set.
-	 */
-	public function setArgNumber($arg_number, $arg_value)
+	public static function newEvent($source, $name)
 	{
-		if(!isset($this->map[$arg_number]))
-			return false;
-		$arg_key = 'arg_' . $this->map[$arg_number];
-		$this->$arg_key = $arg_value;
-		return true;
+		return new static($source, $name);
 	}
 
-	/**
-	 * Returns whether or not this event is sendable.
-	 * @return boolean - Can this event be sent?
-	 */
-	public function getSendable()
+	public function getName()
 	{
-		return (bool) $this->sendable;
+		return $this->name;
+	}
+
+	public function setName($name)
+	{
+		$this->name = $name;
+		return $this;
+	}
+
+	public function getSource()
+	{
+		return $this->source;
+	}
+
+	public function setSource($source)
+	{
+		if($source !== NULL && !is_object($source))
+			throw new \InvalidArgumentException('Source provided to event instance must be an object or NULL');
+
+		$this->source = $source;
+		return $this;
+	}
+
+	public function getData()
+	{
+		return $this->data;
+	}
+
+	public function setData(array $data = array())
+	{
+		$this->data = $data;
+		return $this;
+	}
+
+	public function getDataPoint($point)
+	{
+		return $this->offsetGet($point);
+	}
+
+	public function setDataPoint($point, $value)
+	{
+		$this->offsetSet($point, $value);
+		return $this;
 	}
 
 	/**
@@ -90,8 +109,7 @@ abstract class EventBase implements \ArrayAccess
 	 */
 	public function offsetExists($offset)
 	{
-		$arg = "arg_$offset";
-		return property_exists($this, $arg);
+		return array_key_exists($offset, $this->data);
 	}
 
 	/**
@@ -101,8 +119,9 @@ abstract class EventBase implements \ArrayAccess
 	 */
 	public function offsetGet($offset)
 	{
-		$arg = "arg_$offset";
-		return property_exists($this, $arg) ? $this->$arg : NULL;
+		if(!$this->offsetExists($offset))
+			throw new \InvalidArgumentException('Invalid event parameter specified');
+		return $this->data[$offset];
 	}
 
 	/**
@@ -113,9 +132,7 @@ abstract class EventBase implements \ArrayAccess
 	 */
 	public function offsetSet($offset, $value)
 	{
-		$arg = "arg_$offset";
-		if(property_exists($this, $arg))
-			$this->$arg = $value;
+		$this->data[$offset] = $value;
 	}
 
 	/**
@@ -125,7 +142,6 @@ abstract class EventBase implements \ArrayAccess
 	 */
 	public function offsetUnset($offset)
 	{
-		$arg = "arg_$offset";
-		$this->$arg = NULL;
+		unset($this->data[$offset]);
 	}
 }

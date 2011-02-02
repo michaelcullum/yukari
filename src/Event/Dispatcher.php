@@ -20,11 +20,11 @@
  *
  */
 
-namespace Failnet\Event;
-use Failnet\Bot as Bot;
+namespace Yukari\Event;
+use Yukari\Kernel;
 
 /**
- * Failnet - Event dispatcher object,
+ * Yukari - Event dispatcher object,
  * 	    Used to provide listener registration for handling of events, to surpass the antiquated plugins system.
  *
  *
@@ -50,26 +50,10 @@ class Dispatcher
 	 */
 	public function register($event_type, $listener, array $listener_params = array())
 	{
-		$hash = hash('md5', var_export($listener, true));
-		$this->listeners[$event_type][$hash] = array(
+		$this->listeners[$event_type][] = array(
 			'listener'		=> $listener,
 			'params'		=> $listener_params,
 		);
-	}
-
-	/**
-	 * Drop a listener from the dispatcher
-	 * @param string $event_type - The type of event to remove the listener from.
-	 * @param callable $listener - The callable reference to identify the listener with.
-	 * @return void
-	 */
-	public function unregister($event_type, $listener)
-	{
-		if(!$this->hasListeners($event_type))
-			return;
-
-		$hash = hash('md5', var_export($listener, true));
-		unset($this->listeners[$event_type][$hash]);
 	}
 
 	/**
@@ -84,20 +68,22 @@ class Dispatcher
 
 	/**
 	 * Dispatch an event to registered listeners
-	 * @param Failnet\Event\EventBase $event - The event to dispatch.
+	 * @param \Yukari\Event\Instance $event - The event to dispatch.
 	 * @return array - Array of returned information from each listener.
 	 */
-	public function dispatch(Failnet\Event\EventBase $event)
+	public function trigger(\Yukari\Event\Instance $event)
 	{
-		if(!$this->hasListeners($event->getType()))
+		if(!$this->hasListeners($event->getName()))
 			return;
 
-		$result = array();
-		foreach($this->listeners[$event->getType()] as $listener)
+		$results = array();
+		foreach($this->listeners[$event->getName()] as $listener)
 		{
-			$result[] = call_user_func_array($listener['listener'], array_merge(array($event), $listener['params']));
+			$result = call_user_func_array($listener['listener'], array_merge(array($event), $listener['params']));
+			if(!is_null($result))
+				$results[] = $result;
 		}
 
-		return $result;
+		return $results;
 	}
 }
