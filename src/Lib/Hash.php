@@ -6,10 +6,10 @@
  *  Yukari
  *-------------------------------------------------------------------
  * @version		3.0.0 DEV
- * @category	Failnet
+ * @category	Yukari
  * @package		lib
  * @author		Damian Bushong
- * @copyright	(c) 2009 - 2010 -- Damian Bushong
+ * @copyright	(c) 2009 - 2011 -- Damian Bushong
  * @license		MIT License
  * @link		https://github.com/damianb/yukari
  *
@@ -20,15 +20,14 @@
  *
  */
 
-namespace Failnet\Lib;
-use Failnet\Bot as Bot;
+namespace Yukari\Lib;
 
 /**
- * Failnet - Password hashing framework,
- * 		Used as Failnet's password hashing system.
+ * Yukari - Password hashing framework,
+ * 		Used as Yukari's password hashing system.
  *
  * @package lib
- * @version Version 0.1 / slightly modified for Failnet (using $F$ as hash type identifier, and using hash() + SHA512 instead of MD5)
+ * @version Version 0.1 / slightly modified for Yukari (using $Y$ as hash type identifier, and using hash() + SHA512 instead of MD5)
  *
  * Portable PHP password hashing framework.
  *
@@ -56,16 +55,13 @@ class Hash
 {
 	public $itoa64 = './0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 	public $iteration_count_log2;
-	public $portable_hashes;
 	public $random_state;
 
-	public function __construct($iteration_count_log2 = 8, $portable_hashes = true)
+	public function __construct($iteration_count_log2 = 8)
 	{
-		if ($iteration_count_log2 < 4 || $iteration_count_log2 > 31)
+		if ($iteration_count_log2 < 8 || $iteration_count_log2 > 31)
 			$iteration_count_log2 = 8;
 		$this->iteration_count_log2 = $iteration_count_log2;
-
-		$this->portable_hashes = $portable_hashes;
 
 		$this->random_state = microtime() . getmypid();
 	}
@@ -120,7 +116,7 @@ class Hash
 
 	public function gensalt_private($input)
 	{
-		$output = '$F$';
+		$output = '$Y$';
 		$output .= $this->itoa64[min($this->iteration_count_log2 + 5, 30)];
 		$output .= $this->encode64($input, 6);
 
@@ -133,7 +129,7 @@ class Hash
 		if (substr($setting, 0, 2) == $output)
 			$output = '*1';
 
-		if (substr($setting, 0, 3) != '$F$')
+		if (substr($setting, 0, 3) != '$Y$')
 			return $output;
 
 		$count_log2 = strpos($this->itoa64, $setting[3]);
@@ -154,69 +150,7 @@ class Hash
 		while (--$count);
 
 		$output = substr($setting, 0, 12);
-		$output .= $this->encode64($hash, 16);
-
-		return $output;
-	}
-
-	public function gensalt_extended($input)
-	{
-		$count_log2 = min($this->iteration_count_log2 + 8, 24);
-		# This should be odd to not reveal weak DES keys, and the
-		# maximum valid value is (2**24 - 1) which is odd anyway.
-		$count = (1 << $count_log2) - 1;
-
-		$output = '_';
-		$output .= $this->itoa64[$count & 0x3f];
-		$output .= $this->itoa64[($count >> 6) & 0x3f];
-		$output .= $this->itoa64[($count >> 12) & 0x3f];
-		$output .= $this->itoa64[($count >> 18) & 0x3f];
-
-		$output .= $this->encode64($input, 3);
-
-		return $output;
-	}
-
-	public function gensalt_blowfish($input)
-	{
-		# This one needs to use a different order of characters and a
-		# different encoding scheme from the one in encode64() above.
-		# We care because the last character in our encoded string will
-		# only represent 2 bits.  While two known implementations of
-		# bcrypt will happily accept and correct a salt string which
-		# has the 4 unused bits set to non-zero, we do not want to take
-		# chances and we also do not want to waste an additional byte
-		# of entropy.
-		$itoa64 = './ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-
-		$output = '$2a$';
-		$output .= chr(ord('0') + $this->iteration_count_log2 / 10);
-		$output .= chr(ord('0') + $this->iteration_count_log2 % 10);
-		$output .= '$';
-
-		$i = 0;
-		do
-		{
-			$c1 = ord($input[$i++]);
-			$output .= $itoa64[$c1 >> 2];
-			$c1 = ($c1 & 0x03) << 4;
-			if ($i >= 16)
-			{
-				$output .= $itoa64[$c1];
-				break;
-			}
-
-			$c2 = ord($input[$i++]);
-			$c1 |= $c2 >> 4;
-			$output .= $itoa64[$c1];
-			$c1 = ($c2 & 0x0f) << 2;
-
-			$c2 = ord($input[$i++]);
-			$c1 |= $c2 >> 6;
-			$output .= $itoa64[$c1];
-			$output .= $itoa64[$c2 & 0x3f];
-		}
-		while (1);
+		$output .= $this->encode64($hash, 64);
 
 		return $output;
 	}
@@ -225,27 +159,10 @@ class Hash
 	{
 		$random = '';
 
-		if (CRYPT_BLOWFISH == 1 && !$this->portable_hashes)
-		{
-			$random = $this->get_random_bytes(16);
-			$hash = crypt($password, $this->gensalt_blowfish($random));
-			if (strlen($hash) == 60)
-				return $hash;
-		}
-
-		if (CRYPT_EXT_DES == 1 && !$this->portable_hashes)
-		{
-			if (strlen($random) < 3)
-				$random = $this->get_random_bytes(3);
-			$hash = crypt($password, $this->gensalt_extended($random));
-			if (strlen($hash) == 20)
-				return $hash;
-		}
-
 		if (strlen($random) < 6)
 			$random = $this->get_random_bytes(6);
 		$hash = $this->crypt_private($password, $this->gensalt_private($random));
-		if (strlen($hash) == 34)
+		if (strlen($hash) == 98)
 			return $hash;
 
 		# Returning '*' on error is safe here, but would _not_ be safe
