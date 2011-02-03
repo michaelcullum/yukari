@@ -63,6 +63,7 @@ class Environment
 			'ui.output_level'			=> 'normal',
 			'environment.addons'		=> array(),
 			'core.timezonestring'		=> date_default_timezone_get(),
+			'server.port'				=> 6667,
 		);
 	}
 
@@ -219,6 +220,11 @@ class Environment
 			$required_configs = array(
 				'language.file_dir',
 				'ui.output_level',
+
+				'irc.url',
+				'irc.username',
+				'irc.realname',
+				'irc.nickname',
 			);
 
 			foreach($required_configs as $required_config_name)

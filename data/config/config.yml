@@ -4,11 +4,22 @@
 
 # language component settings
 language.file_dir: /data/language/
+language.default_locale: en_US
+
 # language file compiler stuff
 language.locales:
   - en_US
 language.packages:
   - core
-language.default_locale: en_US
+
+# list of dispatcher listeners...may change later, have the UI autoassign its listeners in the PHP code
 dispatcher.listeners:
   ui.debug: core.ui->debug
+
+socket.use_ssl: false
+
+irc.url: irc.freenode.net
+irc.port: 6667
+irc.nickname: Yukari
+irc.username: Yukari-chan
+irc.realname: Obsidian

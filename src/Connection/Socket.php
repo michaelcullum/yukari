@@ -20,13 +20,12 @@
  *
  */
 
-namespace Failnet\Connection;
-use Failnet\Bot as Bot;
-use Failnet\Lib as Lib;
+namespace Yukari\Connection;
+use Yukari\Kernel;
 
 /**
- * Failnet - Socket connection handling class,
- * 	    Used as Failnet's connection handler.
+ * Yukari - Socket connection handling class,
+ * 	    Used as Yukari's connection handler.
  *
  *
  * @category    Yukari
@@ -40,7 +39,7 @@ class Socket
 	/**
 	 * @var float - The socket timeout setting
 	 */
-	private $timeout = 0.1;
+	protected $timeout = 0.1;
 
 	/**
 	 * @var stream resource - The stream resource used for communicating with the server
@@ -51,24 +50,24 @@ class Socket
 	 * Initiates a connection with the server.
 	 * @return void
 	 *
-	 * @throws Failnet\Connection\SocketException
+	 * @throws \RuntimeException
 	 */
 	public function connect()
 	{
 		// Check to see if the transport method we are using is allowed
-		$transport = Bot::getOption('socket.use_ssl', false) ? 'ssl' : 'tcp';
+		$transport = (Kernel::getConfig('socket.use_ssl') == true) ? 'ssl' : 'tcp';
 		if(!in_array($transport, stream_get_transports()))
-			throw new SocketException(sprintf('', $transport), SocketException::ERR_SOCKET_UNSUPPORTED_TRANSPORT);
+			throw new \RuntimeException(sprintf('Unsupported transport "%s" specified', $transport));
 
 		// Establish and configure the socket connection
-		$remote = "$transport://" . Bot::getOption('server.server_uri', '', true) . ':' . Bot::getOption('server.port', 6667);
+		$remote = "$transport://" . Kernel::getConfig('irc.url') . ':' . Kernel::getConfig('irc.port');
 
 		// Try a few times to connect to the server, and if we can't, we dai.
 		$attempts = 0;
 		do
 		{
 			if(++$attempts > 5)
-				throw new SocketException(sprintf('Socket error encountered: [%1$s] %2$s', $errno, $errstr), SocketException::ERR_SOCKET_ERROR);
+				throw new \RuntimeException(sprintf('Socket error encountered: [%1$s] %2$s', $errno, $errstr));
 
 			$this->socket = @stream_socket_client($remote, $errno, $errstr);
 			if(!$this->socket)
@@ -79,19 +78,19 @@ class Socket
 		stream_set_timeout($this->socket, (int) $this->timeout, (($this->timeout - (int) $this->timeout) * 1000000));
 
 		// Send the server password if one is specified
-		if(Bot::getOption('socket.server_pass', ''))
-			$this->send('PASS', Bot::getOption('server.server_pass', ''));
+		if(Kernel::getConfig('irc.password'))
+			$this->send('PASS', Kernel::getConfig('irc.password'));
 
 		// Send user information
-		$this->send('USER', array(Bot::getOption('server.username', 'Failnet'), Bot::getOption('server.server_uri', '', true), Bot::getOption('server.server_uri', '', true), Bot::getOption('server.realname', 'Failnet')));
-		$this->send('NICK', Bot::getOption('socket.nickname', '', true));
+		$this->send('USER', array(Kernel::getConfig('irc.username'), Kernel::getConfig('irc.url'), Kernel::getConfig('irc.url'), Kernel::getConfig('irc.realname')));
+		$this->send('NICK', Kernel::getConfig('irc.nickname'));
 	}
 
 	/**
 	 * Listens for an event on the current connection.
-	 * @return Failnet\Event\EventBase - Event instance if an event was received, NULL otherwise
+	 * @return \Yukari\Event\Instance - Event instance if an event was received, NULL otherwise
 	 *
-	 * @throws Failnet\Connection\SocketException
+	 * @throws \RuntimeException
 	 */
 	public function get()
 	{
@@ -100,7 +99,7 @@ class Socket
 		do
 		{
 			if(++$attempts > 5)
-				throw new SocketException('fgets() call failed, socket connection lost', SocketException::ERR_SOCKET_FGETS_FAILED);
+				throw new \RuntimeException('fgets() call failed, socket connection lost');
 
 			$buffer = fgets($this->socket, 512);
 		}
@@ -127,12 +126,12 @@ class Socket
 		// Parse the hostmask.
 		if(strpos($prefix, '@') === false)
 		{
-			$hostmask = new Lib\Hostmask('server', Bot::getOption('server.server_uri', '', true), $prefix);
+			$hostmask = new \Yukari\Lib\Hostmask('server', Kernel::getConfig('irc.url'), $prefix);
 		}
 		else
 		{
 			// Parse the command and arguments
-			$hostmask = Lib\Hostmask::load($prefix);
+			$hostmask = \Yukari\Lib\Hostmask::load($prefix);
 		}
 
 		// Parse the event arguments depending on the event type
@@ -200,13 +199,14 @@ class Socket
 		// Create, populate, and return an event object
 		if(ctype_digit($cmd))
 		{
-			$event = new Failnet\Event\IRC\Response();
+			$event = new \Yukari\Event\IRC\Response();
 			$event['code'] = $cmd;
 			$event['description'] = $args;
 
 		}
 		else
 		{
+			// @todo rewrite for new event stuff
 			$event_class = 'Failnet\\Event\\IRC\\' . ucfirst($cmd);
 			$event = new $event_class();
 			$event['type'] = $cmd;
@@ -222,20 +222,21 @@ class Socket
 
 	/**
 	 * Handles construction of command strings and their transmission to the server.
-	 * @param Failnet\Event\EventBase $event - Event to send.
+	 * @param \Yukari\Event\Instance $event - Event to send.
 	 * @return string - Command string that was sent
 	 *
-	 * @throws Failnet\Connection\SocketException
+	 * @throws \LogicException
+	 * @throws \RuntimeException
 	 */
-	public function send(Failnet\Event\EventBase $event)
+	public function send(\Yukari\Event\Instance $event)
 	{
 		// Require an open socket connection to continue
 		if(empty($this->socket))
-			throw new SocketException('Cannot send to server, no connection present', SocketException::ERR_SOCKET_NO_CONNECTION);
+			throw new \LogicException('Cannot send to server, no connection present');
 
 		// Make sure this event can be sent in the first place.
 		if(!$event->sendable())
-			throw new SocketException('Attempt to send unsendable event failed', SocketException::ERR_SOCKET_SEND_UNSENDABLE_EVENT);
+			throw new \LogicException('Attempt to send unsendable event failed');
 
 		// Get the buffer to write.
 		$buffer = $event->buildCommand();
@@ -245,9 +246,9 @@ class Socket
 		do
 		{
 			if(++$attempts > 5)
-				throw new SocketException('fwrite() call failed, socket connection lost', SocketException::ERR_SOCKET_FWRITE_FAILED);
+				throw new \RuntimeException('fwrite() call failed, socket connection lost');
 
-			$success = @fwrite($this->socket, $buffer . "\r\n");
+			$success = @fwrite($this->socket, "{$buffer}\r\n");
 		}
 		while(!$success);
 
@@ -257,13 +258,12 @@ class Socket
 
 	/**
 	 * Terminates the connection with the server.
-	 * @param string $reason - Reason for connection termination (optional)
 	 * @return void
 	 */
 	public function close()
 	{
-		Bot::getObject('core.ui')->system('-!- Quitting from server "' . Bot::getOption('server.server_uri', '', true) . '"');
-		Bot::core('log')->add('--- Quitting from server "' . Bot::core()->config('server') . '" ---'); // @todo rewrite
+		$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.system')
+			->setDataPoint('message', sprintf('Quitting from server "%1$s"', Kernel::getConfig('irc.url'))));
 
 		// Terminate the socket connection
 		fclose($this->socket);
@@ -276,7 +276,7 @@ class Socket
 	 * @param integer $count - Optional maximum number of arguments
 	 * @return array - Array of argument values
 	 */
-	private function args($args, $count = -1)
+	final public function args($args, $count = -1)
 	{
 		return preg_split('/ :?/S', $args, $count);
 	}
