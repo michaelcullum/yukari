@@ -60,7 +60,7 @@ class Socket
 			throw new \RuntimeException(sprintf('Unsupported transport "%s" specified', $transport));
 
 		// Establish and configure the socket connection
-		$remote = "$transport://" . Kernel::getConfig('irc.url') . ':' . Kernel::getConfig('irc.port');
+		$remote = sprintf('%1$s://%2$s:%3$s', $transport, Kernel::getConfig('irc.url'), Kernel::getConfig('irc.port'));
 
 		// Try a few times to connect to the server, and if we can't, we dai.
 		$attempts = 0;
