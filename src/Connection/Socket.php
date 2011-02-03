@@ -259,6 +259,10 @@ class Socket
 				throw new \RuntimeException('fwrite() call failed, socket connection lost');
 
 			$success = @fwrite($this->socket, "{$data}\r\n");
+
+			// slight delay to keep from flooding the server with send requests...we should be polite after all.  :)
+			if(!$success)
+				usleep(500);
 		}
 		while(!$success);
 
