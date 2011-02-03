@@ -79,7 +79,7 @@ class Socket
 
 		// Send the server password if one is specified
 		if(Kernel::getConfig('irc.password'))
-			$this->send('PASS', Kernel::getConfig('irc.password'));
+			$this->send(sprintf('PASS %s', Kernel::getConfig('irc.password')));
 
 		// Send user information
 		$this->send(sprintf('USER %1$s %2$s %3$s :%4$s', Kernel::getConfig('irc.username'), Kernel::getConfig('irc.url'), Kernel::getConfig('irc.url'), Kernel::getConfig('irc.realname')));
