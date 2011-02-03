@@ -18,7 +18,7 @@
 ##########################################
 
 # files and directories to include in the package creation
-ZIPINCLUDES="/bin/* /data/* /docs/* /lib/* /LICENSE /README.markdown"
+ZIPINCLUDES="bin\/* data\/* docs\/* lib\/* LICENSE README.markdown"
 # name to use for the archive
 ZIPNAME=yukari
 # should we do a signed build, or an unsigned build?
@@ -50,8 +50,8 @@ fi
 # up a dir
 cd $SCRIPT/../
 # start packaging stuff
-NAME=$ZIPNAME-$BINNUMBER
-zip -r $NAME -i $ZIPINCLUDES
+NAME="$ZIPNAME-build_$BINNUMBER"
+zip -r $NAME . -i $ZIPINCLUDES
 
 # update the build number
 BINNUMBER=$((BINNUMBER+1))
