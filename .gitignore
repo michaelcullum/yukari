@@ -1,4 +1,4 @@
-build/cert/priv.pem
-build/failnet.phar*
+build/cert/*.pem
+build/yukari.phar*
 build/tmp/*
 build/verified/*
