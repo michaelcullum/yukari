@@ -272,7 +272,10 @@ class Socket
 	 */
 	public function close()
 	{
-		$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.system')
+		if($this->socket === NULL)
+			return;
+
+		Kernel::get('core.dispatcher')->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.system')
 			->setDataPoint('message', sprintf('Quitting from server "%1$s"', Kernel::getConfig('irc.url'))));
 
 		// Terminate the socket connection
