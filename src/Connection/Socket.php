@@ -82,8 +82,8 @@ class Socket
 			$this->send('PASS', Kernel::getConfig('irc.password'));
 
 		// Send user information
-		$this->send('USER', array(Kernel::getConfig('irc.username'), Kernel::getConfig('irc.url'), Kernel::getConfig('irc.url'), Kernel::getConfig('irc.realname')));
-		$this->send('NICK', Kernel::getConfig('irc.nickname'));
+		$this->send(sprintf('USER %1$s %2$s %3$s :%4$s', Kernel::getConfig('irc.username'), Kernel::getConfig('irc.url'), Kernel::getConfig('irc.url'), Kernel::getConfig('irc.realname')));
+		$this->send(sprintf('NICK %1$s', Kernel::getConfig('irc.nickname')));
 	}
 
 	/**
@@ -225,10 +225,23 @@ class Socket
 	 * @param \Yukari\Event\Instance $event - Event to send.
 	 * @return string - Command string that was sent
 	 *
+	 */
+	public function sendEvent(\Yukari\Event\Instance $event)
+	{
+		// Get the buffer to write.
+		$buffer = $event->buildCommand();
+		return $this->send($buffer);
+	}
+
+	/**
+	 * Sends a string of data to the server
+	 * @param string $data - The data to send to the server.
+	 * @return string - The command string that was sent.
+	 *
 	 * @throws \LogicException
 	 * @throws \RuntimeException
 	 */
-	public function send(\Yukari\Event\Instance $event)
+	public function send($data)
 	{
 		// Require an open socket connection to continue
 		if(empty($this->socket))
@@ -238,9 +251,6 @@ class Socket
 		if(!$event->sendable())
 			throw new \LogicException('Attempt to send unsendable event failed');
 
-		// Get the buffer to write.
-		$buffer = $event->buildCommand();
-
 		// Transmit the command over the socket connection
 		$attempts = 0;
 		do
@@ -248,12 +258,12 @@ class Socket
 			if(++$attempts > 5)
 				throw new \RuntimeException('fwrite() call failed, socket connection lost');
 
-			$success = @fwrite($this->socket, "{$buffer}\r\n");
+			$success = @fwrite($this->socket, "{$data}\r\n");
 		}
 		while(!$success);
 
 		// Return the command string that was transmitted
-		return $buffer;
+		return $data;
 	}
 
 	/**
