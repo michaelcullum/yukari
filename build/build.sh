@@ -18,9 +18,9 @@
 ##########################################
 
 # files to exclude in phar-build
-EXCLUDE="~$ .*\.txt$ .*\.markdown$ .*\.md$ stub\.php .*\.json$"
+EXCLUDE="~$ .*\.txt$ .*\.xml$ .*\.markdown$ .*\.md$ stub\.php .*\.json$"
 # directories to exclude in phar-build
-EXLUDEDIR="/Language/Package/*"
+EXCLUDEDIR="/\.git/ /\.svn/ /vendor/swiftmailer/test-suite/ /vendor/swiftmailer/tests/"
 # source directory
 SRC="./src/"
 # name of the phar archive
@@ -33,17 +33,17 @@ PHARNAME=yukari.phar
 # get this script's full path
 SCRIPT=`dirname $(readlink -f $0)`
 #cd $SCRIPT/../
-phar-file-checksums --src $SRC --exclude $EXCLUDE --exclude-dir $EXCLUDEDIR --checksumfile ./filestate
+phar-file-checksums -s $SRC -x "$EXCLUDE" -X "$EXCLUDEDIR" --checksumfile $SCRIPT/filestate.json
 RESULT=$?
 if [ $RESULT -eq 0 ]; then
 	echo 'no rebuild needed'
 else
 	echo 'updating phar file'
-	phar-build --phar $SCRIPT/$PHARNAME --src $SRC --exclude $EXCLUDE --exclude-dir $EXCLUDEDIR --stub ./../src/stub.php
+	phar-build --phar $SCRIPT/$PHARNAME -s $SRC -x "$EXCLUDE" -X "$EXCLUDEDIR" -S ./../src/stub.php -p $SCRIPT/cert/priv.pem -P $SCRIPT/cert/pub.pem
 	mv $SCRIPT/$PHARNAME $SCRIPT/../lib/$PHARNAME
 	mv $SCRIPT/$PHARNAME.pubkey $SCRIPT/../lib/$PHARNAME.pubkey
 	if [ -d $SCRIPT/../.git/ ]; then
-		git add $SCRIPT/../lib/$PHARNAME $SCRIPT/filestate
+		git add $SCRIPT/../lib/$PHARNAME $SCRIPT/filestate.json
 	fi
 	echo 'success'
 fi
