@@ -53,6 +53,11 @@ class Environment
 	protected $config = array();
 
 	/**
+	 * @var boolean - Should we trigger a bot shutdown?
+	 */
+	protected $shutdown = false;
+
+	/**
 	 * Constructor
 	 * @return void
 	 */
@@ -154,7 +159,11 @@ class Environment
 		}
 	}
 
-
+	public function triggerShutdown(\Yukari\Event\Instance $event)
+	{
+		if($event->getName() === 'system.shutdown')
+			$this->shutdown = true;
+	}
 
 
 
@@ -466,22 +475,19 @@ class Environment
 	 */
 	public function runBot()
 	{
-		/* @var Failnet\Connection\Socket */
-		$socket = $this->getObject('core.socket');
-		/* @var Failnet\Event\Dispatcher */
-		$dispatcher = $this->getObject('core.dispatcher');
-		/* @var Failnet\Cron\Manager */
-		$cron = $this->getObject('core.cron');
+		/* @var \Yukari\Connection\Socket */
+		$socket = Kernel::get('core.socket');
+		/* @var \Yukari\Event\Dispatcher */
+		$dispatcher = Kernel::get('core.dispatcher');
+
+		// Hook up the shutdown listener here real quick
+		$dispatcher->register('system.shutdown', array(Kernel::getEnvironment(), 'triggerShutdown'));
 
 		// Connect to the remote server, assuming nothing blows up of course.
 		$socket->connect();
 
 		// Dispatch a connection event
-		if($dispatcher->hasListeners('Runtime\\Connect'))
-		{
-			$trigger = new Event\Runtime\Connect();
-			$dispatcher->dispatch($trigger);
-		}
+		$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'runtime.connect'));
 
 		try
 		{
@@ -489,70 +495,52 @@ class Environment
 			while(true)
 			{
 				$queue = array();
-				$quit = NULL;
 
-				$queue = array_merge($cron->runTasks(), $queue);
+				// Fire off a tick event.
+				$queue = array_merge($dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'runtime.tick')), $queue);
+
+				//$queue = array_merge($cron->runTasks(), $queue);
 				$event = $socket->get();
 				if($event)
 				{
-					// Verify that this event type has listeners assigned, then dispatch it to those registered for it.
-					if($dispatcher->hasListeners($event->getType()))
-						$queue = array_merge($dispatcher->dispatch($event), $queue);
+					// Dispatch our event for proper handling
+					$queue = array_merge($dispatcher->dispatch($event), $queue);
 				}
 
 				if(!empty($queue))
 				{
 					foreach($queue as $outbound)
 					{
-						// If this is a quit event, we'll quit after all other events have processed.
-						if($outbound->getType() === 'IRC\\Quit')
-						{
-							$quit = $outbound;
-							continue;
-						}
-
 						// Fire off a predispatch event, to allow listeners to modify events before they are sent.
 						// Useful for features like self-censoring.
-						if($dispatcher->hasListeners('Runtime\\PreDispatch'))
-						{
-							$trigger = new Event\Runtime\PreDispatch();
-							$trigger['event'] = $outbound;
-							$dispatcher->dispatch($trigger);
-						}
+						$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'runtime.predispatch')
+							->setDataPoint('response', $outbound));
 
 						// Send off the event!
 						$socket->send($outbound);
 
 						// Fire off a postdispatch event, to allow listeners to react to events being sent.
 						// Useful for things like logging.
-						if($dispatcher->hasListeners('Runtime\\PostDispatch'))
-						{
-							$trigger = new Event\Runtime\PostDispatch();
-							$trigger['event'] = $outbound;
-							$dispatcher->dispatch($trigger);
-						}
+						$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'runtime.postdispatch')
+							->setDataPoint('response', $outbound));
 					}
 
 					// If we have a quit event, break out of the loop.
-					if($quit)
+					if($this->shutdown === true)
 						break;
 				}
 			}
 		}
-		catch(FailnetException $e)
+		catch(\Exception $e)
 		{
 			// @todo do stuff here
 
 			try
 			{
 				// Dispatch an emergency abort event.
-				if($dispatcher->hasListeners('Runtime\\Abort'))
-				{
-					$trigger = new Event\Runtime\Abort();
-					$dispatcher->dispatch($trigger);
-				}
+				$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'runtime.abort'));
 			}
-			catch(FailnetException $e)
+			catch(\Exception $e)
 			{
 				// Another exception?  FFFUUUUUUU--
 				// CRASH BANG BOOM.
@@ -562,15 +550,12 @@ class Environment
 		}
 
 		// Dispatch a pre-shutdown event.
-		if($dispatcher->hasListeners('Runtime\\Shutdown'))
-		{
-			$trigger = new Event\Runtime\Shutdown();
-			$dispatcher->dispatch($trigger);
-		}
+		$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'runtime.shutdown'));
 
-		// Send the quit event.
-		$socket->send($quit);
+		// Send a quit event, handle exit gracefully.
+		// @todo update
+		//$socket->send($quit);
 
-		// @todo handle exit gracefully here
+		$socket->send(sprintf('QUIT :Yukari IRC Bot - %s', Kernel::getBuildNumber()));
 	}
 }

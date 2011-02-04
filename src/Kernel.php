@@ -49,12 +49,16 @@ abstract class Kernel
 	 */
 	protected static $autoloader;
 
+	protected static $build_number = 0;
+
 	/**
 	 * Load the kernel up, and get the basics loaded alongside
 	 * @return void
 	 */
 	public static function load()
 	{
+		self::$build_number = @file_get_contents(\Yukari\ROOT_PATH . '/VERSION');
+
 		// Load the Environment object
 		self::setEnvironment(\Yukari\Environment::newInstance());
 	}
@@ -105,6 +109,15 @@ abstract class Kernel
 	public static function getAutoloader()
 	{
 		return self::$autoloader;
+	}
+
+	/**
+	 * Get the build number for this version of Yukari
+	 * @return string - The build string for this version of Yukari.
+	 */
+	public static function getBuildNumber()
+	{
+		return (self::$build_number !== false) ? sprintf('build_%d', self::$build_number) : 'build_DEV';
 	}
 
 	/**
