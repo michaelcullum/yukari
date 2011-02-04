@@ -51,7 +51,7 @@ require Yukari\ROOT_PATH . '/Environment.php';
 
 // Set our error and exception handlers
 @set_error_handler('Yukari\\errorHandler');
-// @set_exception_handler('Yukari\\exceptionHandler'); // @todo uncomment when an exception handler is written
+@set_exception_handler('Yukari\\exceptionHandler');
 
 // Check to see if date.timezone is empty in the PHP.ini; if so, set the timezone with some Hax to prevent strict errors.
 if(!ini_get('date.timezone'))

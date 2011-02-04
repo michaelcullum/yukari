@@ -32,11 +32,11 @@ namespace Yukari;
  */
 function errorHandler($errno, $msg_text, $errfile, $errline)
 {
-	/* @var Yukari\CLI\UI */
-	$ui = Kernel::get('core.ui');
+	/* @var \Yukari\Event\Dispatcher */
+	$dispatcher = Kernel::get('core.dispatcher');
 
-	// If the UI isn't present yet, just seppuku.
-	if(is_null($ui))
+	// If the dispatcher isn't present yet, just seppuku.
+	if(is_null($dispatcher))
 		exit;
 
 	// Do not display notices if we suppress them via @
@@ -46,8 +46,8 @@ function errorHandler($errno, $msg_text, $errfile, $errline)
 	// Strip the current directory from the offending file
 	$errfile = (!empty($errfile)) ? substr(str_replace(array(__DIR__, '\\'), array('', '/'), $errfile), 1) : '';
 	$error = 'in file ' . $errfile . ' on line ' . $errline . ': ' . $msg_text . PHP_EOL;
-	$handled = false;
 
+	$handled = false;
 	switch ($errno)
 	{
 		case E_NOTICE:
@@ -56,22 +56,22 @@ function errorHandler($errno, $msg_text, $errfile, $errline)
 		case E_USER_NOTICE:
 		case E_USER_DEPRECATED:
 			$handled = true;
-			$ui->php("notice: $error");
-			file_put_contents(YUKARI . '/data/logs/Error_' . date('m-d-Y', time()) . '.log', date('D m/d/Y - h:i:s A') . ' - [PHP Notice] ' . $error, FILE_APPEND | LOCK_EX);
+			$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.php')
+				->setDataPoint('message', sprintf('php notice: %s', $error)));
 		break;
 
 		case E_WARNING:
 		case E_USER_WARNING:
 			$handled = true;
-			$ui->php("warning: $error");
-			file_put_contents(YUKARI . '/data/logs/Error_' . date('m-d-Y', time()) . '.log', date('D m/d/Y - h:i:s A') . ' - [PHP Warning] ' . $error, FILE_APPEND | LOCK_EX);
+			$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.php')
+				->setDataPoint('message', sprintf('php warning: %s', $error)));
 		break;
 
 		case E_ERROR:
 		case E_USER_ERROR:
 			$handled = true;
-			$ui->php("error: $error");
-			file_put_contents(YUKARI . '/data/logs/Error_' . date('m-d-Y', time()) . '.log', date('D m/d/Y - h:i:s A') . ' - [PHP Error] ' . $error, FILE_APPEND | LOCK_EX);
+			$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.php')
+				->setDataPoint('message', sprintf('php fatal error: %s', $error)));
 		break;
    }
 
@@ -85,12 +85,22 @@ function errorHandler($errno, $msg_text, $errfile, $errline)
 
 /**
  * Exception handler for Yukari.
- * @param Exception $e - The exception to handle.
+ * @param \Exception $e - The exception to handle.
  * @return void
  */
-function exceptionHandler(Exception $e)
+function exceptionHandler(\Exception $e)
 {
-	// asdf
+	/* @var \Yukari\Event\Dispatcher */
+	$dispatcher = Kernel::get('core.dispatcher');
+
+	// If the dispatcher isn't present yet, just seppuku.
+	if(is_null($dispatcher))
+		exit;
+
+	$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.php')
+		->setDataPoint('message', sprintf('uncaught exception: %1$s::%2$s - %3$s', get_class($e), $e->getCode(), $e->getMessage())));
+
+	exit;
 }
 
 /**
@@ -180,20 +190,6 @@ function timespan($time, $last_comma = false)
 	}
 
 	return $bigtime;
-}
-
-/**
- * Are we directing this at our owner or ourself?
- * This is best to avoid humilation if we're using an agressive command.  ;)
- * @param string $user - The user to check.
- * @return boolean - Are we targeting the owner or ourself?
- * @todo update for new framework
- */
-function checkuser($user)
-{
-   if(preg_match('#' . preg_quote(Bot::core()->config('owner'), '#') . '|' . preg_quote(Bot::core()->config('nick'), '#') . '|self#i', $user))
-	   return true;
-   return false;
 }
 
 /**
