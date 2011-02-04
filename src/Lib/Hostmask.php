@@ -20,10 +20,10 @@
  *
  */
 
-namespace Failnet\Lib;
+namespace Yukari\Lib;
 
 /**
- * Failnet - Hostmask class,
+ * Yukari - Hostmask class,
  * 	    Used as an object for housing hostmask data
  *
  *
@@ -65,14 +65,12 @@ class Hostmask implements \ArrayAccess
 	/**
 	 * Parses a string containing the entire hostmask into a new instance of this class.
 	 * @param string $hostmask - Entire hostmask including the nick, username, and host components
-	 * @return object Failnet\Lib\Hostmask - New object instance populated with the data parsed from the provided hostmask string
-	 *
-	 * @throws Failnet\Lib\HostmaskException
+	 * @return object \Yukari\Lib\Hostmask - New object instance populated with the data parsed from the provided hostmask string
 	 */
 	public static function load($hostmask)
 	{
 		if(!preg_match('/^([^!@]+)!(?:[ni]=)?([^@]+)@([^ ]+)/', $hostmask, $match))
-			throw new HostmaskException(sprintf('Invalid hostmask "%1$s" specified', $hostmask), HostmaskException::ERR_INVALID_HOSTMASK);
+			throw new \LogicException(sprintf('Invalid hostmask "%s" specified', $hostmask));
 
 		list(, $nick, $username, $host) = $match;
 		return new Hostmask($nick, $username, $host);
@@ -126,11 +124,13 @@ class Hostmask implements \ArrayAccess
 	 * @param mixed $offset - The offset to set.
 	 * @param mixed $value - The value to set to the offset.
 	 * @return void
+	 *
+	 * @throws \RuntimeException
 	 */
 	public function offsetSet($offset, $value)
 	{
 		if(!property_exists($this, $offset))
-			throw new HostmaskException('Attempt to access an invalid property in a hostmask object failed', HostmaskException::ERR_INVALID_PROPERTY);
+			throw new \RuntimeException('Attempt to access an invalid property in a hostmask object failed');
 
 		$this->$offset = $value;
 	}
