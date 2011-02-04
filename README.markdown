@@ -19,7 +19,6 @@ Yukari is currently undergoing a complete codebase rewrite, and as such I have b
 
 ## Dependencies
 
-* Swiftmailer 4.0.6 (packaged)
 * sfYaml (packaged)
 
 ## Instructions
