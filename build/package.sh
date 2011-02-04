@@ -18,7 +18,7 @@
 ##########################################
 
 # files and directories to include in the package creation
-ZIPINCLUDES="bin\/* data\/* docs\/* lib\/* LICENSE README.markdown"
+ZIPINCLUDES="addons\/*.phar bin\/* data\/* docs\/* lib\/* LICENSE README.markdown"
 # name to use for the archive
 ZIPNAME=yukari
 
