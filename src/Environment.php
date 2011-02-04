@@ -447,6 +447,7 @@ class Environment
 	 * @return void
 	 *
 	 * @throws Failnet\EnvironmentException
+	 * @deprecated
 	 */
 	public function loadConfig($config)
 	{
@@ -499,13 +500,12 @@ class Environment
 				// Fire off a tick event.
 				$queue = array_merge($dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'runtime.tick')), $queue);
 
-				//$queue = array_merge($cron->runTasks(), $queue);
+				// Grab an event from the socket
 				$event = $socket->get();
+
+				// If we got one, we process the event we received
 				if($event)
-				{
-					// Dispatch our event for proper handling
-					$queue = array_merge($dispatcher->dispatch($event), $queue);
-				}
+					$queue = array_merge($dispatcher->trigger($event), $queue);
 
 				if(!empty($queue))
 				{
@@ -553,9 +553,7 @@ class Environment
 		$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'runtime.shutdown'));
 
 		// Send a quit event, handle exit gracefully.
-		// @todo update
-		//$socket->send($quit);
-
 		$socket->send(sprintf('QUIT :Yukari IRC Bot - %s', Kernel::getBuildNumber()));
+		$socket->close();
 	}
 }
