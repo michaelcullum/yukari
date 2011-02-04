@@ -34,8 +34,11 @@ if [ -e $SCRIPT/bin_number.txt ]
 then
 	BINNUMBER=`cat $SCRIPT/bin_number.txt`
 else
-	BINNUMBER=1
+	BINNUMBER=0
 fi
+BINNUMBER=$((BINNUMBER+1))
+echo $BINNUMBER > $SCRIPT/bin_number.txt
+echo $BINNUMBER > "$SCRIPT/../src/VERSION"
 
 # build the latest phar archive
 $SCRIPT/build.sh
@@ -46,6 +49,4 @@ cd $SCRIPT/../
 NAME="$ZIPNAME-build_$BINNUMBER"
 zip -r $NAME . -i $ZIPINCLUDES
 
-# update the build number
-BINNUMBER=$((BINNUMBER+1))
-echo $BINNUMBER > $SCRIPT/bin_number.txt
+rm "$SCRIPT/../src/VERSION"
