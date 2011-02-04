@@ -21,8 +21,6 @@
  */
 
 namespace Yukari;
-use Yukari\Lib as Lib;
-use Yukari\Event as Event;
 
 /**
  * Yukari - Environment class,
@@ -159,57 +157,21 @@ class Environment
 		}
 	}
 
+	/**
+	 * Basic listener that allows an addon or something to trigger a shutdown
+	 * @param \Yukari\Event\Instance $event - The event that is triggering the shutdown
+	 * @return void
+	 */
 	public function triggerShutdown(\Yukari\Event\Instance $event)
 	{
 		if($event->getName() === 'system.shutdown')
 			$this->shutdown = true;
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	/**
+	 * Load up the Yukari environment.
+	 * @return void
+	 */
 	public function init()
 	{
 		try
@@ -227,9 +189,6 @@ class Environment
 
 			// check for missing required configs
 			$required_configs = array(
-				'language.file_dir',
-				'ui.output_level',
-
 				'irc.url',
 				'irc.username',
 				'irc.realname',
@@ -315,158 +274,6 @@ class Environment
 		catch(\Exception $e)
 		{
 			throw new \RuntimeException(sprintf('Yukari environment initialization encountered a fatal exception (%1$s::%2$s)' . PHP_EOL . 'Exception message: %3$s', get_class($e), $e->getCode(), $e->getMessage()), $e);
-		}
-
-
-
-
-
-
-		if(!file_exists(YUKARI . 'data/config/') || !is_readable(YUKARI . 'data/config/') || !is_writeable(YUKARI . 'data/config/') || !is_dir(YUKARI . 'Data/Config/'))
-			throw new \RuntimeException('Configuration file directory does not exist, or is not readable/writeable');
-		// @note if doctrine is used, this code must be removed
-		if(!file_exists(YUKARI . 'data/DB/') || !is_readable(YUKARI . 'data/DB/') || !is_writeable(YUKARI . 'data/DB/') || !is_dir(YUKARI . 'data/DB/'))
-			throw new \RuntimeException('Database directory does not exist, or is not readable/writeable');
-
-		// Nerf the pyro, then init the Bot with a reference back to the environment.
-		//Kernel::setEnvironment($this);
-
-		// Create our timezone object and store it for now, along with storing our starting DateTime object.
-		$this->setObject('time.timezone', new \DateTimeZone(date_default_timezone_get()));
-		$this->setObject('time.start', new \DateTime('now', $this->getObject('core.timezone')));
-
-		// Define the base memory usage here.
-		define('Yukari\\BASE_MEMORY', memory_get_usage());
-
-		try
-		{
-			// Register our autoloader
-			$autoloader = Yukari\Autoloader::register();
-			$this->setObject('core.autoload', $autoloader);
-			//spl_autoload_register(array($this, 'autoloadClass'));
-
-			// Setup our CLI object, and grab any passed args
-			$this->setObject('core.cli', new Yukari\CLI\CLIArgs($_SERVER['argv']));
-			/* @var Failnet\CLI\CLIArgs */
-			$cli = $this->getObject('core.cli');
-			define('Yukari\\IN_INSTALL', ($cli['mode'] === 'install') ? true : false);
-			define('Yukari\\CONFIG_FILE', ($cli['config'] ? $cli['config'] : 'config.php'));
-
-			if(Yukari\IN_INSTALL)
-			{
-				// stuff for the dynamic installer goes here
-				$this->setObject('core.ui', new Yukari\Install\UI($this->getOption('ui.output_level', 'normal')));
-
-				/* @var Failnet\Install\UI */
-				$ui = $this->getObject('core.ui');
-
-				// Fire off the UI's startup text.
-				$ui->startup();
-				$ui->status('Loading Failnet core objects');
-
-				$ui->system('Loading core.core object');
-				$this->setObject('core.core', new Yukari\Install\Core());
-			}
-			else
-			{
-				if(!file_exists(FAILNET . 'data/config/' . Failnet\CONFIG_FILE))
-					throw new EnvironmentException(sprintf('The configuration file "%1$s" could not be loaded, as it does not exist.', Failnet\CONFIG_FILE), EnvironmentException::ERR_ENVIRONMENT_CONFIG_MISSING);
-
-				// load the config file up next
-				$this->loadConfig(Failnet\CONFIG_FILE);
-
-				//$this->setObject('core.ui', new Failnet\CLI\UI($this->getOption('ui.output_level', 'normal')));
-
-				/* @var Failnet\CLI\UI */
-				$ui = $this->getObject('core.ui');
-
-				// Fire off the UI's startup text.
-				$ui->startup();
-				$ui->status('Loading the Yukari core system');
-
-				// Start loading stuff.
-				$ui->system('Loading internationalization object');
-				$this->setObject('core.language', new Failnet\Language\Manager(YUKARI . Kernel::getConfig('language.file_dir', '/data/language')));
-				$ui->system('Loading password hashing library');
-				$this->setObject('core.hash', new Failnet\Lib\Hash(8));
-				$ui->system('Loading event dispatcher');
-				$this->setObject('core.dispatcher', new Failnet\Event\Dispatcher());
-				$ui->system('Loading session manager');
-				$this->setObject('core.session', new Failnet\Session\Manager());
-
-				// Include any extra files that the user has specified
-				foreach(Kernel::getOption('environment.extra_files', array()) as $file)
-				{
-					// Load the file, or asplode if it fails to load
-					if(($include = @include($file)) === false)
-						throw new EnvironmentException(sprintf('Failed to load extra file "%1$s"', $file), EnvironmentException::ERR_ENVIRONMENT_EXTRA_FILE_LOAD_FAIL);
-				}
-
-				// Load our language files
-				$ui->system('Loading language files');
-				$this->getObject('core.language')->collectEntries();
-
-				// Register our event listeners to the dispatcher
-				/* @var $dispatcher Failnet\Event\Dispatcher */
-				$dispatcher = $this->getObject('core.dispatcher');
-				foreach(Bot::getOption('dispatcher.listeners', array()) as $listener)
-					$dispatcher->register($listener['event'], $listener['listener'], (isset($listener['params']) ? $listener['params'] : NULL));
-
-				// Dispatch a startup event
-				// This is useful for having a listener registered, waiting for startup to complete before loading in an addon or extra library.
-				$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'runtime.startup'));
-
-				// Load any addons we want.
-				$this->setObject('core.addon', new Failnet\Addon\Loader());
-				/* @var $addon_loader Failnet\Addon\Loader */
-				$addon_loader = $this->getObject('core.addon');
-				foreach(Bot::getOption('environment.addons', array()) as $addon)
-				{
-					try
-					{
-						$addon_loader->loadAddon($addon);
-						$ui->system(sprintf('Loaded addon "%s" successfully', $addon));
-					}
-					catch(Failnet\Addon\LoaderException $e)
-					{
-						$ui->warning(sprintf('Failed to load addon "%s"', $addon));
-						$ui->warning(sprintf('Failure message:  %s', $e->getMessage()));
-					}
-				}
-			}
-		}
-		catch(\Exception $e)
-		{
-			throw new \RuntimeException(sprintf('Yukari environment initialization encountered a fatal exception (%1$s::%2$s)' . PHP_EOL . 'Exception message: %3$s', get_class($e), $e->getCode(), $e->getMessage()), $e);
-		}
-	}
-
-	/**
-	 * Load a specified configuration file
-	 * @param string $config -The config file to load, either JSON or PHP.
-	 * @return void
-	 *
-	 * @throws Failnet\EnvironmentException
-	 * @deprecated
-	 */
-	public function loadConfig($config)
-	{
-		// Grab the file extension of the config file, see if it is PHP or JSON...we'll react appropriately based on which we're working with.
-		$file_extension = substr(strrchr($config, '.'), 1);
-		if($file_extension == 'php')
-		{
-			if(($include = @include(FAILNET . "data/config/$config")) === false || !isset($data) || !is_array($data))
-				throw new EnvironmentException(sprintf('Failed to load the specified config file "%1$s"', $config), EnvironmentException::ERR_ENVIRONMENT_FAILED_CONFIG_LOAD);
-			$this->setOptions($data);
-		}
-		elseif($file_extension == 'json')
-		{
-			$data = Lib\JSON::decode(FAILNET . "data/config/$config");
-			$this->setOptions($data);
-		}
-		else
-		{
-			throw new EnvironmentException('The specified config file\'s file type is not supported', EnvironmentException::ERR_ENVIRONMENT_UNSUPPORTED_CONFIG);
 		}
 	}
 
