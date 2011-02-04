@@ -55,9 +55,10 @@ class Loader implements Iterator
 			return;
 
 		$using_phar = false;
+		$addon_uc = ucfirst($addon);
 		// Check to see if there's a phar we are dealing with here before moving on to try to load the standard class files.
 		$phar_path = YUKARI . "/addons/{$addon}/{$addon}.phar";
-		$metadata_path = "/Addon/Metadata/{$addon}.php";
+		$metadata_path = "/Addon/Metadata/{$addon_uc}.php";
 		if(file_exists($phar_path))
 		{
 			require $phar_path;
@@ -67,14 +68,14 @@ class Loader implements Iterator
 		}
 		else
 		{
-			$metadata_path = YUKARI . "/addons/{$addon}/Addon/Metadata/{$addon}.php";
+			$metadata_path = YUKARI . "/addons/{$addon}/Addon/Metadata/{$addon_uc}.php";
 			if(!file_exists(YUKARI . "/addons{$metadata_path}"))
 				throw new \RuntimeException('Could not locate addon metadata file');
 
 			require YUKARI . "/addons{$metadata_path}";
 		}
 
-		$metadata_class = "\\Yukari\\Addon\\Metadata\\{$addon}";
+		$metadata_class = "\\Yukari\\Addon\\Metadata\\{$addon_uc}";
 		if(!class_exists($metadata_class))
 			throw new \RuntimeException('Addon metadata class not defined');
 
@@ -88,9 +89,6 @@ class Loader implements Iterator
 			throw new \LogicException('Addon metadata class does not implement interface MetadataInterface');
 
 		// Check dependencies and requirements here.
-		if(!$metadata->meetsTargetVersion())
-			throw new \RuntimeException('Installed version of Yukari does not meet the required version for the addon');
-
 		if(!$metadata->checkDependencies())
 			throw new \RuntimeException('Addon metadata object declares that its required dependencies have not been met');
 

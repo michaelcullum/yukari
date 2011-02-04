@@ -57,11 +57,6 @@ abstract class MetadataBase implements MetadataInterface
 	protected $description = '';
 
 	/**
-	 * @var string - The addon's minimum target Failnet version.
-	 */
-	protected $target_version = '';
-
-	/**
 	 * @ignore - preventing use of __construct on metadata objects
 	 */
 	final public function __construct() { }
@@ -100,38 +95,6 @@ abstract class MetadataBase implements MetadataInterface
 	final public function getDescription()
 	{
 		return $this->description;
-	}
-
-	/**
-	 * Get the minimum target Failnet version for this addon.
-	 * @return string - The minimum target Failnet version for this addon.
-	 */
-	final public function getTargetVersion()
-	{
-		return $this->target_version;
-	}
-
-	/**
-	 * Determine if the Yukari version we are running meets the minimum version requirement of this addon.
-	 * @return boolean - True if we meet the minimum version, false if we do not.
-	 */
-	final public function meetsTargetVersion()
-	{
-		return version_compare(Kernel::VERSION, $this->getTargetVersion(), '>');
-	}
-
-	/**
-	 * Builds the installation information data, best used with the CLI UI.
-	 * @return array - Array of lines containing installation information
-	 */
-	final public function buildInstallPrompt()
-	{
-		return array(
-			sprintf('Addon name:        %1$s', $this->getAddonName()),
-			sprintf('Addon author:      %1$s', $this->getAuthor()),
-			sprintf('Addon version:     %1$s (requires Yukari %2$s minimum)', $this->getVersion(), $this->getTargetVersion()),
-			sprintf('Addon description: %1$s', $this->getDescription()),
-		);
 	}
 
 	/**

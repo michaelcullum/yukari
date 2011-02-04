@@ -41,9 +41,6 @@ interface MetadataInterface
 	public function getAuthor();
 	public function getAddonName();
 	public function getDescription();
-	public function getTargetVersion();
-	public function meetsTargetVersion();
-	public function buildInstallPrompt();
 
 	public function initialize();
 	public function checkDependencies();
