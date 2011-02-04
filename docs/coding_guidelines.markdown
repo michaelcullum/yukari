@@ -1,11 +1,11 @@
 # Yukari
 
-## Failnet Coding Guidelines
+## Yukari Coding Guidelines
 
 ### Editor settings
 
 * You must use tab indentation for within each block
-* Tabs should be set to equal 4 (four) spaces for Failnet.
+* Tabs should be set to equal 4 (four) spaces for Yukari.
 * All files should be saved with UNIX (also known as LF or "\n") linefeeds, and not using the Windows linefeeds (also known as CRLF or "\r\n") or Classic Mac (also known as CR or "\r") linefeeds.
 
 ### General coding style
@@ -199,8 +199,8 @@ Examples:
 	/* example 2 - class documentation */
 	// @note this should say what the class is, describe it, and also contain the correct @author, @package, and @link comments
 	/**
-	 * Failnet - Core class,
-	 *      Failnet in a nutshell.  Faster, smarter, better, and with a sexier voice.
+	 * Yukari - Core class,
+	 *      Yukari in a nutshell.  Faster, smarter, better, and with a sexier voice.
 	 *
 	 *
 	 * @category    Yukari
@@ -222,18 +222,18 @@ Examples:
 	/* example 4 - method documentation, no parameters */
 	// @note even if the method does not return a value, it should have an @return comment! just say @return void
 	/**
-	 * Instantiates Failnet and sets everything up.
+	 * Instantiates Yukari and sets everything up.
 	 * @return void
 	 */
 	public function __construct()
 
 	/* example 5 - method documentation with parameters, @throws comment */
 	// @note the @param comment should be like follows: @param (variable type) $(parameter name) - (parameter description)
-	// @note also, take note: this shows that the method throws an exception of type Failnet\Exception, and any calls to this method should be prepared if it does throw an exception of this type
+	// @note also, take note: this shows that the method throws an exception of type \RuntimeException, and any calls to this method should be prepared if it does throw an exception of this type
 	/**
-	 * Failnet configuration file settings load method
+	 * Yukari configuration file settings load method
 	 * @param string $file - The configuration file to load
 	 * @return void
-	 * @throws Failnet\Exception
+	 * @throws \RuntimeException
 	 */
 	private function load($file)
