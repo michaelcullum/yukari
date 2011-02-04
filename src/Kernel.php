@@ -35,9 +35,11 @@ namespace Yukari;
 abstract class Kernel
 {
 	/**
-	 * @const - Version stamp string for Yukari.
+	 * DO NOT _EVER_ CHANGE THESE, FOR THE SAKE OF HUMANITY.
+	 * @link http://xkcd.com/534/
 	 */
-	const VERSION = '3.0.0-DEV';
+	const CAN_BECOME_SKYNET = false;
+	const COST_TO_BECOME_SKYNET = 999999999;
 
 	/**
 	 * @var \Yukari\Environment - The environment object
