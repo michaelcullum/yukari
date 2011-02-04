@@ -21,8 +21,6 @@
 ZIPINCLUDES="bin\/* data\/* docs\/* lib\/* LICENSE README.markdown"
 # name to use for the archive
 ZIPNAME=yukari
-# should we do a signed build, or an unsigned build?
-SIGNBUILD=1
 
 ##########################################
 # end script config
@@ -40,12 +38,7 @@ else
 fi
 
 # build the latest phar archive
-if [ $SIGNBUILD -eq 1 ]
-then
-	$SCRIPT/build.sh
-else
-	$SCRIPT/unsigned-build.sh
-fi
+$SCRIPT/build.sh
 
 # up a dir
 cd $SCRIPT/../

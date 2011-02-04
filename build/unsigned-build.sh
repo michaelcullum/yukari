@@ -33,16 +33,17 @@ PHARNAME=yukari.phar
 # get this script's full path
 SCRIPT=`dirname $(readlink -f $0)`
 #cd $SCRIPT/../
-phar-file-checksums -s $SRC -x "$EXCLUDE" -X "$EXCLUDEDIR" --checksumfile $SCRIPT/filestate.json
+phar-file-checksums -s $SRC -x "$EXCLUDE" -X "$EXCLUDEDIR" --checksumfile $SCRIPT/filestates/yukari.json
 RESULT=$?
 if [ $RESULT -eq 0 ]; then
-	echo 'no rebuild needed'
+	echo "no phar recompile needed"
+	echo "to force recompile, delete the file $SCRIPT/filestates/yukari.json"
 else
-	echo 'updating phar file'
+	echo "compiling phar for yukari"
 	phar-build --phar $SCRIPT/$PHARNAME -s $SRC -x "$EXCLUDE" -X "$EXCLUDEDIR" -S ./../src/stub.php --ns
 	mv $SCRIPT/$PHARNAME $SCRIPT/../lib/$PHARNAME
 	if [ -d $SCRIPT/../.git/ ]; then
-		git add $SCRIPT/../lib/$PHARNAME $SCRIPT/filestate.json
+		git add $SCRIPT/../lib/$PHARNAME $SCRIPT/filestates/yukari.json
 	fi
-	echo 'success'
+	echo 'yukari phar compilation successful'
 fi
