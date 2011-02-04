@@ -63,6 +63,7 @@ class CLIArgs implements \ArrayAccess
 	 */
 	public function loadArgs(array $args)
 	{
+		// @todo rewrite to use preg_match_all, a regexp would be much more effective here
 		foreach($args as $i => $val)
 		{
 			if($val[0] === '-')
