@@ -83,7 +83,7 @@ class Socket
 
 		// Send user information
 		$this->send(sprintf('USER %1$s %2$s %3$s :%4$s', Kernel::getConfig('irc.username'), Kernel::getConfig('irc.url'), Kernel::getConfig('irc.url'), Kernel::getConfig('irc.realname')));
-		$this->send(sprintf('NICK %1$s', Kernel::getConfig('irc.nickname')));
+		$this->send(sprintf('NICK %s', Kernel::getConfig('irc.nickname')));
 	}
 
 	/**
