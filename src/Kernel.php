@@ -51,7 +51,15 @@ abstract class Kernel
 	 */
 	protected static $autoloader;
 
-	protected static $build_number = 0;
+	/**
+	 * @var \Yukari\Event\Dispatcher - The event dispatcher object.
+	 */
+	protected static $dispatcher;
+
+	/**
+	 * @var integer - This bot's build number.
+	 */
+	protected static $build_number;
 
 	/**
 	 * Load the kernel up, and get the basics loaded alongside
@@ -76,18 +84,17 @@ abstract class Kernel
 
 	/**
 	 * Stores the environment object
-	 * @param Yukari\Environment $environment - The environment object.
+	 * @param \Yukari\Environment $environment - The environment object.
 	 * @return void
 	 */
 	public static function setEnvironment(\Yukari\Environment $environment)
 	{
-		/* @var Yukari\Environment */
 		self::$environment = $environment;
 	}
 
 	/**
 	 * Grab the environment object, in order to make changes to global settings, or interact with loaded objects more directly
-	 * @return Yukari\Environment - The environment object.
+	 * @return \Yukari\Environment - The environment object.
 	 */
 	public static function getEnvironment()
 	{
@@ -105,12 +112,31 @@ abstract class Kernel
 	}
 
 	/**
-	 * Get the current Docile autoloader object stored in the kernel.
-	 * @return \Docile\Autoloader - The Docile autoloader object
+	 * Get the current autoloader object stored in the kernel.
+	 * @return \Yukari\Autoloader - The autoloader object
 	 */
 	public static function getAutoloader()
 	{
 		return self::$autoloader;
+	}
+
+	/**
+	 * Stores the event dispatcher object
+	 * @param \Yukari\Event\Dispatcher $dispatcher - The event dispatcher object.
+	 * @return void
+	 */
+	public static function setDispatcher(\Yukari\Event\Dispatcher $dispatcher)
+	{
+		self::$dispatcher = $dispatcher;
+	}
+
+	/**
+	 * Grab the event dispatcher object.
+	 * @return \Yukari\Event\Dispatcher - The event dispatcher object.
+	 */
+	public static function getDispatcher()
+	{
+		return self::$dispatcher;
 	}
 
 	/**

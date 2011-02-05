@@ -203,7 +203,8 @@ class Environment
 			}
 
 			// Load up the event dispatcher for the very basic core functionality
-			$dispatcher = Kernel::set('core.dispatcher', new \Yukari\Event\Dispatcher());
+			Kernel::setDispatcher(new \Yukari\Event\Dispatcher());
+			$dispatcher = Kernel::getDispatcher();
 
 			// Instantiate the UI object
 			$ui = Kernel::set('core.ui', new \Yukari\CLI\UI());
@@ -284,10 +285,10 @@ class Environment
 	 */
 	public function runBot()
 	{
+		/* @var \Yukari\Event\Dispatcher */
+		$dispatcher = Kernel::getDispatcher();
 		/* @var \Yukari\Connection\Socket */
 		$socket = Kernel::get('core.socket');
-		/* @var \Yukari\Event\Dispatcher */
-		$dispatcher = Kernel::get('core.dispatcher');
 
 		// Hook up the shutdown listener here real quick
 		$dispatcher->register('system.shutdown', array(Kernel::getEnvironment(), 'triggerShutdown'));

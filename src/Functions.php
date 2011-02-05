@@ -33,7 +33,7 @@ namespace Yukari;
 function errorHandler($errno, $msg_text, $errfile, $errline)
 {
 	/* @var \Yukari\Event\Dispatcher */
-	$dispatcher = Kernel::get('core.dispatcher');
+	$dispatcher = Kernel::getDispatcher();
 
 	// If the dispatcher isn't present yet, just seppuku.
 	if(is_null($dispatcher))
@@ -91,7 +91,7 @@ function errorHandler($errno, $msg_text, $errfile, $errline)
 function exceptionHandler(\Exception $e)
 {
 	/* @var \Yukari\Event\Dispatcher */
-	$dispatcher = Kernel::get('core.dispatcher');
+	$dispatcher = Kernel::getDispatcher();
 
 	// If the dispatcher isn't present yet, just seppuku.
 	if(is_null($dispatcher))

@@ -42,7 +42,7 @@ class Interpreter
 	 */
 	public function registerListeners()
 	{
-		$dispatcher = Kernel::get('core.dispatcher');
+		$dispatcher = Kernel::getDispatcher();
 		$dispatcher->register('irc.input.privmsg', array(Kernel::get('addon.commander'), 'handlePrivmsg'));
 	}
 

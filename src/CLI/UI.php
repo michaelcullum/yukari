@@ -106,7 +106,7 @@ class UI
 	 */
 	public function registerListeners()
 	{
-		$dispatcher = Kernel::get('core.dispatcher');
+		$dispatcher = Kernel::getDispatcher();
 		$dispatcher->register('ui.startup', array(Kernel::get('core.ui'), 'displayStartup'))
 			->register('ui.ready', array(Kernel::get('core.ui'), 'displayReady'))
 			->register('ui.shutdown', array(Kernel::get('core.ui'), 'displayShutdown'))

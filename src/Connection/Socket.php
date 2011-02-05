@@ -279,7 +279,8 @@ class Socket
 		if($this->socket === NULL)
 			return;
 
-		Kernel::get('core.dispatcher')->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.system')
+		$dispatcher = Kernel::getDispatcher();
+		$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.system')
 			->setDataPoint('message', sprintf('Quitting from server "%1$s"', Kernel::getConfig('irc.url'))));
 
 		// Terminate the socket connection
