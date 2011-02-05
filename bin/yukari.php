@@ -24,7 +24,7 @@
  * @ignore
  */
 
-define('YUKARI', dirname(__FILE__) . '/..');
+define('YUKARI', dirname(dirname(__FILE__)));
 define('YUKARI_PHAR', 'lib/yukari.phar');
 define('YUKARI_MIN_PHP', '5.3.0');
 //define('Yukari\\RUN_PHAR', true);
