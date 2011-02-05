@@ -20,13 +20,13 @@
  *
  */
 
-namespace Failnet\CLI;
-use Failnet\Bot as Bot;
+namespace Yukari\CLI;
+use Yukari\Kernel;
 
 
 /**
- * Failnet - Terminal UI class,
- * 	    Used to handle displaying Failnet's output to a terminal/command prompt.
+ * Yukari - Terminal UI class,
+ * 	    Used to handle displaying Yukari's output to a terminal/command prompt.
  *
  *
  * @category    Yukari
@@ -37,6 +37,14 @@ use Failnet\Bot as Bot;
  */
 class UI
 {
+	// Output levels
+	const OUTPUT_SILENT = 0;
+	const OUTPUT_NORMAL = 1;
+	const OUTPUT_DEBUG = 2;
+	const OUTPUT_DEBUG_FULL = 3;
+	const OUTPUT_RAW = 4;
+	const OUTPUT_SPAM = 4; // ;D
+
 	/**
 	 * @var integer - Our current output level
 	 */
@@ -71,7 +79,7 @@ class UI
 	 */
 	public function __construct($output_level = 'normal')
 	{
-		if(Bot::getOption('ui.enable_colors', false) && $this->checkColorSupport())
+		if(Kernel::getConfig('ui.enable_colors') && $this->checkColorSupport())
 		{
 			$this->fg_colors = array('black' => '30', 'blue' => '34', 'green' => '32', 'cyan' => '36', 'red' => '31', 'purple' => '35', 'brown' => '33', 'yellow' => '33', 'white' => '37');
 			$this->bg_colors = array('black' => '40', 'red' => '41', 'green' => '42', 'yellow' => '43', 'blue' => '44', 'magenta' => '45', 'cyan' => '46', 'light_gray' => '47');
@@ -85,10 +93,35 @@ class UI
 			$this->enable_colors = true;
 		}
 
+		// Make sure the output level is valid
 		if(!in_array($output_level, array('silent', 'normal', 'debug', 'debug_full', 'raw', 'spam')))
-			throw new UIException(sprintf('Invalid UI output level "%1$s" specified', $output_level), UIException::ERR_UI_INVALID_OUTPUT_LEVEL);
+			throw new \InvalidArgumentException(sprintf('Invalid UI output level "%1$s" specified', $output_level));
 
-		$this->output_level = constant('Failnet\\OUTPUT_' . strtoupper($output_level));
+		$this->output_level = constant('Yukari\\CLI\\UI::OUTPUT_' . strtoupper($output_level));
+	}
+
+	/**
+	 * Register our listeners in the event dispatcher.
+	 * @return \Yukari\CLI\UI - Provides a fluent interface.
+	 */
+	public function registerListeners()
+	{
+		$dispatcher = Kernel::get('core.dispatcher');
+		$dispatcher->register('ui.startup', array(Kernel::get('core.ui'), 'displayStartup'))
+			->register('ui.ready', array(Kernel::get('core.ui'), 'displayReady'))
+			->register('ui.shutdown', array(Kernel::get('core.ui'), 'displayShutdown'))
+			->register('ui.message.irc', array(Kernel::get('core.ui'), 'displayIRC'))
+			->register('ui.message.status', array(Kernel::get('core.ui'), 'displayStatus'))
+			->register('ui.message.system', array(Kernel::get('core.ui'), 'displaySystem'))
+			->register('ui.message.event', array(Kernel::get('core.ui'), 'displayEvent'))
+			->register('ui.message.notice', array(Kernel::get('core.ui'), 'displayNotice'))
+			->register('ui.message.warning', array(Kernel::get('core.ui'), 'displayWarning'))
+			->register('ui.message.error', array(Kernel::get('core.ui'), 'displayError'))
+			->register('ui.message.php', array(Kernel::get('core.ui'), 'displayPHP'))
+			->register('ui.message.debug', array(Kernel::get('core.ui'), 'displayDebug'))
+			->register('ui.message.raw', array(Kernel::get('core.ui'), 'displayRaw'));
+
+		return $this;
 	}
 
 	/**
@@ -147,30 +180,34 @@ class UI
 	 */
 	public function level($level)
 	{
-		if($level === Failnet\OUTPUT_RAW)
+		if($level === \Yukari\CLI\UI::OUTPUT_RAW)
 		{
-			return ($this->output_level === Failnet\OUTPUT_RAW);
+			return ($this->output_level === \Yukari\CLI\UI::OUTPUT_RAW);
 		}
 		else
 		{
-			return ($this->output_level >= $level && $this->output_level !== Failnet\OUTPUT_RAW);
+			return ($this->output_level >= $level && $this->output_level !== \Yukari\CLI\UI::OUTPUT_RAW);
 		}
 	}
 
 	/**
-	 * Method called on startup that dumps the startup text for Failnet to output
+	 * Method called on startup that dumps the startup text for Yukari to output
+	 * @param \Yukari\Event\Instance $event - The event that is triggering the output.
 	 * @return void
 	 */
-	public function startup()
+	public function displayStartup(\Yukari\Event\Instance $event)
 	{
-		if($this->level(Failnet\OUTPUT_NORMAL))
+		if($event->getName() !== 'ui.startup')
+			return;
+
+		if($this->level(\Yukari\CLI\UI::OUTPUT_NORMAL))
 		{
 			$this->output('===================================================================', 'STATUS');
 			$this->output('', 'STATUS');
-			$this->output('  Yukari', 'STATUS');
+			$this->output('  Yukari IRC Bot', 'STATUS');
 			$this->output('---------------------------------------------------------------------', 'STATUS');
-			$this->output('@version:      ' . Failnet\FAILNET_VERSION, 'STATUS');
-			$this->output('@copyright:    (c) 2009 - 2010 -- Damian Bushong', 'STATUS');
+			$this->output('@build:        ' . Kernel::getBuildNumber(), 'STATUS');
+			$this->output('@copyright:    (c) 2009 - 2011 -- Damian Bushong', 'STATUS');
 			$this->output('@license:      MIT License', 'STATUS');
 			$this->output('', 'STATUS');
 			$this->output('===================================================================', 'STATUS');
@@ -179,160 +216,210 @@ class UI
 			$this->output('with this package in the file LICENSE.', 'STATUS');
 			$this->output('', 'STATUS');
 			$this->output('---------------------------------------------------------------------', 'STATUS');
-			$this->output('Failnet is starting up. Go get yourself a coffee.', 'STATUS');
+			$this->output('Yukari is starting up. Go get yourself a coffee.', 'STATUS');
 		}
 	}
 
 	/**
-	 * Method called that dumps Failnet's ready-notice text to output
+	 * Method called that dumps Yukari's ready-notice text to output
+	 * @param \Yukari\Event\Instance $event - The event that is triggering the output.
 	 * @return void
 	 */
-	public function ready()
+	public function displayReady(\Yukari\Event\Instance $event)
 	{
-		if($this->level(Failnet\OUTPUT_NORMAL))
-		{
-			$this->output('---------------------------------------------------------------------', 'STATUS');
-			$this->output('Failnet loaded and ready!', 'STATUS');
-			$this->output('---------------------------------------------------------------------', 'STATUS');
-		}
-	}
+		if($event->getName() !== 'ui.ready')
+			return;
 
-	/**
-	 * Method called on shutdown that dumps the shutdown text for Failnet to output
-	 * @return void
-	 */
-	public function shutdown()
-	{
-		if($this->level(Failnet\OUTPUT_NORMAL))
+		if($this->level(\Yukari\CLI\UI::OUTPUT_NORMAL))
 		{
 			$this->output('---------------------------------------------------------------------', 'STATUS');
-			$this->output('Failnet shutting down...', 'STATUS');
+			$this->output('Yukari loaded and ready!', 'STATUS');
 			$this->output('---------------------------------------------------------------------', 'STATUS');
 		}
 	}
 
 	/**
-	 * Method called on message being recieved/sent
+	 * Method called on shutdown that dumps the shutdown text for Yukari to output
+	 * @param \Yukari\Event\Instance $event - The event that is triggering the output.
 	 * @return void
 	 */
-	public function message($data)
+	public function displayShutdown(\Yukari\Event\Instance $event)
 	{
-		if($this->level(Failnet\OUTPUT_NORMAL))
+		if($event->getName() !== 'ui.shutdown')
+			return;
+
+		if($this->level(\Yukari\CLI\UI::OUTPUT_NORMAL))
 		{
-			$this->output('[irc] ' . $data);
+			$this->output('---------------------------------------------------------------------', 'STATUS');
+			$this->output('Yukari shutting down...', 'STATUS');
+			$this->output('---------------------------------------------------------------------', 'STATUS');
 		}
 	}
 
 	/**
-	 * Method called when a low-level system event is triggered or occurs in Failnet
+	 * Method called on message being received/sent
+	 * @param \Yukari\Event\Instance $event - The event that is triggering the output.
 	 * @return void
 	 */
-	public function status($data)
+	public function displayIRC(\Yukari\Event\Instance $event)
 	{
-		if($this->level(Failnet\OUTPUT_NORMAL))
+		if($event->getName() !== 'ui.message.irc')
+			return;
+
+		if($this->level(\Yukari\CLI\UI::OUTPUT_NORMAL))
 		{
-			$this->output('[system] ' . $data);
+			$this->output('[irc] ' . $event->getDataPoint('message'));
 		}
 	}
 
 	/**
-	 * Method called when a system event is triggered or occurs in Failnet
+	 * Method called when a low-level system event is triggered or occurs in Yukari
+	 * @param \Yukari\Event\Instance $event - The event that is triggering the output.
 	 * @return void
 	 */
-	public function system($data)
+	public function displayStatus(\Yukari\Event\Instance $event)
 	{
-		if($this->level(Failnet\OUTPUT_DEBUG))
+		if($event->getName() !== 'ui.message.status')
+			return;
+
+		if($this->level(\Yukari\CLI\UI::OUTPUT_NORMAL))
 		{
-			$this->output('[system] ' . $data);
+			$this->output('[system] ' . $event->getDataPoint('message'));
 		}
 	}
 
 	/**
-	 * Method called when a system event is triggered or occurs in Failnet
+	 * Method called when a system event is triggered or occurs in Yukari
+	 * @param \Yukari\Event\Instance $event - The event that is triggering the output.
+	 * @return void
+	 */
+	public function displaySystem(\Yukari\Event\Instance $event)
+	{
+		if($event->getName() !== 'ui.message.system')
+			return;
+
+		if($this->level(\Yukari\CLI\UI::OUTPUT_DEBUG))
+		{
+			$this->output('[system] ' . $event->getDataPoint('message'));
+		}
+	}
+
+	/**
+	 * Method called when a system event is triggered or occurs in Yukari
+	 * @param \Yukari\Event\Instance $event - The event that is triggering the output.
 	 * @param string $data - The data to display
 	 * @return void
+	 *
+	 * @note Intended for debugging use only.
 	 */
-	public function event($data)
+	public function displayEvent(\Yukari\Event\Instance $event)
 	{
-		if($this->level(Failnet\OUTPUT_DEBUG_FULL))
+		if($event->getName() !== 'ui.message.event')
+			return;
+
+		if($this->level(\Yukari\CLI\UI::OUTPUT_DEBUG_FULL))
 		{
-			$this->output('[event] ' . $data);
+			$this->output('[event] ' . $event->getDataPoint('message'));
 		}
 	}
 
 	/**
 	 * Method called on a notice being thrown
-	 * @param string $data - The data to display
+	 * @param \Yukari\Event\Instance $event - The event that is triggering the output.
 	 * @return void
 	 */
-	public function notice($data)
+	public function displayNotice(\Yukari\Event\Instance $event)
 	{
-		if($this->level(Failnet\OUTPUT_DEBUG))
+		if($event->getName() !== 'ui.message.notice')
+			return;
+
+		if($this->level(\Yukari\CLI\UI::OUTPUT_DEBUG))
 		{
-			$this->output('[notice] ' . $data);
+			$this->output('[notice] ' . $event->getDataPoint('message'));
 		}
 	}
 
 	/**
 	 * Method called on a warning being issued
-	 * @param string $data - The data to display
+	 * @param \Yukari\Event\Instance $event - The event that is triggering the output.
 	 * @return void
 	 */
-	public function warning($data)
+	public function displayWarning(\Yukari\Event\Instance $event)
 	{
-		if($this->level(Failnet\OUTPUT_DEBUG))
+		if($event->getName() !== 'ui.message.warning')
+			return;
+
+		if($this->level(\Yukari\CLI\UI::OUTPUT_DEBUG))
 		{
-			$this->output('[warning] ' . $data, 'WARNING');
+			$this->output('[warning] ' . $event->getDataPoint('message'), 'WARNING');
 		}
 	}
 
 	/**
 	 * Method called on an error being encountered
-	 * @param string $data - The data to display
+	 * @param \Yukari\Event\Instance $event - The event that is triggering the output.
 	 * @return void
 	 */
-	public function error($data)
+	public function displayError(\Yukari\Event\Instance $event)
 	{
-		if($this->level(Failnet\OUTPUT_DEBUG))
+		if($event->getName() !== 'ui.message.error')
+			return;
+
+		if($this->level(\Yukari\CLI\UI::OUTPUT_DEBUG))
 		{
-			$this->output('[error] ' . $data, 'ERROR');
+			$this->output('[error] ' . $event->getDataPoint('message'), 'ERROR');
 		}
 	}
 
 	/**
 	 * Method that is called when a PHP issue pops up (notice, warning, etc.)
-	 * @param string $data - The data to display
+	 * @param \Yukari\Event\Instance $event - The event that is triggering the output.
 	 * @return void
 	 */
-	public function php($data)
+	public function displayPHP(\Yukari\Event\Instance $event)
 	{
-		if($this->level(Failnet\OUTPUT_DEBUG))
+		if($event->getName() !== 'ui.message.php')
+			return;
+
+		if($this->level(\Yukari\CLI\UI::OUTPUT_DEBUG))
 		{
-			$this->output('[php] ' . $data, 'ERROR');
+			$this->output('[php] ' . $event->getDataPoint('message'), 'ERROR');
 		}
 	}
 
 	/**
-	 * Method called on debug information being output in Failnet
+	 * Method called on debug information being output in Yukari
+	 * @param \Yukari\Event\Instance $event - The event that is triggering the output.
 	 * @return void
+	 *
+	 * @note Intended for debugging use only.
 	 */
-	public function debug($data)
+	public function displayDebug(\Yukari\Event\Instance $event)
 	{
-		if($this->level(Failnet\OUTPUT_DEBUG_FULL))
+		if($event->getName() !== 'ui.message.debug')
+			return;
+
+		if($this->level(\Yukari\CLI\UI::OUTPUT_DEBUG_FULL))
 		{
-			$this->output('[debug] ' . $data);
+			$this->output('[debug] ' . $event->getDataPoint('message'));
 		}
 	}
 
 	/**
-	 * Method called on raw IRC protocol information being output in Failnet
+	 * Method called on raw IRC protocol information being output in Yukari
+	 * @param \Yukari\Event\Instance $event - The event that is triggering the output.
 	 * @return void
+	 *
+	 * @note Intended for debugging use only.
 	 */
-	public function raw($data)
+	public function displayRaw(\Yukari\Event\Instance $event)
 	{
-		if($this->level(Failnet\OUTPUT_RAW))
+		if($event->getName() !== 'ui.message.raw')
+			return;
+
+		if($this->level(\Yukari\CLI\UI::OUTPUT_RAW))
 		{
-			$this->output('[SOCKET] ' . $data);
+			$this->output('[SOCKET] ' . $event->getDataPoint('message'));
 		}
 	}
 }
