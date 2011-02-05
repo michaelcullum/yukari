@@ -46,14 +46,39 @@ class Dispatcher
 	 * @param string $event_type - The type of event type to attach the listener to.
 	 * @param callable $listener - The callable reference for the listener.
 	 * @param array $listener_params - Any extra parameters to pass to the listener.
-	 * @return void
+	 * @return \Yukari\Event\Dispatcher - Provides a fluent interface.
 	 */
 	public function register($event_type, $listener, array $listener_params = array())
 	{
-		$this->listeners[$event_type][] = array(
+		if(!is_array($this->listeners[$event_type]))
+			$this->listeners[$event_type] = array();
+
+		array_push($this->listeners[$event_type], array(
 			'listener'		=> $listener,
 			'params'		=> $listener_params,
-		);
+		));
+
+		return $this;
+	}
+
+	/**
+	 * Register a new listener with the dispatcher, inserting the listener to the top of the stack for the event
+	 * @param string $event_type - The type of event type to attach the listener to.
+	 * @param callable $listener - The callable reference for the listener.
+	 * @param array $listener_params - Any extra parameters to pass to the listener.
+	 * @return \Yukari\Event\Dispatcher - Provides a fluent interface.
+	 */
+	public function preRegister($event_type, $listener, array $listener_params = array())
+	{
+		if(!is_array($this->listeners[$event_type]))
+			$this->listeners[$event_type] = array();
+
+		array_unshift($this->listeners[$event_type], array(
+			'listener'		=> $listener,
+			'params'		=> $listener_params,
+		));
+
+		return $this;
 	}
 
 	/**
@@ -80,8 +105,14 @@ class Dispatcher
 		foreach($this->listeners[$event->getName()] as $listener)
 		{
 			$result = call_user_func_array($listener['listener'], array_merge(array($event), $listener['params']));
-			if(!is_null($result))
+			if($result === false)
+			{
+				break;
+			}
+			elseif($result !== NULL && $result !== true)
+			{
 				$results[] = $result;
+			}
 		}
 
 		return $results;
