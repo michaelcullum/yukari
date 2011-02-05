@@ -64,9 +64,10 @@ class Environment
 		$this->config = array(
 			'language.default_locale'	=> 'en-US',
 			'ui.output_level'			=> 'normal',
+			'ui.enablecolors'			=> false,
 			'environment.addons'		=> array(),
 			'core.timezonestring'		=> date_default_timezone_get(),
-			'server.port'				=> 6667,
+			'irc.port'					=> 6667,
 		);
 	}
 
@@ -253,7 +254,7 @@ class Environment
 			}
 
 			$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.system')
-						->setDataPoint('message', 'Registering listeners to event dispatcher'));
+				->setDataPoint('message', 'Registering listeners to event dispatcher'));
 			foreach(Kernel::getConfig('dispatcher.listeners') as $event_name => $listener)
 			{
 				$listener = explode('->', $listener);
