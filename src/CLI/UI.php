@@ -75,7 +75,7 @@ class UI
 	 * @param string $output_level - The output level to use
 	 * @return void
 	 *
-	 * @throws Failnet\CLI\UIException
+	 * @throws \InvalidArgumentException
 	 */
 	public function __construct($output_level = 'normal')
 	{
