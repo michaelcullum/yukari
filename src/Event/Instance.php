@@ -33,7 +33,7 @@ namespace Yukari\Event;
  * @license     MIT License
  * @link        https://github.com/damianb/yukari
  */
-abstract class Instance implements \ArrayAccess
+class Instance implements \ArrayAccess
 {
 	protected $name = '';
 
