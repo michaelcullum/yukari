@@ -49,6 +49,19 @@ Make changes to the files in the **src/** directory, then build the package (wit
 Using the compile-on-commit script (without signing it)
     $ cp build/hooks/autobuild-unsigned .git/hooks/pre-commit
 
-### Running the script
+### Building addons
 
 @todo writeme
+
+### Running the script
+
+#### Windows
+
+@todo writeme
+
+#### Linux
+
+Navigate to the root directory of Yukari, then use this command:
+	$ ./bin/yukari
+
+Yukari will immediately start up afterwards.
