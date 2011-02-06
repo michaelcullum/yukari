@@ -146,7 +146,7 @@ class Environment
 	{
 		foreach($config_array as $key => $value)
 		{
-			if(is_array($this->config[$key]))
+			if(isset($this->config[$key]) && is_array($this->config[$key]))
 			{
 				if(!is_array($value))
 					$value = array($value);
@@ -231,9 +231,6 @@ class Environment
 			// Load the password hashing library
 			$hash = Kernel::set('lib.hash', new \Yukari\Lib\Hash());
 
-			// Load the session manager
-			$session = Kernel::set('core.session', new \Yukari\Session\Manager());
-
 			// Load the socket interface
 			$socket = Kernel::set('core.socket', new \Yukari\Connection\Socket());
 
@@ -280,7 +277,7 @@ class Environment
 		}
 		catch(\Exception $e)
 		{
-			throw new \RuntimeException(sprintf('Yukari environment initialization encountered a fatal exception (%1$s::%2$s)' . PHP_EOL . 'Exception message: %3$s', get_class($e), $e->getCode(), $e->getMessage()), $e);
+			throw new \RuntimeException(sprintf('Yukari environment initialization encountered a fatal exception (%1$s::%2$s)' . PHP_EOL . 'Exception message: %3$s', get_class($e), $e->getCode(), $e->getMessage()));
 		}
 	}
 
