@@ -21,8 +21,7 @@
  */
 
 namespace Yukari\Language;
-use Failnet\Bot as Bot;
-use Failnet\Lib as Lib;
+use Yukari\Kernel;
 
 /**
  * Yukari - Language manager class,
@@ -53,23 +52,15 @@ class Manager
 	protected $language_dir = '';
 
 	/**
-	 * Constructor
-	 * @param string $language_dir - The directory to load language files from.
-	 * @return void
-	 */
-	public function __construct($language_dir)
-	{
-		$this->setPath($language_dir);
-	}
-
-	/**
 	 * Set the path to search for language files in
 	 * @param string $language_dir - The directory to load language files from.
-	 * @return void
+	 * @return \Yukari\Language\Manager - Provides a fluent interface
 	 */
 	public function setPath($language_dir)
 	{
 		$this->language_dir = rtrim($language_dir, '/') . '/';
+
+		return $this;
 	}
 
 	/**
@@ -78,8 +69,7 @@ class Manager
 	 */
 	public function collectEntries()
 	{
-		/* @var Failnet\CLI\UI */
-		$ui = Bot::getObject('core.ui');
+		$dispatcher = Kernel::getDispatcher();
 
 		$files = scandir($this->language_dir);
 		foreach($files as $file)
@@ -93,9 +83,10 @@ class Manager
 			{
 				$this->loadFile($file);
 			}
-			catch(LanguageException $e)
+			catch(\RuntimeException $e)
 			{
-				$ui->debug('Failed to load language file ' . substr(strrchr($file, '.'), 1)); // @todo recode, add in $e->getMessage()
+				$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.debug')
+					->setDataPoint('message', sprintf('Failed to load language file "%s"', $file)));
 			}
 		}
 	}
@@ -105,27 +96,26 @@ class Manager
 	 * @param string $file - The full filepath of the language file to load.
 	 * @return void
 	 *
-	 * @throws Failnet\Language\ManagerException
+	 * @throws \RuntimeException
 	 *
 	 * @note This method will not allow reloading a language file
 	 */
 	public function loadFile($file)
 	{
-		/* @var Failnet\CLI\UI */
-		$ui = Bot::getObject('core.ui');
+		$dispatcher = Kernel::getDispatcher();
 
 		$file = basename($file);
 		if(in_array($file, $this->files))
-			throw new ManagerException(sprintf('Language file "%1$s" cannot be reloaded', $file), ManagerException::ERR_LANGUAGE_FILE_RELOAD_FAILED);
+			throw new \RuntimeException(sprintf('Language file "%1$s" cannot be reloaded', $file));
 
 		// Let's try to load the language file...we use try/catch in case something goes nuclear with the JSON processing, here.
 		try
 		{
-			$json = Lib\JSON::decode($this->language_dir . $file);
+			$json = \Yukari\Lib\JSON::decode($this->language_dir . $file);
 		}
-		catch(Lib\JSONException $e)
+		catch(\RuntimeException $e)
 		{
-			throw new ManagerException(sprintf('Language file "%1$s" could not be loaded', $file), ManagerException::ERR_LANGUAGE_FILE_LOAD_FAILED);
+			throw new \RuntimeException(sprintf('Language file "%1$s" could not be loaded', $file));
 		}
 
 		// Store the new language entries
@@ -133,11 +123,12 @@ class Manager
 
 		// Add this language file to the list of loaded language files
 		$this->files[] = $file;
-		$ui->system('--- Loaded language file' . $file);
+		$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.system')
+			->setDataPoint('message', sprintf('Loaded language file "%s"', $file)));
 	}
 
 	/**
-	 * Pulls a language variable from Failnet, and will vsprintf() extra strings into the language variable if desired
+	 * Pulls a language variable from Yukari, and will vsprintf() extra strings into the language variable if desired
 	 * @param string $locale - The locale to grab the entry under.
 	 * @param string $key - The language key of the variable to fetch
 	 * @param array $arguments - Any parameters that should be passed to vsprintf() if desired
