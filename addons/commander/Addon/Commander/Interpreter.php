@@ -38,12 +38,14 @@ class Interpreter
 {
 	/**
 	 * Register the listeners we need for this addon to work properly.
-	 * @return void
+	 * @return \Yukari\Addon\Commander\Interpreter - Provides a fluent interface.
 	 */
 	public function registerListeners()
 	{
 		$dispatcher = Kernel::getDispatcher();
 		$dispatcher->register('irc.input.privmsg', array(Kernel::get('addon.commander'), 'handlePrivmsg'));
+
+		return $this;
 	}
 
 	/**

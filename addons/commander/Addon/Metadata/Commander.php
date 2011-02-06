@@ -54,7 +54,7 @@ class Commander extends \Yukari\Addon\Metadata\MetadataBase
 	/**
 	 * @var string - The addon's description.
 	 */
-	protected $description = 'Interprets PRIVMSG commands and sends out extended events for easy handling of user commands through the native event dispatcher..';
+	protected $description = 'Interprets PRIVMSG commands and sends out extended events for easy handling of user commands through the native event dispatcher.';
 
 	/**
 	 * Hooking method for addon metadata objects, called to initialize the addon after the dependency check has been passed.
