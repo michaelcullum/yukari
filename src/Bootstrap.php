@@ -22,7 +22,7 @@
 namespace Yukari;
 
 // Set the root path
-define('Yukari\ROOT_PATH', (defined('Yukari\RUN_PHAR')) ? YUKARI . '/src' : 'phar://' . YUKARI_PHAR);
+define('Yukari\\ROOT_PATH', (defined('Yukari\\RUN_PHAR')) ? YUKARI . '/src' : 'phar://' . YUKARI_PHAR);
 
 /**
  * We need to start checking to see if the requirements for Yukari have been met
@@ -40,14 +40,10 @@ if(!extension_loaded('pdo_sqlite'))
 	throw new \RuntimeException('Yukari requires the SQLite PDO extension');
 
 // Absolute essentials first
-require Yukari\ROOT_PATH . '/Constants.php';
-require Yukari\ROOT_PATH . '/Exception.php';
-require Yukari\ROOT_PATH . '/Autoloader.php';
-
-// Load up the common files, and get going.
-require Yukari\ROOT_PATH . '/Kernel.php';
-require Yukari\ROOT_PATH . '/Functions.php';
-require Yukari\ROOT_PATH . '/Environment.php';
+require \Yukari\ROOT_PATH . '/Autoloader.php';
+require \Yukari\ROOT_PATH . '/Kernel.php';
+require \Yukari\ROOT_PATH . '/Functions.php';
+require \Yukari\ROOT_PATH . '/Environment.php';
 
 // Set our error and exception handlers
 @set_error_handler('Yukari\\errorHandler');
@@ -58,9 +54,9 @@ if(!ini_get('date.timezone'))
 	@date_default_timezone_set(@date_default_timezone_get());
 
 // Include the sfYaml stuff
-include_once Yukari\ROOT_PATH . '/vendor/sfYaml/lib/sfYaml.php';
-include_once Yukari\ROOT_PATH . '/vendor/sfYaml/lib/sfYamlParser.php';
-include_once Yukari\ROOT_PATH . '/vendor/sfYaml/lib/sfYamlInline.php';
+include_once \Yukari\ROOT_PATH . '/vendor/sfYaml/lib/sfYaml.php';
+include_once \Yukari\ROOT_PATH . '/vendor/sfYaml/lib/sfYamlParser.php';
+include_once \Yukari\ROOT_PATH . '/vendor/sfYaml/lib/sfYamlInline.php';
 
 // Run indefinitely...
 set_time_limit(0);
