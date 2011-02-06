@@ -2,4 +2,5 @@ build/cert/*.pem
 build/yukari.phar*
 build/tmp/*
 build/verified/*
+data/database/*.sqlite
 downloads/*
