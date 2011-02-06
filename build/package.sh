@@ -45,8 +45,10 @@ $SCRIPT/build.sh
 
 # up a dir
 cd $SCRIPT/../
+mv $ZIPNAME-build_*.zip $SCRIPT/../downloads/
 # start packaging stuff
 NAME="$ZIPNAME-build_$BINNUMBER"
 zip -r $NAME . -i $ZIPINCLUDES
+
 
 rm "$SCRIPT/../src/VERSION"

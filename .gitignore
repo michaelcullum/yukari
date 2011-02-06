@@ -2,3 +2,4 @@ build/cert/*.pem
 build/yukari.phar*
 build/tmp/*
 build/verified/*
+downloads/*

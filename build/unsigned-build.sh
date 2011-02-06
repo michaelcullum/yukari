@@ -20,7 +20,7 @@
 # files to exclude in phar-build
 EXCLUDE="~$ .*\.txt$ .*\.xml$ .*\.markdown$ .*\.md$ stub\.php .*\.json$"
 # directories to exclude in phar-build
-EXCLUDEDIR="/\.git/ /\.svn/ /vendor/swiftmailer/test-suite/ /vendor/swiftmailer/tests/"
+EXCLUDEDIR="/\.git/ /\.svn/ /vendor/sfYaml/test/"
 # source directory
 SRC="./src/"
 # name of the phar archive
