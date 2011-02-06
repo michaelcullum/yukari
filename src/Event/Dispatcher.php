@@ -50,7 +50,7 @@ class Dispatcher
 	 */
 	public function register($event_type, $listener, array $listener_params = array())
 	{
-		if(!is_array($this->listeners[$event_type]))
+		if(!isset($this->listeners[$event_type]) || !is_array($this->listeners[$event_type]))
 			$this->listeners[$event_type] = array();
 
 		array_push($this->listeners[$event_type], array(
@@ -70,7 +70,7 @@ class Dispatcher
 	 */
 	public function preRegister($event_type, $listener, array $listener_params = array())
 	{
-		if(!is_array($this->listeners[$event_type]))
+		if(!isset($this->listeners[$event_type]) || !is_array($this->listeners[$event_type]))
 			$this->listeners[$event_type] = array();
 
 		array_unshift($this->listeners[$event_type], array(
