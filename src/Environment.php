@@ -196,7 +196,6 @@ class Environment
 				'irc.realname',
 				'irc.nickname',
 			);
-
 			foreach($required_configs as $required_config_name)
 			{
 				if(!isset($this->config[$required_config_name]))
