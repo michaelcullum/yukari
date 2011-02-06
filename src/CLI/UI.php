@@ -74,8 +74,6 @@ class UI
 	 * Constructor
 	 * @param string $output_level - The output level to use
 	 * @return void
-	 *
-	 * @throws \InvalidArgumentException
 	 */
 	public function __construct($output_level = 'normal')
 	{
@@ -92,12 +90,6 @@ class UI
 			);
 			$this->enable_colors = true;
 		}
-
-		// Make sure the output level is valid
-		if(!in_array($output_level, array('silent', 'normal', 'debug', 'debug_full', 'raw', 'spam')))
-			throw new \InvalidArgumentException(sprintf('Invalid UI output level "%1$s" specified', $output_level));
-
-		$this->output_level = constant('Yukari\\CLI\\UI::OUTPUT_' . strtoupper($output_level));
 	}
 
 	/**
@@ -120,6 +112,24 @@ class UI
 			->register('ui.message.php', array(Kernel::get('core.ui'), 'displayPHP'))
 			->register('ui.message.debug', array(Kernel::get('core.ui'), 'displayDebug'))
 			->register('ui.message.raw', array(Kernel::get('core.ui'), 'displayRaw'));
+
+		return $this;
+	}
+
+	/**
+	 * Set the output level
+	 * @param string $output_level - The output level.
+	 * @return \Yukari\CLI\UI - Provides a fluent interface.
+	 *
+	 * @throws \InvalidArgumentException
+	 */
+	public function setOutputLevel($output_level)
+	{
+		// Make sure the output level is valid
+		if(!in_array($output_level, array('silent', 'normal', 'debug', 'debug_full', 'raw', 'spam')))
+			throw new \InvalidArgumentException(sprintf('Invalid UI output level "%1$s" specified', $output_level));
+
+		$this->output_level = constant('Yukari\\CLI\\UI::OUTPUT_' . strtoupper($output_level));
 
 		return $this;
 	}
