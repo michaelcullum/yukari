@@ -23,6 +23,7 @@ irc.port: 6667
 irc.nickname: Yukari
 irc.username: Yukari-chan
 irc.realname: Obsidian
+ui.enable_colors: true
 ui.output_level: debug_full
 addons.loadlist:
-  - Whitelist
+  - whitelist
