@@ -67,10 +67,21 @@ abstract class Kernel
 	 */
 	public static function load()
 	{
-		self::$build_number = @file_get_contents(\Yukari\ROOT_PATH . '/VERSION');
+		// Grab the build number we're running under.
+		if(file_exists(\Yukari\ROOT_PATH . '/VERSION'))
+		{
+			self::$build_number = file_get_contents(\Yukari\ROOT_PATH . '/VERSION');
+		}
+		else
+		{
+			self::$build_number = false;
+		}
 
 		// Load the Environment object
 		self::setEnvironment(\Yukari\Environment::newInstance());
+
+		// Setup the autoloader.
+		self::setAutoloader(\Yukari\Autoloader::register());
 	}
 
 	/**
