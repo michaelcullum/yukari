@@ -5,7 +5,6 @@
  *
  *  Yukari
  *-------------------------------------------------------------------
- * @version     3.0.0 DEV
  * @category    Yukari
  * @package     cli
  * @author      Damian Bushong

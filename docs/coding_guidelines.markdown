@@ -181,11 +181,10 @@ Examples:
 	 *
 	 *  Yukari
 	 *-------------------------------------------------------------------
-	 * @version     3.0.0 DEV
 	 * @category    Yukari
 	 * @package     core
 	 * @author      Damian Bushong
-	 * @copyright   (c) 2010 -- Damian Bushong
+	 * @copyright   (c) 2009 - 2011 -- Damian Bushong
 	 * @license     MIT License
 	 * @link        https://github.com/damianb/yukari
 	 *
