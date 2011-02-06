@@ -215,7 +215,7 @@ class UI
 			$this->output('===================================================================', 'STATUS');
 			$this->output('', 'STATUS');
 			$this->output('  Yukari IRC Bot', 'STATUS');
-			$this->output('---------------------------------------------------------------------', 'STATUS');
+			$this->output('-------------------------------------------------------------------', 'STATUS');
 			$this->output('@build:        ' . Kernel::getBuildNumber(), 'STATUS');
 			$this->output('@copyright:    (c) 2009 - 2011 -- Damian Bushong', 'STATUS');
 			$this->output('@license:      MIT License', 'STATUS');
@@ -225,7 +225,7 @@ class UI
 			$this->output('This program is subject to the MIT license that is bundled', 'STATUS');
 			$this->output('with this package in the file LICENSE.', 'STATUS');
 			$this->output('', 'STATUS');
-			$this->output('---------------------------------------------------------------------', 'STATUS');
+			$this->output('-------------------------------------------------------------------', 'STATUS');
 			$this->output('Yukari is starting up. Go get yourself a coffee.', 'STATUS');
 		}
 	}
@@ -242,9 +242,9 @@ class UI
 
 		if($this->level(\Yukari\CLI\UI::OUTPUT_NORMAL))
 		{
-			$this->output('---------------------------------------------------------------------', 'STATUS');
+			$this->output('-------------------------------------------------------------------', 'STATUS');
 			$this->output('Yukari loaded and ready!', 'STATUS');
-			$this->output('---------------------------------------------------------------------', 'STATUS');
+			$this->output('-------------------------------------------------------------------', 'STATUS');
 		}
 	}
 
