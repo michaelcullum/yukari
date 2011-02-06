@@ -18,7 +18,7 @@
 ##########################################
 
 # files and directories to include in the package creation
-ZIPINCLUDES="bin\/* data\/config\/* data\/database\/.keep data\/language\/* docs\/* lib\/* lib\/addons\/* LICENSE README.markdown"
+ZIPINCLUDES="bin\/* data\/config\/* data\/config\/addons\/* data\/database\/.keep data\/language\/* docs\/* lib\/* lib\/addons\/* LICENSE README.markdown"
 # addons to build phars out of
 ADDONS=("commander" "whitelist")
 # name to use for the archive
