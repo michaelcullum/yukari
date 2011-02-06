@@ -19,10 +19,8 @@
  *
  */
 
-namespace Yukari;
-
 // Set the root path
-define('Yukari\\ROOT_PATH', (defined('Yukari\\RUN_PHAR')) ? YUKARI . '/src' : 'phar://' . YUKARI_PHAR);
+define('Yukari\\ROOT_PATH', (\Yukari\RUN_PHAR === true) ? 'phar://' . YUKARI_PHAR : YUKARI . '/src');
 
 /**
  * We need to start checking to see if the requirements for Yukari have been met
@@ -64,6 +62,7 @@ set_time_limit(0);
 // The first chunk always gets in the way, so we drop it.
 array_shift($_SERVER['argv']);
 
-Kernel::load();
-Kernel::initEnvironment();
-Kernel::getEnvironment()->runBot();
+\Yukari\Kernel::load();
+\Yukari\Kernel::initEnvironment();
+exit; // terminate because the rest still isn't done yet
+\Yukari\Kernel::getEnvironment()->runBot();
