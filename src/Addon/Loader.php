@@ -34,7 +34,7 @@ use Yukari\Kernel;
  * @license     MIT License
  * @link        https://github.com/damianb/yukari
  */
-class Loader implements Iterator
+class Loader implements \Iterator
 {
 	/**
 	 * @var array - Array of instantiated metadata objects.
