@@ -155,7 +155,7 @@ class Hash
 		return $output;
 	}
 
-	public function hash($password)
+	public function hashPassword($password)
 	{
 		$random = '';
 
