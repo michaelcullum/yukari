@@ -47,7 +47,7 @@ class Autoloader
 	public function __construct(array $paths = array())
 	{
 		$paths = array_merge($paths, array(
-			Yukari\ROOT_PATH,
+			\Yukari\ROOT_PATH,
 		));
 		foreach($paths as $path)
 			$this->setPath($path);
