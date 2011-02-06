@@ -37,7 +37,7 @@ function errorHandler($errno, $msg_text, $errfile, $errline)
 
 	// If the dispatcher isn't present yet, just seppuku.
 	if(is_null($dispatcher))
-		exit;
+		exit(1);
 
 	// Do not display notices if we suppress them via @
 	if (error_reporting() == 0)
@@ -77,7 +77,7 @@ function errorHandler($errno, $msg_text, $errfile, $errline)
 
 	// Fatal error? DAI.
 	if($errno === E_USER_ERROR)
-		exit;
+		exit(1);
 
 	// If we didn't handle it, we return false so that PHP can try handling it.
 	return ($handled) ? true : false;
@@ -95,12 +95,12 @@ function exceptionHandler(\Exception $e)
 
 	// If the dispatcher isn't present yet, just seppuku.
 	if(is_null($dispatcher))
-		exit;
+		exit(1);
 
 	$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.php')
 		->setDataPoint('message', sprintf('uncaught exception: %1$s::%2$s - %3$s', get_class($e), $e->getCode(), $e->getMessage())));
 
-	exit;
+	exit(1);
 }
 
 /**
