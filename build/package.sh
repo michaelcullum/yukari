@@ -19,6 +19,8 @@
 
 # files and directories to include in the package creation
 ZIPINCLUDES="addons\/*.phar bin\/* data\/* docs\/* lib\/* LICENSE README.markdown"
+# addons to build phars out of
+ADDONS=("commander" "whitelist")
 # name to use for the archive
 ZIPNAME=yukari
 
@@ -43,12 +45,19 @@ echo $BINNUMBER > "$SCRIPT/../src/VERSION"
 # build the latest phar archive
 $SCRIPT/build.sh
 
+# build the addon phars
+for i in "${ADDONS[@]}"
+do
+	$SCRIPT/addon_build.sh $i
+done
+
 # up a dir
 cd $SCRIPT/../
+# stow away any old builds
 mv $ZIPNAME-build_*.zip $SCRIPT/../downloads/
 # start packaging stuff
 NAME="$ZIPNAME-build_$BINNUMBER"
 zip -r $NAME . -i $ZIPINCLUDES
 
-
+# pitch the version file, we don't need it now
 rm "$SCRIPT/../src/VERSION"

@@ -33,7 +33,7 @@ use Yukari\Kernel;
  * @license     MIT License
  * @link        https://github.com/damianb/yukari
  */
-class ACLWhitelist extends \Yukari\Addon\Metadata\MetadataBase
+class Whitelist extends \Yukari\Addon\Metadata\MetadataBase
 {
 	/**
 	 * @var string - The addon's version.
@@ -48,12 +48,12 @@ class ACLWhitelist extends \Yukari\Addon\Metadata\MetadataBase
 	/**
 	 * @var string - The addon's name.
 	 */
-	protected $name = 'ACLWhitelist';
+	protected $name = 'Whitelist';
 
 	/**
 	 * @var string - The addon's description.
 	 */
-	protected $description = 'Provides basic command whitelist functionality.';
+	protected $description = 'Provides basic command whitelist authentication.';
 
 	/**
 	 * Hooking method for addon metadata objects, called to initialize the addon after the dependency check has been passed.

@@ -24,3 +24,5 @@ irc.nickname: Yukari
 irc.username: Yukari-chan
 irc.realname: Obsidian
 ui.output_level: debug_full
+addons.loadlist:
+  - Whitelist

@@ -65,7 +65,7 @@ class Environment
 			'language.default_locale'	=> 'en-US',
 			'ui.output_level'			=> 'normal',
 			'ui.enablecolors'			=> false,
-			'environment.addons'		=> array(),
+			'addons.loadlist'		=> array(),
 			'core.timezonestring'		=> date_default_timezone_get(),
 			'irc.port'					=> 6667,
 			'db.file'					=> 'yukari',
@@ -241,7 +241,7 @@ class Environment
 
 			// Load any addons we want.
 			$addon_loader = Kernel::set('core.addonloader', new \Yukari\Addon\Loader());
-			foreach(Kernel::getConfig('environment.addons') as $addon)
+			foreach(Kernel::getConfig('addons.loadlist') as $addon)
 			{
 				try
 				{
