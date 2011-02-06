@@ -55,36 +55,18 @@ class CLIArgs implements \ArrayAccess
 	 * Load up the CLI args and parse them.
 	 * @param array $args - An array of CLI args to load and parse
 	 * @return void
-	 *
-	 * @copyright   (c) 2010 Sam Thompson
-	 * @author      Sam Thompson
-	 * @license     MIT License
-	 * @note        This code generously provided by a friend of mine, Sam Thompson.  Kudos!
 	 */
 	public function loadArgs(array $args)
 	{
-		// @todo rewrite to use preg_match_all, a regexp would be much more effective here
 		foreach($args as $i => $val)
 		{
-			if($val[0] === '-')
-			{
-				if($val[1] === '-')
-				{
-					$separator = strpos($val, '=');
-					if($separator !== false)
-					{
-						$this->args[substr($val, 2, $separator - 2)] = substr($val, $separator + 1);
-					}
-					else
-					{
-						$this->args[substr($val, 2)] = true;
-					}
-				}
-				else
-				{
-					$this->args[substr($val, 1)] = true;
-				}
-			}
+			$result = preg_match('#\-\-?([a-z0-9]+[a-z0-9\-_]*)(=([a-z0-9]+[a-z0-9\-_]*))?#i', $val, $matches);
+			if(!$result)
+				continue;
+
+			var_dump($matches);
+			list(, $setting, , $value) = array_pad($matches, 4, true);
+			$this->args[$setting] = $value;
 		}
 	}
 
