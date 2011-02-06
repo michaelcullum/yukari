@@ -18,7 +18,7 @@
 ##########################################
 
 # files and directories to include in the package creation
-ZIPINCLUDES="addons\/*.phar bin\/* data\/* docs\/* lib\/* LICENSE README.markdown"
+ZIPINCLUDES="lib\/addons\/* bin\/* data\/* docs\/* lib\/* LICENSE README.markdown"
 # addons to build phars out of
 ADDONS=("commander" "whitelist")
 # name to use for the archive

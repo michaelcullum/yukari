@@ -64,12 +64,12 @@ else
 		phar-build --phar $SCRIPT/$PHARNAME -s $SRC -x "$EXCLUDE" -X "$EXCLUDEDIR" -S $SCRIPT/tmp/stub.php --ns
 	fi
 
-	mv $SCRIPT/$PHARNAME $SCRIPT/../addons/$PHARNAME
+	mv $SCRIPT/$PHARNAME $SCRIPT/../lib/addons/$PHARNAME
 
 	# check for not signing the package P:
 	if [ $NOSIGN -eq 0 ]
 	then
-		mv $SCRIPT/$PHARNAME.pubkey $SCRIPT/../addons/$PHARNAME.pubkey
+		mv $SCRIPT/$PHARNAME.pubkey $SCRIPT/../lib/addons/$PHARNAME.pubkey
 	fi
 
 	# remove temporary stub file
