@@ -20,12 +20,12 @@
  *
  */
 
-namespace Failnet\CLI;
+namespace Yukari\CLI;
 
 
 /**
- * Failnet - CLI handling object,
- * 	    Used to provide access to parameters passed to Failnet via argv.
+ * Yukari - CLI handling object,
+ * 	    Used to provide access to parameters passed to Yukari via argv.
  *
  *
  * @category    Yukari
