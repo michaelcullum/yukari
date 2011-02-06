@@ -13,8 +13,8 @@ language.packages:
   - core
 
 # list of dispatcher listeners...may change later, have the UI autoassign its listeners in the PHP code
-dispatcher.listeners:
-  ui.debug: core.ui->debug
+#dispatcher.listeners:
+#  #
 
 socket.use_ssl: false
 
@@ -23,3 +23,4 @@ irc.port: 6667
 irc.nickname: Yukari
 irc.username: Yukari-chan
 irc.realname: Obsidian
+ui.output_level: debug_full

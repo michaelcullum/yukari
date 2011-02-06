@@ -256,18 +256,22 @@ class Environment
 				}
 			}
 
-			$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.system')
-				->setDataPoint('message', 'Registering listeners to event dispatcher'));
-			foreach(Kernel::getConfig('dispatcher.listeners') as $event_name => $listener)
+			if(Kernel::getConfig('dispatcher.listeners'))
 			{
-				$listener = explode('->', $listener);
-				if(sizeof($listener) > 1)
+				$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.system')
+					->setDataPoint('message', 'Registering listeners to event dispatcher'));
+
+				foreach(Kernel::getConfig('dispatcher.listeners') as $event_name => $listener)
 				{
-					$dispatcher->register($event_name, array(Kernel::get($listener[0]), $listener[1]));
-				}
-				else
-				{
-					$dispatcher->register($event_name, $listener[0]);
+					$listener = explode('->', $listener);
+					if(sizeof($listener) > 1)
+					{
+						$dispatcher->register($event_name, array(Kernel::get($listener[0]), $listener[1]));
+					}
+					else
+					{
+						$dispatcher->register($event_name, $listener[0]);
+					}
 				}
 			}
 
@@ -279,6 +283,8 @@ class Environment
 		{
 			throw new \RuntimeException(sprintf('Yukari environment initialization encountered a fatal exception (%1$s::%2$s)' . PHP_EOL . 'Exception message: %3$s', get_class($e), $e->getCode(), $e->getMessage()));
 		}
+
+		$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.ready'));
 	}
 
 	/**

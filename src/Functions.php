@@ -56,21 +56,21 @@ function errorHandler($errno, $msg_text, $errfile, $errline)
 		case E_USER_NOTICE:
 		case E_USER_DEPRECATED:
 			$handled = true;
-			$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.php')
+			$dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, 'ui.message.php')
 				->setDataPoint('message', sprintf('php notice: %s', $error)));
 		break;
 
 		case E_WARNING:
 		case E_USER_WARNING:
 			$handled = true;
-			$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.php')
+			$dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, 'ui.message.php')
 				->setDataPoint('message', sprintf('php warning: %s', $error)));
 		break;
 
 		case E_ERROR:
 		case E_USER_ERROR:
 			$handled = true;
-			$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.php')
+			$dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, 'ui.message.php')
 				->setDataPoint('message', sprintf('php fatal error: %s', $error)));
 		break;
    }
@@ -97,7 +97,7 @@ function exceptionHandler(\Exception $e)
 	if(is_null($dispatcher))
 		exit(1);
 
-	$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.php')
+	$dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, 'ui.message.php')
 		->setDataPoint('message', sprintf('uncaught exception: %1$s::%2$s - %3$s', get_class($e), $e->getCode(), $e->getMessage())));
 
 	exit(1);
