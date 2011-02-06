@@ -68,7 +68,7 @@ class Autoloader
 		if($filepath !== false)
 		{
 			require $filepath;
-			if(!class_exists($class))
+			if(!class_exists($class) && !interface_exists($class))
 				throw new \RuntimeException(sprintf('Invalid class contained within file %s', $filepath));
 			return;
 		}

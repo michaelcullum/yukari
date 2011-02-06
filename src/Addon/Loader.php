@@ -56,22 +56,21 @@ class Loader implements \Iterator
 		$using_phar = false;
 		$addon_uc = ucfirst($addon);
 		// Check to see if there's a phar we are dealing with here before moving on to try to load the standard class files.
-		$phar_path = YUKARI . "/addons/{$addon}/{$addon}.phar";
+		$phar_path = "addons/{$addon}.phar";
 		$metadata_path = "/Addon/Metadata/{$addon_uc}.php";
-		if(file_exists($phar_path))
+		if(file_exists(YUKARI . '/' . $phar_path) && false)
 		{
-			require $phar_path;
 			$using_phar = true;
-
-			require $phar_path . $metadata_path;
+			if(!file_exists("phar://{$phar_path}/{$metadata_path}"))
+				throw new \RuntimeException('Could not locate addon metadata file');
+			require "phar://{$phar_path}/{$metadata_path}";
 		}
 		else
 		{
-			$metadata_path = YUKARI . "/addons/{$addon}/Addon/Metadata/{$addon_uc}.php";
-			if(!file_exists(YUKARI . "/addons{$metadata_path}"))
+			if(!file_exists(YUKARI . "/addons/{$addon}{$metadata_path}"))
 				throw new \RuntimeException('Could not locate addon metadata file');
 
-			require YUKARI . "/addons{$metadata_path}";
+			require YUKARI . "/addons/{$addon}{$metadata_path}";
 		}
 
 		$metadata_class = "\\Yukari\\Addon\\Metadata\\{$addon_uc}";
@@ -91,10 +90,13 @@ class Loader implements \Iterator
 		if(!$metadata->checkDependencies())
 			throw new \RuntimeException('Addon metadata object declares that its required dependencies have not been met');
 
-		// If we aren't using a phar here we need to add the addon's path to the autoload paths.
-		if(!$using_phar)
+		// If the addon's metadata object passes all checks and we're not using a phar file, then we add the addon's directory to the autoloader include path
+		if($using_phar)
 		{
-			// If the addon's metadata object passes all checks and we're not using a phar file, then we add the addon's directory to the autoloader include path
+			Kernel::getAutoloader()->setPath("phar://{$phar_path}/");
+		}
+		else
+		{
 			Kernel::getAutoloader()->setPath(YUKARI . "/addons/{$addon}/");
 		}
 
