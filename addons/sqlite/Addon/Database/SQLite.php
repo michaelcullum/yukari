@@ -6,7 +6,7 @@
  *  Yukari
  *-------------------------------------------------------------------
  * @category    Yukari
- * @package     core
+ * @package     addon
  * @author      Damian Bushong
  * @copyright   (c) 2009 - 2011 -- Damian Bushong
  * @license     MIT License
@@ -28,7 +28,7 @@ use Yukari\Kernel;
  *
  *
  * @category    Yukari
- * @package     core
+ * @package     addon
  * @author      Damian Bushong
  * @license     MIT License
  * @link        https://github.com/damianb/yukari
