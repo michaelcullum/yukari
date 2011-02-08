@@ -20,8 +20,8 @@ socket.use_ssl: false
 
 irc.url: irc.freenode.net
 irc.port: 6667
-irc.nickname: Yukari
-irc.username: Yukari-chan
+irc.nickname: Yukari-chan
+irc.username: yukari
 irc.realname: Obsidian
 ui.enable_colors: true
 ui.output_level: debug_full
