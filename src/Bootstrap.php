@@ -58,5 +58,5 @@ array_shift($_SERVER['argv']);
 
 \Yukari\Kernel::load();
 \Yukari\Kernel::initEnvironment();
-exit; // terminate because the rest still isn't done yet
+//exit; // terminate because the rest still isn't done yet
 \Yukari\Kernel::getEnvironment()->runBot();

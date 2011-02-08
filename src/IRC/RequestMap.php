@@ -129,22 +129,22 @@ class RequestMap
 			'ctcp' => function($target, $command, $args = NULL) {
 				if($args !== NULL)
 				{
-					return sprintf('PRIVMSG %1$s :' . chr(1) . '%2$s %3$s' . chr(1), strtoupper($target), $command, (is_array($args) ? implode(' ', $args) : $args));
+					return sprintf('PRIVMSG %1$s :' . chr(1) . '%2$s %3$s' . chr(1), $target, strtoupper($command), (is_array($args) ? implode(' ', $args) : $args));
 				}
 				else
 				{
-					return sprintf('PRIVMSG %1$s :' . chr(1) . '$2$s' . chr(1), strtoupper($target), $command);
+					return sprintf('PRIVMSG %1$s :' . chr(1) . '$2$s' . chr(1), $target, strtoupper($command));
 				}
 			},
 
 			'ctcp_reply' => function($target, $command, $args = NULL) {
 				if($args !== NULL)
 				{
-					return sprintf('NOTICE %1$s :' . chr(1) . '%2$s %3$s' . chr(1), strtoupper($target), $command, (is_array($args) ? implode(' ', $args) : $args));
+					return sprintf('NOTICE %1$s :' . chr(1) . '%2$s %3$s' . chr(1), $target, strtoupper($command), (is_array($args) ? implode(' ', $args) : $args));
 				}
 				else
 				{
-					return sprintf('NOTICE %1$s :' . chr(1) . '$2$s' . chr(1), strtoupper($target), $command);
+					return sprintf('NOTICE %1$s :' . chr(1) . '$2$s' . chr(1), $target, strtoupper($command));
 				}
 			},
 

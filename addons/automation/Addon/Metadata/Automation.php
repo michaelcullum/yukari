@@ -67,14 +67,15 @@ class Automation extends \Yukari\Addon\Metadata\MetadataBase
 			if(strtolower($event['command']) === 'version')
 			{
 				return \Yukari\Event\Instance::newEvent(null, 'irc.output.ctcp_reply')
-					->setDataPoint('target', $event['target'])
+					->setDataPoint('target', $event['hostmask']['nick'])
 					->setDataPoint('command', 'version')
 					->setDataPoint('args', sprintf('Yukari IRC Bot - %s', Kernel::getBuildNumber()));
 			}
 			elseif(strtolower($event['command']) === 'ping')
 			{
+				var_dump($event['args']);
 				return \Yukari\Event\Instance::newEvent(null, 'irc.output.ctcp_reply')
-					->setDataPoint('target', $event['target'])
+					->setDataPoint('target', $event['hostmask']['nick'])
 					->setDataPoint('command', 'ping')
 					->setDataPoint('args', $event['args']);
 			}

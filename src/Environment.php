@@ -179,11 +179,11 @@ class Environment
 		{
 			// load config file here, load CLI args parser
 			$cli = Kernel::set('core.cli', new \Yukari\CLI\CLIArgs($_SERVER['argv']));
-			$config = (isset($cli['config'])) ? $cli['config'] : 'config.yml';
+			$config = (isset($cli['config'])) ? "{$cli['config']}.yml" : 'config.yml';
 
 			// Make sure that the config file is usable.
 			if(!file_exists(YUKARI . "/data/config/{$config}") || !is_readable(YUKARI . "/data/config/{$config}"))
-				throw new \RuntimeException('Configuration file directory does not exist, or is not readable/writeable');
+				throw new \RuntimeException('Configuration file does not exist, or is not readable/writeable');
 
 			// Load the configs
 			Kernel::importConfig(\sfYaml::load(YUKARI . "/data/config/{$config}"));
@@ -312,14 +312,14 @@ class Environment
 				$queue = array();
 
 				// Fire off a tick event.
-				$queue = array_merge($dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'runtime.tick')), $queue);
+				$queue = array_merge((array) $dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'runtime.tick')), $queue);
 
 				// Grab an event from the socket
 				$event = $socket->get();
 
 				// If we got one, we process the event we received
 				if($event)
-					$queue = array_merge($dispatcher->trigger($event), $queue);
+					$queue = array_merge((array) $dispatcher->trigger($event), $queue);
 
 				if(!empty($queue))
 				{
@@ -331,23 +331,27 @@ class Environment
 							->setDataPoint('response', $outbound));
 
 						// Send off the event!
-						$socket->send($outbound);
+						$socket->sendEvent($outbound);
 
 						// Fire off a postdispatch event, to allow listeners to react to events being sent.
 						// Useful for things like logging.
 						$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'runtime.postdispatch')
 							->setDataPoint('response', $outbound));
 					}
+				}
 
-					// If we have a quit event, break out of the loop.
-					if($this->shutdown === true)
-						break;
+				// If we have a quit event, break out of the loop.
+				if($this->shutdown === true)
+				{
+					echo "shutdown\n";
+					break;
 				}
 			}
 		}
 		catch(\Exception $e)
 		{
-			// @todo do stuff here
+			$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.debug')
+				->setDataPoint('message', sprintf('Exception %1$s::%2$s: %3$s', get_class($e), $e->getCode(), $e->getMessage())));
 
 			try
 			{

@@ -93,17 +93,9 @@ class Socket
 	 */
 	public function get()
 	{
-		// Check for a new event on the current connection
-		$attempts = 0;
-		do
-		{
-			if(++$attempts > 5)
-				throw new \RuntimeException('fgets() call failed, socket connection lost');
+		$dispatcher = Kernel::getDispatcher();
 
-			$buffer = fgets($this->socket, 512);
-		}
-		while($buffer === false);
-
+		$buffer = fgets($this->socket, 512);
 
 		// Strip the trailing newline from the buffer
 		$buffer = rtrim($buffer);
@@ -111,6 +103,10 @@ class Socket
 		// If no new event was found we will just return NULL
 		if (empty($buffer))
 			return NULL;
+
+		// Raw buffer output
+		$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.raw')
+			->setDataPoint('message', '<- ' . $buffer));
 
 		$prefix = '';
 		if(substr($buffer, 0, 1) == ':')
@@ -157,27 +153,21 @@ class Socket
 					list($ctcp_cmd, $args) = array_pad(explode(' ', $ctcp, 2), 2, array());
 					$ctcp_cmd = strtolower($ctcp_cmd);
 					$cmd = 'ctcp';
-					switch ($ctcp_cmd)
+					switch($ctcp_cmd)
 					{
 						case 'version':
 						case 'time':
 						case 'finger':
 						case 'ping':
 							if($reply)
-							{
 								$cmd = 'ctcp_reply';
-								$args = array($args);
-							}
+							$args = array_merge(array($source, $ctcp_cmd), (array) $args);
 						break;
 						case 'action':
 							$args = array($source, $args);
 						break;
 					}
 
-				}
-				else
-				{
-					$args = $this->args($args, 2);
 				}
 			break;
 
@@ -217,8 +207,8 @@ class Socket
 				->setDataPoint('type', $cmd);
 
 			// Properly map arguments into the event using some array magick...
-			$map = $request_map->getMap();
-			$args = array_pad($args, sizeof($map), NULL);
+			$map = $request_map->getMap($cmd);
+			$args = array_pad((array) $args, sizeof($map), NULL);
 			foreach($map as $key => $map_arg)
 				$event->setDataPoint($map_arg, $args[$key]);
 
@@ -226,6 +216,9 @@ class Socket
 				$event->setDataPoint('hostmask', $hostmask);
 		}
 		$event->setDataPoint('buffer', $buffer);
+
+		$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.event')
+			->setDataPoint('message', "<- " . print_r($event, true)));
 
 		return $event;
 	}
@@ -238,7 +231,11 @@ class Socket
 	 */
 	public function sendEvent(\Yukari\Event\Instance $event)
 	{
+		$dispatcher = Kernel::getDispatcher();
 		$request_map = Kernel::get('core.request_map');
+
+		$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.event')
+			->setDataPoint('message', "-> " . print_r($event, true)));
 
 		// Get the buffer to write.
 		$buffer = $request_map->buildOutput($event);
@@ -255,13 +252,11 @@ class Socket
 	 */
 	public function send($data)
 	{
+		$dispatcher = Kernel::getDispatcher();
+
 		// Require an open socket connection to continue
 		if(empty($this->socket))
 			throw new \LogicException('Cannot send to server, no connection present');
-
-		// Make sure this event can be sent in the first place.
-		if(!$event->sendable())
-			throw new \LogicException('Attempt to send unsendable event failed');
 
 		// Transmit the command over the socket connection
 		$attempts = 0;
@@ -277,6 +272,10 @@ class Socket
 				usleep(500);
 		}
 		while(!$success);
+
+		// Raw buffer output
+		$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.raw')
+			->setDataPoint('message', '-> ' . $data));
 
 		// Return the command string that was transmitted
 		return $data;
