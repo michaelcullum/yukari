@@ -61,3 +61,5 @@ zip -r $NAME . -i $ZIPINCLUDES
 
 # pitch the version file, we don't need it now
 rm "$SCRIPT/../src/VERSION"
+
+echo "successfully generated build $BINNUMBER"
