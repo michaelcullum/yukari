@@ -62,8 +62,6 @@ class CLIArgs implements \ArrayAccess
 			$result = preg_match('#\-\-?([a-z0-9]+[a-z0-9\-_]*)(=([a-z0-9]+[a-z0-9\-_]*))?#i', $val, $matches);
 			if(!$result)
 				continue;
-
-			var_dump($matches);
 			list(, $setting, , $value) = array_pad($matches, 4, true);
 			$this->args[$setting] = $value;
 		}
