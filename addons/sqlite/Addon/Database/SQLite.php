@@ -36,9 +36,9 @@ use Yukari\Kernel;
 class SQLite extends \PDO
 {
 	/**
-	 * @var array - Stores all prepared query objects
+	 * @var array - Stores all anonymous functions that we use for queries
 	 */
-	private $statements = array();
+	protected $queries = array();
 
 	/**
 	 * @ignore
@@ -76,29 +76,58 @@ class SQLite extends \PDO
 	}
 
 	/**
-	 * Prepared query object generation and storage
-	 * @param string $table - The table that we are working with
-	 * @param string $type - The "name" of the query
-	 * @param string $statement - The query that is to be stored for later use
-	 * @return void
+	 * Define a query for later use.
+	 * @param string $query_name - The name to store the query as.
+	 * @param \Closure $query - An anonymous function used as the "query" to execute.
+	 * @return \Yukari\Addon\Database\SQLite - Provides a fluent interface.
 	 */
-	public function armQuery($table, $type, $statement)
+	public function defineQuery($query_name, \Closure $query)
 	{
-		$this->statements[$table][$type] = $statement;
+		$this->queries[$query_index] = $query;
+		return $this;
 	}
 
 	/**
-	 * Prepared query object retrieval and execution
-	 * @param string $table - The table that we are working with
-	 * @param string $type - The "name" of the query
-	 * @return \PDO_Statement - An instance of \PDO_Statement.
+	 * Execute a stored query function and return the results
+	 * @note uses func_num_args, first arg is the query index, and the rest gets passed to the function as params 2+
+	 * @return mixed - The value returned from the query function
 	 *
 	 * @throws \InvalidArgumentException
 	 */
-	public function useQuery($table, $type)
+	public function query()
 	{
-		if(!isset($this->statements[$table][$type]))
-			throw new \InvalidArgumentException('The query "%s" has not been defined');
-		return $this->prepare($this->statements[$table][$type]);
+		$argc = func_num_args();
+		if($argc < 1)
+			throw new \InvalidArgumentException('Required query index for \\Yukari\\Addon\\Database\\SQLite::query() not provided');
+
+		$args = func_get_args();
+		list($query_index, $args) = array_pad($args, 2, array());
+
+		if(!isset($this->queries[$query_index]))
+			throw new \InvalidArgumentException('The query associated with the query index specified does not exist');
+
+		$return = call_user_func_array($this->queries[$query_index], array_merge(array($this->db), (array) $args));
+		return $return;
 	}
+
+	/**
+	 * @note: example query definition:
+	 * <code>
+	 *
+	 * \Yukari\Addon\Database\Sqlite->defineQuery('query_name', function(\PDO $db, $id) {
+	 *	$sql = 'SELECT id, value
+	 *			FROM sometable
+	 *			WHERE id = :id';
+	 *		$q = $db->prepare($sql);
+	 *		$q = $db->bindParam(':id', $id, PDO::PARAM_STR);
+	 *		$q->execute(array('id' => $id));
+	 *		$result = $q->fetch(PDO::FETCH_ASSOC);
+	 *
+	 *		// Avoiding PDOStatement locking issues...
+	 *		$q = NULL;
+	 *		return $result;
+	 *	});
+	 *
+	 * </code>
+	 */
 }
