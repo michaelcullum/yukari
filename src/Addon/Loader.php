@@ -58,7 +58,7 @@ class Loader implements \Iterator
 		// Check to see if there's a phar we are dealing with here before moving on to try to load the standard class files.
 		$phar_path = "lib/addons/{$addon}.phar";
 		$metadata_path = "/Addon/Metadata/{$addon_uc}.php";
-		if(file_exists(YUKARI . '/' . $phar_path) && false)
+		if(file_exists(YUKARI . "/{$phar_path}"))
 		{
 			$using_phar = true;
 			if(!file_exists("phar://{$phar_path}/{$metadata_path}"))
@@ -67,6 +67,9 @@ class Loader implements \Iterator
 		}
 		else
 		{
+			$dispatcher = Kernel::getDispatcher();
+			$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.debug')
+				->setDataPoint('message', sprintf('Phar archive not present for addon "%1$s", looked in "%2$s"', $addon, YUKARI . "/{$phar_path}")));
 			if(!file_exists(YUKARI . "/addons/{$addon}{$metadata_path}"))
 				throw new \RuntimeException('Could not locate addon metadata file');
 
