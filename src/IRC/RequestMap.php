@@ -48,7 +48,7 @@ class RequestMap
 	 * Constructor, instantiates the map and pattern arrays
 	 * @return void
 	 */
-	public static function __construct()
+	public function __construct()
 	{
 		// Declare the arg map.
 		$this->map = array(
