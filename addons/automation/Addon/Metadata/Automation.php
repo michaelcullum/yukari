@@ -73,7 +73,9 @@ class Automation extends \Yukari\Addon\Metadata\MetadataBase
 			}
 			elseif(strtolower($event['command']) === 'ping')
 			{
-				var_dump($event['args']);
+				if($event['args'] === NULL)
+					return NULL;
+
 				return \Yukari\Event\Instance::newEvent(null, 'irc.output.ctcp_reply')
 					->setDataPoint('target', $event['hostmask']['nick'])
 					->setDataPoint('command', 'ping')
