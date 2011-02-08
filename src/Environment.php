@@ -231,7 +231,10 @@ class Environment
 			$hash = Kernel::set('lib.hash', new \Yukari\Lib\Hash());
 
 			// Load the socket interface
-			$socket = Kernel::set('core.socket', new \Yukari\Connection\Socket());			
+			$socket = Kernel::set('core.socket', new \Yukari\Connection\Socket());
+
+			// Load the request map
+			$request_map = Kernel::set('core.request_map', new \Yukari\IRC\RequestMap());
 
 			// Load any addons we want.
 			$addon_loader = Kernel::set('core.addonloader', new \Yukari\Addon\Loader());

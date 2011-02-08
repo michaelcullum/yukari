@@ -32,26 +32,26 @@ namespace Yukari\IRC;
  * @license     MIT License
  * @link        https://github.com/damianb/yukari
  */
-abstract class RequestMap
+class RequestMap
 {
 	/**
 	 * @var array - Array containing the arguments map for each IRC command we handle
 	 */
-	protected static $map = array();
+	protected $map = array();
 
 	/**
 	 * @var array - Array containing the anonymous functions we use to parse and construct our IRC output based on internal events.
 	 */
-	protected static $patterns = array();
+	protected $patterns = array();
 
 	/**
-	 * Instantiate the map and pattern arrays
+	 * Constructor, instantiates the map and pattern arrays
 	 * @return void
 	 */
-	public static function init()
+	public static function __construct()
 	{
 		// Declare the arg map.
-		self::$map = array(
+		$this->map = array(
 			'action' => array(
 				'target',
 				'text',
@@ -121,7 +121,7 @@ abstract class RequestMap
 		);
 
 		// Declare the anon functions that we'll use to build the raw IRC communication string
-		self::$patterns = array(
+		$this->patterns = array(
 			'action' => function($target, $text) {
 				return sprintf('PRIVMSG %1$s :' . chr(1) . 'ACTION %2$s ' . chr(1), $target, rtrim($text));
 			},
@@ -253,9 +253,9 @@ abstract class RequestMap
 	 * @param string $command - The IRC event name.
 	 * @return array - The map of arguments to parse the IRC event with.
 	 */
-	public static function getMap($command)
+	public function getMap($command)
 	{
-		return (isset(self::$map[$command])) ? self::$map[$command] : array();
+		return (isset($this->map[$command])) ? $this->map[$command] : array();
 	}
 
 	/**
@@ -263,17 +263,17 @@ abstract class RequestMap
 	 * @param \Yukari\Event\Instance $event - The event containing the data to send.
 	 * @return string - The raw IRC to send.
 	 */
-	public static function buildOutput(\Yukari\Event\Instance $event)
+	public function buildOutput(\Yukari\Event\Instance $event)
 	{
 		// get the event type we're dealing with
 		list( , , $event_type) = array_pad(explode('.', $event->getName()), -3, '');
 
 		// build array of params
 		$params = array();
-		foreach(self::getMap($event_type) as $arg)
+		foreach($this->getMap($event_type) as $arg)
 			$params[] = (isset($event[$arg])) ? $event[$arg] : NULL;
 
 		// execute and return the raw IRC string to send.
-		return call_user_func_array(self::$patterns[$event_type], $params);
+		return call_user_func_array($this->patterns[$event_type], $params);
 	}
 }

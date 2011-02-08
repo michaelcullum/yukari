@@ -134,7 +134,6 @@ class Socket
 		}
 
 		// Parse the event arguments depending on the event type
-		// @todo rewrite for proper parsing using the new event objects
 		$cmd = strtolower($cmd);
 		switch ($cmd)
 		{
@@ -155,21 +154,26 @@ class Socket
 				{
 					$ctcp = substr($ctcp, 1, -1);
 					$reply = ($cmd == 'notice');
-					list($cmd, $args) = array_pad(explode(' ', $ctcp, 2), 2, array());
-					$cmd = strtolower($cmd);
-					switch ($cmd)
+					list($ctcp_cmd, $args) = array_pad(explode(' ', $ctcp, 2), 2, array());
+					$ctcp_cmd = strtolower($ctcp_cmd);
+					$cmd = 'ctcp';
+					switch ($ctcp_cmd)
 					{
 						case 'version':
 						case 'time':
 						case 'finger':
 						case 'ping':
 							if($reply)
+							{
+								$cmd = 'ctcp_reply';
 								$args = array($args);
+							}
 						break;
 						case 'action':
 							$args = array($source, $args);
 						break;
 					}
+
 				}
 				else
 				{
@@ -198,23 +202,30 @@ class Socket
 		// Create, populate, and return an event object
 		if(ctype_digit($cmd))
 		{
-			$event = new \Yukari\Event\IRC\Response();
+			$event = \Yukari\Event\Instance::newEvent($this, 'irc.input.response')
+				->setDataPoint('code', $cmd)
+				->setDataPoint('description', $args);
 			$event['code'] = $cmd;
 			$event['description'] = $args;
 
 		}
 		else
 		{
-			// @todo rewrite for new event stuff
-			$event_class = 'Failnet\\Event\\IRC\\' . ucfirst($cmd);
-			$event = new $event_class();
-			$event['type'] = $cmd;
-			$event['arguments'] = $args;
+			$request_map = Kernel::get('core.request_map');
+
+			$event = \Yukari\Event\Instance::newEvent($this, sprintf('irc.input.%s', $cmd))
+				->setDataPoint('type', $cmd);
+
+			// Properly map arguments into the event using some array magick...
+			$map = $request_map->getMap();
+			$args = array_pad($args, sizeof($map), NULL);
+			foreach($map as $key => $map_arg)
+				$event->setDataPoint($map_arg, $args[$key]);
+
 			if(isset($hostmask))
-				$event['hostmask'] = $hostmask;
-			$event->channel = $arguments[0];
+				$event->setDataPoint('hostmask', $hostmask);
 		}
-		$event->buffer = $buffer;
+		$event->setDataPoint('buffer', $buffer);
 
 		return $event;
 	}
@@ -227,8 +238,10 @@ class Socket
 	 */
 	public function sendEvent(\Yukari\Event\Instance $event)
 	{
+		$request_map = Kernel::get('core.request_map');
+
 		// Get the buffer to write.
-		$buffer = $event->buildCommand();
+		$buffer = $request_map->buildOutput($event);
 		return $this->send($buffer);
 	}
 
