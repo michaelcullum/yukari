@@ -68,14 +68,7 @@ abstract class Kernel
 	public static function load()
 	{
 		// Grab the build number we're running under.
-		if(file_exists(\Yukari\ROOT_PATH . '/VERSION'))
-		{
-			self::$build_number = file_get_contents(\Yukari\ROOT_PATH . '/VERSION');
-		}
-		else
-		{
-			self::$build_number = false;
-		}
+		self::$build_number = (file_exists(\Yukari\ROOT_PATH . '/VERSION')) ? file_get_contents(\Yukari\ROOT_PATH . '/VERSION') : false;
 
 		// Load the Environment object
 		self::setEnvironment(\Yukari\Environment::newInstance());
