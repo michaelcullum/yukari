@@ -98,6 +98,8 @@ class UI
 	public function registerListeners()
 	{
 		$dispatcher = Kernel::getDispatcher();
+
+		// Register our load of UI listeners
 		$dispatcher->register('ui.startup', array(Kernel::get('core.ui'), 'displayStartup'))
 			->register('ui.ready', array(Kernel::get('core.ui'), 'displayReady'))
 			->register('ui.shutdown', array(Kernel::get('core.ui'), 'displayShutdown'))
@@ -111,6 +113,103 @@ class UI
 			->register('ui.message.php', array(Kernel::get('core.ui'), 'displayPHP'))
 			->register('ui.message.debug', array(Kernel::get('core.ui'), 'displayDebug'))
 			->register('ui.message.raw', array(Kernel::get('core.ui'), 'displayRaw'));
+
+		// Display IRC going-ons
+		$dispatcher->register('irc.input.action', function(\Yukari\Event\Instance $event) {
+			$dispatcher = Kernel::getDispatcher();
+			$dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, 'ui.message.irc')
+				->setDataPoint('message', sprintf('<- [%2$s] *** %1$s %3$s', $event['hostmask']['nick'], $event['target'], $event['text'])));
+		});
+		$dispatcher->register('irc.input.privmsg', function(\Yukari\Event\Instance $event) {
+			$dispatcher = Kernel::getDispatcher();
+			$dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, 'ui.message.irc')
+				->setDataPoint('message', sprintf('<- [%2$s] <%1$s> %3$s', $event['hostmask']['nick'], $event['target'], $event['text'])));
+		});
+		$dispatcher->register('irc.input.notice', function(\Yukari\Event\Instance $event) {
+			$dispatcher = Kernel::getDispatcher();
+			$dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, 'ui.message.irc')
+				->setDataPoint('message', sprintf('<- [%2$s] <%1$s NOTICE>  %3$s', $event['hostmask']['nick'], $event['target'], $event['text'])));
+		});
+
+		// Display CTCP requests and replies
+		$dispatcher->register('irc.input.ctcp', function(\Yukari\Event\Instance $event) {
+			$dispatcher = Kernel::getDispatcher();
+			if($event['args'] !== NULL)
+			{
+				$dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, 'ui.message.irc')
+					->setDataPoint('message', sprintf('<- <%1$s> CTCP %2$s - %3$s', $event['hostmask']['nick'], $event['command'], $event['args'])));
+			}
+			else
+			{
+				$dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, 'ui.message.irc')
+					->setDataPoint('message', sprintf('<- <%1$s> CTCP %2$s', $event['hostmask']['nick'], $event['command'])));
+			}
+		});
+		$dispatcher->register('irc.input.ctcp_reply', function(\Yukari\Event\Instance $event) {
+			$dispatcher = Kernel::getDispatcher();
+			if($event['args'] !== NULL)
+			{
+				$dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, 'ui.message.irc')
+					->setDataPoint('message', sprintf('<- <%1$s> CTCP-REPLY %2$s - %3$s', $event['hostmask']['nick'], $event['command'], $event['args'])));
+			}
+			else
+			{
+				$dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, 'ui.message.irc')
+					->setDataPoint('message', sprintf('<- <%1$s> CTCP-REPLY %2$s', $event['hostmask']['nick'], $event['command'])));
+			}
+		});
+
+		// Display our responses
+		$dispatcher->register('runtime.postdispatch', function(\Yukari\Event\Instance $event) {
+			$dispatcher = Kernel::getDispatcher();
+			switch($event->getName())
+			{
+				case 'irc.output.action':
+					$dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, 'ui.message.irc')
+						->setDataPoint('message', sprintf('-> [%1$s] *** %2$s', $event['target'], $event['text'])));
+				break;
+
+				case 'irc.output.ctcp':
+					if($event['args'] !== NULL)
+					{
+						$dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, 'ui.message.irc')
+							->setDataPoint('message', sprintf('-> [%1$s] CTCP %2$s - %3$s', $event['target'], $event['command'], $event['args'])));
+					}
+					else
+					{
+						$dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, 'ui.message.irc')
+							->setDataPoint('message', sprintf('-> [%1$s] CTCP %2$s', $event['target'], $event['command'])));
+					}
+				break;
+
+				case 'irc.output.ctcp_reply':
+					if($event['args'] !== NULL)
+					{
+						$dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, 'ui.message.irc')
+							->setDataPoint('message', sprintf('-> [%1$s] CTCP-REPLY %2$s - %3$s', $event['target'], $event['command'], $event['args'])));
+					}
+					else
+					{
+						$dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, 'ui.message.irc')
+							->setDataPoint('message', sprintf('-> [%1$s] CTCP-REPLY %2$s', $event['target'], $event['command'])));
+					}
+				break;
+
+				case 'irc.output.privmsg':
+					$dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, 'ui.message.irc')
+						->setDataPoint('message', sprintf('-> [%1$s] %2$s', $event['target'], $event['text'])));
+				break;
+
+				case 'irc.output.notice':
+					$dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, 'ui.message.irc')
+						->setDataPoint('message', sprintf('-> [%1$s NOTICE] %2$s', $event['target'], $event['text'])));
+				break;
+
+				default:
+					return NULL;
+				break;
+			}
+		});
 
 		return $this;
 	}
@@ -276,9 +375,7 @@ class UI
 			return;
 
 		if($this->level(\Yukari\CLI\UI::OUTPUT_NORMAL))
-		{
 			$this->output('[irc] ' . $event->getDataPoint('message'));
-		}
 	}
 
 	/**
@@ -292,9 +389,7 @@ class UI
 			return;
 
 		if($this->level(\Yukari\CLI\UI::OUTPUT_NORMAL))
-		{
 			$this->output('[system] ' . $event->getDataPoint('message'));
-		}
 	}
 
 	/**
@@ -308,9 +403,7 @@ class UI
 			return;
 
 		if($this->level(\Yukari\CLI\UI::OUTPUT_DEBUG))
-		{
 			$this->output('[system] ' . $event->getDataPoint('message'));
-		}
 	}
 
 	/**
@@ -327,9 +420,7 @@ class UI
 			return;
 
 		if($this->level(\Yukari\CLI\UI::OUTPUT_DEBUG_FULL))
-		{
 			$this->output('[event] ' . $event->getDataPoint('message'));
-		}
 	}
 
 	/**
@@ -343,9 +434,7 @@ class UI
 			return;
 
 		if($this->level(\Yukari\CLI\UI::OUTPUT_DEBUG))
-		{
 			$this->output('[notice] ' . $event->getDataPoint('message'));
-		}
 	}
 
 	/**
@@ -359,9 +448,7 @@ class UI
 			return;
 
 		if($this->level(\Yukari\CLI\UI::OUTPUT_DEBUG))
-		{
 			$this->output('[warning] ' . $event->getDataPoint('message'), 'WARNING');
-		}
 	}
 
 	/**
@@ -375,9 +462,7 @@ class UI
 			return;
 
 		if($this->level(\Yukari\CLI\UI::OUTPUT_DEBUG))
-		{
 			$this->output('[error] ' . $event->getDataPoint('message'), 'ERROR');
-		}
 	}
 
 	/**
@@ -391,9 +476,7 @@ class UI
 			return;
 
 		if($this->level(\Yukari\CLI\UI::OUTPUT_DEBUG))
-		{
 			$this->output('[php] ' . $event->getDataPoint('message'), 'ERROR');
-		}
 	}
 
 	/**
@@ -408,10 +491,8 @@ class UI
 		if($event->getName() !== 'ui.message.debug')
 			return;
 
-		if($this->level(\Yukari\CLI\UI::OUTPUT_DEBUG_FULL))
-		{
+		if($this->level(\Yukari\CLI\UI::OUTPUT_DEBUG))
 			$this->output('[debug] ' . $event->getDataPoint('message'));
-		}
 	}
 
 	/**
@@ -427,8 +508,6 @@ class UI
 			return;
 
 		if($this->level(\Yukari\CLI\UI::OUTPUT_RAW))
-		{
 			$this->output('[SOCKET] ' . $event->getDataPoint('message'));
-		}
 	}
 }
