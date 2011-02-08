@@ -3,4 +3,4 @@
 #
 
 whitelist_data:
-  - *Obsidian_!*@codebite.siteowner
+  - "*Obsidian_!*@codebite.siteowner"
