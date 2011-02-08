@@ -266,7 +266,7 @@ abstract class RequestMap
 	public static function buildOutput(\Yukari\Event\Instance $event)
 	{
 		// get the event type we're dealing with
-		list( , , $event_type) = explode('.', $event->getName());
+		list( , , $event_type) = array_pad(explode('.', $event->getName()), -3, '');
 
 		// build array of params
 		$params = array();
