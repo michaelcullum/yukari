@@ -110,7 +110,14 @@ class Dispatcher
 			}
 			elseif($result !== NULL && $result !== true)
 			{
-				$results[] = $result;
+				if(is_array($result)
+				{
+					$results = array_merge($results, $result);
+				}
+				else
+				{
+					$results[] = $result;
+				}
 			}
 		}
 
