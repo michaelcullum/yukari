@@ -68,7 +68,6 @@ class Environment
 			'addons.loadlist'		=> array(),
 			'core.timezonestring'		=> date_default_timezone_get(),
 			'irc.port'					=> 6667,
-			'db.file'					=> 'yukari',
 		);
 	}
 
@@ -232,12 +231,7 @@ class Environment
 			$hash = Kernel::set('lib.hash', new \Yukari\Lib\Hash());
 
 			// Load the socket interface
-			$socket = Kernel::set('core.socket', new \Yukari\Connection\Socket());
-
-			// Connect to the database
-			//$db = Kernel::set('core.database', new \Yukari\Database\PDO());
-			$db = new \Yukari\Database\PDO();
-			$db->connect('sqlite:' . YUKARI . '/data/database/' . Kernel::getConfig('db.file') . '.sqlite');
+			$socket = Kernel::set('core.socket', new \Yukari\Connection\Socket());			
 
 			// Load any addons we want.
 			$addon_loader = Kernel::set('core.addonloader', new \Yukari\Addon\Loader());

@@ -26,4 +26,5 @@ irc.realname: Obsidian
 ui.enable_colors: true
 ui.output_level: debug_full
 addons.loadlist:
+  - sqlite
   - whitelist

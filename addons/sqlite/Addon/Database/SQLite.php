@@ -19,11 +19,11 @@
  *
  */
 
-namespace Yukari\Database;
+namespace Yukari\Addon\Database;
 use Yukari\Kernel;
 
 /**
- * Yukari - Database class,
+ * Yukari - SQLite Database class,
  * 	    Extension of PDO, adapted to suit our needs.
  *
  *
@@ -33,7 +33,7 @@ use Yukari\Kernel;
  * @license     MIT License
  * @link        https://github.com/damianb/yukari
  */
-class PDO extends \PDO
+class SQLite extends \PDO
 {
 	/**
 	 * @var array - Stores all prepared query objects

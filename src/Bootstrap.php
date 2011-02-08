@@ -27,15 +27,9 @@ define('Yukari\\ROOT_PATH', (\Yukari\RUN_PHAR === true) ? 'phar://' . YUKARI_PHA
  *
  * Things we check:
  *  - PHP_SAPI
- *  - PDO availability
- *  - PDO+SQlite availability
  */
 if(strtolower(PHP_SAPI) !== 'cli')
 	throw new \RuntimeException('Yukari must be run in the CLI SAPI');
-if(!extension_loaded('PDO'))
-	throw new \RuntimeException('Yukari requires PDO');
-if(!extension_loaded('pdo_sqlite'))
-	throw new \RuntimeException('Yukari requires the SQLite PDO extension');
 
 // Absolute essentials first
 require \Yukari\ROOT_PATH . '/Autoloader.php';
