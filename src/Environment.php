@@ -352,6 +352,8 @@ class Environment
 		{
 			$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.debug')
 				->setDataPoint('message', sprintf('Exception %1$s::%2$s: %3$s', get_class($e), $e->getCode(), $e->getMessage())));
+			$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.debug')
+				->setDataPoint('message', sprintf('Stack trace: %s', $e->getTraceAsString())));
 
 			try
 			{
