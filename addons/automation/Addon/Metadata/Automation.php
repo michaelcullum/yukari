@@ -63,6 +63,7 @@ class Automation extends \Yukari\Addon\Metadata\MetadataBase
 	{
 		$dispatcher = Kernel::getDispatcher();
 
+		// Respond to CTCP VERSION and CTCP PING (if a valid argument for the CTCP was provided)
 		$dispatcher->register('irc.input.ctcp', function(\Yukari\Event\Instance $event) {
 			if(strtolower($event['command']) === 'version')
 			{
@@ -87,6 +88,7 @@ class Automation extends \Yukari\Addon\Metadata\MetadataBase
 			}
 		});
 
+		// Respond to server pings
 		$dispatcher->register('irc.input.ping', function(\Yukari\Event\Instance $event) {
 			return \Yukari\Event\Instance::newEvent(null, 'irc.output.pong')
 					->setDataPoint('origin', $event['target']);
