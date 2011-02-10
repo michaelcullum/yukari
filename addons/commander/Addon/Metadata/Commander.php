@@ -61,6 +61,10 @@ class Commander extends \Yukari\Addon\Metadata\MetadataBase
 	 */
 	public function initialize()
 	{
+		// Set the default config we need
+		if(!Kernel::getConfig('commander.command_indicator'))
+			Kernel::setConfig('commander.command_indicator', '!');
+
 		$interpreter = Kernel::set('addon.commander', new \Yukari\Addon\Commander\Interpreter());
 		$interpreter->registerListeners();
 	}
