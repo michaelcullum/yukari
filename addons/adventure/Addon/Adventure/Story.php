@@ -58,8 +58,23 @@ class Story
 
 			$event_id = (!empty($result)) ? $result['event_id'] : Kernel::getConfig('story.startpoint');
 
-
 			return $event_id;
+		});
+
+		// Update the event ID for the current user.
+		$database->defineQuery('story.updateUserLastEvent', function(\PDO $db, $hostmask, $event_id) {
+			$sql = 'UPDATE game_adventure_story 
+				SET event_id = :event_id
+				WHERE host_string = :host_string';
+
+                        $q = $db->prepare($sql);
+                        $q->bindParam(':host_string', $hostmask, PDO::PARAM_STR);
+			$q->bindParam(':event_id', $event_id, PDO::PARAM_INT);
+                        $q->execute();
+
+			$q = NULL;
+
+			return true;
 		});
 	}
 
@@ -128,18 +143,39 @@ class Story
 		return $results;
 	}
 
-	protected function getCurrentEvent()
+	/**
+	 * Get the current event for the specified user (by way of their hostmask).
+	 * @param \Yukari\Lib\Hostmask $hostmask - The hostmask to use for current event lookup.
+	 * @return array - Array containing the event data for the last event the user encountered.
+	 *
+	 */
+	protected function getCurrentEvent(\Yukari\Lib\Hostmask $hostmask)
 	{
-		// asdf
+		$database = Kernel::get('addon.database');
+
+		return $this->story_data[$database->query('story.getUserLastEvent', sprintf('%1$s@%2$s', $hostmask['username'], $hostmask['host']))];
 	}
 
+	/**
+	 * Update the last encountered event ID for the specified user.
+	 * @param \Yukari\Lib\Hostmask $hostmask - The hostmask to update the last encountered event ID for.
+	 * @param integer $event_id - The event ID to set as the last encountered event.
+	 * @return void
+	 */
 	protected function updateEventID(\Yukari\Lib\Hostmask $hostmask, $event_id)
 	{
-		// asdf
+		$database = Kernel::get('addon.database');
+
+		$database->query('story.updateUserLastEvent', sprintf('%1$s@%2$s', $hostmask['username'], $hostmask['host']), $event_id);
 	}
 
-	protected function getEventPaths()
+	/**
+	 * Get the possible choice paths for the specified event.
+	 * @param integer $event_id - The event to lookup choice paths for.
+	 * @return array - The array of paths that can be taken from the specified event.
+	 */
+	protected function getEventPaths($event_id)
 	{
-		// asdf
+		return $this->story_data[$event_id]['paths'];
 	}
 }
