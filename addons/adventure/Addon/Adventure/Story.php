@@ -39,7 +39,28 @@ class Story
 
 	public function prepareDatabase()
 	{
-		// asdf
+		$database = Kernel::get('addon.database');
+
+		if(!$database->tableExists('game_adventure_places'))
+			$database->runSchema('game_adventure_story.sql');
+
+		// Get the ID of the last event that a user was at.
+		$database->defineQuery('story.getUserLastEvent', function(\PDO $db, $hostmask) {
+			$sql = 'SELECT event_id
+				FROM game_adventure_story
+				WHERE host_string = :host_string';
+
+			$q = $db->prepare($sql);
+			$q->bindParam(':host_string', $hostmask, PDO::PARAM_STR);
+			$q->execute();
+			$result = $q->fetch(PDO::FETCH_ASSOC);
+			$q = NULL;
+
+			$event_id = (!empty($result)) ? $result['event_id'] : Kernel::getConfig('story.startpoint');
+
+
+			return $event_id;
+		});
 	}
 
 	public function loadStoryFile()
@@ -107,17 +128,17 @@ class Story
 		return $results;
 	}
 
-	protected function sayCurrentEvent()
+	protected function getCurrentEvent()
 	{
 		// asdf
 	}
 
-	protected function updateEvent()
+	protected function updateEventID(\Yukari\Lib\Hostmask $hostmask, $event_id)
 	{
 		// asdf
 	}
 
-	protected function sayCurrentPaths()
+	protected function getEventPaths()
 	{
 		// asdf
 	}
