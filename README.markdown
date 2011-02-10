@@ -14,8 +14,6 @@ Yukari is currently undergoing a complete codebase rewrite, and as such I have b
 
 * PHP 5.3.x
 * PHAR read access
-* SQLite
-* SQLite extension for PDO
 
 ## Dependencies
 
