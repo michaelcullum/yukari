@@ -119,8 +119,8 @@ class SQLite extends \PDO
 	 *			FROM sometable
 	 *			WHERE id = :id';
 	 *		$q = $db->prepare($sql);
-	 *		$q = $db->bindParam(':id', $id, PDO::PARAM_STR);
-	 *		$q->execute(array('id' => $id));
+	 *		$q->bindParam(':id', $id, PDO::PARAM_STR);
+	 *		$q->execute();
 	 *		$result = $q->fetch(PDO::FETCH_ASSOC);
 	 *
 	 *		// Avoiding PDOStatement locking issues...
