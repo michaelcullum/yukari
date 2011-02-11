@@ -67,6 +67,7 @@ class Interpreter
 			$_results = $dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, sprintf('irc.input.command.%s', $text[0]))
 				->setDataPoint('command', $text[0])
 				->setDataPoint('text', $text[1])
+				->setDataPoint('target', $event['target'])
 				->setDataPoint('hostmask', $event['hostmask'])
 				->setDataPoint('rootevent', $event));
 			$results = array_merge($results, $_results);
@@ -74,6 +75,7 @@ class Interpreter
 			$_results = $dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, sprintf('irc.input.privatecommand.%s', $text[0]))
 				->setDataPoint('command', $text[0])
 				->setDataPoint('text', $text[1])
+				->setDataPoint('target', $event['target'])
 				->setDataPoint('hostmask', $event['hostmask'])
 				->setDataPoint('rootevent', $event));
 			$results = array_merge($results, $_results);
@@ -86,6 +88,7 @@ class Interpreter
 			$_results = $dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, sprintf('irc.input.command.%s', $command))
 				->setDataPoint('command', $command)
 				->setDataPoint('text', $text)
+				->setDataPoint('target', $event['target'])
 				->setDataPoint('hostmask', $event['hostmask'])
 				->setDataPoint('rootevent', $event));
 			$results = array_merge($results, $_results);
@@ -97,6 +100,7 @@ class Interpreter
 				$_results = $dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, sprintf('irc.input.namedcommand.%s', $command))
 					->setDataPoint('command', $command)
 					->setDataPoint('text', $text)
+					->setDataPoint('target', $event['target'])
 					->setDataPoint('hostmask', $event['hostmask'])
 					->setDataPoint('rootevent', $event));
 				$results = array_merge($results, $_results);
