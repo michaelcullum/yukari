@@ -69,6 +69,7 @@ class Interpreter
 				->setDataPoint('text', $text[1])
 				->setDataPoint('target', $event['target'])
 				->setDataPoint('hostmask', $event['hostmask'])
+				->setDataPoint('is_private', true)
 				->setDataPoint('rootevent', $event));
 			$results = array_merge($results, $_results);
 
@@ -77,6 +78,7 @@ class Interpreter
 				->setDataPoint('text', $text[1])
 				->setDataPoint('target', $event['target'])
 				->setDataPoint('hostmask', $event['hostmask'])
+				->setDataPoint('is_private', true)
 				->setDataPoint('rootevent', $event));
 			$results = array_merge($results, $_results);
 		}
@@ -90,6 +92,7 @@ class Interpreter
 				->setDataPoint('text', $text)
 				->setDataPoint('target', $event['target'])
 				->setDataPoint('hostmask', $event['hostmask'])
+				->setDataPoint('is_private', false)
 				->setDataPoint('rootevent', $event));
 			$results = array_merge($results, $_results);
 
@@ -102,6 +105,7 @@ class Interpreter
 					->setDataPoint('text', $text)
 					->setDataPoint('target', $event['target'])
 					->setDataPoint('hostmask', $event['hostmask'])
+					->setDataPoint('is_private', false)
 					->setDataPoint('rootevent', $event));
 				$results = array_merge($results, $_results);
 			}
