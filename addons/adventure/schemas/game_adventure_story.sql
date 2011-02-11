@@ -20,5 +20,5 @@
 
 CREATE TABLE IF NOT EXISTS game_adventure_story (
 	host_string TEXT NOT NULL DEFAULT '',
-	event_id INTEGER UNSIGNED NOT NULL DEFAULT 0
+	event_id TEXT NOT NULL DEFAULT ''
 );
