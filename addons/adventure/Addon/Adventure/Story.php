@@ -35,8 +35,15 @@ use Yukari\Kernel;
  */
 class Story
 {
+	/**
+	 * @var array - The array of story data loaded from the YAML file.
+	 */
 	protected $story_data = array();
 
+	/**
+	 * Prepare the database and define the necessary queries.
+	 * @return \Yukari\Addon\Adventure\Story - Provides a fluent interface
+	 */
 	public function prepareDatabase()
 	{
 		$database = Kernel::get('addon.database');
@@ -56,7 +63,23 @@ class Story
 			$result = $q->fetch(PDO::FETCH_ASSOC);
 			$q = NULL;
 
-			$event_id = (!empty($result)) ? $result['event_id'] : Kernel::getConfig('story.startpoint');
+			if(empty($result))
+			{
+				$event_id = Kernel::getConfig('story.startpoint');
+
+				$sql = 'INSERT INTO game_adventure_story
+					( host_string, event_id )
+					VALUES ( :host_string, :event_id )';
+
+				$q = $db->prepare($sql);
+				$q->bindParam(':host_string', $hostmask, PDO::PARAM_STR);
+				$q->bindParam(':event_id', $event_id, PDO::PARAM_STR);
+				$q->execute();
+			}
+			else
+			{
+				$event_id = $result['event_id'];
+			}
 
 			return $event_id;
 		});
@@ -67,26 +90,34 @@ class Story
 				SET event_id = :event_id
 				WHERE host_string = :host_string';
 
-                        $q = $db->prepare($sql);
-                        $q->bindParam(':host_string', $hostmask, PDO::PARAM_STR);
-			$q->bindParam(':event_id', $event_id, PDO::PARAM_INT);
-                        $q->execute();
+			$q = $db->prepare($sql);
+			$q->bindParam(':host_string', $hostmask, PDO::PARAM_STR);
+			$q->bindParam(':event_id', $event_id, PDO::PARAM_STR);
+            $result = $q->execute();
 
 			$q = NULL;
 
-			return true;
+			return $result;
 		});
+
+		return $this;
 	}
 
+	/**
+	 * Load the YAML file containing the story for the adventure.
+	 * @return \Yukari\Addon\Adventure\Story - Provides a fluent interface
+	 */
 	public function loadStoryFile()
 	{
 		$story_file = \sfYaml::load(YUKARI . '/data/config/addons/' . Kernel::getConfig('story.story_file'));
 		$this->story_data = $story_file['story.data'];
+
+		return $this;
 	}
 
 	/**
 	 * Register the listeners we need for this addon to work properly.
-	 * @return \Yukari\Addon\Commander\Interpreter - Provides a fluent interface.
+	 * @return \Yukari\Addon\Adventure\Story - Provides a fluent interface.
 	 */
 	public function registerListeners()
 	{
@@ -101,14 +132,61 @@ class Story
 	/**
 	 * Handles playing the latest chunk of the story.
 	 * @param \Yukari\Event\Instance $event - The event to interpret.
-	 * @return void
+	 * @return array - Array of messages to send.
 	 */
 	public function handlePlayStory(\Yukari\Event\Instance $event)
 	{
-		$dispatcher = Kernel::getDispatcher();
-		$database = Kernel::get('addon.database');
-
 		$event_id = $this->getCurrentEvent($event['hostmask']);
+
+		return $this->buildStoryEvent($event, $event_id);
+	}
+
+	/**
+	 * Handles restarting the story at the beginning.
+	 * @param \Yukari\Event\Instance $event - The event to interpret.
+	 * @return array - Array of messages to send.
+	 */
+	public function handleRestartStory(\Yukari\Event\Instance $event)
+	{
+		$event_id = Kernel::getConfig('story.startpoint');
+		$this->updateEventID($event['hostmask'], $event_id);
+
+		return $this->buildStoryEvent($event, $event_id);
+	}
+
+	/**
+	 * Handles choosing the path to take in the story.
+	 * @param \Yukari\Event\Instance $event - The event to interpret.
+	 * @return array - Array of messages to send.
+	 */
+	public function handleChooseStoryPath(\Yukari\Event\Instance $event)
+	{
+		$event_id = $this->getCurrentEvent($event['hostmask']);
+		$paths = $this->getEventPaths($event_id);
+
+		if(!isset($paths[$event['text']]))
+		{
+			$results[] = \Yukari\Event\Instance::newEvent(null, 'irc.output.privmsg')
+				->setDataPoint('target', $event['target'])
+				->setDataPoint('text', sprintf('%1$s: Invalid option specified.', $event['target']));
+
+			return $results;
+		}
+		else
+		{
+			$next_event_id = $paths[$event['text']]['event'];
+			$this->updateEventID($event['hostmask'], $next_event_id);
+			return $this->buildStoryEvent($event, $next_event_id);
+		}
+	}
+
+	/**
+	 * Handles creation of output for our specified story event.
+	 * @param \Yukari\Event\Instance $event - The event to interpret.
+	 * @return array - Array of messages to send.
+	 */
+	protected function buildStoryEvent(\Yukari\Event\Instance $event, $event_id)
+	{
 		$event_text = wordwrap($this->story_data[$event_id]['text'], 300, "\n");
 
 		$results = array();
@@ -149,39 +227,8 @@ class Story
 							->setDataPoint('text', sprintf('%1$s: (...) %2$s', $event['hostmask']['nick'], $line));
 					}
 				}
-
 			}
 		}
-
-		return $results;
-	}
-
-	/**
-	 * Handles restarting the story at the beginning.
-	 * @param \Yukari\Event\Instance $event - The event to interpret.
-	 * @return void
-	 */
-	public function handleRestartStory(\Yukari\Event\Instance $event)
-	{
-		$dispatcher = Kernel::getDispatcher();
-		$database = Kernel::get('addon.database');
-
-		// asdf
-
-		return $results;
-	}
-
-	/**
-	 * Handles choosing the path to take in the story.
-	 * @param \Yukari\Event\Instance $event - The event to interpret.
-	 * @return void
-	 */
-	public function handleChooseStoryPath(\Yukari\Event\Instance $event)
-	{
-		$dispatcher = Kernel::getDispatcher();
-		$database = Kernel::get('addon.database');
-
-		// asdf
 
 		return $results;
 	}
