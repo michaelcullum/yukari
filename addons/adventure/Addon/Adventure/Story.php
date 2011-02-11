@@ -166,9 +166,10 @@ class Story
 
 		if(!isset($paths[$event['text']]))
 		{
+			$highlight = (!$event['is_private']) ? $event['hostmask']['nick'] . ':' : '';
 			$results[] = \Yukari\Event\Instance::newEvent(null, 'irc.output.privmsg')
 				->setDataPoint('target', $event['target'])
-				->setDataPoint('text', sprintf('%1$s: Invalid option specified.', $event['target']));
+				->setDataPoint('text', sprintf('%1$s Invalid option specified.', $highlight));
 
 			return $results;
 		}
@@ -188,6 +189,7 @@ class Story
 	protected function buildStoryEvent(\Yukari\Event\Instance $event, $event_id)
 	{
 		$event_text = wordwrap($this->story_data[$event_id]['text'], 300, "\n");
+		$highlight = (!$event['is_private']) ? $event['hostmask']['nick'] . ':' : '';
 
 		$results = array();
 		// Explodie the message!
@@ -195,7 +197,7 @@ class Story
 		{
 			$results[] = \Yukari\Event\Instance::newEvent(null, 'irc.output.privmsg')
 				->setDataPoint('target', $event['target'])
-				->setDataPoint('text', sprintf('%1$s: %2$s', $event['hostmask']['nick'], $line));
+				->setDataPoint('text', sprintf('%1$s %2$s', $highlight, $line));
 		}
 
 		// If we have paths, we'll want to let the sucker know what varieties of doom^W^W^W^H options they have.
@@ -203,7 +205,7 @@ class Story
 		{
 			$results[] = \Yukari\Event\Instance::newEvent(null, 'irc.output.privmsg')
 				->setDataPoint('target', $event['target'])
-				->setDataPoint('text', sprintf('%1$s: You have %2$s options to choose from...do you:', $event['hostmask']['nick'], count($this->story_data[$event_id]['paths'])));
+				->setDataPoint('text', sprintf('%1$s You have %2$s options to choose from...do you:', $highlight, count($this->story_data[$event_id]['paths'])));
 
 			// WHAT DO
 			foreach($this->story_data[$event_id]['paths'] as $path_id => $path)
@@ -217,14 +219,14 @@ class Story
 					{
 						$results[] = \Yukari\Event\Instance::newEvent(null, 'irc.output.privmsg')
 							->setDataPoint('target', $event['target'])
-							->setDataPoint('text', sprintf('%1$s: option "%2$s": %3$s', $event['hostmask']['nick'], $path_id, $line));
+							->setDataPoint('text', sprintf('%1$s option "%2$s": %3$s', $highlight, $path_id, $line));
 						$first = false;
 					}
 					else
 					{
 						$results[] = \Yukari\Event\Instance::newEvent(null, 'irc.output.privmsg')
 							->setDataPoint('target', $event['target'])
-							->setDataPoint('text', sprintf('%1$s: (...) %2$s', $event['hostmask']['nick'], $line));
+							->setDataPoint('text', sprintf('%1$s (...) %2$s', $highlight, $line));
 					}
 				}
 			}
