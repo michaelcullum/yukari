@@ -63,7 +63,7 @@ class Story
 
 		// Update the event ID for the current user.
 		$database->defineQuery('story.updateUserLastEvent', function(\PDO $db, $hostmask, $event_id) {
-			$sql = 'UPDATE game_adventure_story 
+			$sql = 'UPDATE game_adventure_story
 				SET event_id = :event_id
 				WHERE host_string = :host_string';
 
@@ -108,7 +108,50 @@ class Story
 		$dispatcher = Kernel::getDispatcher();
 		$database = Kernel::get('addon.database');
 
-		// asdf
+		$event_id = $this->getCurrentEvent($event['hostmask']);
+		$event_text = wordwrap($this->story_data[$event_id]['text'], 300, "\n");
+
+		$results = array();
+		// Explodie the message!
+		foreach(explode("\n", $event_text) as $line)
+		{
+			$results[] = \Yukari\Event\Instance::newEvent(null, 'irc.output.privmsg')
+				->setDataPoint('target', $event['target'])
+				->setDataPoint('text', sprintf('%1$s: %2$s', $event['hostmask']['nick'], $line));
+		}
+
+		// If we have paths, we'll want to let the sucker know what varieties of doom^W^W^W^H options they have.
+		if(isset($this->story_data[$event_id]['paths']))
+		{
+			$results[] = \Yukari\Event\Instance::newEvent(null, 'irc.output.privmsg')
+				->setDataPoint('target', $event['target'])
+				->setDataPoint('text', sprintf('%1$s: You have %2$s options to choose from...do you:', $event['hostmask']['nick'], count($this->story_data[$event_id]['paths'])));
+
+			// WHAT DO
+			foreach($this->story_data[$event_id]['paths'] as $path_id => $path)
+			{
+				$path_text = explode("\n", wordwrap($path['text'], 300, "\n"));
+				$first = true;
+				foreach($path_text as $line)
+				{
+					// We want to only show the "option xyz" bit if it's the first line about it.
+					if($first === true)
+					{
+						$results[] = \Yukari\Event\Instance::newEvent(null, 'irc.output.privmsg')
+							->setDataPoint('target', $event['target'])
+							->setDataPoint('text', sprintf('%1$s: option "%2$s": %3$s', $event['hostmask']['nick'], $path_id, $line));
+						$first = false;
+					}
+					else
+					{
+						$results[] = \Yukari\Event\Instance::newEvent(null, 'irc.output.privmsg')
+							->setDataPoint('target', $event['target'])
+							->setDataPoint('text', sprintf('%1$s: (...) %2$s', $event['hostmask']['nick'], $line));
+					}
+				}
+
+			}
+		}
 
 		return $results;
 	}
