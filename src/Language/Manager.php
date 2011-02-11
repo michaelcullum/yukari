@@ -150,7 +150,7 @@ class Manager
 	}
 
 	/**
-	 * Load a language variable into Failnet for future use.
+	 * Load a language variable into Yukari for future use.
 	 * @param string $locale - The locale for this language entry.
 	 * @param string $key - The language key to use this language variable with.
 	 * @param string $value - A plain or sprintf() formatted string to use for a language variable.
@@ -180,8 +180,8 @@ class Manager
 	}
 
 	/**
-	 * Alias of Failnet\Language\Manager->getEntry()
-	 * @see Failnet\Language\Manager->getEntry()
+	 * Alias of \Yukari\Language\Manager->getEntry()
+	 * @see \Yukari\Language\Manager->getEntry()
 	 */
 	public function __invoke($locale, $key, array $arguments = array())
 	{

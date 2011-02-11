@@ -113,7 +113,7 @@ class PackageBase implements PackageInterface
 
 	/**
 	 * Iterator method, gets the current element
-	 * @return Failnet\Lib\UserInterface - The current session of focus.
+	 * @return string - The current language entry.
 	 */
 	final public function current()
 	{

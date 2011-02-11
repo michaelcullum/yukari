@@ -24,7 +24,7 @@ namespace Yukari;
 
 /**
  * Yukari - Environment class,
- *      Manages the Failnet environment.
+ *      Manages the Yukari environment.
  *
  *
  * @category    Yukari
