@@ -195,9 +195,6 @@ class Socket
 			$event = \Yukari\Event\Instance::newEvent($this, 'irc.input.response')
 				->setDataPoint('code', $cmd)
 				->setDataPoint('description', $args);
-			$event['code'] = $cmd;
-			$event['description'] = $args;
-
 		}
 		else
 		{
@@ -218,7 +215,7 @@ class Socket
 		$event->setDataPoint('buffer', $buffer);
 
 		$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.event')
-			->setDataPoint('message', "<- " . print_r($event, true)));
+			->setDataPoint('message', sprintf('<- event "%1$s"', $event->getName())));
 
 		return $event;
 	}
@@ -235,7 +232,7 @@ class Socket
 		$request_map = Kernel::get('core.request_map');
 
 		$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.event')
-			->setDataPoint('message', "-> " . print_r($event, true)));
+			->setDataPoint('message', sprintf('-> event "%1$s"', $event->getName())));
 
 		// Get the buffer to write.
 		$buffer = $request_map->buildOutput($event);
