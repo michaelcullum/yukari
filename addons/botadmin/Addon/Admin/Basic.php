@@ -44,6 +44,7 @@ class Basic
 		$dispatcher = Kernel::getDispatcher();
 		$dispatcher->register('irc.input.command.join', array(Kernel::get('addon.botadmin'), 'handleJoinCommand'))
 			->register('irc.input.command.part', array(Kernel::get('addon.botadmin'), 'handlePartCommand'))
+			->register('irc.input.command.listaddons', array(Kernel::get('addon.botadmin'), 'handleListaddonsCommand'))
 			->register('irc.input.command.quit', array(Kernel::get('addon.botadmin'), 'handleQuitCommand'));
 
 		return $this;
@@ -110,6 +111,69 @@ class Basic
 
 				return $part;
 			}
+		}
+	}
+
+	public function handleKickCommand(\Yukari\Event\Instance $event)
+	{
+		// asdf
+	}
+
+	public function handleOpCommand(\Yukari\Event\Instance $event)
+	{
+		// asdf
+	}
+
+	public function handleDeopCommand(\Yukari\Event\Instance $event)
+	{
+		// asdf
+	}
+	public function handleVoiceCommand(\Yukari\Event\Instance $event)
+	{
+		// asdf
+	}
+
+	public function handleDevoiceCommand(\Yukari\Event\Instance $event)
+	{
+		// asdf
+	}
+
+	public function handleListaddonsCommand(\Yukari\Event\Instance $event)
+	{
+		// Check auths first
+		if(!$this->checkAuthentication($event['hostmask']))
+		{
+			return $this->handleCommandRefusal($event);
+		}
+		else
+		{
+			$addon_loader = Kernel::get('core.addonloader');
+
+			foreach($addon_loader as $metadata)
+				$addon_list[] = sprintf('%1$s [%2$s]', $metadata->getName(), $metadata->getVersion());
+
+			// Had to get hackish with word wrapping, can't rely on wordwrap() here.
+			$response = array(0 => '');
+			$i = 0;
+			foreach($addon_list as $addon)
+			{
+				$len = strlen($addon);
+				if(strlen($response[$i]) + $len > 300)
+					$i++;
+				$response[$i][] = $addon;
+			}
+
+			$results = array();
+			$highlight = (!$event['is_private']) ? $event['hostmask']['nick'] . ':' : '';
+			foreach($response as $line)
+			{
+				$line = implode(', ', $line);
+				$results[] = \Yukari\Event\Instance::newEvent(null, 'irc.output.privmsg')
+					->setDataPoint('target', $event['target'])
+					->setDataPoint('text', sprintf('%1$s %2$s.', $highlight, $line));
+			}
+
+			return $results;
 		}
 	}
 
