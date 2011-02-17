@@ -59,10 +59,19 @@ class Interpreter
 		$our_name = Kernel::getConfig('irc.nickname');
 
 		$results = array();
+
 		// Is this a direct, private command?
 		if($event['target'] == $our_name)
 		{
-			$text = array_pad(explode(' ', $event['text'], 2), 2, '');
+			// Just drop the indicator if this is a private command.  User friendliness and all that. ;)
+			if(substr($event['text'], 0, strlen($indicator)) == $indicator)
+			{
+				$text = array_pad(explode(' ', substr($event['text'], strlen($indicator)), 2), 2, '');
+			}
+			else
+			{
+				$text = array_pad(explode(' ', $event['text'], 2), 2, '');
+			}
 
 			$_results = $dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, sprintf('irc.input.command.%s', $text[0]))
 				->setDataPoint('command', $text[0])
@@ -71,6 +80,8 @@ class Interpreter
 				->setDataPoint('hostmask', $event['hostmask'])
 				->setDataPoint('is_private', true)
 				->setDataPoint('rootevent', $event));
+			if(!is_array($_results))
+				$_results = array($_results);
 			$results = array_merge($results, $_results);
 
 			$_results = $dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, sprintf('irc.input.privatecommand.%s', $text[0]))
@@ -80,12 +91,13 @@ class Interpreter
 				->setDataPoint('hostmask', $event['hostmask'])
 				->setDataPoint('is_private', true)
 				->setDataPoint('rootevent', $event));
+				$_results = array($_results);
 			$results = array_merge($results, $_results);
 		}
-		elseif(preg_match('#^(' . preg_quote($indicator, '#') . '|' . preg_quote($our_name, '#') . ': )([a-z0-9]+)( .*)?#i', $event['text'], $matches))
+		elseif(preg_match('#^(' . preg_quote($indicator, '#') . '|' . preg_quote($our_name, '#') . '\: )([a-z0-9]*)( (.*))?#iS', $event['text'], $matches) == true)
 		{
 			// Make sure we have a full array here.
-			list($trigger, $command, $text) = array_pad($matches, 3, '');
+			list(, $trigger, $command, , $text) = array_pad($matches, 5, '');
 
 			$_results = $dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, sprintf('irc.input.command.%s', $command))
 				->setDataPoint('command', $command)
@@ -94,10 +106,12 @@ class Interpreter
 				->setDataPoint('hostmask', $event['hostmask'])
 				->setDataPoint('is_private', false)
 				->setDataPoint('rootevent', $event));
+			if(!is_array($_results))
+				$_results = array($_results);
 			$results = array_merge($results, $_results);
 
 			// Check to see if this was the command indicator, or if we were addressed by name ("!command" versus "Yukari: command")
-			if(substr($trigger, 0, strlen($indicator)) != $indicator)
+			if($trigger == $indicator)
 			{
 				// Okay, this was a named command - we treat this as special, and dispatch another event for it.
 				$_results = $dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, sprintf('irc.input.namedcommand.%s', $command))
@@ -107,6 +121,8 @@ class Interpreter
 					->setDataPoint('hostmask', $event['hostmask'])
 					->setDataPoint('is_private', false)
 					->setDataPoint('rootevent', $event));
+				if(!is_array($_results))
+					$_results = array($_results);
 				$results = array_merge($results, $_results);
 			}
 		}
