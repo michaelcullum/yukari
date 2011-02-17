@@ -29,7 +29,7 @@ Via gzip tarball package of source:
     tar xzf yukari-dev.tgz
     cd ./yukari
 
-Via zip package of build:
+Via zip package of build (replacing {buildnumber} with the actual build number):
     mkdir ./yukari
     unzip yukari-build_{buildnumber}.zip -d ./yukari/
     cd ./yukari
@@ -53,7 +53,7 @@ Additionally, you can build your phars on-commit using the provided compile-on-c
 Make your changes to the files in the **src/** directory, then make changes to addons in the **addons/** directory.  When ready, use the provided packaging script to compile the next build.
     $ ./build/package.sh
 
-Please note that this script will, by default, attempt to sign any phars it builds.
+Please note that this script will, by default, attempt to sign any phars it builds.  You will need to modify the script itself to prevent this if you don't want the phars signed.
 
 ### Building addons
 
@@ -73,3 +73,5 @@ Navigate to the root directory of Yukari, then use this command:
 Yukari will immediately start up afterwards.
 
 Note: You can specify an alternative configuration file to use within the **data/config/** directory by using the commandline parameter "*--config=confignamehere*"
+
+@note: A shell script providing easy manipulation of the bot through screen is also planned.
