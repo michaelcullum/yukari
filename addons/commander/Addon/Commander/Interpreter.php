@@ -50,7 +50,7 @@ class Interpreter
 	/**
 	 * Handle and interpret PRIVMSG events, and fire off additional events if we deem the input to be commands directed at the bot.
 	 * @param \Yukari\Event\Instance $event - The event to interpret.
-	 * @return void
+	 * @return array - Returns an array of IRC output events to send.
 	 */
 	public function handlePrivmsg(\Yukari\Event\Instance $event)
 	{
@@ -126,6 +126,27 @@ class Interpreter
 				$results = array_merge($results, $_results);
 			}
 		}
+
+		return $results;
+	}
+
+	/**
+	 * Handle and interpret IRC response events, and fire off additional events for the individual response types.
+	 * @param \Yukari\Event\Instance $event - The event to interpret.
+	 * @return array - Returns an array of IRC output events to send.
+	 */
+	public function handleResponse(\Yukari\Event\Instance $event)
+	{
+		$dispatcher = Kernel::getDispatcher();
+		$response_map = Kernel::get('core.response_map');
+
+		$event_code = (int) $event['code'];
+		$event_type = $response_map->getResponseType($event_code);
+
+		$results = $dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, sprintf('irc.input.response.%s', $event_type))
+			->setDataPoint('code', $event_code)
+			->setDataPoint('description', $event['description'])
+			->setDataPoint('rootevent', $event));
 
 		return $results;
 	}
