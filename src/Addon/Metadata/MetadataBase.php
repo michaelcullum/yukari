@@ -82,7 +82,7 @@ abstract class MetadataBase implements MetadataInterface
 	 * Get the name of the addon.
 	 * @return string - The addon's name.
 	 */
-	final public function getAddonName()
+	final public function getName()
 	{
 		return $this->name;
 	}

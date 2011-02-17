@@ -153,12 +153,12 @@ class Basic
 				$addon_list[] = sprintf('%1$s [%2$s]', $metadata->getName(), $metadata->getVersion());
 
 			// Had to get hackish with word wrapping, can't rely on wordwrap() here.
-			$response = array(0 => '');
+			$response = array(0 => array());
 			$i = 0;
 			foreach($addon_list as $addon)
 			{
 				$len = strlen($addon);
-				if(strlen($response[$i]) + $len > 300)
+				if(strlen(implode(', ', $response[$i])) + $len + 2 > 300)
 					$i++;
 				$response[$i][] = $addon;
 			}

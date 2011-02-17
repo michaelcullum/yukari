@@ -38,7 +38,7 @@ interface MetadataInterface
 	public function __construct();
 	public function getVersion();
 	public function getAuthor();
-	public function getAddonName();
+	public function getName();
 	public function getDescription();
 
 	public function initialize();
