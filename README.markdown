@@ -26,7 +26,7 @@ Via git:
     git submodule update
 
 Via gzip tarball package of source:
-    tar xzf yukari-dev.tgz
+    tar xzf yukari-master.tar.gz
     cd ./yukari
 
 Via zip package of build (replacing {buildnumber} with the actual build number):
