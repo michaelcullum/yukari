@@ -2,13 +2,9 @@
 
 Yukari is a flexible IRC bot built in PHP 5.3 Object Oriented Programming.
 
-## WARNING
-
-Yukari is currently undergoing a complete codebase rewrite, and as such I have been picking the project up and setting it back down as I learn new coding techniques.
-
 **Copyright**: *(c) 2009 - 2011 -- Damian Bushong*
 
-**License**: *MIT License*
+**License**: *MIT License* - please see the provided file located in /LICENSE for the full license terms
 
 ## Requirements
 
@@ -29,23 +25,35 @@ Via git:
     git submodule init
     git submodule update
 
-Via gzip tarball package:
+Via gzip tarball package of source:
     tar xzf yukari-dev.tgz
     cd ./yukari
 
-Optionally, you may verify the package if you have the phar-util package installed via PEAR.
+Via zip package of build:
+    mkdir ./yukari
+    unzip yukari-build_{buildnumber}.zip -d ./yukari/
+    cd ./yukari
 
-### Compiling an updated PHAR package
+Optionally, you may verify the phar(s) if you have the phar-util package installed via pear.
 
-Install the phar-util package <http://github.com/koto/phar-util> via PEAR, if you have not done so already
+### Compiling an updated phar
+
+Install the phar-util package <http://github.com/koto/phar-util> via pear, if you have not done so already
     $ sudo pear channel-discover pear.kotowicz.net
     $ sudo pear install kotowicz/PharUtil-beta
 
-Make changes to the files in the **src/** directory, then build the package (without signing it)
+Make changes to the files in the **src/** directory, then build the phar (without signing it)
     $ ./build/unsigned-build.sh
 
-Using the compile-on-commit script (without signing it)
+Additionally, you can build your phars on-commit using the provided compile-on-commit script (without signing it)
     $ cp build/hooks/autobuild-unsigned .git/hooks/pre-commit
+
+### Packaging a build
+
+Make your changes to the files in the **src/** directory, then make changes to addons in the **addons/** directory.  When ready, use the provided packaging script to compile the next build.
+    $ ./build/package.sh
+
+Please note that this script will, by default, attempt to sign any phars it builds.
 
 ### Building addons
 
@@ -63,3 +71,5 @@ Navigate to the root directory of Yukari, then use this command:
 	$ ./bin/yukari
 
 Yukari will immediately start up afterwards.
+
+Note: You can specify an alternative configuration file to use within the **data/config/** directory by using the commandline parameter "*--config=confignamehere*"
