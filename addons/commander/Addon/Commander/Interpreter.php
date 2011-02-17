@@ -143,6 +143,10 @@ class Interpreter
 		$event_code = (int) $event['code'];
 		$event_type = $response_map->getResponseType($event_code);
 
+		// Just in case we wtf at a non-standard response code.
+		if($event_type === false)
+			return NULL;
+
 		$results = $dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, sprintf('irc.input.response.%s', $event_type))
 			->setDataPoint('code', $event_code)
 			->setDataPoint('description', $event['description'])
