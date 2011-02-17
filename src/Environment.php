@@ -325,6 +325,10 @@ class Environment
 				{
 					foreach($queue as $outbound)
 					{
+						// Do not fire off non-instances.
+						if(!($outbound instanceof \Yukari\Event\Instance))
+							continue;
+
 						// Fire off a predispatch event, to allow listeners to modify events before they are sent.
 						// Useful for features like self-censoring.
 						$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'runtime.predispatch')
