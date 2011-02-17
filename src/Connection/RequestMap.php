@@ -19,7 +19,7 @@
  *
  */
 
-namespace Yukari\IRC;
+namespace Yukari\Connection;
 
 /**
  * Yukari - IRC Request Argument-mapping class,

@@ -233,8 +233,9 @@ class Environment
 			// Load the socket interface
 			$socket = Kernel::set('core.socket', new \Yukari\Connection\Socket());
 
-			// Load the request map
-			$request_map = Kernel::set('core.request_map', new \Yukari\IRC\RequestMap());
+			// Load the request map and response map
+			$request_map = Kernel::set('core.request_map', new \Yukari\Connection\RequestMap());
+			$response_map = Kernel::set('core.response_map', new \Yukari\Connection\ResponseMap());
 
 			// Load any addons we want.
 			$addon_loader = Kernel::set('core.addonloader', new \Yukari\Addon\Loader());
