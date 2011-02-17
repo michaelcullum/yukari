@@ -139,17 +139,6 @@ class Basic
 		return $results;
 	}
 
-	public function handleWhoisResponse(\Yukari\Event\Instance $event)
-	{
-		if($event['code'] != \Yukari\IRC\ResponseCodes::RPL_WHOISUSER)
-			return NULL;
-	}
-
-	public function buildBanMask()
-	{
-		// asdf
-	}
-
 	public function checkAuthentication(\Yukari\Lib\Hostmask $hostmask)
 	{
 		$dispatcher = Kernel::getDispatcher();
