@@ -76,7 +76,7 @@ class Basic
 				if(isset($join_params[1]))
 					$join->setDataPoint('key', $join_params[1]);
 
-				return $results;
+				return $join;
 			}
 		}
 	}
@@ -108,7 +108,7 @@ class Basic
 				if(isset($part_params[1]))
 					$part->setDataPoint('reason', $part_params[1]);
 
-				return $results;
+				return $part;
 			}
 		}
 	}
@@ -124,6 +124,8 @@ class Basic
 		{
 			$dispatcher = Kernel::getDispatcher();
 			$dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, 'system.shutdown'));
+
+			return NULL;
 		}
 	}
 
@@ -135,6 +137,17 @@ class Basic
 			->setDataPoint('text', sprintf('%1$s You are not authorized to use this command.', $highlight));
 
 		return $results;
+	}
+
+	public function handleWhoisResponse(\Yukari\Event\Instance $event)
+	{
+		if($event['code'] != \Yukari\IRC\ResponseCodes::RPL_WHOISUSER)
+			return NULL;
+	}
+
+	public function buildBanMask()
+	{
+		// asdf
 	}
 
 	public function checkAuthentication(\Yukari\Lib\Hostmask $hostmask)
