@@ -271,10 +271,13 @@ class Environment
 		}
 		catch(\Exception $e)
 		{
-			throw new \RuntimeException(sprintf('Yukari environment initialization encountered a fatal exception (%1$s::%2$s)' . PHP_EOL . 'Exception message: %3$s', get_class($e), $e->getCode(), $e->getMessage()));
+			throw new \RuntimeException(sprintf('Yukari environment initialization encountered a fatal exception (%1$s::%2$s)' . PHP_EOL . 'Exception message: %3$s' . PHP_EOL . 'Exception trace: %4$s', get_class($e), $e->getCode(), $e->getMessage()), $e->getTraceAsString());
 		}
 
+		// All done!
 		$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.ready'));
+
+		// How fast were we, now?  :3
 		$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.debug')
 			->setDataPoint('message', sprintf('Startup complete, took %1$s seconds', (microtime(true) - \Yukari\START_MICROTIME))));
 	}

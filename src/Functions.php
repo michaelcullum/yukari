@@ -329,6 +329,8 @@ function cake()
 	'                                          ',
 	'                                          ',
 	);
+
+	$ui = Kernel::get('core.ui');
 	foreach($cake as $line)
-		Kernel::get('ui')->output($line, 'CAKE');
+		$ui->output($line, 'CAKE');
 }
