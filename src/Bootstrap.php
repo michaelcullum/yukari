@@ -34,6 +34,8 @@ if(strtolower(PHP_SAPI) !== 'cli')
 // Define the base memory usage here.
 define('Yukari\\BASE_MEMORY', memory_get_usage());
 define('Yukari\\BASE_MEMORY_PEAK', memory_get_peak_usage());
+define('Yukari\\START_TIME', time());
+define('Yukari\\START_MICROTIME', microtime(true));
 
 // Absolute essentials first
 require \Yukari\ROOT_PATH . '/Autoloader.php';

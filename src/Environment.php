@@ -217,7 +217,7 @@ class Environment
 
 			// Create our timezone object and store it for now, along with storing our starting DateTime object.
 			$timezone = Kernel::set('core.timezone', new \DateTimeZone(Kernel::getConfig('core.timezonestring')));
-			Kernel::set('core.starttime', new \DateTime('now', $timezone));
+			Kernel::set('core.starttime', new \DateTime('@' . \Yukari\START_TIME, $timezone));
 
 			// Load the password hashing library
 			$hash = Kernel::set('lib.hash', new \Yukari\Lib\Hash());
@@ -275,6 +275,8 @@ class Environment
 		}
 
 		$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.ready'));
+		$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.debug')
+			->setDataPoint('message', sprintf('Startup complete, took %1$s seconds', (microtime(true) - \Yukari\START_MICROTIME))));
 	}
 
 	/**
