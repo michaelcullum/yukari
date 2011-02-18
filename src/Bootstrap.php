@@ -31,6 +31,10 @@ define('Yukari\\ROOT_PATH', (\Yukari\RUN_PHAR === true) ? 'phar://' . YUKARI_PHA
 if(strtolower(PHP_SAPI) !== 'cli')
 	throw new \RuntimeException('Yukari must be run in the CLI SAPI');
 
+// Define the base memory usage here.
+define('Yukari\\BASE_MEMORY', memory_get_usage());
+define('Yukari\\BASE_MEMORY_PEAK', memory_get_peak_usage());
+
 // Absolute essentials first
 require \Yukari\ROOT_PATH . '/Autoloader.php';
 require \Yukari\ROOT_PATH . '/Kernel.php';

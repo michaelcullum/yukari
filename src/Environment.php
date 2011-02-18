@@ -219,9 +219,6 @@ class Environment
 			$timezone = Kernel::set('core.timezone', new \DateTimeZone(Kernel::getConfig('core.timezonestring')));
 			Kernel::set('core.starttime', new \DateTime('now', $timezone));
 
-			// Define the base memory usage here.
-			define('Yukari\\BASE_MEMORY', memory_get_usage());
-
 			// Load the password hashing library
 			$hash = Kernel::set('lib.hash', new \Yukari\Lib\Hash());
 
