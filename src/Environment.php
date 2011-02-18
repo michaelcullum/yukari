@@ -341,10 +341,7 @@ class Environment
 
 				// If we have a quit event, break out of the loop.
 				if($this->shutdown === true)
-				{
-					echo "shutdown\n";
 					break;
-				}
 			}
 		}
 		catch(\Exception $e)
@@ -363,9 +360,10 @@ class Environment
 			{
 				// Another exception?  FFFUUUUUUU--
 				// CRASH BANG BOOM.
-				exit;
+				printf('Fatal error [%1$s::%2$s] encountered during runtime abort procedure, terminating immediately' . PHP_EOL, get_class($e), $e->getCode());
+				exit(1);
 			}
-			exit;
+			exit(1);
 		}
 
 		// Dispatch a pre-shutdown event.
