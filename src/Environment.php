@@ -222,11 +222,6 @@ class Environment
 			// Define the base memory usage here.
 			define('Yukari\\BASE_MEMORY', memory_get_usage());
 
-			// Load the language manager
-			$language = Kernel::set('core.language', new \Yukari\Language\Manager());
-			$language->setPath(YUKARI . Kernel::getConfig('language.file_dir'))
-				->collectEntries();
-
 			// Load the password hashing library
 			$hash = Kernel::set('lib.hash', new \Yukari\Lib\Hash());
 
