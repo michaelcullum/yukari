@@ -15,6 +15,10 @@ Yukari is a flexible IRC bot built in PHP 5.3 Object Oriented Programming.
 
 * sfYaml (packaged)
 
+## Extras
+
+More addons are available in the yukari-extras repository; for more details, look here: <https://github.com/damianb/yukari-extras>
+
 ## Instructions
 
 ### Installation
@@ -38,7 +42,7 @@ Optionally, you may verify the phar(s) if you have the phar-util package install
 
 ### Compiling an updated phar
 
-Install the phar-util package <http://github.com/koto/phar-util> via pear, if you have not done so already
+Install the phar-util package <https://github.com/koto/phar-util> via pear, if you have not done so already
     $ sudo pear channel-discover pear.kotowicz.net
     $ sudo pear install kotowicz/PharUtil-beta
 
