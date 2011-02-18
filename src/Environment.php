@@ -310,27 +310,28 @@ class Environment
 				$queue = array();
 
 				// Fire off a tick event.
-				$queue = array_merge((array) $dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'runtime.tick')), $queue);
+				$queue = array_merge($queue, (array) $dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'runtime.tick')));
 
 				// Grab an event from the socket
 				$event = $socket->get();
 
 				// If we got one, we process the event we received
 				if($event)
-					$queue = array_merge((array) $dispatcher->trigger($event), $queue);
+					$queue = array_merge($queue, (array) $dispatcher->trigger($event));
 
+				// Only if we have events to send...
 				if(!empty($queue))
 				{
 					foreach($queue as $outbound)
 					{
-						// Do not fire off non-instances.
-						if(!($outbound instanceof \Yukari\Event\Instance))
+						// Do not fire off non-instances and non-output events.
+						if(!($outbound instanceof \Yukari\Event\Instance) || substr($outbound->getName(), 0, 11) !== 'irc.output.')
 							continue;
 
 						// Fire off a predispatch event, to allow listeners to modify events before they are sent.
 						// Useful for features like self-censoring.
 						$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'runtime.predispatch')
-							->setDataPoint('response', $outbound));
+							->setDataPoint('event', $outbound));
 
 						// Send off the event!
 						$socket->sendEvent($outbound);
@@ -338,7 +339,7 @@ class Environment
 						// Fire off a postdispatch event, to allow listeners to react to events being sent.
 						// Useful for things like logging.
 						$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'runtime.postdispatch')
-							->setDataPoint('response', $outbound));
+							->setDataPoint('event', $outbound));
 					}
 				}
 
@@ -349,13 +350,13 @@ class Environment
 		}
 		catch(\Exception $e)
 		{
-			$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.debug')
-				->setDataPoint('message', sprintf('Exception %1$s::%2$s: %3$s', get_class($e), $e->getCode(), $e->getMessage())));
-			$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.debug')
-				->setDataPoint('message', sprintf('Stack trace: %s', $e->getTraceAsString())));
-
 			try
 			{
+				$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.debug')
+					->setDataPoint('message', sprintf('Exception %1$s::%2$s: %3$s', get_class($e), $e->getCode(), $e->getMessage())));
+				$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.debug')
+					->setDataPoint('message', sprintf('Stack trace: %s', $e->getTraceAsString())));
+
 				// Dispatch an emergency abort event.
 				$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'runtime.abort'));
 			}

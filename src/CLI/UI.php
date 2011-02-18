@@ -162,7 +162,7 @@ class UI
 		// Display our responses
 		$dispatcher->register('runtime.postdispatch', function(\Yukari\Event\Instance $event) {
 			$dispatcher = Kernel::getDispatcher();
-			$response = $event->getDataPoint('response');
+			$response = $event->getDataPoint('event');
 			switch($response->getName())
 			{
 				case 'irc.output.action':
