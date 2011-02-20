@@ -44,6 +44,10 @@ class Basic
 		$dispatcher = Kernel::getDispatcher();
 		$dispatcher->register('irc.input.command.join', array(Kernel::get('addon.botadmin'), 'handleJoinCommand'))
 			->register('irc.input.command.part', array(Kernel::get('addon.botadmin'), 'handlePartCommand'))
+			->register('irc.input.command.op', array(Kernel::get('addon.botadmin'), 'handleSetUserChannelMode'), array('+o'))
+			->register('irc.input.command.deop', array(Kernel::get('addon.botadmin'), 'handleSetUserChannelMode'), array('-o'))
+			->register('irc.input.command.voice', array(Kernel::get('addon.botadmin'), 'handleSetUserChannelMode'), array('+v'))
+			->register('irc.input.command.devoice', array(Kernel::get('addon.botadmin'), 'handleSetUserChannelMode'), array('-v'))
 			->register('irc.input.command.listaddons', array(Kernel::get('addon.botadmin'), 'handleListaddonsCommand'))
 			->register('irc.input.command.quit', array(Kernel::get('addon.botadmin'), 'handleQuitCommand'));
 
@@ -119,23 +123,61 @@ class Basic
 		// asdf
 	}
 
-	public function handleOpCommand(\Yukari\Event\Instance $event)
+	public function handleSetUserChannelMode(\Yukari\Event\Instance $event, $mode)
 	{
-		// asdf
-	}
+		// Check auths first
+		if(!$this->checkAuthentication($event['hostmask']))
+		{
+			return $this->handleCommandRefusal($event);
+		}
+		else
+		{
+			$highlight = (!$event['is_private']) ? $event['hostmask']['nick'] . ':' : '';
+			if(preg_match('#[\!\#\@]#i', $event['text']))
+			{
+				$results[] = \Yukari\Event\Instance::newEvent(null, 'irc.output.privmsg')
+					->setDataPoint('target', $event['target'])
+					->setDataPoint('text', sprintf('%1$s Invalid nickname specified.', $highlight));
 
-	public function handleDeopCommand(\Yukari\Event\Instance $event)
-	{
-		// asdf
-	}
-	public function handleVoiceCommand(\Yukari\Event\Instance $event)
-	{
-		// asdf
-	}
+				return $results;
+			}
+			else
+			{
+				// send the mode command
+				$params = explode(' ', $event['text'], 2);
 
-	public function handleDevoiceCommand(\Yukari\Event\Instance $event)
-	{
-		// asdf
+				// if the user wants to specify a channel, let them do so...and then fall back to the current channel if no channel is specified
+				if($params[0][0] !== '#')
+				{
+					list($channel, $user) = $params;
+				}
+				elseif(isset($params[1]) && $params[1][0] !== '#')
+				{
+					list($user, $channel) = $params;
+				}
+				else
+				{
+					// if this was a private command, we must derp at the sender.
+					if($event['is_private'])
+					{
+						$results[] = \Yukari\Event\Instance::newEvent(null, 'irc.output.privmsg')
+							->setDataPoint('target', $event['target'])
+							->setDataPoint('text', sprintf('%1$s No target channel specified specified.', $highlight));
+
+						return $results;
+					}
+
+					$channel = $event['target'];
+					$user = $params[0];
+				}
+				$results[] = \Yukari\Event\Instance::newEvent(null, 'irc.output.mode')
+					->setDataPoint('target', $channel)
+					->setDataPoint('flags', $mode)
+					->setDataPoint('args', $user);
+
+				return $results;
+			}
+		}
 	}
 
 	public function handleListaddonsCommand(\Yukari\Event\Instance $event)
