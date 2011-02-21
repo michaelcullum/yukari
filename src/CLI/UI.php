@@ -117,17 +117,17 @@ class UI
 		// Display IRC going-ons
 		$dispatcher->register('irc.input.action', function(\Yukari\Event\Instance $event) {
 			$dispatcher = Kernel::getDispatcher();
-			$dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, 'ui.message.irc')
+			$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
 				->setDataPoint('message', sprintf('<- [%2$s] *** %1$s %3$s', $event['hostmask']['nick'], $event['target'], $event['text'])));
 		});
 		$dispatcher->register('irc.input.privmsg', function(\Yukari\Event\Instance $event) {
 			$dispatcher = Kernel::getDispatcher();
-			$dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, 'ui.message.irc')
+			$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
 				->setDataPoint('message', sprintf('<- [%2$s] <%1$s> %3$s', $event['hostmask']['nick'], $event['target'], $event['text'])));
 		});
 		$dispatcher->register('irc.input.notice', function(\Yukari\Event\Instance $event) {
 			$dispatcher = Kernel::getDispatcher();
-			$dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, 'ui.message.irc')
+			$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
 				->setDataPoint('message', sprintf('<- [%2$s] <%1$s NOTICE>  %3$s', $event['hostmask']['nick'], $event['target'], $event['text'])));
 		});
 
@@ -136,12 +136,12 @@ class UI
 			$dispatcher = Kernel::getDispatcher();
 			if($event['args'] !== NULL)
 			{
-				$dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, 'ui.message.irc')
+				$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
 					->setDataPoint('message', sprintf('<- <%1$s> CTCP %2$s - %3$s', $event['hostmask']['nick'], $event['command'], $event['args'])));
 			}
 			else
 			{
-				$dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, 'ui.message.irc')
+				$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
 					->setDataPoint('message', sprintf('<- <%1$s> CTCP %2$s', $event['hostmask']['nick'], $event['command'])));
 			}
 		});
@@ -149,12 +149,12 @@ class UI
 			$dispatcher = Kernel::getDispatcher();
 			if($event['args'] !== NULL)
 			{
-				$dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, 'ui.message.irc')
+				$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
 					->setDataPoint('message', sprintf('<- <%1$s> CTCP-REPLY %2$s - %3$s', $event['hostmask']['nick'], $event['command'], $event['args'])));
 			}
 			else
 			{
-				$dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, 'ui.message.irc')
+				$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
 					->setDataPoint('message', sprintf('<- <%1$s> CTCP-REPLY %2$s', $event['hostmask']['nick'], $event['command'])));
 			}
 		});
@@ -166,19 +166,19 @@ class UI
 			switch($response->getName())
 			{
 				case 'irc.output.action':
-					$dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, 'ui.message.irc')
+					$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
 						->setDataPoint('message', sprintf('-> [%1$s] *** %2$s', $response['target'], $response['text'])));
 				break;
 
 				case 'irc.output.ctcp':
 					if(isset($response['args']))
 					{
-						$dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, 'ui.message.irc')
+						$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
 							->setDataPoint('message', sprintf('-> [%1$s] CTCP %2$s - %3$s', $response['target'], $response['command'], $response['args'])));
 					}
 					else
 					{
-						$dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, 'ui.message.irc')
+						$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
 							->setDataPoint('message', sprintf('-> [%1$s] CTCP %2$s', $response['target'], $response['command'])));
 					}
 				break;
@@ -186,23 +186,23 @@ class UI
 				case 'irc.output.ctcp_reply':
 					if(isset($response['args']))
 					{
-						$dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, 'ui.message.irc')
+						$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
 							->setDataPoint('message', sprintf('-> [%1$s] CTCP-REPLY %2$s - %3$s', $response['target'], $response['command'], $response['args'])));
 					}
 					else
 					{
-						$dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, 'ui.message.irc')
+						$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
 							->setDataPoint('message', sprintf('-> [%1$s] CTCP-REPLY %2$s', $response['target'], $response['command'])));
 					}
 				break;
 
 				case 'irc.output.privmsg':
-					$dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, 'ui.message.irc')
+					$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
 						->setDataPoint('message', sprintf('-> [%1$s] %2$s', $response['target'], $response['text'])));
 				break;
 
 				case 'irc.output.notice':
-					$dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, 'ui.message.irc')
+					$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
 						->setDataPoint('message', sprintf('-> [%1$s NOTICE] %2$s', $response['target'], $response['text'])));
 				break;
 

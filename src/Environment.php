@@ -211,8 +211,8 @@ class Environment
 				->registerListeners();
 
 			// Startup message
-			$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.startup'));
-			$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.system')
+			$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.startup'));
+			$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.system')
 				->setDataPoint('message', 'Loading the Yukari core'));
 
 			// Create our timezone object and store it for now, along with storing our starting DateTime object.
@@ -236,19 +236,19 @@ class Environment
 				try
 				{
 					$addon_loader->loadAddon($addon);
-					$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.system')
+					$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.system')
 						->setDataPoint('message', sprintf('Loaded addon "%s"', $addon)));
 				}
 				catch(\Exception $e)
 				{
-					$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.warning')
+					$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.warning')
 						->setDataPoint('message', sprintf('Failed to load addon "%1$s" - failure message: "%2$s"', $addon, $e->getMessage())));
 				}
 			}
 
 			if(Kernel::getConfig('dispatcher.listeners'))
 			{
-				$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.system')
+				$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.system')
 					->setDataPoint('message', 'Registering listeners to event dispatcher'));
 
 				foreach(Kernel::getConfig('dispatcher.listeners') as $event_name => $listener)
@@ -267,7 +267,7 @@ class Environment
 
 			// Dispatch a startup event
 			// This is useful for having a listener registered, waiting for startup to complete before loading in one last thing
-			$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'runtime.startup'));
+			$dispatcher->trigger(\Yukari\Event\Instance::newEvent('runtime.startup'));
 		}
 		catch(\Exception $e)
 		{
@@ -275,10 +275,10 @@ class Environment
 		}
 
 		// All done!
-		$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.ready'));
+		$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.ready'));
 
 		// How fast were we, now?  :3
-		$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.debug')
+		$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.debug')
 			->setDataPoint('message', sprintf('Startup complete, took %1$s seconds', (microtime(true) - \Yukari\START_MICROTIME))));
 	}
 
@@ -300,7 +300,7 @@ class Environment
 		$socket->connect();
 
 		// Dispatch a connection event
-		$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'runtime.connect'));
+		$dispatcher->trigger(\Yukari\Event\Instance::newEvent('runtime.connect'));
 
 		try
 		{
@@ -330,7 +330,7 @@ class Environment
 
 						// Fire off a predispatch event, to allow listeners to modify events before they are sent.
 						// Useful for features like self-censoring.
-						$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'runtime.predispatch')
+						$dispatcher->trigger(\Yukari\Event\Instance::newEvent('runtime.predispatch')
 							->setDataPoint('event', $outbound));
 
 						// Send off the event!
@@ -338,7 +338,7 @@ class Environment
 
 						// Fire off a postdispatch event, to allow listeners to react to events being sent.
 						// Useful for things like logging.
-						$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'runtime.postdispatch')
+						$dispatcher->trigger(\Yukari\Event\Instance::newEvent('runtime.postdispatch')
 							->setDataPoint('event', $outbound));
 					}
 				}
@@ -352,13 +352,13 @@ class Environment
 		{
 			try
 			{
-				$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.debug')
+				$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.debug')
 					->setDataPoint('message', sprintf('Exception %1$s::%2$s: %3$s', get_class($e), $e->getCode(), $e->getMessage())));
-				$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.debug')
+				$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.debug')
 					->setDataPoint('message', sprintf('Stack trace: %s', $e->getTraceAsString())));
 
 				// Dispatch an emergency abort event.
-				$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'runtime.abort'));
+				$dispatcher->trigger(\Yukari\Event\Instance::newEvent('runtime.abort'));
 			}
 			catch(\Exception $e)
 			{
@@ -371,13 +371,13 @@ class Environment
 		}
 
 		// Dispatch a pre-shutdown event.
-		$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'runtime.shutdown'));
+		$dispatcher->trigger(\Yukari\Event\Instance::newEvent('runtime.shutdown'));
 
 		// Send a quit event, handle exit gracefully.
 		$socket->send(sprintf('QUIT :Yukari IRC Bot - %s', Kernel::getBuildNumber()));
 		$socket->close();
 
 		// Dispatch a bot-termination event, now that the socket is closed and we've no connection to the server
-		$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'runtime.terminate'));
+		$dispatcher->trigger(\Yukari\Event\Instance::newEvent('runtime.terminate'));
 	}
 }
