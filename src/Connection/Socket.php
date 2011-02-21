@@ -105,7 +105,7 @@ class Socket
 			return NULL;
 
 		// Raw buffer output
-		$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.raw')
+		$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.raw')
 			->setDataPoint('message', '<- ' . $buffer));
 
 		$prefix = '';
@@ -192,7 +192,7 @@ class Socket
 		// Create, populate, and return an event object
 		if(ctype_digit($cmd))
 		{
-			$event = \Yukari\Event\Instance::newEvent($this, 'irc.input.response')
+			$event = \Yukari\Event\Instance::newEvent('irc.input.response')
 				->setDataPoint('code', $cmd)
 				->setDataPoint('description', $args);
 		}
@@ -200,7 +200,7 @@ class Socket
 		{
 			$request_map = Kernel::get('core.request_map');
 
-			$event = \Yukari\Event\Instance::newEvent($this, sprintf('irc.input.%s', $cmd))
+			$event = \Yukari\Event\Instance::newEvent(sprintf('irc.input.%s', $cmd))
 				->setDataPoint('type', $cmd);
 
 			// Properly map arguments into the event using some array magick...
@@ -214,7 +214,7 @@ class Socket
 		}
 		$event->setDataPoint('buffer', $buffer);
 
-		$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.event')
+		$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.event')
 			->setDataPoint('message', sprintf('<- event "%1$s"', $event->getName())));
 
 		return $event;
@@ -231,7 +231,7 @@ class Socket
 		$dispatcher = Kernel::getDispatcher();
 		$request_map = Kernel::get('core.request_map');
 
-		$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.event')
+		$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.event')
 			->setDataPoint('message', sprintf('-> event "%1$s"', $event->getName())));
 
 		// Get the buffer to write.
@@ -271,7 +271,7 @@ class Socket
 		while(!$success);
 
 		// Raw buffer output
-		$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.raw')
+		$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.raw')
 			->setDataPoint('message', '-> ' . $data));
 
 		// Return the command string that was transmitted
@@ -288,7 +288,7 @@ class Socket
 			return;
 
 		$dispatcher = Kernel::getDispatcher();
-		$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.system')
+		$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.system')
 			->setDataPoint('message', sprintf('Quitting from server "%1$s"', Kernel::getConfig('irc.url'))));
 
 		// Terminate the socket connection
