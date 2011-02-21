@@ -67,7 +67,7 @@ class Automation extends \Yukari\Addon\Metadata\MetadataBase
 		$dispatcher->register('irc.input.ctcp', function(\Yukari\Event\Instance $event) {
 			if(strtolower($event['command']) === 'version')
 			{
-				return \Yukari\Event\Instance::newEvent(null, 'irc.output.ctcp_reply')
+				return \Yukari\Event\Instance::newEvent('irc.output.ctcp_reply')
 					->setDataPoint('target', $event['hostmask']['nick'])
 					->setDataPoint('command', 'version')
 					->setDataPoint('args', sprintf('Yukari IRC Bot - %s', Kernel::getBuildNumber()));
@@ -77,7 +77,7 @@ class Automation extends \Yukari\Addon\Metadata\MetadataBase
 				if($event['args'] === NULL)
 					return NULL;
 
-				return \Yukari\Event\Instance::newEvent(null, 'irc.output.ctcp_reply')
+				return \Yukari\Event\Instance::newEvent('irc.output.ctcp_reply')
 					->setDataPoint('target', $event['hostmask']['nick'])
 					->setDataPoint('command', 'ping')
 					->setDataPoint('args', $event['args']);
@@ -90,7 +90,7 @@ class Automation extends \Yukari\Addon\Metadata\MetadataBase
 
 		// Respond to server pings
 		$dispatcher->register('irc.input.ping', function(\Yukari\Event\Instance $event) {
-			return \Yukari\Event\Instance::newEvent(null, 'irc.output.pong')
+			return \Yukari\Event\Instance::newEvent('irc.output.pong')
 					->setDataPoint('origin', $event['target']);
 		});
 	}

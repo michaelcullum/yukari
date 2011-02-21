@@ -71,7 +71,7 @@ class Basic
 			$highlight = (!$event['is_private']) ? $event['hostmask']['nick'] . ':' : '';
 			if($event['text'][0] !== '#')
 			{
-				$results[] = \Yukari\Event\Instance::newEvent(null, 'irc.output.privmsg')
+				$results[] = \Yukari\Event\Instance::newEvent('irc.output.privmsg')
 					->setDataPoint('target', $event['target'])
 					->setDataPoint('text', sprintf('%1$s Invalid channel specified.', $highlight));
 
@@ -80,7 +80,7 @@ class Basic
 			else
 			{
 				$join_params = explode(' ', $event['text'], 2);
-				$join = \Yukari\Event\Instance::newEvent(null, 'irc.output.join')
+				$join = \Yukari\Event\Instance::newEvent('irc.output.join')
 					->setDataPoint('channel', $join_params[0]);
 
 				if(isset($join_params[1]))
@@ -108,7 +108,7 @@ class Basic
 			$highlight = (!$event['is_private']) ? $event['hostmask']['nick'] . ':' : '';
 			if($event['text'][0] !== '#')
 			{
-				$results[] = \Yukari\Event\Instance::newEvent(null, 'irc.output.privmsg')
+				$results[] = \Yukari\Event\Instance::newEvent('irc.output.privmsg')
 					->setDataPoint('target', $event['target'])
 					->setDataPoint('text', sprintf('%1$s Invalid channel specified.', $highlight));
 
@@ -117,7 +117,7 @@ class Basic
 			else
 			{
 				$part_params = explode(' ', $event['text'], 2);
-				$part = \Yukari\Event\Instance::newEvent(null, 'irc.output.part')
+				$part = \Yukari\Event\Instance::newEvent('irc.output.part')
 					->setDataPoint('channel', $part_params[0]);
 
 				if(isset($part_params[1]))
@@ -151,7 +151,7 @@ class Basic
 			$highlight = (!$event['is_private']) ? $event['hostmask']['nick'] . ':' : '';
 			if(preg_match('#[\!\#\@]#i', $event['text']))
 			{
-				$results[] = \Yukari\Event\Instance::newEvent(null, 'irc.output.privmsg')
+				$results[] = \Yukari\Event\Instance::newEvent('irc.output.privmsg')
 					->setDataPoint('target', $event['target'])
 					->setDataPoint('text', sprintf('%1$s Invalid nickname specified.', $highlight));
 
@@ -176,7 +176,7 @@ class Basic
 					// if this was a private command, we must derp at the sender.
 					if($event['is_private'])
 					{
-						$results[] = \Yukari\Event\Instance::newEvent(null, 'irc.output.privmsg')
+						$results[] = \Yukari\Event\Instance::newEvent('irc.output.privmsg')
 							->setDataPoint('target', $event['target'])
 							->setDataPoint('text', sprintf('%1$s No target channel specified specified.', $highlight));
 
@@ -186,7 +186,7 @@ class Basic
 					$channel = $event['target'];
 					$user = $params[0];
 				}
-				$results[] = \Yukari\Event\Instance::newEvent(null, 'irc.output.mode')
+				$results[] = \Yukari\Event\Instance::newEvent('irc.output.mode')
 					->setDataPoint('target', $channel)
 					->setDataPoint('flags', $mode)
 					->setDataPoint('args', $user);
@@ -231,7 +231,7 @@ class Basic
 			foreach($response as $line)
 			{
 				$line = implode(', ', $line);
-				$results[] = \Yukari\Event\Instance::newEvent(null, 'irc.output.privmsg')
+				$results[] = \Yukari\Event\Instance::newEvent('irc.output.privmsg')
 					->setDataPoint('target', $event['target'])
 					->setDataPoint('text', sprintf('%1$s %2$s.', $highlight, $line));
 			}
@@ -255,7 +255,7 @@ class Basic
 		else
 		{
 			$dispatcher = Kernel::getDispatcher();
-			$dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, 'system.shutdown'));
+			$dispatcher->trigger(\Yukari\Event\Instance::newEvent('system.shutdown'));
 
 			return NULL;
 		}
@@ -269,7 +269,7 @@ class Basic
 	public function handleCommandRefusal(\Yukari\Event\Instance $event)
 	{
 		$highlight = (!$event['is_private']) ? $event['hostmask']['nick'] . ':' : '';
-		$results[] = \Yukari\Event\Instance::newEvent(null, 'irc.output.privmsg')
+		$results[] = \Yukari\Event\Instance::newEvent('irc.output.privmsg')
 			->setDataPoint('target', $event['target'])
 			->setDataPoint('text', sprintf('%1$s You are not authorized to use this command.', $highlight));
 
@@ -284,7 +284,7 @@ class Basic
 	public function checkAuthentication(\Yukari\Lib\Hostmask $hostmask)
 	{
 		$dispatcher = Kernel::getDispatcher();
-		$auth = $dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, 'acl.check_allowed')
+		$auth = $dispatcher->trigger(\Yukari\Event\Instance::newEvent('acl.check_allowed')
 			->setDataPoint('hostmask', $hostmask));
 		if(!is_array($auth) || !isset($auth[0]) || $auth[0] === 0)
 		{

@@ -73,7 +73,7 @@ class Interpreter
 				$text = array_pad(explode(' ', $event['text'], 2), 2, '');
 			}
 
-			$_results = $dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, sprintf('irc.input.command.%s', $text[0]))
+			$_results = $dispatcher->trigger(\Yukari\Event\Instance::newEvent(sprintf('irc.input.command.%s', $text[0]))
 				->setDataPoint('command', $text[0])
 				->setDataPoint('text', $text[1])
 				->setDataPoint('target', $event['target'])
@@ -84,7 +84,7 @@ class Interpreter
 				$_results = array($_results);
 			$results = array_merge($results, $_results);
 
-			$_results = $dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, sprintf('irc.input.privatecommand.%s', $text[0]))
+			$_results = $dispatcher->trigger(\Yukari\Event\Instance::newEvent(sprintf('irc.input.privatecommand.%s', $text[0]))
 				->setDataPoint('command', $text[0])
 				->setDataPoint('text', $text[1])
 				->setDataPoint('target', $event['target'])
@@ -99,7 +99,7 @@ class Interpreter
 			// Make sure we have a full array here.
 			list(, $trigger, $command, , $text) = array_pad($matches, 5, '');
 
-			$_results = $dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, sprintf('irc.input.command.%s', $command))
+			$_results = $dispatcher->trigger(\Yukari\Event\Instance::newEvent(sprintf('irc.input.command.%s', $command))
 				->setDataPoint('command', $command)
 				->setDataPoint('text', $text)
 				->setDataPoint('target', $event['target'])
@@ -114,7 +114,7 @@ class Interpreter
 			if($trigger == $indicator)
 			{
 				// Okay, this was a named command - we treat this as special, and dispatch another event for it.
-				$_results = $dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, sprintf('irc.input.namedcommand.%s', $command))
+				$_results = $dispatcher->trigger(\Yukari\Event\Instance::newEvent(sprintf('irc.input.namedcommand.%s', $command))
 					->setDataPoint('command', $command)
 					->setDataPoint('text', $text)
 					->setDataPoint('target', $event['target'])
@@ -147,7 +147,7 @@ class Interpreter
 		if($event_type === false)
 			return NULL;
 
-		$results = $dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, sprintf('irc.input.response.%s', $event_type))
+		$results = $dispatcher->trigger(\Yukari\Event\Instance::newEvent(sprintf('irc.input.response.%s', $event_type))
 			->setDataPoint('code', $event_code)
 			->setDataPoint('description', $event['description'])
 			->setDataPoint('rootevent', $event));
