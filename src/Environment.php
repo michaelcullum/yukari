@@ -376,5 +376,8 @@ class Environment
 		// Send a quit event, handle exit gracefully.
 		$socket->send(sprintf('QUIT :Yukari IRC Bot - %s', Kernel::getBuildNumber()));
 		$socket->close();
+
+		// Dispatch a bot-termination event, now that the socket is closed and we've no connection to the server
+		$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'runtime.terminate'));
 	}
 }
