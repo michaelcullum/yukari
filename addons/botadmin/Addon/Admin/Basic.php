@@ -54,6 +54,11 @@ class Basic
 		return $this;
 	}
 
+	/**
+	 * Handles the bot being told to join a specific channel.
+	 * @param \Yukari\Event\Instance $event - The event instance.
+	 * @return array - Array of events to dispatch in response to the input event.
+	 */
 	public function handleJoinCommand(\Yukari\Event\Instance $event)
 	{
 		// Check auths first
@@ -81,11 +86,16 @@ class Basic
 				if(isset($join_params[1]))
 					$join->setDataPoint('key', $join_params[1]);
 
-				return $join;
+				return array($join);
 			}
 		}
 	}
 
+	/**
+	 * Handles the bot being told to part a specific channel.
+	 * @param \Yukari\Event\Instance $event - The event instance.
+	 * @return array - Array of events to dispatch in response to the input event.
+	 */
 	public function handlePartCommand(\Yukari\Event\Instance $event)
 	{
 		// Check auths first
@@ -113,7 +123,7 @@ class Basic
 				if(isset($part_params[1]))
 					$part->setDataPoint('reason', $part_params[1]);
 
-				return $part;
+				return array($part);
 			}
 		}
 	}
@@ -123,6 +133,12 @@ class Basic
 		// asdf
 	}
 
+	/**
+	 * Handles the bot being told set a channel-specific user mode.
+	 * @param \Yukari\Event\Instance $event - The event instance.
+	 * @param string $mode - The mode flag to set.
+	 * @return array - Array of events to dispatch in response to the input event.
+	 */
 	public function handleSetUserChannelMode(\Yukari\Event\Instance $event, $mode)
 	{
 		// Check auths first
@@ -180,6 +196,11 @@ class Basic
 		}
 	}
 
+	/**
+	 * Handles the bot being told to list all loaded addons.
+	 * @param \Yukari\Event\Instance $event - The event instance.
+	 * @return array - Array of events to dispatch in response to the input event.
+	 */
 	public function handleListaddonsCommand(\Yukari\Event\Instance $event)
 	{
 		// Check auths first
@@ -219,6 +240,11 @@ class Basic
 		}
 	}
 
+	/**
+	 * Handles the bot being told to quit.
+	 * @param \Yukari\Event\Instance $event - The event instance.
+	 * @return array - Array of events to dispatch in response to the input event.
+	 */
 	public function handleQuitCommand(\Yukari\Event\Instance $event)
 	{
 		// Check auths first
@@ -235,6 +261,11 @@ class Basic
 		}
 	}
 
+	/**
+	 * Handles the bot refusing to obey a command due to authentication failure.
+	 * @param \Yukari\Event\Instance $event - The event instance.
+	 * @return array - Array of events to dispatch in response to the input event.
+	 */
 	public function handleCommandRefusal(\Yukari\Event\Instance $event)
 	{
 		$highlight = (!$event['is_private']) ? $event['hostmask']['nick'] . ':' : '';
@@ -245,6 +276,11 @@ class Basic
 		return $results;
 	}
 
+	/**
+	 * Checks to see if the originator of the event is authorized to use the command.
+	 * @param \Yukari\Lib\Hostmask $event - The hostmask object of the event originator.
+	 * @return boolean - Is the sender authorized to use the command?
+	 */
 	public function checkAuthentication(\Yukari\Lib\Hostmask $hostmask)
 	{
 		$dispatcher = Kernel::getDispatcher();
