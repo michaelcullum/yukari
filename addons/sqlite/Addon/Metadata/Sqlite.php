@@ -71,11 +71,16 @@ class Sqlite extends \Yukari\Addon\Metadata\MetadataBase
 	/**
 	 * Hooking method for addon metadata objects for executing own code on pre-load dependency check.
 	 * @return boolean - Does the addon pass the dependency check?
+	 *
+	 * @throws \RuntimeException
 	 */
 	public function checkDependencies()
 	{
 		if(!extension_loaded('PDO') || !extension_loaded('pdo_sqlite'))
-			return false;
+			throw new \RuntimeException('Dependency check failed, PHP extension "PDO" not loaded');
+
+		if(!extension_loaded('pdo_sqlite'))
+			throw new \RuntimeException('Dependency check failed, PHP extension "pdo_sqlite" not loaded');
 
 		return true;
 	}

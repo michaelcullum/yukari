@@ -68,11 +68,16 @@ class Botadmin extends \Yukari\Addon\Metadata\MetadataBase
 	/**
 	 * Hooking method for addon metadata objects for executing own code on pre-load dependency check.
 	 * @return boolean - Does the addon pass the dependency check?
+	 *
+	 * @throws \RuntimeException
 	 */
 	public function checkDependencies()
 	{
-		if(!Kernel::get('addon.commander') || !Kernel::get('addon.acl'))
-			return false;
+		if(!Kernel::get('addon.commander'))
+			throw new \RuntimeException('Addon dependency "addon.commander" not present');
+		if(!Kernel::get('addon.acl'))
+			throw new \RuntimeException('Addon dependency "addon.acl" not present');
+
 		return true;
 	}
 }
