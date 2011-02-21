@@ -163,11 +163,11 @@ class Basic
 				$params = explode(' ', $event['text'], 2);
 
 				// if the user wants to specify a channel, let them do so...and then fall back to the current channel if no channel is specified
-				if($params[0][0] !== '#')
+				if($params[0][0] === '#')
 				{
 					list($channel, $user) = $params;
 				}
-				elseif(isset($params[1]) && $params[1][0] !== '#')
+				elseif(isset($params[1]) && $params[1][0] === '#')
 				{
 					list($user, $channel) = $params;
 				}
