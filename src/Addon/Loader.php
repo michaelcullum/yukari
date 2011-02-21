@@ -97,7 +97,7 @@ class Loader implements \Iterator
 		}
 		catch(\Exception $e)
 		{
-			throw new \RuntimeException(sprintf('Exception [%1$s::%2$s] encountered during dependency check, message "%3$s"', get_class($e), $e->getCode(), $e->getMessage()));
+			throw new \RuntimeException(sprintf('Dependency check failed, reason: %1$s', $e->getMessage()));
 		}
 
 		// If the addon's metadata object passes all checks and we're not using a phar file, then we add the addon's directory to the autoloader include path
