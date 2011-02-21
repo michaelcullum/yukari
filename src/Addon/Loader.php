@@ -89,9 +89,16 @@ class Loader implements \Iterator
 		if(!($metadata instanceof \Yukari\Addon\Metadata\MetadataInterface))
 			throw new \LogicException('Addon metadata class does not implement interface MetadataInterface');
 
-		// Check dependencies and requirements here.
-		if(!$metadata->checkDependencies())
-			throw new \RuntimeException('Addon metadata object declares that its required dependencies have not been met');
+		// Let our addons check for their dependencies here.
+		try
+		{
+			if(!$metadata->checkDependencies())
+				throw new \RuntimeException('Addon metadata object declares that its required dependencies have not been met');
+		}
+		catch(\Exception $e)
+		{
+			throw new \RuntimeException(sprintf('Exception [%1$s::%2$s] encountered during dependency check, message "%3$s"', get_class($e), $e->getCode(), $e->getMessage()));
+		}
 
 		// If the addon's metadata object passes all checks and we're not using a phar file, then we add the addon's directory to the autoloader include path
 		if($using_phar)
