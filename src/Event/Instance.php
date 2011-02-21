@@ -50,26 +50,15 @@ class Instance implements \ArrayAccess
 	protected $source;
 
 	/**
-	 * Constructor
-	 * @param mixed $source - The source of the event.
-	 * @param string $name - The event's name.
-	 * @param array $data - Any data to attach to the event.
-	 * @return void
-	 */
-	public function __construct($source, $name, array $data = array())
-	{
-		$this->setSource($source)->setName($name)->setData($data);
-	}
-
-	/**
 	 * Create a new event, used as a one-line shortcut for quickly dispatching events.
-	 * @param mixed $source - The source of the event.
 	 * @param string $name - The event's name.
 	 * @return \Yukari\Event\Instance - The event created.
 	 */
-	public static function newEvent($source, $name)
+	public static function newEvent($name)
 	{
-		return new static($source, $name);
+		$self = new static();
+		$self->setName($name);
+		return $self;
 	}
 
 	/**
