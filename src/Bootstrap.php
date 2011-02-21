@@ -31,7 +31,7 @@ define('Yukari\\ROOT_PATH', (\Yukari\RUN_PHAR === true) ? 'phar://' . YUKARI_PHA
 if(strtolower(PHP_SAPI) !== 'cli')
 	throw new \RuntimeException('Yukari must be run in the CLI SAPI');
 
-// Define the base memory usage here.
+// Define a few constants on startup here.
 define('Yukari\\BASE_MEMORY', memory_get_usage());
 define('Yukari\\BASE_MEMORY_PEAK', memory_get_peak_usage());
 define('Yukari\\START_TIME', time());
@@ -51,7 +51,7 @@ require \Yukari\ROOT_PATH . '/Environment.php';
 if(!ini_get('date.timezone'))
 	@date_default_timezone_set(@date_default_timezone_get());
 
-// Include the sfYaml stuff
+// Include the sfYaml stuff (ugh include_once)
 include_once \Yukari\ROOT_PATH . '/vendor/sfYaml/lib/sfYaml.php';
 include_once \Yukari\ROOT_PATH . '/vendor/sfYaml/lib/sfYamlParser.php';
 include_once \Yukari\ROOT_PATH . '/vendor/sfYaml/lib/sfYamlInline.php';
@@ -64,5 +64,4 @@ array_shift($_SERVER['argv']);
 
 \Yukari\Kernel::load();
 \Yukari\Kernel::initEnvironment();
-//exit; // terminate because the rest still isn't done yet
 \Yukari\Kernel::getEnvironment()->runBot();
