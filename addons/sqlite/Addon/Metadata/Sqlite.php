@@ -77,10 +77,10 @@ class Sqlite extends \Yukari\Addon\Metadata\MetadataBase
 	public function checkDependencies()
 	{
 		if(!extension_loaded('PDO') || !extension_loaded('pdo_sqlite'))
-			throw new \RuntimeException('Dependency check failed, PHP extension "PDO" not loaded');
+			throw new \RuntimeException('PHP extension "PDO" not loaded');
 
 		if(!extension_loaded('pdo_sqlite'))
-			throw new \RuntimeException('Dependency check failed, PHP extension "pdo_sqlite" not loaded');
+			throw new \RuntimeException('PHP extension "pdo_sqlite" not loaded');
 
 		return true;
 	}
