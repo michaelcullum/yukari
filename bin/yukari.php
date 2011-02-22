@@ -32,7 +32,7 @@ error_reporting(-1);
 // Check running PHP version against the minimum supported PHP version...
 if(version_compare(YUKARI_MIN_PHP, PHP_VERSION, '>'))
 {
-	echo sprintf('Yukari requires PHP version %1$s or better, while the currently installed PHP version is %2$s', YUKARI_MIN_PHP, PHP_VERSION);
+	echo sprintf('Yukari requires PHP version %1$s or better, while the currently installed PHP version is %2$s.' . PHP_EOL, YUKARI_MIN_PHP, PHP_VERSION);
 	exit(1);
 }
 
