@@ -291,9 +291,10 @@ class Basic
 			{
 				$addon = $event['text'];
 				// Alphanumeric addon names only, we don't want any sneaky stuff going on.
-				if(!preg_match('#^[0-9a-zA-Z]+$#i'))
+				if(!preg_match('#^([0-9a-z]+)$#i', $event['text']))
 					throw new \RuntimeException('Unacceptable addon name provided');
 
+				$addon_loader = Kernel::get('core.addonloader');
 				$addon_loader->loadAddon($addon);
 
 				// Display a message in the UI.
@@ -302,7 +303,7 @@ class Basic
 
 				$results[] = \Yukari\Event\Instance::newEvent('irc.output.privmsg')
 					->setDataPoint('target', $event['target'])
-					->setDataPoint('text', sprintf('%1$s Loaded addon "%1$s" successfully.', $highlight, $addon));
+					->setDataPoint('text', sprintf('%1$s Loaded addon "%2$s" successfully.', $highlight, $addon));
 			}
 			catch(\Exception $e)
 			{
@@ -312,7 +313,7 @@ class Basic
 
 				$results[] = \Yukari\Event\Instance::newEvent('irc.output.privmsg')
 					->setDataPoint('target', $event['target'])
-					->setDataPoint('text', sprintf('%1$s Failed to load addon "%1$s".', $highlight, $addon));
+					->setDataPoint('text', sprintf('%1$s Failed to load addon "%2$s".', $highlight, $addon));
 			}
 
 			return $results;
@@ -346,7 +347,7 @@ class Basic
 			}
 
 			// Get the latest build number.
-			$latest_build_number = @file_get_contents(self::BUILD_NUMBER_URL);
+			$latest_build_number = rtrim(@file_get_contents(self::BUILD_NUMBER_URL));
 
 			// If the return value was false, an empty string, or a non integer...something went wrong.
 			if($latest_build_number === false || $latest_build_number == '' || !ctype_digit($latest_build_number))
