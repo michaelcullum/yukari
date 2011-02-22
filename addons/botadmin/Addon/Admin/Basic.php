@@ -49,6 +49,7 @@ class Basic
 		$dispatcher = Kernel::getDispatcher();
 		$dispatcher->register('irc.input.command.join', array(Kernel::get('addon.botadmin'), 'handleJoinCommand'))
 			->register('irc.input.command.part', array(Kernel::get('addon.botadmin'), 'handlePartCommand'))
+			//->register('irc.input.command.kick', array(Kernel::get('addon.botadmin'), 'handleKickCommand'))
 			->register('irc.input.command.op', array(Kernel::get('addon.botadmin'), 'handleSetUserChannelMode'), array('+o'))
 			->register('irc.input.command.deop', array(Kernel::get('addon.botadmin'), 'handleSetUserChannelMode'), array('-o'))
 			->register('irc.input.command.voice', array(Kernel::get('addon.botadmin'), 'handleSetUserChannelMode'), array('+v'))
