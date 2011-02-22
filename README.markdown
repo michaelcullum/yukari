@@ -4,7 +4,7 @@ Yukari is a flexible IRC bot built in PHP 5.3 Object Oriented Programming.
 
 **Copyright**: *(c) 2009 - 2011 -- Damian Bushong*
 
-**License**: *MIT License* - please see the provided file located in /LICENSE for the full license terms
+**License**: *MIT License* - please see the provided file located in /LICENSE for the full license text
 
 ## Requirements
 
@@ -61,7 +61,10 @@ Please note that this script will, by default, attempt to sign any phars it buil
 
 ### Building addons
 
-@todo writeme
+Make changes to individual addons in the **addons/** directory (one directory per addon), then build the addon phar
+    $ ./build/addon_build.sh
+
+Note that this requires having already created OpenSSL certificates using phar-generate-cert (part of the phar-util pear package) and placing them in the directory **build/cert/**.
 
 ### Running the script
 
@@ -76,6 +79,6 @@ Navigate to the root directory of Yukari, then use this command:
 
 Yukari will immediately start up afterwards.
 
-Note: You can specify an alternative configuration file to use within the **data/config/** directory by using the commandline parameter "*--config=confignamehere*"
+Protip: You can specify an alternative configuration file to use within the **data/config/** directory by using the commandline parameter "*--config=confignamehere*"
 
-@note: A shell script providing easy manipulation of the bot through screen is also planned.
+**@note**: A shell script providing easy manipulation of the bot through screen is planned.
