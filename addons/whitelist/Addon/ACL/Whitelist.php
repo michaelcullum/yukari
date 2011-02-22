@@ -75,7 +75,8 @@ class Whitelist
 	public function registerListeners()
 	{
 		$dispatcher = Kernel::getDispatcher();
-		$dispatcher->register('acl.check_allowed', array(Kernel::get('addon.acl'), 'handleAccess'));
+		$dispatcher->register('acl.check_allowed', array(Kernel::get('addon.acl'), 'handleAccess'))
+			->register('irc.input.command.reloadwhitelist', array(Kernel::get('addon.acl'), 'handleReloadWhitelist'));
 
 		return $this;
 	}
@@ -83,11 +84,37 @@ class Whitelist
 	/**
 	 * Handle and interpret command permission events.
 	 * @param \Yukari\Event\Instance $event - The event to interpret.
-	 * @return unknown
+	 * @return integer - Returns 1 if user is authorized, returns 0 if not authorized.
 	 */
 	public function handleAccess(\Yukari\Event\Instance $event)
 	{
 		$result = preg_match($this->whitelist_regexp, $event->getDataPoint('hostmask'));
 		return (int) $result;
+	}
+
+	/**
+	 * Handle the command to reload the whitelist.
+	 * @param \Yukari\Event\Instance $event - The event to interpret.
+	 * @return array - Array of events to dispatch in response to the input event.
+	 */
+	public function handleReloadWhitelist(\Yukari\Event\Instance $event)
+	{
+		$highlight = (!$event['is_private']) ? $event['hostmask']['nick'] . ':' : '';
+		if($this->handleAccess($event) === 1)
+		{
+			$this->loadWhitelistFile();
+
+			$results = \Yukari\Event\Instance::newEvent('irc.output.privmsg')
+				->setDataPoint('target', $event['target'])
+				->setDataPoint('text', sprintf('%1$s Whitelist file reloaded.', $highlight));
+		}
+		else
+		{
+			$results = \Yukari\Event\Instance::newEvent('irc.output.privmsg')
+				->setDataPoint('target', $event['target'])
+				->setDataPoint('text', sprintf('%1$s You are not authorized to use this command.', $highlight));
+		}
+
+		return $results;
 	}
 }
