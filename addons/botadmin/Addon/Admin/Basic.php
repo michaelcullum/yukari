@@ -23,8 +23,8 @@ namespace Yukari\Addon\Admin;
 use Yukari\Kernel;
 
 /**
- * Yukari - Commander addon interpreter object,
- *      Checks incoming privmsg events and sees if they are commands intended for the bot, and if so extended events are issued accordingly.
+ * Yukari - Basic bot administration object,
+ *      Hooks onto incoming admin commands, authenticates the sender, and either performs a task or tells the user to screw off.
  *
  *
  * @category    Yukari
@@ -35,6 +35,11 @@ use Yukari\Kernel;
  */
 class Basic
 {
+	/**
+	 * @const - URL providing the latest available build number for Yukari.
+	 */
+	const BUILD_NUMBER_URL = 'https://github.com/damianb/yukari/raw/master/build/bin_number.txt';
+
 	/**
 	 * Register the listeners we need for this addon to work properly.
 	 * @return \Yukari\Addon\Admin\Basic - Provides a fluent interface.
@@ -48,7 +53,10 @@ class Basic
 			->register('irc.input.command.deop', array(Kernel::get('addon.botadmin'), 'handleSetUserChannelMode'), array('-o'))
 			->register('irc.input.command.voice', array(Kernel::get('addon.botadmin'), 'handleSetUserChannelMode'), array('+v'))
 			->register('irc.input.command.devoice', array(Kernel::get('addon.botadmin'), 'handleSetUserChannelMode'), array('-v'))
-			->register('irc.input.command.listaddons', array(Kernel::get('addon.botadmin'), 'handleListaddonsCommand'))
+			->register('irc.input.command.listaddons', array(Kernel::get('addon.botadmin'), 'handleListAddonsCommand'))
+			//->register('irc.input.command.addoninfo', array(Kernel::get('addon.botadmin'), 'handleAddonInfoCommand')) // @todo write this command
+			->register('irc.input.command.loadaddon', array(Kernel::get('addon.botadmin'), 'handleLoadAddonCommand'))
+			->register('irc.input.command.versioncheck', array(Kernel::get('addon.botadmin'), 'handleVersionCheckCommand'))
 			->register('irc.input.command.quit', array(Kernel::get('addon.botadmin'), 'handleQuitCommand'));
 
 		return $this;
@@ -149,6 +157,8 @@ class Basic
 		else
 		{
 			$highlight = (!$event['is_private']) ? $event['hostmask']['nick'] . ':' : '';
+
+			// Make sure an invalid username isn't being provided.
 			if(preg_match('#[\!\#\@]#i', $event['text']))
 			{
 				$results[] = \Yukari\Event\Instance::newEvent('irc.output.privmsg')
@@ -178,7 +188,7 @@ class Basic
 					{
 						$results[] = \Yukari\Event\Instance::newEvent('irc.output.privmsg')
 							->setDataPoint('target', $event['target'])
-							->setDataPoint('text', sprintf('%1$s No target channel specified specified.', $highlight));
+							->setDataPoint('text', sprintf('%1$s No target channel specified.', $highlight));
 
 						return $results;
 					}
@@ -201,7 +211,7 @@ class Basic
 	 * @param \Yukari\Event\Instance $event - The event instance.
 	 * @return array - Array of events to dispatch in response to the input event.
 	 */
-	public function handleListaddonsCommand(\Yukari\Event\Instance $event)
+	public function handleListAddonsCommand(\Yukari\Event\Instance $event)
 	{
 		// Check auths first
 		if(!$this->checkAuthentication($event['hostmask']))
@@ -237,6 +247,133 @@ class Basic
 			}
 
 			return $results;
+		}
+	}
+
+	/**
+	 * Handles the bot being told to provide information about a loaded addon.
+	 * @param \Yukari\Event\Instance $event - The event instance.
+	 * @return array - Array of events to dispatch in response to the input event.
+	 */
+	public function handleAddonInfoCommand(\Yukari\Event\Instance $event)
+	{
+		// Check auths first
+		if(!$this->checkAuthentication($event['hostmask']))
+		{
+			return $this->handleCommandRefusal($event);
+		}
+		else
+		{
+			// asdf
+		}
+	}
+
+	/**
+	 * Handles the bot being told to load a specific addon.
+	 * @param \Yukari\Event\Instance $event - The event instance.
+	 * @return array - Array of events to dispatch in response to the input event.
+	 */
+	public function handleLoadAddonCommand(\Yukari\Event\Instance $event)
+	{
+		$dispatcher = Kernel::getDispatcher();
+
+		// Check auths first
+		if(!$this->checkAuthentication($event['hostmask']))
+		{
+			return $this->handleCommandRefusal($event);
+		}
+		else
+		{
+			$highlight = (!$event['is_private']) ? $event['hostmask']['nick'] . ':' : '';
+
+			try
+			{
+				$addon = $event['text'];
+				// Alphanumeric addon names only, we don't want any sneaky stuff going on.
+				if(!preg_match('#^[0-9a-zA-Z]+$#i'))
+					throw new \RuntimeException('Unacceptable addon name provided');
+
+				$addon_loader->loadAddon($addon);
+
+				// Display a message in the UI.
+				$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.system')
+					->setDataPoint('message', sprintf('Loaded addon "%s"', $addon)));
+
+				$results[] = \Yukari\Event\Instance::newEvent('irc.output.privmsg')
+					->setDataPoint('target', $event['target'])
+					->setDataPoint('text', sprintf('%1$s Loaded addon "%1$s" successfully.', $highlight, $addon));
+			}
+			catch(\Exception $e)
+			{
+				// Display a message in the UI saying stuff asploded
+				$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.warning')
+					->setDataPoint('message', sprintf('Failed to load addon "%1$s" - failure message: "%2$s"', $addon, $e->getMessage())));
+
+				$results[] = \Yukari\Event\Instance::newEvent('irc.output.privmsg')
+					->setDataPoint('target', $event['target'])
+					->setDataPoint('text', sprintf('%1$s Failed to load addon "%1$s".', $highlight, $addon));
+			}
+
+			return $results;
+		}
+	}
+
+	/**
+	 * Handles the bot being told to check to see if a newer build is available.
+	 * @param \Yukari\Event\Instance $event - The event instance.
+	 * @return array - Array of events to dispatch in response to the input event.
+	 */
+	public function handleVersionCheckCommand(\Yukari\Event\Instance $event)
+	{
+		// Check auths first
+		if(!$this->checkAuthentication($event['hostmask']))
+		{
+			return $this->handleCommandRefusal($event);
+		}
+		else
+		{
+			$highlight = (!$event['is_private']) ? $event['hostmask']['nick'] . ':' : '';
+			$installed_build = (int) substr(Kernel::getBuildNumber(), 6);
+
+			// if the build number is "DEV", it's a dev build, so we can't treat it as a normal build.  As such, version check must fail here.
+			if($installed_build == 'DEV')
+			{
+				$results[] = \Yukari\Event\Instance::newEvent('irc.output.privmsg')
+					->setDataPoint('target', $event['target'])
+					->setDataPoint('text', sprintf('%1$s Cannot check for new build; a DEV build is currently installed.', $highlight));
+				return $results;
+			}
+
+			// Get the latest build number.
+			$latest_build_number = @file_get_contents(self::BUILD_NUMBER_URL);
+
+			// If the return value was false, an empty string, or a non integer...something went wrong.
+			if($latest_build_number === false || $latest_build_number == '' || !ctype_digit($latest_build_number))
+			{
+				$results[] = \Yukari\Event\Instance::newEvent('irc.output.privmsg')
+					->setDataPoint('target', $event['target'])
+					->setDataPoint('text', sprintf('%1$s Failed to get the latest build number.', $highlight));
+				return $results;
+			}
+			else
+			{
+				$latest_build_number = (int) $latest_build_number;
+
+				// Do some comparisons to see if we're on the latest build.
+				if($latest_build_number <= $installed_build)
+				{
+					$status = 'Yukari is up to date';
+				}
+				elseif($latest_build_number > $installed_build)
+				{
+					$status = sprintf('Yukari build %1$d is available; currently running build %2$d', $latest_build_number, $installed_build);
+				}
+
+				$results[] = \Yukari\Event\Instance::newEvent('irc.output.privmsg')
+					->setDataPoint('target', $event['target'])
+					->setDataPoint('text', sprintf('%1$s %2$s.', $highlight, $status));
+				return $results;
+			}
 		}
 	}
 
