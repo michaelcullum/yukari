@@ -423,15 +423,16 @@ class Basic
 	public function checkAuthentication(\Yukari\Lib\Hostmask $hostmask)
 	{
 		$dispatcher = Kernel::getDispatcher();
-		$auth = $dispatcher->trigger(\Yukari\Event\Instance::newEvent('acl.check_allowed')
+		$auth = $dispatcher->cleanTrigger(\Yukari\Event\Instance::newEvent('acl.check_allowed')
 			->setDataPoint('hostmask', $hostmask));
-		if(!is_array($auth) || !isset($auth[0]) || $auth[0] === 0)
+		if(isset($auth[0]))
 		{
-			return false;
+			return $auth[0];
 		}
 		else
 		{
-			return true;
+			// if we don't have a result, assume we don't have a reliable ACL addon in place and deny access.
+			return false;
 		}
 	}
 }
