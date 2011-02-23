@@ -73,11 +73,31 @@ class Usertracker extends \Yukari\Addon\Metadata\MetadataBase
 	 */
 	public function checkDependencies()
 	{
-		// Commander addon necessary for this addon.
+		$addon_loader = Kernel::get('core.addonloader');
+
 		if(!Kernel::get('addon.commander'))
-			throw new \RuntimeException('Addon dependency "addon.commander" not present');
+		{
+			try
+			{
+				$addon_loader->loadAddon('commander');
+			}
+			catch(\RuntimeException $e)
+			{
+				throw new \RuntimeException(sprintf('Failed to load dependency "addon.commander", error message "%1$s"', $e->getMessage());
+			}
+		}
+
 		if(!Kernel::get('addon.channeltracker'))
-			throw new \RuntimeException('Addon dependency "addon.channeltracker" not present');
+		{
+			try
+			{
+				$addon_loader->loadAddon('channeltracker');
+			}
+			catch(\RuntimeException $e)
+			{
+				throw new \RuntimeException(sprintf('Failed to load dependency "addon.channeltracker", error message "%1$s"', $e->getMessage());
+			}
+		}
 
 		return true;
 	}

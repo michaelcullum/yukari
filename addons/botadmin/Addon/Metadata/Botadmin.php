@@ -73,10 +73,31 @@ class Botadmin extends \Yukari\Addon\Metadata\MetadataBase
 	 */
 	public function checkDependencies()
 	{
+		$addon_loader = Kernel::get('core.addonloader');
+
 		if(!Kernel::get('addon.commander'))
-			throw new \RuntimeException('Addon dependency "addon.commander" not present');
+		{
+			try
+			{
+				$addon_loader->loadAddon('commander');
+			}
+			catch(\RuntimeException $e)
+			{
+				throw new \RuntimeException(sprintf('Failed to load dependency "addon.commander", error message "%1$s"', $e->getMessage());
+			}
+		}
+
 		if(!Kernel::get('addon.acl'))
-			throw new \RuntimeException('Addon dependency "addon.acl" not present');
+		{
+			try
+			{
+				$addon_loader->loadAddon('whitelist');
+			}
+			catch(\RuntimeException $e)
+			{
+				throw new \RuntimeException(sprintf('Failed to load dependency "addon.acl", error message "%1$s"', $e->getMessage());
+			}
+		}	
 
 		return true;
 	}
