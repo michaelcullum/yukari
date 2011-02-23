@@ -24,19 +24,19 @@ More addons are available in the yukari-extras repository; for more details, loo
 ### Installation
 
 Via git:
-    git clone https://github.com/damianb/yukari.git
-    cd ./yukari
-    git submodule init
-    git submodule update
+    $ git clone https://github.com/damianb/yukari.git
+    $ cd ./yukari
+    $ git submodule init
+    $ git submodule update
 
 Via gzip tarball package of source:
-    tar xzf yukari-master.tar.gz
-    cd ./yukari
+    $ tar xzf yukari-master.tar.gz
+    $ cd ./yukari
 
 Via zip package of build (replacing {buildnumber} with the actual build number):
-    mkdir ./yukari
-    unzip yukari-build_{buildnumber}.zip -d ./yukari/
-    cd ./yukari
+    $ mkdir ./yukari
+    $ unzip yukari-build_{buildnumber}.zip -d ./yukari/
+    $ cd ./yukari
 
 Optionally, you may verify the phar(s) if you have the phar-util package installed via pear.
 
