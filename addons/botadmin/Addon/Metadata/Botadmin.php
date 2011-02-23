@@ -80,6 +80,8 @@ class Botadmin extends \Yukari\Addon\Metadata\MetadataBase
 			try
 			{
 				$addon_loader->loadAddon('commander');
+				$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.system')
+					->setDataPoint('message', sprintf('Loaded addon "%s"', 'commander')));
 			}
 			catch(\RuntimeException $e)
 			{
@@ -92,6 +94,8 @@ class Botadmin extends \Yukari\Addon\Metadata\MetadataBase
 			try
 			{
 				$addon_loader->loadAddon('whitelist');
+				$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.system')
+					->setDataPoint('message', sprintf('Loaded addon "%s"', 'whitelist')));
 			}
 			catch(\RuntimeException $e)
 			{
