@@ -131,6 +131,52 @@ class UI
 				->setDataPoint('message', sprintf('<- [%2$s] <%1$s NOTICE>  %3$s', $event['hostmask']['nick'], $event['target'], $event['text'])));
 		});
 
+		// Display channel happenings.
+		$dispatcher->register('irc.input.join', function(\Yukari\Event\Instance $event) {
+			$dispatcher = Kernel::getDispatcher();
+			$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
+				->setDataPoint('message', sprintf('<- %1$s (%2$s@%3$s) has joined %4$s', $event['hostmask']['nick'], $event['hostmask']['username'], $event['hostmask']['host'], $event['channel'])));
+		});
+		$dispatcher->register('irc.input.part', function(\Yukari\Event\Instance $event) {
+			$dispatcher = Kernel::getDispatcher();
+			if($event['reason'] !== NULL)
+			{
+				$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
+					->setDataPoint('message', sprintf('<- %1$s (%2$s@%3$s) has left %4$s [Reason: %5$s]', $event['hostmask']['nick'], $event['hostmask']['username'], $event['hostmask']['host'], $event['channel'], $event['reason'])));
+			}
+			else
+			{
+				$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
+					->setDataPoint('message', sprintf('<- %1$s (%2$s@%3$s) has left %4$s', $event['hostmask']['nick'], $event['hostmask']['username'], $event['hostmask']['host'], $event['channel'])));
+			}
+		});
+		$dispatcher->register('irc.input.kick', function(\Yukari\Event\Instance $event) {
+			$dispatcher = Kernel::getDispatcher();
+			if($event['reason'] !== NULL)
+			{
+				$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
+					->setDataPoint('message', sprintf('<- %1$s kicked %2$s %3$s [Reason: %4$s]', $event['hostmask']['nick'], $event['user'], $event['channel'], $event['reason'])));
+			}
+			else
+			{
+				$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
+					->setDataPoint('message', sprintf('<- %1$s kicked %2$s from %3$s', $event['hostmask']['nick'], $event['user'], $event['channel'])));
+			}
+		});
+		$dispatcher->register('irc.input.quit', function(\Yukari\Event\Instance $event) {
+			$dispatcher = Kernel::getDispatcher();
+			if($event['reason'] !== NULL)
+			{
+				$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
+					->setDataPoint('message', sprintf('<- %1$s (%2$s@%3$s) has quit [Reason: %4$s]', $event['hostmask']['nick'], $event['hostmask']['username'], $event['hostmask']['host'], $event['reason'])));
+			}
+			else
+			{
+				$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
+					->setDataPoint('message', sprintf('<- %1$s (%2$s@%3$s) has quit', $event['hostmask']['nick'], $event['hostmask']['username'], $event['hostmask']['host'])));
+			}
+		});
+
 		// Display CTCP requests and replies
 		$dispatcher->register('irc.input.ctcp', function(\Yukari\Event\Instance $event) {
 			$dispatcher = Kernel::getDispatcher();
