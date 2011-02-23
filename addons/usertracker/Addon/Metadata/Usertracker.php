@@ -73,6 +73,7 @@ class Usertracker extends \Yukari\Addon\Metadata\MetadataBase
 	 */
 	public function checkDependencies()
 	{
+		$dispatcher = Kernel::getDispatcher();
 		$addon_loader = Kernel::get('core.addonloader');
 
 		if(!Kernel::get('addon.commander'))
