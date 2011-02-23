@@ -123,4 +123,25 @@ class Dispatcher
 
 		return $results;
 	}
+	
+	/**
+	 * Dispatch an event to registered listeners, purified so that boolean values can be returned (and only null values are ignored)
+	 * @param \Yukari\Event\Instance $event - The event to dispatch.
+	 * @return array - Array of returned information from each listener.
+	 */
+	public function cleanTrigger(\Yukari\Event\Instance $event)
+	{
+		if(!$this->hasListeners($event->getName()))
+			return;
+
+		$results = array();
+		foreach($this->listeners[$event->getName()] as $listener)
+		{
+			$result = call_user_func_array($listener['listener'], array_merge(array($event), $listener['params']));
+			if($result !== NULL)
+				$results[] = $result;
+		}
+
+		return $results;
+	}
 }
