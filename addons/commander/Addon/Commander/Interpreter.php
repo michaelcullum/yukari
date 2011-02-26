@@ -61,23 +61,23 @@ class Interpreter
 		$results = array();
 
 		// Is this a direct, private command?
-		if($event['target'] == $our_name)
+		if($event->getDataPoint('target') == $our_name)
 		{
 			// Just drop the indicator if this is a private command.  User friendliness and all that. ;)
-			if(substr($event['text'], 0, strlen($indicator)) == $indicator)
+			if(substr($event->getDataPoint('text'), 0, strlen($indicator)) == $indicator)
 			{
-				$text = array_pad(explode(' ', substr($event['text'], strlen($indicator)), 2), 2, '');
+				$text = array_pad(explode(' ', substr($event->getDataPoint('text'), strlen($indicator)), 2), 2, '');
 			}
 			else
 			{
-				$text = array_pad(explode(' ', $event['text'], 2), 2, '');
+				$text = array_pad(explode(' ', $event->getDataPoint('text'), 2), 2, '');
 			}
 
 			$_results = $dispatcher->trigger(\Yukari\Event\Instance::newEvent(sprintf('irc.input.command.%s', $text[0]))
 				->setDataPoint('command', $text[0])
 				->setDataPoint('text', $text[1])
-				->setDataPoint('target', $event['target'])
-				->setDataPoint('hostmask', $event['hostmask'])
+				->setDataPoint('target', $event->getDataPoint('target'))
+				->setDataPoint('hostmask', $event->getDataPoint('hostmask'))
 				->setDataPoint('is_private', true)
 				->setDataPoint('rootevent', $event));
 			if(!is_array($_results))
@@ -87,14 +87,14 @@ class Interpreter
 			$_results = $dispatcher->trigger(\Yukari\Event\Instance::newEvent(sprintf('irc.input.privatecommand.%s', $text[0]))
 				->setDataPoint('command', $text[0])
 				->setDataPoint('text', $text[1])
-				->setDataPoint('target', $event['target'])
-				->setDataPoint('hostmask', $event['hostmask'])
+				->setDataPoint('target', $event->getDataPoint('target'))
+				->setDataPoint('hostmask', $event->getDataPoint('hostmask'))
 				->setDataPoint('is_private', true)
 				->setDataPoint('rootevent', $event));
 				$_results = array($_results);
 			$results = array_merge($results, $_results);
 		}
-		elseif(preg_match('#^(' . preg_quote($indicator, '#') . '|' . preg_quote($our_name, '#') . '\: )([a-z0-9]*)( (.*))?#iS', $event['text'], $matches) == true)
+		elseif(preg_match('#^(' . preg_quote($indicator, '#') . '|' . preg_quote($our_name, '#') . '\: )([a-z0-9]*)( (.*))?#iS', $event->getDataPoint('text'), $matches) == true)
 		{
 			// Make sure we have a full array here.
 			list(, $trigger, $command, , $text) = array_pad($matches, 5, '');
@@ -102,8 +102,8 @@ class Interpreter
 			$_results = $dispatcher->trigger(\Yukari\Event\Instance::newEvent(sprintf('irc.input.command.%s', $command))
 				->setDataPoint('command', $command)
 				->setDataPoint('text', $text)
-				->setDataPoint('target', $event['target'])
-				->setDataPoint('hostmask', $event['hostmask'])
+				->setDataPoint('target', $event->getDataPoint('target'))
+				->setDataPoint('hostmask', $event->getDataPoint('hostmask'))
 				->setDataPoint('is_private', false)
 				->setDataPoint('rootevent', $event));
 			if(!is_array($_results))
@@ -117,8 +117,8 @@ class Interpreter
 				$_results = $dispatcher->trigger(\Yukari\Event\Instance::newEvent(sprintf('irc.input.namedcommand.%s', $command))
 					->setDataPoint('command', $command)
 					->setDataPoint('text', $text)
-					->setDataPoint('target', $event['target'])
-					->setDataPoint('hostmask', $event['hostmask'])
+					->setDataPoint('target', $event->getDataPoint('target'))
+					->setDataPoint('hostmask', $event->getDataPoint('hostmask'))
 					->setDataPoint('is_private', false)
 					->setDataPoint('rootevent', $event));
 				if(!is_array($_results))
@@ -140,7 +140,7 @@ class Interpreter
 		$dispatcher = Kernel::getDispatcher();
 		$response_map = Kernel::get('core.response_map');
 
-		$event_code = (int) $event['code'];
+		$event_code = (int) $event->getDataPoint('code');
 		$event_type = $response_map->getResponseType($event_code);
 
 		// Just in case we wtf at a non-standard response code.
@@ -149,7 +149,7 @@ class Interpreter
 
 		$results = $dispatcher->trigger(\Yukari\Event\Instance::newEvent(sprintf('irc.input.response.%s', $event_type))
 			->setDataPoint('code', $event_code)
-			->setDataPoint('description', $event['description'])
+			->setDataPoint('description', $event->getDataPoint('description'))
 			->setDataPoint('rootevent', $event));
 
 		return $results;

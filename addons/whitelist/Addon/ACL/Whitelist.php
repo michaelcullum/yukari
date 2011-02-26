@@ -99,19 +99,19 @@ class Whitelist
 	 */
 	public function handleReloadWhitelist(\Yukari\Event\Instance $event)
 	{
-		$highlight = (!$event['is_private']) ? $event['hostmask']['nick'] . ':' : '';
+		$highlight = (!$event->getDataPoint('is_private')) ? $event->getDataPoint('hostmask')->getNick() . ':' : '';
 		if($this->handleAccess($event) === 1)
 		{
 			$this->loadWhitelistFile();
 
 			$results = \Yukari\Event\Instance::newEvent('irc.output.privmsg')
-				->setDataPoint('target', $event['target'])
+				->setDataPoint('target', $event->getDataPoint('target'))
 				->setDataPoint('text', sprintf('%1$s Whitelist file reloaded.', $highlight));
 		}
 		else
 		{
 			$results = \Yukari\Event\Instance::newEvent('irc.output.privmsg')
-				->setDataPoint('target', $event['target'])
+				->setDataPoint('target', $event->getDataPoint('target'))
 				->setDataPoint('text', sprintf('%1$s You are not authorized to use this command.', $highlight));
 		}
 

@@ -71,24 +71,24 @@ class Basic
 	public function handleJoinCommand(\Yukari\Event\Instance $event)
 	{
 		// Check auths first
-		if(!$this->checkAuthentication($event['hostmask']))
+		if(!$this->checkAuthentication($event->getDataPoint('hostmask')))
 		{
 			return $this->handleCommandRefusal($event);
 		}
 		else
 		{
-			$highlight = (!$event['is_private']) ? $event['hostmask']['nick'] . ':' : '';
-			if($event['text'][0] !== '#')
+			$highlight = (!$event->getDataPoint('is_private')) ? $event->getDataPoint('hostmask')->getNick() . ':' : '';
+			if($event->getDataPoint('text')[0] !== '#')
 			{
 				$results[] = \Yukari\Event\Instance::newEvent('irc.output.privmsg')
-					->setDataPoint('target', $event['target'])
+					->setDataPoint('target', $event->getDataPoint('target'))
 					->setDataPoint('text', sprintf('%1$s Invalid channel specified.', $highlight));
 
 				return $results;
 			}
 			else
 			{
-				$join_params = explode(' ', $event['text'], 2);
+				$join_params = explode(' ', $event->getDataPoint('text'), 2);
 				$join = \Yukari\Event\Instance::newEvent('irc.output.join')
 					->setDataPoint('channel', $join_params[0]);
 
@@ -108,24 +108,24 @@ class Basic
 	public function handlePartCommand(\Yukari\Event\Instance $event)
 	{
 		// Check auths first
-		if(!$this->checkAuthentication($event['hostmask']))
+		if(!$this->checkAuthentication($event->getDataPoint('hostmask')))
 		{
 			return $this->handleCommandRefusal($event);
 		}
 		else
 		{
-			$highlight = (!$event['is_private']) ? $event['hostmask']['nick'] . ':' : '';
-			if($event['text'][0] !== '#')
+			$highlight = (!$event->getDataPoint('is_private')) ? $event->getDataPoint('hostmask')->getNick() . ':' : '';
+			if($event->getDataPoint('text')[0] !== '#')
 			{
 				$results[] = \Yukari\Event\Instance::newEvent('irc.output.privmsg')
-					->setDataPoint('target', $event['target'])
+					->setDataPoint('target', $event->getDataPoint('target'))
 					->setDataPoint('text', sprintf('%1$s Invalid channel specified.', $highlight));
 
 				return $results;
 			}
 			else
 			{
-				$part_params = explode(' ', $event['text'], 2);
+				$part_params = explode(' ', $event->getDataPoint('text'), 2);
 				$part = \Yukari\Event\Instance::newEvent('irc.output.part')
 					->setDataPoint('channel', $part_params[0]);
 
@@ -151,19 +151,19 @@ class Basic
 	public function handleSetUserChannelMode(\Yukari\Event\Instance $event, $mode)
 	{
 		// Check auths first
-		if(!$this->checkAuthentication($event['hostmask']))
+		if(!$this->checkAuthentication($event->getDataPoint('hostmask')))
 		{
 			return $this->handleCommandRefusal($event);
 		}
 		else
 		{
-			$highlight = (!$event['is_private']) ? $event['hostmask']['nick'] . ':' : '';
+			$highlight = (!$event->getDataPoint('is_private')) ? $event->getDataPoint('hostmask')->getNick() . ':' : '';
 
 			// Make sure an invalid username isn't being provided.
-			if(preg_match('#[\!\#\@]#i', $event['text']))
+			if(preg_match('#[\!\#\@]#i', $event->getDataPoint('text')))
 			{
 				$results[] = \Yukari\Event\Instance::newEvent('irc.output.privmsg')
-					->setDataPoint('target', $event['target'])
+					->setDataPoint('target', $event->getDataPoint('target'))
 					->setDataPoint('text', sprintf('%1$s Invalid nickname specified.', $highlight));
 
 				return $results;
@@ -171,7 +171,7 @@ class Basic
 			else
 			{
 				// send the mode command
-				$params = explode(' ', $event['text'], 2);
+				$params = explode(' ', $event->getDataPoint('text'), 2);
 
 				// if the user wants to specify a channel, let them do so...and then fall back to the current channel if no channel is specified
 				if($params[0][0] === '#')
@@ -185,16 +185,16 @@ class Basic
 				else
 				{
 					// if this was a private command, we must derp at the sender.
-					if($event['is_private'])
+					if($event->getDataPoint('is_private'))
 					{
 						$results[] = \Yukari\Event\Instance::newEvent('irc.output.privmsg')
-							->setDataPoint('target', $event['target'])
+							->setDataPoint('target', $event->getDataPoint('target'))
 							->setDataPoint('text', sprintf('%1$s No target channel specified.', $highlight));
 
 						return $results;
 					}
 
-					$channel = $event['target'];
+					$channel = $event->getDataPoint('target');
 					$user = $params[0];
 				}
 				$results[] = \Yukari\Event\Instance::newEvent('irc.output.mode')
@@ -215,7 +215,7 @@ class Basic
 	public function handleListAddonsCommand(\Yukari\Event\Instance $event)
 	{
 		// Check auths first
-		if(!$this->checkAuthentication($event['hostmask']))
+		if(!$this->checkAuthentication($event->getDataPoint('hostmask')))
 		{
 			return $this->handleCommandRefusal($event);
 		}
@@ -238,12 +238,12 @@ class Basic
 			}
 
 			$results = array();
-			$highlight = (!$event['is_private']) ? $event['hostmask']['nick'] . ':' : '';
+			$highlight = (!$event->getDataPoint('is_private')) ? $event->getDataPoint('hostmask')->getNick() . ':' : '';
 			foreach($response as $line)
 			{
 				$line = implode(', ', $line);
 				$results[] = \Yukari\Event\Instance::newEvent('irc.output.privmsg')
-					->setDataPoint('target', $event['target'])
+					->setDataPoint('target', $event->getDataPoint('target'))
 					->setDataPoint('text', sprintf('%1$s %2$s.', $highlight, $line));
 			}
 
@@ -259,7 +259,7 @@ class Basic
 	public function handleAddonInfoCommand(\Yukari\Event\Instance $event)
 	{
 		// Check auths first
-		if(!$this->checkAuthentication($event['hostmask']))
+		if(!$this->checkAuthentication($event->getDataPoint('hostmask')))
 		{
 			return $this->handleCommandRefusal($event);
 		}
@@ -279,19 +279,19 @@ class Basic
 		$dispatcher = Kernel::getDispatcher();
 
 		// Check auths first
-		if(!$this->checkAuthentication($event['hostmask']))
+		if(!$this->checkAuthentication($event->getDataPoint('hostmask')))
 		{
 			return $this->handleCommandRefusal($event);
 		}
 		else
 		{
-			$highlight = (!$event['is_private']) ? $event['hostmask']['nick'] . ':' : '';
+			$highlight = (!$event->getDataPoint('is_private')) ? $event->getDataPoint('hostmask')->getNick() . ':' : '';
 
 			try
 			{
-				$addon = $event['text'];
+				$addon = $event->getDataPoint('text');
 				// Alphanumeric addon names only, we don't want any sneaky stuff going on.
-				if(!preg_match('#^([0-9a-z]+)$#i', $event['text']))
+				if(!preg_match('#^([0-9a-z]+)$#i', $event->getDataPoint('text')))
 					throw new \RuntimeException('Unacceptable addon name provided');
 
 				$addon_loader = Kernel::get('core.addonloader');
@@ -302,7 +302,7 @@ class Basic
 					->setDataPoint('message', sprintf('Loaded addon "%s"', $addon)));
 
 				$results[] = \Yukari\Event\Instance::newEvent('irc.output.privmsg')
-					->setDataPoint('target', $event['target'])
+					->setDataPoint('target', $event->getDataPoint('target'))
 					->setDataPoint('text', sprintf('%1$s Loaded addon "%2$s" successfully.', $highlight, $addon));
 			}
 			catch(\Exception $e)
@@ -312,7 +312,7 @@ class Basic
 					->setDataPoint('message', sprintf('Failed to load addon "%1$s" - failure message: "%2$s"', $addon, $e->getMessage())));
 
 				$results[] = \Yukari\Event\Instance::newEvent('irc.output.privmsg')
-					->setDataPoint('target', $event['target'])
+					->setDataPoint('target', $event->getDataPoint('target'))
 					->setDataPoint('text', sprintf('%1$s Failed to load addon "%2$s".', $highlight, $addon));
 			}
 
@@ -328,20 +328,20 @@ class Basic
 	public function handleVersionCheckCommand(\Yukari\Event\Instance $event)
 	{
 		// Check auths first
-		if(!$this->checkAuthentication($event['hostmask']))
+		if(!$this->checkAuthentication($event->getDataPoint('hostmask')))
 		{
 			return $this->handleCommandRefusal($event);
 		}
 		else
 		{
-			$highlight = (!$event['is_private']) ? $event['hostmask']['nick'] . ':' : '';
+			$highlight = (!$event->getDataPoint('is_private')) ? $event->getDataPoint('hostmask')->getNick() . ':' : '';
 			$installed_build = (int) substr(Kernel::getBuildNumber(), 6);
 
 			// if the build number is "DEV", it's a dev build, so we can't treat it as a normal build.  As such, version check must fail here.
 			if($installed_build == 'DEV')
 			{
 				$results[] = \Yukari\Event\Instance::newEvent('irc.output.privmsg')
-					->setDataPoint('target', $event['target'])
+					->setDataPoint('target', $event->getDataPoint('target'))
 					->setDataPoint('text', sprintf('%1$s Cannot check for new build; a DEV build is currently installed.', $highlight));
 				return $results;
 			}
@@ -353,7 +353,7 @@ class Basic
 			if($latest_build_number === false || $latest_build_number == '' || !ctype_digit($latest_build_number))
 			{
 				$results[] = \Yukari\Event\Instance::newEvent('irc.output.privmsg')
-					->setDataPoint('target', $event['target'])
+					->setDataPoint('target', $event->getDataPoint('target'))
 					->setDataPoint('text', sprintf('%1$s Failed to get the latest build number.', $highlight));
 				return $results;
 			}
@@ -372,7 +372,7 @@ class Basic
 				}
 
 				$results[] = \Yukari\Event\Instance::newEvent('irc.output.privmsg')
-					->setDataPoint('target', $event['target'])
+					->setDataPoint('target', $event->getDataPoint('target'))
 					->setDataPoint('text', sprintf('%1$s %2$s.', $highlight, $status));
 				return $results;
 			}
@@ -387,7 +387,7 @@ class Basic
 	public function handleQuitCommand(\Yukari\Event\Instance $event)
 	{
 		// Check auths first
-		if(!$this->checkAuthentication($event['hostmask']))
+		if(!$this->checkAuthentication($event->getDataPoint('hostmask')))
 		{
 			return $this->handleCommandRefusal($event);
 		}
@@ -407,9 +407,9 @@ class Basic
 	 */
 	public function handleCommandRefusal(\Yukari\Event\Instance $event)
 	{
-		$highlight = (!$event['is_private']) ? $event['hostmask']['nick'] . ':' : '';
+		$highlight = (!$event->getDataPoint('is_private')) ? $event->getDataPoint('hostmask')->getNick() . ':' : '';
 		$results[] = \Yukari\Event\Instance::newEvent('irc.output.privmsg')
-			->setDataPoint('target', $event['target'])
+			->setDataPoint('target', $event->getDataPoint('target'))
 			->setDataPoint('text', sprintf('%1$s You are not authorized to use this command.', $highlight));
 
 		return $results;

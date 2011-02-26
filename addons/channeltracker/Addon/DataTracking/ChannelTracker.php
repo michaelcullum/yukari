@@ -61,10 +61,10 @@ class ChannelTracker
 	 */
 	public function trackChannelJoin(\Yukari\Event\Instance $event)
 	{
-		if($event['hostmask']['nick'] == Kernel::getConfig('irc.nickname'))
+		if($event->getDataPoint('hostmask')->getNick() == Kernel::getConfig('irc.nickname'))
 		{
-			if(!in_array($event['channel'], $this->channels))
-				array_push($this->channels, $event['channel']);
+			if(!in_array($event->getDataPoint('channel'), $this->channels))
+				array_push($this->channels, $event->getDataPoint('channel'));
 		}
 	}
 
@@ -75,9 +75,9 @@ class ChannelTracker
 	 */
 	public function trackChannelPart(\Yukari\Event\Instance $event)
 	{
-		if($event['hostmask']['nick'] == Kernel::getConfig('irc.nickname'))
+		if($event->getDataPoint('hostmask')->getNick() == Kernel::getConfig('irc.nickname'))
 		{
-			$key = array_search($event['channel'], $this->channels);
+			$key = array_search($event->getDataPoint('channel'), $this->channels);
 			if($key !== false)
 				unset($this->channels[$key]);
 		}
@@ -90,9 +90,9 @@ class ChannelTracker
 	 */
 	public function trackChannelKick(\Yukari\Event\Instance $event)
 	{
-		if($event['hostmask']['nick'] == Kernel::getConfig('irc.nickname'))
+		if($event->getDataPoint('hostmask')->getNick() == Kernel::getConfig('irc.nickname'))
 		{
-			$key = array_search($event['channel'], $this->channels);
+			$key = array_search($event->getDataPoint('channel'), $this->channels);
 			if($key !== false)
 				unset($this->channels[$key]);
 		}

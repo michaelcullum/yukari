@@ -65,22 +65,22 @@ class Automation extends \Yukari\Addon\Metadata\MetadataBase
 
 		// Respond to CTCP VERSION and CTCP PING (if a valid argument for the CTCP was provided)
 		$dispatcher->register('irc.input.ctcp', function(\Yukari\Event\Instance $event) {
-			if(strtolower($event['command']) === 'version')
+			if(strtolower($event->getDataPoint('command')) === 'version')
 			{
 				return \Yukari\Event\Instance::newEvent('irc.output.ctcp_reply')
-					->setDataPoint('target', $event['hostmask']['nick'])
+					->setDataPoint('target', $event->getDataPoint('hostmask')->getNick())
 					->setDataPoint('command', 'version')
 					->setDataPoint('args', sprintf('Yukari IRC Bot - %s', Kernel::getBuildNumber()));
 			}
-			elseif(strtolower($event['command']) === 'ping')
+			elseif(strtolower($event->getDataPoint('command')) === 'ping')
 			{
-				if($event['args'] === NULL)
+				if(!$event->dataPointExists('args') || $event->getDataPoint('args') === NULL)
 					return NULL;
 
 				return \Yukari\Event\Instance::newEvent('irc.output.ctcp_reply')
-					->setDataPoint('target', $event['hostmask']['nick'])
+					->setDataPoint('target', $event->getDataPoint('hostmask')->getNick())
 					->setDataPoint('command', 'ping')
-					->setDataPoint('args', $event['args']);
+					->setDataPoint('args', $event->getDataPoint('args'));
 			}
 			else
 			{
@@ -91,7 +91,7 @@ class Automation extends \Yukari\Addon\Metadata\MetadataBase
 		// Respond to server pings
 		$dispatcher->register('irc.input.ping', function(\Yukari\Event\Instance $event) {
 			return \Yukari\Event\Instance::newEvent('irc.output.pong')
-					->setDataPoint('origin', $event['target']);
+					->setDataPoint('origin', $event->getDataPoint('target'));
 		});
 	}
 
