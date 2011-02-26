@@ -121,7 +121,7 @@ class Hostmask implements \ArrayAccess
 	/**
 	 * Parses a string containing the entire hostmask into a new instance of this class.
 	 * @param string $hostmask - Entire hostmask including the nick, username, and host components
-	 * @return object \Yukari\Lib\Hostmask - New object instance populated with the data parsed from the provided hostmask string
+	 * @return \Yukari\Connection\Hostmask - New object instance populated with the data parsed from the provided hostmask string
 	 */
 	public static function load($hostmask)
 	{

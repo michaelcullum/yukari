@@ -78,7 +78,7 @@ class Basic
 		else
 		{
 			$highlight = (!$event->getDataPoint('is_private')) ? $event->getDataPoint('hostmask')->getNick() . ':' : '';
-			if($event->getDataPoint('text')[0] !== '#')
+			if(substr($event->getDataPoint('text'), 0, 1) !== '#')
 			{
 				$results[] = \Yukari\Event\Instance::newEvent('irc.output.privmsg')
 					->setDataPoint('target', $event->getDataPoint('target'))
@@ -115,7 +115,7 @@ class Basic
 		else
 		{
 			$highlight = (!$event->getDataPoint('is_private')) ? $event->getDataPoint('hostmask')->getNick() . ':' : '';
-			if($event->getDataPoint('text')[0] !== '#')
+			if(substr($event->getDataPoint('text'), 0, 1) !== '#')
 			{
 				$results[] = \Yukari\Event\Instance::newEvent('irc.output.privmsg')
 					->setDataPoint('target', $event->getDataPoint('target'))
@@ -417,10 +417,10 @@ class Basic
 
 	/**
 	 * Checks to see if the originator of the event is authorized to use the command.
-	 * @param \Yukari\Lib\Hostmask $event - The hostmask object of the event originator.
+	 * @param \Yukari\Connection\Hostmask $event - The hostmask object of the event originator.
 	 * @return boolean - Is the sender authorized to use the command?
 	 */
-	public function checkAuthentication(\Yukari\Lib\Hostmask $hostmask)
+	public function checkAuthentication(\Yukari\Connection\Hostmask $hostmask)
 	{
 		$dispatcher = Kernel::getDispatcher();
 		$auth = $dispatcher->cleanTrigger(\Yukari\Event\Instance::newEvent('acl.check_allowed')

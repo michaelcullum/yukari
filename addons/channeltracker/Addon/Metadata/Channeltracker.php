@@ -86,7 +86,7 @@ class Channeltracker extends \Yukari\Addon\Metadata\MetadataBase
 			}
 			catch(\RuntimeException $e)
 			{
-				throw new \RuntimeException(sprintf('Failed to load dependency "addon.commander", error message "%1$s"', $e->getMessage());
+				throw new \RuntimeException(sprintf('Failed to load dependency "addon.commander", error message "%1$s"', $e->getMessage()));
 			}
 		}
 

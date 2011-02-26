@@ -19,7 +19,7 @@
  *
  */
 
-namespace Yukari\Addon\DataTracker;
+namespace Yukari\Addon\DataTracking;
 use Yukari\Kernel;
 
 /**
