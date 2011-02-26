@@ -127,13 +127,25 @@ class Instance implements \ArrayAccess
 	}
 
 	/**
+	 * Check if a data point exists in this event.
+	 * @param string - The key for the data point to grab.
+	 * @return boolean - Does the data point exist?
+	 */
+	public function dataPointExists($point)
+	{
+		return array_key_exists($point, $this->data);
+	}
+
+	/**
 	 * Get a single point of data attached to this event.
 	 * @param string - The key for the data point to grab.
 	 * @return mixed - The point of data we're looking for
 	 */
 	public function getDataPoint($point)
 	{
-		return $this->offsetGet($point);
+		if(!$this->dataPointExists($point))
+			throw new \InvalidArgumentException('Invalid event parameter specified');
+		return $this->data[$point];
 	}
 
 	/**
@@ -144,7 +156,7 @@ class Instance implements \ArrayAccess
 	 */
 	public function setDataPoint($point, $value)
 	{
-		$this->offsetSet($point, $value);
+		$this->data[$point] = $value;
 		return $this;
 	}
 
@@ -159,6 +171,8 @@ class Instance implements \ArrayAccess
 	 */
 	public function offsetExists($offset)
 	{
+		$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.debug')
+			->setDataPoint('message', sprintf('Deprecation notice: Using ArrayAccess to access offset "%1$s" in \\Yukari\\Event\\Instance', $offset)));
 		return array_key_exists($offset, $this->data);
 	}
 
@@ -169,6 +183,8 @@ class Instance implements \ArrayAccess
 	 */
 	public function offsetGet($offset)
 	{
+		$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.debug')
+			->setDataPoint('message', sprintf('Deprecation notice: Using ArrayAccess to access offset "%1$s" in \\Yukari\\Event\\Instance', $offset)));
 		if(!$this->offsetExists($offset))
 			throw new \InvalidArgumentException('Invalid event parameter specified');
 		return $this->data[$offset];
@@ -182,6 +198,8 @@ class Instance implements \ArrayAccess
 	 */
 	public function offsetSet($offset, $value)
 	{
+		$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.debug')
+			->setDataPoint('message', sprintf('Deprecation notice: Using ArrayAccess to access offset "%1$s" in \\Yukari\\Event\\Instance', $offset)));
 		$this->data[$offset] = $value;
 	}
 
@@ -192,6 +210,8 @@ class Instance implements \ArrayAccess
 	 */
 	public function offsetUnset($offset)
 	{
+		$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.debug')
+			->setDataPoint('message', sprintf('Deprecation notice: Using ArrayAccess to access offset "%1$s" in \\Yukari\\Event\\Instance', $offset)));
 		unset($this->data[$offset]);
 	}
 }
