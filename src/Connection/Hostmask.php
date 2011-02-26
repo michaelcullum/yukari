@@ -19,7 +19,7 @@
  *
  */
 
-namespace Yukari\Lib;
+namespace Yukari\Connection;
 
 /**
  * Yukari - Hostmask class,
@@ -37,28 +37,85 @@ class Hostmask implements \ArrayAccess
 	/**
 	 * @var string - The host of the hostmask
 	 */
-	public $host = '';
+	protected $host = '';
 
 	/**
 	 * @var string - The nick of the hostmask
 	 */
-	public $nick = '';
+	protected $nick = '';
 
 	/**
 	 * @var string - The username of the hostmask
 	 */
-	public $username = '';
+	protected $username = '';
 
 	/**
-	 * Constructor method to initialize components of the hostmask.
-	 * @param string $nick - Nick of the hostmask
-	 * @param string $username - Username of the hostmask
-	 * @param string $host - Host of the hostmask
-	 * @return void
+	 * Get a new instance of the hostmask object.
+	 * @return \Yukari\Connection\Hostmask - Provides a fluent interface.
 	 */
-	public function __construct($nick, $username, $host)
+	public static function newInstance()
 	{
-		list($this->nick, $this->username, $this->host) = array($nick, $username, $host);
+		return new static();
+	}
+
+	/**
+	 * Get the host for the current hostmask.
+	 * @return string - The current host for the hostmask.
+	 */
+	public function getHost()
+	{
+		return $this->host;
+	}
+
+	/**
+	 * Set the host for the current hostmask
+	 * @param string $host - The host to set.
+	 * @return \Yukari\Connection\Hostmask - Provides a fluent interface.
+	 */
+	public function setHost($host)
+	{
+		$this->host = (string) $host;
+		return $this;
+	}
+
+	/**
+	 * Get the username for the current hostmask.
+	 * @return string - The current username for the hostmask.
+	 */
+	public function getUsername()
+	{
+		return $this->username;
+	}
+
+	/**
+	 * Set the username for the current hostmask
+	 * @param string $username - The host to set.
+	 * @return \Yukari\Connection\Hostmask - Provides a fluent interface.
+	 */
+	public function setUsername($username)
+	{
+		$this->username = (string) $username;
+		return $this;
+	}
+
+	/**
+	 * Get the nick for the current hostmask.
+	 * @return string - The current nick for the hostmask.
+	 */
+	public function getNick()
+	{
+		return $this->nick;
+	}
+
+	/**
+	 * Set the nick for the current hostmask
+	 * @param string $nick - The nick to set.
+	 * @return \Yukari\Connection\Hostmask - Provides a fluent interface.
+	 */
+	public function setNick($nick)
+	{
+		$this->nick = (string) $nick;
+		return $this;
 	}
 
 	/**
@@ -72,7 +129,9 @@ class Hostmask implements \ArrayAccess
 			throw new \LogicException(sprintf('Invalid hostmask "%s" specified', $hostmask));
 
 		list(, $nick, $username, $host) = $match;
-		return new Hostmask($nick, $username, $host);
+		$self = new static();
+		$self->setHost($host)->setUsername($username)->setNick($nick);
+		return $self;
 	}
 
 	/**
@@ -105,6 +164,8 @@ class Hostmask implements \ArrayAccess
 	 */
 	public function offsetExists($offset)
 	{
+		$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.debug')
+			->setDataPoint('message', sprintf('Deprecation notice: Using ArrayAccess to access offset "%1$s" in \\Yukari\\Connection\\Hostmask', $offset)));
 		return property_exists($this, $offset);
 	}
 
@@ -115,6 +176,8 @@ class Hostmask implements \ArrayAccess
 	 */
 	public function offsetGet($offset)
 	{
+		$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.debug')
+			->setDataPoint('message', sprintf('Deprecation notice: Using ArrayAccess to access offset "%1$s" in \\Yukari\\Connection\\Hostmask', $offset)));
 		return property_exists($this, $offset) ? $this->$offset : NULL;
 	}
 
@@ -128,6 +191,8 @@ class Hostmask implements \ArrayAccess
 	 */
 	public function offsetSet($offset, $value)
 	{
+		$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.debug')
+			->setDataPoint('message', sprintf('Deprecation notice: Using ArrayAccess to access offset "%1$s" in \\Yukari\\Connection\\Hostmask', $offset)));
 		if(!property_exists($this, $offset))
 			throw new \RuntimeException('Attempt to access an invalid property in a hostmask object failed');
 
@@ -141,6 +206,8 @@ class Hostmask implements \ArrayAccess
 	 */
 	public function offsetUnset($offset)
 	{
+		$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.debug')
+			->setDataPoint('message', sprintf('Deprecation notice: Using ArrayAccess to access offset "%1$s" in \\Yukari\\Connection\\Hostmask', $offset)));
 		$this->$offset = NULL;
 	}
 }
