@@ -5,13 +5,12 @@
  *
  *  Yukari
  *-------------------------------------------------------------------
- * @version		3.0.0 DEV
- * @category	Yukari
- * @package		lib
- * @author		Damian Bushong
- * @copyright	(c) 2009 - 2011 -- Damian Bushong
- * @license		MIT License
- * @link		https://github.com/damianb/yukari
+ * @category    Yukari
+ * @package     addon
+ * @author      Damian Bushong
+ * @copyright   (c) 2009 - 2011 -- Damian Bushong
+ * @license     MIT License
+ * @link        https://github.com/damianb/yukari
  *
  *===================================================================
  *
@@ -20,7 +19,7 @@
  *
  */
 
-namespace Yukari\Lib;
+namespace Yukari\Addon\Security;
 
 /**
  * Yukari - Password hashing framework,
@@ -177,6 +176,29 @@ class Hash
 		if ($hash[0] == '*')
 			$hash = crypt($password, $stored_hash);
 
-		return $hash == $stored_hash;
+		return $this->full_compare($hash, $stored_hash);
+	}
+
+	/**
+	 * A time-insensitive string comparison function, to help deter highly accurate timing attacks.
+	 * @param string $a - The first string to compare
+	 * @param string $b - The second string to compare
+	 * @return boolean - Do the strings match?
+	 *
+	 * @license - Public Domain - http://twitter.com/padraicb/status/41055320243437568
+	 * @link http://blog.astrumfutura.com/2010/10/nanosecond-scale-remote-timing-attacks-on-php-applications-time-to-take-them-seriously/
+	 * @author http://twitter.com/padraicb
+	 */
+	public function full_compare($a, $b)
+	{
+		if(strlen($a) !== strlen($b))
+			return false;
+
+		$result = 0;
+
+		for($i = 0, $size = strlen($a); $i < $size; $i++)
+			$result |= ord($a[$i]) ^ ord($b[$i]);
+
+		return $result == 0;
 	}
 }

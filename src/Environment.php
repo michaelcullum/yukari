@@ -5,7 +5,6 @@
  *
  *  Yukari
  *-------------------------------------------------------------------
- * @version     3.0.0 DEV
  * @category    Yukari
  * @package     Yukari
  * @author      Damian Bushong
@@ -218,9 +217,6 @@ class Environment
 			// Create our timezone object and store it for now, along with storing our starting DateTime object.
 			$timezone = Kernel::set('core.timezone', new \DateTimeZone(Kernel::getConfig('core.timezonestring')));
 			Kernel::set('core.starttime', new \DateTime('@' . \Yukari\START_TIME, $timezone));
-
-			// Load the password hashing library
-			$hash = Kernel::set('lib.hash', new \Yukari\Lib\Hash());
 
 			// Load the socket interface
 			$socket = Kernel::set('core.socket', new \Yukari\Connection\Socket());
