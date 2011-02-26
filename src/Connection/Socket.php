@@ -121,12 +121,12 @@ class Socket
 		// Parse the hostmask.
 		if(strpos($prefix, '@') === false)
 		{
-			$hostmask = new \Yukari\Lib\Hostmask('server', Kernel::getConfig('irc.url'), $prefix);
+			$hostmask = \Yukari\Connection\Hostmask::newInstance()->setNick('server')->setUsername(Kernel::getConfig('irc.url'))->setHost($prefix);
 		}
 		else
 		{
 			// Parse the command and arguments
-			$hostmask = \Yukari\Lib\Hostmask::load($prefix);
+			$hostmask = \Yukari\Connection\Hostmask::load($prefix);
 		}
 
 		// Parse the event arguments depending on the event type
