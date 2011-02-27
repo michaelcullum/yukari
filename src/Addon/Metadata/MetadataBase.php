@@ -61,6 +61,35 @@ abstract class MetadataBase implements MetadataInterface
 	final public function __construct() { }
 
 	/**
+	 * Loads an addon dependency for the current addon, complete with error handling
+	 * @param string $slot - The slot to check for the dependency in.
+	 * @param string $name - The name of the addon dependency to load if the slot isn't occupied
+	 * @return boolean - Returns true if the dependency is loaded.
+	 *
+	 * @throws \RuntimeException
+	 */
+	final public function loadDependency($slot, $name)
+	{
+		$dispatcher = Kernel::getDispatcher();
+		$addon_loader = Kernel::get('core.addonloader');
+		if(!Kernel::get($slot))
+		{
+			try
+			{
+				$addon_loader->loadAddon($name);
+				$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.system')
+					->setDataPoint('message', sprintf('Loaded addon "%s"', $name)));
+				return true;
+			}
+			catch(\RuntimeException $e)
+			{
+				throw new \RuntimeException(sprintf('Failed to load dependency "%1$s", error message "%2$s"', $name, $e->getMessage());
+			}
+		}
+		return true;
+	}
+
+	/**
 	 * Get the version stamp of the addon.
 	 * @return string - The version stamp of the addon.
 	 */
