@@ -20,6 +20,6 @@
  */
 
 // Gotta love one-liners.
-require 'phar://' . YUKARI_PHAR . '/Bootstrap.php';
+require 'phar://' . YUKARI_PHAR . '/Yukari/Bootstrap.php';
 
 __HALT_COMPILER(); ?>
