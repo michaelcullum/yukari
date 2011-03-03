@@ -57,7 +57,7 @@ class Loader implements \Iterator
 		$addon_uc = ucfirst($addon);
 		// Check to see if there's a phar we are dealing with here before moving on to try to load the standard class files.
 		$phar_path = "lib/addons/{$addon}.phar";
-		$metadata_path = "/Addon/Metadata/{$addon_uc}.php";
+		$metadata_path = "/Yukari/Addon/Metadata/{$addon_uc}.php";
 		if(file_exists(YUKARI . "/{$phar_path}"))
 		{
 			$using_phar = true;
