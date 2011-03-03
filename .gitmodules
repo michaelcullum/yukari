@@ -1,4 +1,3 @@
-
-[submodule "src/vendor/Symfony/Yaml"]
-	path = src/vendor/Symfony/Yaml
+[submodule "src/Symfony/Yaml"]
+	path = src/Symfony/Yaml
 	url = https://github.com/symfony/Yaml.git
