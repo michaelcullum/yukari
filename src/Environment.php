@@ -185,7 +185,7 @@ class Environment
 				throw new \RuntimeException('Configuration file does not exist, or is not readable/writeable');
 
 			// Load the configs
-			Kernel::importConfig(\sfYaml::load(YUKARI . "/data/config/{$config}"));
+			Kernel::importConfig(\Symfony\Component\Yaml\Yaml::load(YUKARI . "/data/config/{$config}"));
 
 			// check for missing required configs
 			$required_configs = array(
