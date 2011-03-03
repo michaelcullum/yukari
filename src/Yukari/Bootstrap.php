@@ -38,10 +38,10 @@ define('Yukari\\START_TIME', time());
 define('Yukari\\START_MICROTIME', microtime(true));
 
 // Absolute essentials first
-require \Yukari\ROOT_PATH . '/Autoloader.php';
-require \Yukari\ROOT_PATH . '/Kernel.php';
-require \Yukari\ROOT_PATH . '/Functions.php';
-require \Yukari\ROOT_PATH . '/Environment.php';
+require \Yukari\ROOT_PATH . '/Yukari/Autoloader.php';
+require \Yukari\ROOT_PATH . '/Yukari/Kernel.php';
+require \Yukari\ROOT_PATH . '/Yukari/Functions.php';
+require \Yukari\ROOT_PATH . '/Yukari/Environment.php';
 
 // Set our error and exception handlers
 @set_error_handler('Yukari\\errorHandler');
