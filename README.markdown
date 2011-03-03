@@ -13,7 +13,7 @@ Yukari is a flexible IRC bot built in PHP 5.3 Object Oriented Programming.
 
 ## Dependencies
 
-* sfYaml (packaged)
+* Symfony\Component\Yaml (packaged)
 
 ## Extras
 
@@ -54,7 +54,7 @@ Additionally, you can build your phars on-commit using the provided compile-on-c
 
 ### Packaging a build
 
-Make your changes to the files in the **src/** directory, then make changes to addons in the **addons/** directory.  When ready, use the provided packaging script to compile the next build.
+Make your changes to the files in the **src/Yukari/** directory, then make changes to addons in the **addons/** directory.  When ready, use the provided packaging script to compile the next build.
     $ ./build/package.sh
 
 Please note that this script will, by default, attempt to sign any phars it builds.  You will need to modify the script itself to prevent this if you don't want the phars signed.
