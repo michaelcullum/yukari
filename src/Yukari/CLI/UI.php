@@ -217,7 +217,7 @@ class UI
 				break;
 
 				case 'irc.output.ctcp':
-					if(!$response->dataPointExists('args') || $response->getDataPoint('args') === NULL)
+					if($response->dataPointExists('args') && $response->getDataPoint('args') !== NULL)
 					{
 						$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
 							->setDataPoint('message', sprintf('-> [%1$s] CTCP %2$s - %3$s', $response->getDataPoint('target'), $response->getDataPoint('command'), $response->getDataPoint('args'))));
@@ -230,7 +230,7 @@ class UI
 				break;
 
 				case 'irc.output.ctcp_reply':
-					if(!$response->dataPointExists('args') || $response->getDataPoint('args') === NULL)
+					if($response->dataPointExists('args') && $response->getDataPoint('args') !== NULL)
 					{
 						$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
 							->setDataPoint('message', sprintf('-> [%1$s] CTCP-REPLY %2$s - %3$s', $response->getDataPoint('target'), $response->getDataPoint('command'), $response->getDataPoint('args'))));
