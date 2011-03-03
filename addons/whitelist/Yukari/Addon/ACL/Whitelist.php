@@ -62,7 +62,7 @@ class Whitelist
 	 */
 	public function loadWhitelistFile()
 	{
-		$this->whitelist = \sfYaml::load(YUKARI . '/data/config/addons/' . Kernel::getConfig('acl.whitelist.file'));
+		$this->whitelist = \Symfony\Component\Yaml\Yaml::load(YUKARI . '/data/config/addons/' . Kernel::getConfig('acl.whitelist.file'));
 		$this->whitelist_regexp = \Yukari\hostmasksToRegex((array) $this->whitelist['whitelist_data']);
 
 		return $this;

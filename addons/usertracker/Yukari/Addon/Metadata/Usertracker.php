@@ -68,42 +68,11 @@ class Usertracker extends \Yukari\Addon\Metadata\MetadataBase
 	/**
 	 * Hooking method for addon metadata objects for executing own code on pre-load dependency check.
 	 * @return boolean - Does the addon pass the dependency check?
-	 *
-	 * @throws \RuntimeException
 	 */
 	public function checkDependencies()
 	{
-		$dispatcher = Kernel::getDispatcher();
-		$addon_loader = Kernel::get('core.addonloader');
-
-		if(!Kernel::get('addon.commander'))
-		{
-			try
-			{
-				$addon_loader->loadAddon('commander');
-				$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.system')
-					->setDataPoint('message', sprintf('Loaded addon "%s"', 'commander')));
-			}
-			catch(\RuntimeException $e)
-			{
-				throw new \RuntimeException(sprintf('Failed to load dependency "addon.commander", error message "%1$s"', $e->getMessage());
-			}
-		}
-
-		if(!Kernel::get('addon.channeltracker'))
-		{
-			try
-			{
-				$addon_loader->loadAddon('channeltracker');
-				$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.system')
-					->setDataPoint('message', sprintf('Loaded addon "%s"', 'channeltracker')));
-			}
-			catch(\RuntimeException $e)
-			{
-				throw new \RuntimeException(sprintf('Failed to load dependency "addon.channeltracker", error message "%1$s"', $e->getMessage());
-			}
-		}
-
+		$this->loadDependency('addon.commander', 'commander');
+		$this->loadDependency('addon.channeltracker', 'channeltracker');
 		return true;
 	}
 }
