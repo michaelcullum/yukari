@@ -39,9 +39,9 @@ if(version_compare(YUKARI_MIN_PHP, PHP_VERSION, '>'))
 // If we are running Yukari using the Phar archive, then
 if(Yukari\RUN_PHAR === true)
 {
-	require 'phar://' . YUKARI_PHAR . '/Bootstrap.php';
+	require 'phar://' . YUKARI_PHAR . '/Yukari/Bootstrap.php';
 }
 else
 {
-	require YUKARI . '/src/Bootstrap.php';
+	require YUKARI . '/src/Yukari/Bootstrap.php';
 }
