@@ -83,7 +83,7 @@ abstract class MetadataBase implements MetadataInterface
 			}
 			catch(\RuntimeException $e)
 			{
-				throw new \RuntimeException(sprintf('Failed to load dependency "%1$s", error message "%2$s"', $name, $e->getMessage());
+				throw new \RuntimeException(sprintf('Failed to load dependency "%1$s", error message "%2$s"', $name, $e->getMessage()));
 			}
 		}
 		return true;
