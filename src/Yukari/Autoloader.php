@@ -35,7 +35,7 @@ namespace Yukari;
 class Autoloader
 {
 	/**
-	 * @var array - The paths that Yukari will attempt to load class files from.
+	 * @var array - The paths that we will attempt to load class files from.
 	 */
 	private $paths = array();
 
@@ -91,27 +91,6 @@ class Autoloader
 				return $path . $file;
 		}
 		return false;
-	}
-
-	/**
-	 * Scan a directory for files that we would want to autoload
-	 * @param string $path - The path to scan
-	 * @param string $strip - Anything extra to strip out of the path when generating the namespace
-	 * @param string $prefix - A namespace prefix to use, if we need one
-	 * @return array - An array of class names to autoload.
-	 */
-	public function getNamespaces($path, $strip = '', $prefix = '')
-	{
-		$files = scandir($path);
-		foreach($files as $file)
-		{
-			if($file[0] == '.' || substr(strrchr($file, '.'), 1) != 'php')
-				continue;
-
-			$prefix = (!$prefix) ? 'Yukari\\' . str_replace('/', '\\', substr($path, strlen(YUKARI . $strip) + 1)) : $prefix;
-			$return[] = $prefix . (substr($prefix, -1, 1) != '\\' ? '\\' : '') . ucfirst(substr($file, 0, strrpos($file, '.')));
-		}
-		return $return;
 	}
 
 	/**
