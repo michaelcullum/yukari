@@ -150,7 +150,6 @@ class Autoloader
 	public function cleanName($class)
 	{
 		$class = ($class[0] == '\\') ? substr($class, 1) : $class;
-		// $class = (substr($class, 0, 6) == 'Yukari') ? substr($class, 6) : $class;
 		return str_replace('\\', '/', $class);
 	}
 

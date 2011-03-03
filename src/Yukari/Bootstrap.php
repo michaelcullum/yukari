@@ -52,11 +52,13 @@ if(!ini_get('date.timezone'))
 	@date_default_timezone_set(@date_default_timezone_get());
 
 // Include the Symfony Yaml component
+/*
 require \Yukari\ROOT_PATH . '/vendor/Symfony/Yaml/Yaml.php';
 require \Yukari\ROOT_PATH . '/vendor/Symfony/Yaml/Exception.php';
 require \Yukari\ROOT_PATH . '/vendor/Symfony/Yaml/Parser.php';
 require \Yukari\ROOT_PATH . '/vendor/Symfony/Yaml/ParserException.php';
 require \Yukari\ROOT_PATH . '/vendor/Symfony/Yaml/Inline.php';
+*/
 
 // Run indefinitely...
 set_time_limit(0);
