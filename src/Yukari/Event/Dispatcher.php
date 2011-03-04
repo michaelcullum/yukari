@@ -50,7 +50,9 @@ class Dispatcher
 	public function register($event_type, $listener, array $listener_params = array())
 	{
 		if(!isset($this->listeners[$event_type]) || !is_array($this->listeners[$event_type]))
+		{
 			$this->listeners[$event_type] = array();
+		}
 
 		array_push($this->listeners[$event_type], array(
 			'listener'		=> $listener,
@@ -70,7 +72,9 @@ class Dispatcher
 	public function preRegister($event_type, $listener, array $listener_params = array())
 	{
 		if(!isset($this->listeners[$event_type]) || !is_array($this->listeners[$event_type]))
+		{
 			$this->listeners[$event_type] = array();
+		}
 
 		array_unshift($this->listeners[$event_type], array(
 			'listener'		=> $listener,
@@ -98,12 +102,15 @@ class Dispatcher
 	public function trigger(\Yukari\Event\Instance $event)
 	{
 		if(!$this->hasListeners($event->getName()))
+		{
 			return;
+		}
 
 		$results = array();
 		foreach($this->listeners[$event->getName()] as $listener)
 		{
 			$result = call_user_func_array($listener['listener'], array_merge(array($event), $listener['params']));
+
 			if($result === false)
 			{
 				break;
@@ -123,7 +130,7 @@ class Dispatcher
 
 		return $results;
 	}
-	
+
 	/**
 	 * Dispatch an event to registered listeners, purified so that boolean values can be returned (and only null values are ignored)
 	 * @param \Yukari\Event\Instance $event - The event to dispatch.
@@ -132,14 +139,18 @@ class Dispatcher
 	public function cleanTrigger(\Yukari\Event\Instance $event)
 	{
 		if(!$this->hasListeners($event->getName()))
+		{
 			return;
+		}
 
 		$results = array();
 		foreach($this->listeners[$event->getName()] as $listener)
 		{
 			$result = call_user_func_array($listener['listener'], array_merge(array($event), $listener['params']));
 			if($result !== NULL)
+			{
 				$results[] = $result;
+			}
 		}
 
 		return $results;

@@ -98,13 +98,17 @@ class SQLite extends \PDO
 	{
 		$argc = func_num_args();
 		if($argc < 1)
+		{
 			throw new \InvalidArgumentException('Required query index for \\Yukari\\Addon\\Database\\SQLite::query() not provided');
+		}
 
 		$args = func_get_args();
 		list($query_index, $args) = array_pad($args, 2, array());
 
 		if(!isset($this->queries[$query_index]))
+		{
 			throw new \InvalidArgumentException('The query associated with the query index specified does not exist');
+		}
 
 		$return = call_user_func_array($this->queries[$query_index], array_merge(array($this->db), (array) $args));
 		return $return;

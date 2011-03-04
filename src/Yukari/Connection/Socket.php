@@ -56,7 +56,9 @@ class Socket
 		// Check to see if the transport method we are using is allowed
 		$transport = (Kernel::getConfig('socket.use_ssl') == true) ? 'ssl' : 'tcp';
 		if(!in_array($transport, stream_get_transports()))
+		{
 			throw new \RuntimeException(sprintf('Unsupported transport "%s" specified', $transport));
+		}
 
 		// Establish and configure the socket connection
 		$remote = sprintf('%1$s://%2$s:%3$s', $transport, Kernel::getConfig('irc.url'), Kernel::getConfig('irc.port'));
@@ -66,11 +68,15 @@ class Socket
 		do
 		{
 			if(++$attempts > 5)
+			{
 				throw new \RuntimeException(sprintf('Socket error encountered: [%1$s] %2$s', $errno, $errstr));
+			}
 
 			$this->socket = @stream_socket_client($remote, $errno, $errstr);
 			if(!$this->socket)
+			{
 				sleep(5);
+			}
 		}
 		while(!$this->socket);
 
@@ -78,7 +84,9 @@ class Socket
 
 		// Send the server password if one is specified
 		if(Kernel::getConfig('irc.password'))
+		{
 			$this->send(sprintf('PASS %s', Kernel::getConfig('irc.password')));
+		}
 
 		// Send user information
 		$this->send(sprintf('USER %1$s %2$s %3$s :%4$s', Kernel::getConfig('irc.username'), Kernel::getConfig('irc.url'), Kernel::getConfig('irc.url'), Kernel::getConfig('irc.realname')));
@@ -102,7 +110,9 @@ class Socket
 
 		// If no new event was found we will just return NULL
 		if (empty($buffer))
+		{
 			return NULL;
+		}
 
 		// Raw buffer output
 		$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.raw')
@@ -160,7 +170,9 @@ class Socket
 						case 'finger':
 						case 'ping':
 							if($reply)
+							{
 								$cmd = 'ctcp_reply';
+							}
 							$args = array_merge(array($source, $ctcp_cmd), (array) $args);
 						break;
 						case 'action':
@@ -207,10 +219,14 @@ class Socket
 			$map = $request_map->getMap($cmd);
 			$args = array_pad((array) $args, sizeof($map), NULL);
 			foreach($map as $key => $map_arg)
+			{
 				$event->setDataPoint($map_arg, $args[$key]);
+			}
 
 			if(isset($hostmask))
+			{
 				$event->setDataPoint('hostmask', $hostmask);
+			}
 		}
 		$event->setDataPoint('buffer', $buffer);
 
@@ -253,20 +269,26 @@ class Socket
 
 		// Require an open socket connection to continue
 		if(empty($this->socket))
+		{
 			throw new \LogicException('Cannot send to server, no connection present');
+		}
 
 		// Transmit the command over the socket connection
 		$attempts = 0;
 		do
 		{
 			if(++$attempts > 5)
+			{
 				throw new \RuntimeException('fwrite() call failed, socket connection lost');
+			}
 
 			$success = @fwrite($this->socket, "{$data}\r\n");
 
 			// slight delay to keep from flooding the server with send requests...we should be polite after all.  :)
 			if(!$success)
+			{
 				usleep(500);
+			}
 		}
 		while(!$success);
 
@@ -285,7 +307,9 @@ class Socket
 	public function close()
 	{
 		if($this->socket === NULL)
+		{
 			return;
+		}
 
 		$dispatcher = Kernel::getDispatcher();
 		$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.system')

@@ -51,7 +51,9 @@ class Loader implements \Iterator
 	{
 		// Check to see if the addon has already been loaded.
 		if(isset($this->metadata[hash('md5', $addon)]))
+		{
 			return;
+		}
 
 		$using_phar = false;
 		$addon_uc = ucfirst($addon);
@@ -61,8 +63,12 @@ class Loader implements \Iterator
 		if(file_exists(YUKARI . "/{$phar_path}"))
 		{
 			$using_phar = true;
+
 			if(!file_exists("phar://{$phar_path}/{$metadata_path}"))
+			{
 				throw new \RuntimeException('Could not locate addon metadata file');
+			}
+
 			require "phar://{$phar_path}/{$metadata_path}";
 		}
 		else
@@ -70,30 +76,35 @@ class Loader implements \Iterator
 			$dispatcher = Kernel::getDispatcher();
 			$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.debug')
 				->setDataPoint('message', sprintf('Phar archive not present for addon "%1$s", looked in "%2$s"', $addon, YUKARI . "/{$phar_path}")));
+
 			if(!file_exists(YUKARI . "/addons/{$addon}{$metadata_path}"))
+			{
 				throw new \RuntimeException('Could not locate addon metadata file');
+			}
 
 			require YUKARI . "/addons/{$addon}{$metadata_path}";
 		}
 
 		$metadata_class = "\\Yukari\\Addon\\Metadata\\{$addon_uc}";
 		if(!class_exists($metadata_class))
+		{
 			throw new \RuntimeException('Addon metadata class not defined');
+		}
 
 		// We want to instantiate the addon's metadata object, and make sure it's the right type of object.
-		/* @var $metadata \Yukari\Addon\Metadata\MetadataBase */
 		$metadata = new $metadata_class;
 		if(!($metadata instanceof \Yukari\Addon\Metadata\MetadataBase))
+		{
 			throw new \LogicException('Addon metadata class does not extend class MetadataBase');
-
-		if(!($metadata instanceof \Yukari\Addon\Metadata\MetadataInterface))
-			throw new \LogicException('Addon metadata class does not implement interface MetadataInterface');
+		}
 
 		// Let our addons check for their dependencies here.
 		try
 		{
 			if(!$metadata->checkDependencies())
+			{
 				throw new \RuntimeException('Addon metadata object declares that its required dependencies have not been met');
+			}
 		}
 		catch(\Exception $e)
 		{

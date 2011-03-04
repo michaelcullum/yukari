@@ -33,7 +33,7 @@ use Yukari\Kernel;
  * @license     MIT License
  * @link        https://github.com/damianb/yukari
  */
-abstract class MetadataBase implements MetadataInterface
+abstract class MetadataBase
 {
 	/**
 	 * @var string - The addon's version.

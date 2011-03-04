@@ -53,7 +53,9 @@ class Whitelist
 	{
 		// Set a default value for this config if it's not present.
 		if(!Kernel::getConfig('acl.whitelist.file'))
+		{
 			Kernel::setConfig('acl.whitelist.file', 'acl_whitelist.yml');
+		}
 	}
 
 	/**

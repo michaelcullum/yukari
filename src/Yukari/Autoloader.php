@@ -49,8 +49,11 @@ class Autoloader
 		$paths = array_merge($paths, array(
 			\Yukari\ROOT_PATH,
 		));
+
 		foreach($paths as $path)
+		{
 			$this->setPath($path);
+		}
 	}
 
 	/**
@@ -69,7 +72,9 @@ class Autoloader
 		{
 			require $filepath;
 			if(!class_exists($class) && !interface_exists($class))
+			{
 				throw new \RuntimeException(sprintf('Invalid class contained within file %s', $filepath));
+			}
 			return;
 		}
 		else
@@ -88,7 +93,9 @@ class Autoloader
 		foreach($this->paths as $path)
 		{
 			if(file_exists($path . $file))
+			{
 				return $path . $file;
+			}
 		}
 		return false;
 	}
@@ -100,7 +107,7 @@ class Autoloader
 	 */
 	public function setPath($include_path)
 	{
-		// We use array_unshift here so that newer autoloading paths take top priority.
+		// We use array_unshift here so that newer autoloading paths take priority.
 		array_unshift($this->paths, rtrim($include_path, '/') . '/');
 	}
 
@@ -116,7 +123,9 @@ class Autoloader
 		foreach($this->paths as $path)
 		{
 			if(file_exists("{$path}{$name}.php"))
+			{
 				return true;
+			}
 		}
 		return false;
 	}
@@ -128,8 +137,7 @@ class Autoloader
 	 */
 	public function cleanName($class)
 	{
-		$class = ($class[0] == '\\') ? substr($class, 1) : $class;
-		return str_replace('\\', '/', $class);
+		return str_replace('\\', '/', ltrim($class, '\\'));
 	}
 
 	/**

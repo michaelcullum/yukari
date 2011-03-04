@@ -93,7 +93,9 @@ class Basic
 					->setDataPoint('channel', $join_params[0]);
 
 				if(isset($join_params[1]))
+				{
 					$join->setDataPoint('key', $join_params[1]);
+				}
 
 				return array($join);
 			}
@@ -130,7 +132,9 @@ class Basic
 					->setDataPoint('channel', $part_params[0]);
 
 				if(isset($part_params[1]))
+				{
 					$part->setDataPoint('reason', $part_params[1]);
+				}
 
 				return array($part);
 			}
@@ -224,7 +228,9 @@ class Basic
 			$addon_loader = Kernel::get('core.addonloader');
 
 			foreach($addon_loader as $metadata)
+			{
 				$addon_list[] = sprintf('%1$s [%2$s]', $metadata->getName(), $metadata->getVersion());
+			}
 
 			// Had to get hackish with word wrapping, can't rely on wordwrap() here.
 			$response = array(0 => array());
@@ -233,7 +239,9 @@ class Basic
 			{
 				$len = strlen($addon);
 				if(strlen(implode(', ', $response[$i])) + $len + 2 > 300)
+				{
 					$i++;
+				}
 				$response[$i][] = $addon;
 			}
 
@@ -292,7 +300,9 @@ class Basic
 				$addon = $event->getDataPoint('text');
 				// Alphanumeric addon names only, we don't want any sneaky stuff going on.
 				if(!preg_match('#^([0-9a-z]+)$#i', $event->getDataPoint('text')))
+				{
 					throw new \RuntimeException('Unacceptable addon name provided');
+				}
 
 				$addon_loader = Kernel::get('core.addonloader');
 				$addon_loader->loadAddon($addon);
@@ -425,6 +435,7 @@ class Basic
 		$dispatcher = Kernel::getDispatcher();
 		$auth = $dispatcher->cleanTrigger(\Yukari\Event\Instance::newEvent('acl.check_allowed')
 			->setDataPoint('hostmask', $hostmask));
+
 		if(isset($auth[0]))
 		{
 			return $auth[0];

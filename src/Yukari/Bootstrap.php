@@ -29,7 +29,9 @@ define('Yukari\\ROOT_PATH', (\Yukari\RUN_PHAR === true) ? 'phar://' . YUKARI_PHA
  *  - PHP_SAPI
  */
 if(strtolower(PHP_SAPI) !== 'cli')
+{
 	throw new \RuntimeException('Yukari must be run in the CLI SAPI');
+}
 
 // Define a few constants on startup here.
 define('Yukari\\BASE_MEMORY', memory_get_usage());
@@ -49,7 +51,9 @@ require \Yukari\ROOT_PATH . '/Yukari/Environment.php';
 
 // Check to see if date.timezone is empty in the PHP.ini; if so, set the timezone with some Hax to prevent strict errors.
 if(!ini_get('date.timezone'))
+{
 	@date_default_timezone_set(@date_default_timezone_get());
+}
 
 // Run indefinitely...
 set_time_limit(0);

@@ -62,7 +62,9 @@ class Sqlite extends \Yukari\Addon\Metadata\MetadataBase
 	public function initialize()
 	{
 		if(!Kernel::getConfig('db.sqlite.file'))
+		{
 			Kernel::setConfig('db.sqlite.file', 'yukari');
+		}
 
 		$db = Kernel::set('addon.database', new \Yukari\Addon\Database\SQLite());
 		$db->connect('sqlite:' . YUKARI . '/data/database/' . Kernel::getConfig('db.sqlite.file') . '.sqlite');
@@ -76,11 +78,15 @@ class Sqlite extends \Yukari\Addon\Metadata\MetadataBase
 	 */
 	public function checkDependencies()
 	{
-		if(!extension_loaded('PDO') || !extension_loaded('pdo_sqlite'))
+		if(!extension_loaded('PDO'))
+		{
 			throw new \RuntimeException('PHP extension "PDO" not loaded');
+		}
 
 		if(!extension_loaded('pdo_sqlite'))
+		{
 			throw new \RuntimeException('PHP extension "pdo_sqlite" not loaded');
+		}
 
 		return true;
 	}

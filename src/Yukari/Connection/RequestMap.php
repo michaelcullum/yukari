@@ -271,7 +271,9 @@ class RequestMap
 		// build array of params
 		$params = array();
 		foreach($this->getMap($event_type) as $arg)
+		{
 			$params[] = ($event->dataPointExists($arg)) ? $event->getDataPoint($arg) : NULL;
+		}
 
 		// execute and return the raw IRC string to send.
 		return call_user_func_array($this->patterns[$event_type], $params);

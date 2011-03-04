@@ -32,7 +32,7 @@ namespace Yukari\Connection;
  * @license     MIT License
  * @link        https://github.com/damianb/yukari
  */
-class Hostmask implements \ArrayAccess
+class Hostmask
 {
 	/**
 	 * @var string - The host of the hostmask
@@ -122,14 +122,18 @@ class Hostmask implements \ArrayAccess
 	 * Parses a string containing the entire hostmask into a new instance of this class.
 	 * @param string $hostmask - Entire hostmask including the nick, username, and host components
 	 * @return \Yukari\Connection\Hostmask - New object instance populated with the data parsed from the provided hostmask string
+	 *
+	 * @throws \LogicException
 	 */
 	public static function load($hostmask)
 	{
 		if(!preg_match('/^([^!@]+)!(?:[ni]=)?([^@]+)@([^ ]+)/', $hostmask, $match))
+		{
 			throw new \LogicException(sprintf('Invalid hostmask "%s" specified', $hostmask));
+		}
 
 		list(, $nick, $username, $host) = $match;
-		$self = new static();
+		$self = static::newInstance();
 		$self->setHost($host)->setUsername($username)->setNick($nick);
 		return $self;
 	}
@@ -151,63 +155,5 @@ class Hostmask implements \ArrayAccess
 	public function checkMatch($regex)
 	{
 		return (preg_match('#^' . str_replace('*', '.*', $regex) . '$#i', (string) $this) > 0) ? true : false;
-	}
-
-	/**
-	 * ArrayAccess stuff
-	 */
-
-	/**
-	 * Check if an "array" offset exists in this object.
-	 * @param mixed $offset - The offset to check.
-	 * @return boolean - Does anything exist for this offset?
-	 */
-	public function offsetExists($offset)
-	{
-		$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.debug')
-			->setDataPoint('message', sprintf('Deprecation notice: Using ArrayAccess to access offset "%1$s" in \\Yukari\\Connection\\Hostmask', $offset)));
-		return property_exists($this, $offset);
-	}
-
-	/**
-	 * Get an "array" offset for this object.
-	 * @param mixed $offset - The offset to grab from.
-	 * @return mixed - The value of the offset, or null if the offset does not exist.
-	 */
-	public function offsetGet($offset)
-	{
-		$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.debug')
-			->setDataPoint('message', sprintf('Deprecation notice: Using ArrayAccess to access offset "%1$s" in \\Yukari\\Connection\\Hostmask', $offset)));
-		return property_exists($this, $offset) ? $this->$offset : NULL;
-	}
-
-	/**
-	 * Set an "array" offset to a certain value, if the offset exists
-	 * @param mixed $offset - The offset to set.
-	 * @param mixed $value - The value to set to the offset.
-	 * @return void
-	 *
-	 * @throws \RuntimeException
-	 */
-	public function offsetSet($offset, $value)
-	{
-		$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.debug')
-			->setDataPoint('message', sprintf('Deprecation notice: Using ArrayAccess to access offset "%1$s" in \\Yukari\\Connection\\Hostmask', $offset)));
-		if(!property_exists($this, $offset))
-			throw new \RuntimeException('Attempt to access an invalid property in a hostmask object failed');
-
-		$this->$offset = $value;
-	}
-
-	/**
-	 * Unset an "array" offset.
-	 * @param mixed $offset - The offset to clear out.
-	 * @return void
-	 */
-	public function offsetUnset($offset)
-	{
-		$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.debug')
-			->setDataPoint('message', sprintf('Deprecation notice: Using ArrayAccess to access offset "%1$s" in \\Yukari\\Connection\\Hostmask', $offset)));
-		$this->$offset = NULL;
 	}
 }

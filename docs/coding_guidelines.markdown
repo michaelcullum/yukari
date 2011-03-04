@@ -105,7 +105,7 @@ Examples:
 	}
 
 	/* example 2 - directory/file naming */
-	/Includes/Core/Language.php
+	/src/Yukari/Event/Dispatcher.php
 
 	/* example 3 - variable naming */
 	$some_variable = 3;
@@ -131,25 +131,35 @@ Examples:
 ### "IF" conditionals
 
 * Do not include a space between "if" and the opening parenthesis.
-* When no "else" or "elseif" extension is present and when there is only one line being executed, does not have to use braces.
+* If conditionals must always use braces.
 
 Example:
+	// this is good
+	if($some_var)
+	{
+		$this->doSomething();
+	}
+	// this is bad
 	if($some_var)
 		$this->doSomething();
 
 ### Loops
 
-* For and foreach loops, as long as they only execute one line of code in the loop, are not required to use braces
+* For and foreach loops are required to use braces.
 * While and do-while loops are required to use braces.
 
 Examples:
 	/* example 1 - single-line for loops */
 	for($i = 1;  $i <= 10; $i++)
+	{
 		echo $i;
+	}
 
 	/* example 2 - single line foreach loops */
 	foreach($array as $key => $value)
+	{
 		$another_array[$key] = $value;
+	}
 
 	/* example 3 - while loops */
 	while(true)
@@ -171,7 +181,7 @@ Examples:
 
 Examples:
 	/* example 1 - file header documentation */
-	// @note file's location is at Includes/Core/Core.php
+	// @note file's location is at /src/Yukari/Environment.php
 	// @note take notice! @author should be your name, @copyright changed to your own name, @link should be changed to a link to your own project
 	// @note the @package comment should change to the correct package this is in as well
 	<?php
@@ -182,7 +192,7 @@ Examples:
 	 *  Yukari
 	 *-------------------------------------------------------------------
 	 * @category    Yukari
-	 * @package     core
+	 * @package     Yukari
 	 * @author      Damian Bushong
 	 * @copyright   (c) 2009 - 2011 -- Damian Bushong
 	 * @license     MIT License
@@ -198,17 +208,17 @@ Examples:
 	/* example 2 - class documentation */
 	// @note this should say what the class is, describe it, and also contain the correct @author, @package, and @link comments
 	/**
-	 * Yukari - Core class,
-	 *      Yukari in a nutshell.  Faster, smarter, better, and with a sexier voice.
+	 * Yukari - Environment class,
+	 *      Manages the Yukari environment.
 	 *
 	 *
 	 * @category    Yukari
-	 * @package     core
+	 * @package     Yukari
 	 * @author      Damian Bushong
 	 * @license     MIT License
 	 * @link        https://github.com/damianb/yukari
 	 */
-	class Core extends Base
+	class Environment
 	{
 
 	/* example 3, property documentation
@@ -233,6 +243,7 @@ Examples:
 	 * Yukari configuration file settings load method
 	 * @param string $file - The configuration file to load
 	 * @return void
+	 *
 	 * @throws \RuntimeException
 	 */
 	private function load($file)

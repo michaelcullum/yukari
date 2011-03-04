@@ -32,7 +32,7 @@ namespace Yukari\Event;
  * @license     MIT License
  * @link        https://github.com/damianb/yukari
  */
-class Instance implements \ArrayAccess
+class Instance
 {
 	/**
 	 * @var string - The event name.
@@ -100,7 +100,9 @@ class Instance implements \ArrayAccess
 	public function setSource($source)
 	{
 		if($source !== NULL && !is_object($source))
+		{
 			throw new \InvalidArgumentException('Source provided to event instance must be an object or NULL');
+		}
 
 		$this->source = $source;
 		return $this;
@@ -140,11 +142,15 @@ class Instance implements \ArrayAccess
 	 * Get a single point of data attached to this event.
 	 * @param string - The key for the data point to grab.
 	 * @return mixed - The point of data we're looking for
+	 *
+	 * @throws \InvalidArgumentException
 	 */
 	public function getDataPoint($point)
 	{
 		if(!$this->dataPointExists($point))
+		{
 			throw new \InvalidArgumentException('Invalid event parameter specified');
+		}
 		return $this->data[$point];
 	}
 
@@ -158,60 +164,5 @@ class Instance implements \ArrayAccess
 	{
 		$this->data[$point] = $value;
 		return $this;
-	}
-
-	/**
-	 * ArrayAccess methods
-	 */
-
-	/**
-	 * Check if an "array" offset exists in this object.
-	 * @param mixed $offset - The offset to check.
-	 * @return boolean - Does anything exist for this offset?
-	 */
-	public function offsetExists($offset)
-	{
-		$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.debug')
-			->setDataPoint('message', sprintf('Deprecation notice: Using ArrayAccess to access offset "%1$s" in \\Yukari\\Event\\Instance', $offset)));
-		return array_key_exists($offset, $this->data);
-	}
-
-	/**
-	 * Get an "array" offset for this object.
-	 * @param mixed $offset - The offset to grab from.
-	 * @return mixed - The value of the offset, or null if the offset does not exist.
-	 */
-	public function offsetGet($offset)
-	{
-		$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.debug')
-			->setDataPoint('message', sprintf('Deprecation notice: Using ArrayAccess to access offset "%1$s" in \\Yukari\\Event\\Instance', $offset)));
-		if(!$this->offsetExists($offset))
-			throw new \InvalidArgumentException('Invalid event parameter specified');
-		return $this->data[$offset];
-	}
-
-	/**
-	 * Set an "array" offset to a certain value, if the offset exists
-	 * @param mixed $offset - The offset to set.
-	 * @param mixed $value - The value to set to the offset.
-	 * @return void
-	 */
-	public function offsetSet($offset, $value)
-	{
-		$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.debug')
-			->setDataPoint('message', sprintf('Deprecation notice: Using ArrayAccess to access offset "%1$s" in \\Yukari\\Event\\Instance', $offset)));
-		$this->data[$offset] = $value;
-	}
-
-	/**
-	 * Unset an "array" offset.
-	 * @param mixed $offset - The offset to clear out.
-	 * @return void
-	 */
-	public function offsetUnset($offset)
-	{
-		$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.debug')
-			->setDataPoint('message', sprintf('Deprecation notice: Using ArrayAccess to access offset "%1$s" in \\Yukari\\Event\\Instance', $offset)));
-		unset($this->data[$offset]);
 	}
 }

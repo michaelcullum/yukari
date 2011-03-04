@@ -64,7 +64,9 @@ class ChannelTracker
 		if($event->getDataPoint('hostmask')->getNick() == Kernel::getConfig('irc.nickname'))
 		{
 			if(!in_array($event->getDataPoint('channel'), $this->channels))
+			{
 				array_push($this->channels, $event->getDataPoint('channel'));
+			}
 		}
 	}
 
@@ -79,7 +81,9 @@ class ChannelTracker
 		{
 			$key = array_search($event->getDataPoint('channel'), $this->channels);
 			if($key !== false)
+			{
 				unset($this->channels[$key]);
+			}
 		}
 	}
 
@@ -94,7 +98,9 @@ class ChannelTracker
 		{
 			$key = array_search($event->getDataPoint('channel'), $this->channels);
 			if($key !== false)
+			{
 				unset($this->channels[$key]);
+			}
 		}
 	}
 

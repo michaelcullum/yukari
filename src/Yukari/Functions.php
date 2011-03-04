@@ -43,7 +43,9 @@ function errorHandler($errno, $msg_text, $errfile, $errline)
 
 	// Do not display notices if we suppress them via @
 	if (error_reporting() == 0)
+	{
 		return;
+	}
 
 	// Strip the current directory from the offending file
 	$errfile = (!empty($errfile)) ? substr(str_replace(array(__DIR__, '\\'), array('', '/'), $errfile), 1) : '';
@@ -79,7 +81,9 @@ function errorHandler($errno, $msg_text, $errfile, $errline)
 
 	// Fatal error? DAI.
 	if($errno === E_USER_ERROR)
+	{
 		exit(1);
+	}
 
 	// If we didn't handle it, we return false so that PHP can try handling it.
 	return ($handled) ? true : false;
@@ -123,7 +127,9 @@ function getErrorContext($file, $line, $context = 3)
 		if (($i + 1) > ($line - $context))
 		{
 			if(($i + 1) > ($line + $context))
+			{
 				break;
+			}
 			$return[] = $str;
 		}
 	}
@@ -145,7 +151,9 @@ function formatFilesize($bytes)
 		if($bytes >= pow(2, ($i * 10)))
 		{
 			for($j = $i; $j >= 1; $j--)
+			{
 				$bytes = $bytes / 1024;
+			}
 			return round($bytes, 2) . ' ' . $types[$t - $i];
 		}
 	}
@@ -208,14 +216,20 @@ function unique_string($length = 32)
 	$rand_string = '';
 
 	if(!$range)
+	{
 		$range = array_merge(range(0, 9), range('a', 'z'));
+	}
 
 	if($length < 1)
+	{
 		return $rand_string;
+	}
 
 	mt_srand((double) microtime() * (9001 + (date('j') * 1000))); // <insert obligatory over-9000 joke here>
 	for($i = 1; $i = $length; $i++)
+	{
 		$rand_string .= $range[mt_rand(0, 35) - 1];
+	}
 
 	return $rand_string;
 }
@@ -231,9 +245,13 @@ function hostmasksToRegex($list)
 {
 	static $hmask_find, $hmask_repl;
 	if(empty($hmask_find))
+	{
 		$hmask_find = array('\\', '^', '$', '.', '[', ']', '|', '(', ')', '?', '+', '{', '}');
+	}
 	if(empty($hmask_repl))
+	{
 		$hmask_repl = array('\\\\', '\\^', '\\$', '\\.', '\\[', '\\]', '\\|', '\\(', '\\)', '\\?', '\\+', '\\{', '\\}');
+	}
 
 	$patterns = array();
 
@@ -283,21 +301,6 @@ function parseHostmask($hostmask, &$nick, &$user, &$host)
 }
 
 /**
- * Based on the function at http://php.net/manual/en/function.array-filter.php#89432 by "Craig", it allows separation of values based on a callback function
- * @param array &$input - The array to process, also this will be filled with array values that were evaluated as boolean FALSE via the compare callback
- * @param callback $compare - Function name that we will use to check each value
- * @return array - The vars that match in the strict comparison
- *
- * @note Kudos to cs278 for the function redesign...like ZOMG so much nicer!
- */
-function array_split(&$input, $compare)
-{
-	$return = array_filter($input, $compare);
-	$input = array_diff($input, $return);
-	return $return;
-}
-
-/**
  * This function is a lie.
  * @return void
  */
@@ -332,5 +335,7 @@ function cake()
 
 	$ui = Kernel::get('core.ui');
 	foreach($cake as $line)
+	{
 		$ui->output($line, 'CAKE');
+	}
 }

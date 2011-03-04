@@ -77,7 +77,9 @@ class Environment
 	public static function newInstance()
 	{
 		if(is_null(self::$instance))
+		{
 			self::$instance = new self();
+		}
 
 		return self::$instance;
 	}
@@ -89,9 +91,7 @@ class Environment
 	 */
 	public function getObject($slot)
 	{
-		if(!isset($this->objects[$slot]))
-			return NULL;
-		return $this->objects[$slot];
+		return ((isset($this->objects[$slot])) ? $this->objects[$slot] : NULL);
 	}
 
 	/**
@@ -105,7 +105,10 @@ class Environment
 	public function setObject($slot, $object)
 	{
 		if(!is_object($object))
+		{
 			throw new \LogicException('Cannot store non-objects in Yukari kernel');
+		}
+
 		$this->objects[$slot] = $object;
 
 		return $this->objects[$slot];
@@ -118,9 +121,7 @@ class Environment
 	 */
 	public function getConfig($slot)
 	{
-		if(!isset($this->config[$slot]))
-			return NULL;
-		return $this->config[$slot];
+		return ((isset($this->config[$slot])) ? $this->config[$slot] : NULL);
 	}
 
 	/**
@@ -147,7 +148,9 @@ class Environment
 			if(isset($this->config[$key]) && is_array($this->config[$key]))
 			{
 				if(!is_array($value))
+				{
 					$value = array($value);
+				}
 				$this->config[$key] = array_merge($this->config[$key], $value);
 			}
 			else
@@ -165,7 +168,9 @@ class Environment
 	public function triggerShutdown(\Yukari\Event\Instance $event)
 	{
 		if($event->getName() === 'system.shutdown')
+		{
 			$this->shutdown = true;
+		}
 	}
 
 	/**
@@ -182,7 +187,9 @@ class Environment
 
 			// Make sure that the config file is usable.
 			if(!file_exists(YUKARI . "/data/config/{$config}") || !is_readable(YUKARI . "/data/config/{$config}"))
+			{
 				throw new \RuntimeException('Configuration file does not exist, or is not readable/writeable');
+			}
 
 			// Load the configs
 			Kernel::importConfig(\Symfony\Component\Yaml\Yaml::load(YUKARI . "/data/config/{$config}"));
@@ -197,7 +204,9 @@ class Environment
 			foreach($required_configs as $required_config_name)
 			{
 				if(!isset($this->config[$required_config_name]))
+				{
 					throw new \RuntimeException(sprintf('Required config entry "%s" not defined', $required_config_name));
+				}
 			}
 
 			// Load up the event dispatcher for the very basic core functionality
@@ -284,12 +293,10 @@ class Environment
 	 */
 	public function runBot()
 	{
-		/* @var \Yukari\Event\Dispatcher */
 		$dispatcher = Kernel::getDispatcher();
-		/* @var \Yukari\Connection\Socket */
 		$socket = Kernel::get('core.socket');
 
-		// Hook up the shutdown listener here real quick
+		// Hook up the shutdown listener real quick
 		$dispatcher->register('system.shutdown', array(Kernel::getEnvironment(), 'triggerShutdown'));
 
 		// Connect to the remote server, assuming nothing blows up of course.
@@ -306,14 +313,16 @@ class Environment
 				$queue = array();
 
 				// Fire off a tick event.
-				$queue = array_merge($queue, (array) $dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'runtime.tick')));
+				$queue = array_merge($queue, (array) $dispatcher->trigger(\Yukari\Event\Instance::newEvent('runtime.tick')));
 
 				// Grab an event from the socket
 				$event = $socket->get();
 
 				// If we got one, we process the event we received
 				if($event)
+				{
 					$queue = array_merge($queue, (array) $dispatcher->trigger($event));
+				}
 
 				// Only if we have events to send...
 				if(!empty($queue))
@@ -322,7 +331,9 @@ class Environment
 					{
 						// Do not fire off non-instances and non-output events.
 						if(!($outbound instanceof \Yukari\Event\Instance) || substr($outbound->getName(), 0, 11) !== 'irc.output.')
+						{
 							continue;
+						}
 
 						// Fire off a predispatch event, to allow listeners to modify events before they are sent.
 						// Useful for features like self-censoring.
@@ -341,7 +352,9 @@ class Environment
 
 				// If we have a quit event, break out of the loop.
 				if($this->shutdown === true)
+				{
 					break;
+				}
 			}
 		}
 		catch(\Exception $e)

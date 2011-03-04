@@ -80,8 +80,11 @@ class Interpreter
 				->setDataPoint('hostmask', $event->getDataPoint('hostmask'))
 				->setDataPoint('is_private', true)
 				->setDataPoint('rootevent', $event));
+
 			if(!is_array($_results))
+			{
 				$_results = array($_results);
+			}
 			$results = array_merge($results, $_results);
 
 			$_results = $dispatcher->trigger(\Yukari\Event\Instance::newEvent(sprintf('irc.input.privatecommand.%s', $text[0]))
@@ -91,7 +94,11 @@ class Interpreter
 				->setDataPoint('hostmask', $event->getDataPoint('hostmask'))
 				->setDataPoint('is_private', true)
 				->setDataPoint('rootevent', $event));
+
+			if(!is_array($_results))
+			{
 				$_results = array($_results);
+			}
 			$results = array_merge($results, $_results);
 		}
 		elseif(preg_match('#^(' . preg_quote($indicator, '#') . '|' . preg_quote($our_name, '#') . '\: )([a-z0-9]*)( (.*))?#iS', $event->getDataPoint('text'), $matches) == true)
@@ -106,8 +113,11 @@ class Interpreter
 				->setDataPoint('hostmask', $event->getDataPoint('hostmask'))
 				->setDataPoint('is_private', false)
 				->setDataPoint('rootevent', $event));
+
 			if(!is_array($_results))
+			{
 				$_results = array($_results);
+			}
 			$results = array_merge($results, $_results);
 
 			// Check to see if this was the command indicator, or if we were addressed by name ("!command" versus "Yukari: command")
@@ -121,8 +131,11 @@ class Interpreter
 					->setDataPoint('hostmask', $event->getDataPoint('hostmask'))
 					->setDataPoint('is_private', false)
 					->setDataPoint('rootevent', $event));
+
 				if(!is_array($_results))
+				{
 					$_results = array($_results);
+				}
 				$results = array_merge($results, $_results);
 			}
 		}
@@ -145,7 +158,9 @@ class Interpreter
 
 		// Just in case we wtf at a non-standard response code.
 		if($event_type === false)
+		{
 			return NULL;
+		}
 
 		$results = $dispatcher->trigger(\Yukari\Event\Instance::newEvent(sprintf('irc.input.response.%s', $event_type))
 			->setDataPoint('code', $event_code)

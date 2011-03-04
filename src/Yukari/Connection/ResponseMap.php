@@ -1011,7 +1011,9 @@ class ResponseMap
 	public function getResponseType($code)
 	{
 		if(!isset($this->map[$code]))
+		{
 			return false;
+		}
 		return $this->map[$code];
 	}
 }

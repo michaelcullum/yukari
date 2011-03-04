@@ -6,7 +6,7 @@
  *  Yukari
  *-------------------------------------------------------------------
  * @category    Yukari
- * @package     core
+ * @package     cli
  * @author      Damian Bushong
  * @copyright   (c) 2009 - 2011 -- Damian Bushong
  * @license     MIT License
@@ -29,7 +29,7 @@ use Yukari\Kernel;
  *
  *
  * @category    Yukari
- * @package     core
+ * @package     cli
  * @author      Damian Bushong
  * @license     MIT License
  * @link        https://github.com/damianb/yukari
@@ -272,7 +272,9 @@ class UI
 	{
 		// Make sure the output level is valid
 		if(!in_array($output_level, array('silent', 'normal', 'debug', 'debug_full', 'raw', 'spam')))
+		{
 			throw new \InvalidArgumentException(sprintf('Invalid UI output level "%1$s" specified', $output_level));
+		}
 
 		$this->output_level = constant('Yukari\\CLI\\UI::OUTPUT_' . strtoupper($output_level));
 
@@ -298,7 +300,9 @@ class UI
 	public function addColor($string, $profile)
 	{
 		if(!isset($this->color_profiles[strtoupper($profile)]) || empty($this->color_profiles[strtoupper($profile)]))
+		{
 			return $string;
+		}
 
 		$profile = $this->color_profiles[strtoupper($profile)];
 
@@ -353,7 +357,9 @@ class UI
 	public function displayStartup(\Yukari\Event\Instance $event)
 	{
 		if($event->getName() !== 'ui.startup')
+		{
 			return;
+		}
 
 		if($this->level(\Yukari\CLI\UI::OUTPUT_NORMAL))
 		{
@@ -383,7 +389,9 @@ class UI
 	public function displayReady(\Yukari\Event\Instance $event)
 	{
 		if($event->getName() !== 'ui.ready')
+		{
 			return;
+		}
 
 		if($this->level(\Yukari\CLI\UI::OUTPUT_NORMAL))
 		{
@@ -401,7 +409,9 @@ class UI
 	public function displayShutdown(\Yukari\Event\Instance $event)
 	{
 		if($event->getName() !== 'ui.shutdown')
+		{
 			return;
+		}
 
 		if($this->level(\Yukari\CLI\UI::OUTPUT_NORMAL))
 		{
@@ -419,10 +429,14 @@ class UI
 	public function displayIRC(\Yukari\Event\Instance $event)
 	{
 		if($event->getName() !== 'ui.message.irc')
+		{
 			return;
+		}
 
 		if($this->level(\Yukari\CLI\UI::OUTPUT_NORMAL))
+		{
 			$this->output('[irc] ' . $event->getDataPoint('message'));
+		}
 	}
 
 	/**
@@ -433,10 +447,14 @@ class UI
 	public function displayStatus(\Yukari\Event\Instance $event)
 	{
 		if($event->getName() !== 'ui.message.status')
+		{
 			return;
+		}
 
 		if($this->level(\Yukari\CLI\UI::OUTPUT_NORMAL))
+		{
 			$this->output('[system] ' . $event->getDataPoint('message'));
+		}
 	}
 
 	/**
@@ -447,10 +465,14 @@ class UI
 	public function displaySystem(\Yukari\Event\Instance $event)
 	{
 		if($event->getName() !== 'ui.message.system')
+		{
 			return;
+		}
 
 		if($this->level(\Yukari\CLI\UI::OUTPUT_DEBUG))
+		{
 			$this->output('[system] ' . $event->getDataPoint('message'));
+		}
 	}
 
 	/**
@@ -464,10 +486,14 @@ class UI
 	public function displayEvent(\Yukari\Event\Instance $event)
 	{
 		if($event->getName() !== 'ui.message.event')
+		{
 			return;
+		}
 
 		if($this->level(\Yukari\CLI\UI::OUTPUT_DEBUG_FULL))
+		{
 			$this->output('[event] ' . $event->getDataPoint('message'));
+		}
 	}
 
 	/**
@@ -478,10 +504,14 @@ class UI
 	public function displayNotice(\Yukari\Event\Instance $event)
 	{
 		if($event->getName() !== 'ui.message.notice')
+		{
 			return;
+		}
 
 		if($this->level(\Yukari\CLI\UI::OUTPUT_DEBUG))
+		{
 			$this->output('[notice] ' . $event->getDataPoint('message'));
+		}
 	}
 
 	/**
@@ -492,10 +522,14 @@ class UI
 	public function displayWarning(\Yukari\Event\Instance $event)
 	{
 		if($event->getName() !== 'ui.message.warning')
+		{
 			return;
+		}
 
 		if($this->level(\Yukari\CLI\UI::OUTPUT_DEBUG))
+		{
 			$this->output('[warning] ' . $event->getDataPoint('message'), 'WARNING');
+		}
 	}
 
 	/**
@@ -506,10 +540,14 @@ class UI
 	public function displayError(\Yukari\Event\Instance $event)
 	{
 		if($event->getName() !== 'ui.message.error')
+		{
 			return;
+		}
 
 		if($this->level(\Yukari\CLI\UI::OUTPUT_DEBUG))
+		{
 			$this->output('[error] ' . $event->getDataPoint('message'), 'ERROR');
+		}
 	}
 
 	/**
@@ -520,10 +558,14 @@ class UI
 	public function displayPHP(\Yukari\Event\Instance $event)
 	{
 		if($event->getName() !== 'ui.message.php')
+		{
 			return;
+		}
 
 		if($this->level(\Yukari\CLI\UI::OUTPUT_DEBUG))
+		{
 			$this->output('[php] ' . $event->getDataPoint('message'), 'ERROR');
+		}
 	}
 
 	/**
@@ -536,10 +578,14 @@ class UI
 	public function displayDebug(\Yukari\Event\Instance $event)
 	{
 		if($event->getName() !== 'ui.message.debug')
+		{
 			return;
+		}
 
 		if($this->level(\Yukari\CLI\UI::OUTPUT_DEBUG))
+		{
 			$this->output('[debug] ' . $event->getDataPoint('message'));
+		}
 	}
 
 	/**
@@ -552,9 +598,13 @@ class UI
 	public function displayRaw(\Yukari\Event\Instance $event)
 	{
 		if($event->getName() !== 'ui.message.raw')
+		{
 			return;
+		}
 
 		if($this->level(\Yukari\CLI\UI::OUTPUT_RAW))
+		{
 			$this->output('[SOCKET] ' . $event->getDataPoint('message'));
+		}
 	}
 }
