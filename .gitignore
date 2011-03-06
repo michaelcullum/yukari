@@ -2,7 +2,10 @@ build/cert/*.pem
 build/yukari.phar*
 build/tmp/*
 build/verified/*
+nbproject/*
+.komodotools/*
 data/database/*.sqlite
 downloads/*
 extra-addons
 extra-addons/*
+yukari.komodoproject
