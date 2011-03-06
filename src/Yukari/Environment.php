@@ -182,7 +182,7 @@ class Environment
 		try
 		{
 			// load config file here, load CLI args parser
-			$cli = Kernel::set('core.cli', new \Yukari\CLI\CLIArgs($_SERVER['argv']));
+			$cli = Kernel::set('core.args', new \Yukari\CLI\CLIArgs($_SERVER['argv']));
 			$config = (isset($cli['config'])) ? "{$cli['config']}.yml" : 'config.yml';
 
 			// Make sure that the config file is usable.
