@@ -1,3 +1,6 @@
 [submodule "src/Symfony/Component/Yaml"]
 	path = src/Symfony/Component/Yaml
 	url = https://github.com/symfony/Yaml.git
+[submodule "src/OpenFlame/Framework"]
+	path = src/OpenFlame/Framework
+	url = https://github.com/OpenFlame/OpenFlame-Framework.git
