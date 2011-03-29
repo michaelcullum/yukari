@@ -35,5 +35,15 @@ use Yukari\Kernel;
  */
 class UserTracker
 {
-	// asdf
+	/**
+	 * Register the listeners we need for this addon to work properly.
+	 * @return \Yukari\Addon\DataTracker\UserTracker - Provides a fluent interface.
+	 */
+	public function registerListeners()
+	{
+		$dispatcher = Kernel::getDispatcher();
+                $dispatcher->register('irc.input.join', array(Kernel::get('addon.usertracker'), 'trackUserJoin'));
+
+		return $this;
+	}
 }
