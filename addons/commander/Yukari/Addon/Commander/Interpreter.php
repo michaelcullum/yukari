@@ -49,10 +49,10 @@ class Interpreter
 
 	/**
 	 * Handle and interpret PRIVMSG events, and fire off additional events if we deem the input to be commands directed at the bot.
-	 * @param \Yukari\Event\Instance $event - The event to interpret.
+	 * @param \OpenFlame\Framework\Event\Instance $event - The event to interpret.
 	 * @return array - Returns an array of IRC output events to send.
 	 */
-	public function handlePrivmsg(\Yukari\Event\Instance $event)
+	public function handlePrivmsg(\OpenFlame\Framework\Event\Instance $event)
 	{
 		$dispatcher = Kernel::getDispatcher();
 		$indicator = Kernel::getConfig('commander.command_indicator');
@@ -73,70 +73,54 @@ class Interpreter
 				$text = array_pad(explode(' ', $event->getDataPoint('text'), 2), 2, '');
 			}
 
-			$_results = $dispatcher->trigger(\Yukari\Event\Instance::newEvent(sprintf('irc.input.command.%s', $text[0]))
-				->setDataPoint('command', $text[0])
-				->setDataPoint('text', $text[1])
-				->setDataPoint('target', $event->getDataPoint('target'))
-				->setDataPoint('hostmask', $event->getDataPoint('hostmask'))
-				->setDataPoint('is_private', true)
-				->setDataPoint('rootevent', $event));
+			$_results = $dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent(sprintf('irc.input.command.%s', $text[0]))->setData(array(
+				'rootevent'		=> $event,
+				'is_private'	=> true,
+				'command'		=> $text[0],
+				'text'			=> $text[1],
+				'target'		=> $event->getDataPoint('target'),
+				'hostmask'		=> $event->getDataPoint('hostmask'),
+			)));
+			$results = array_merge($results, (array) $_results->getReturns());
 
-			if(!is_array($_results))
-			{
-				$_results = array($_results);
-			}
-			$results = array_merge($results, $_results);
-
-			$_results = $dispatcher->trigger(\Yukari\Event\Instance::newEvent(sprintf('irc.input.privatecommand.%s', $text[0]))
-				->setDataPoint('command', $text[0])
-				->setDataPoint('text', $text[1])
-				->setDataPoint('target', $event->getDataPoint('target'))
-				->setDataPoint('hostmask', $event->getDataPoint('hostmask'))
-				->setDataPoint('is_private', true)
-				->setDataPoint('rootevent', $event));
-
-			if(!is_array($_results))
-			{
-				$_results = array($_results);
-			}
-			$results = array_merge($results, $_results);
+			$_results = $dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent(sprintf('irc.input.privatecommand.%s', $text[0]))->setData(array(
+				'rootevent'		=> $event,
+				'is_private'	=> true,
+				'command'		=> $text[0],
+				'text'			=> $text[1],
+				'target'		=> $event->getDataPoint('target'),
+				'hostmask'		=> $event->getDataPoint('hostmask'),
+			)));
+			$results = array_merge($results, (array) $_results->getReturns());
 		}
 		elseif(preg_match('#^(' . preg_quote($indicator, '#') . '|' . preg_quote($our_name, '#') . '\: )([a-z0-9]*)( (.*))?#iS', $event->getDataPoint('text'), $matches) == true)
 		{
 			// Make sure we have a full array here.
 			list(, $trigger, $command, , $text) = array_pad($matches, 5, '');
 
-			$_results = $dispatcher->trigger(\Yukari\Event\Instance::newEvent(sprintf('irc.input.command.%s', $command))
-				->setDataPoint('command', $command)
-				->setDataPoint('text', $text)
-				->setDataPoint('target', $event->getDataPoint('target'))
-				->setDataPoint('hostmask', $event->getDataPoint('hostmask'))
-				->setDataPoint('is_private', false)
-				->setDataPoint('rootevent', $event));
-
-			if(!is_array($_results))
-			{
-				$_results = array($_results);
-			}
-			$results = array_merge($results, $_results);
+			$_results = $dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent(sprintf('irc.input.command.%s', $command))->setData(array(
+				'rootevent'		=> $event,
+				'is_private'	=> false,
+				'command'		=> $text[0],
+				'text'			=> $text[1],
+				'target'		=> $event->getDataPoint('target'),
+				'hostmask'		=> $event->getDataPoint('hostmask'),
+			)));
+			$results = array_merge($results, (array) $_results->getReturns());
 
 			// Check to see if this was the command indicator, or if we were addressed by name ("!command" versus "Yukari: command")
 			if($trigger == $indicator)
 			{
 				// Okay, this was a named command - we treat this as special, and dispatch another event for it.
-				$_results = $dispatcher->trigger(\Yukari\Event\Instance::newEvent(sprintf('irc.input.namedcommand.%s', $command))
-					->setDataPoint('command', $command)
-					->setDataPoint('text', $text)
-					->setDataPoint('target', $event->getDataPoint('target'))
-					->setDataPoint('hostmask', $event->getDataPoint('hostmask'))
-					->setDataPoint('is_private', false)
-					->setDataPoint('rootevent', $event));
-
-				if(!is_array($_results))
-				{
-					$_results = array($_results);
-				}
-				$results = array_merge($results, $_results);
+				$_results = $dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent(sprintf('irc.input.namedcommand.%s', $command))->setData(array(
+					'rootevent'		=> $event,
+					'is_private'	=> false,
+					'command'		=> $text[0],
+					'text'			=> $text[1],
+					'target'		=> $event->getDataPoint('target'),
+					'hostmask'		=> $event->getDataPoint('hostmask'),
+				)));
+				$results = array_merge($results, (array) $_results->getReturns());
 			}
 		}
 
@@ -145,10 +129,10 @@ class Interpreter
 
 	/**
 	 * Handle and interpret IRC response events, and fire off additional events for the individual response types.
-	 * @param \Yukari\Event\Instance $event - The event to interpret.
+	 * @param \OpenFlame\Framework\Event\Instance $event - The event to interpret.
 	 * @return array - Returns an array of IRC output events to send.
 	 */
-	public function handleResponse(\Yukari\Event\Instance $event)
+	public function handleResponse(\OpenFlame\Framework\Event\Instance $event)
 	{
 		$dispatcher = Kernel::getDispatcher();
 		$response_map = Kernel::get('core.response_map');
@@ -162,11 +146,12 @@ class Interpreter
 			return NULL;
 		}
 
-		$results = $dispatcher->trigger(\Yukari\Event\Instance::newEvent(sprintf('irc.input.response.%s', $event_type))
-			->setDataPoint('code', $event_code)
-			->setDataPoint('description', $event->getDataPoint('description'))
-			->setDataPoint('rootevent', $event));
+		$results = $dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent(sprintf('irc.input.response.%s', $event_type))->setData(array(
+			'rootevent'		=> $event,
+			'code'			=> $event_code,
+			'description'	=> $event->getDataPoint('description'),
+		)));
 
-		return $results;
+		return (array) $results->getReturns();
 	}
 }
