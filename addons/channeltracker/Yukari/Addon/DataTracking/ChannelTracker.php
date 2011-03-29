@@ -56,7 +56,7 @@ class ChannelTracker
 
 	/**
 	 * Tracks us joining a channel.
-	 * @param \Yukari\Event\Instance $event - The event instance.
+	 * @param \OpenFlame\Framework\Event\Instance $event - The event instance.
 	 * @return array - Array of events to dispatch in response to the input event.
 	 */
 	public function trackChannelJoin(\OpenFlame\Framework\Event\Instance $event)
