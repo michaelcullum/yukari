@@ -64,10 +64,10 @@ class Automation extends \Yukari\Addon\Metadata\MetadataBase
 		$dispatcher = Kernel::getDispatcher();
 
 		// Respond to CTCP VERSION and CTCP PING (if a valid argument for the CTCP was provided)
-		$dispatcher->register('irc.input.ctcp', function(\Yukari\Event\Instance $event) {
+		$dispatcher->register('irc.input.ctcp', function(\OpenFlame\Framework\Event\Instance $event) {
 			if(strtolower($event->getDataPoint('command')) === 'version')
 			{
-				return \Yukari\Event\Instance::newEvent('irc.output.ctcp_reply')
+				return \OpenFlame\Framework\Event\Instance::newEvent('irc.output.ctcp_reply')
 					->setDataPoint('target', $event->getDataPoint('hostmask')->getNick())
 					->setDataPoint('command', 'version')
 					->setDataPoint('args', sprintf('Yukari IRC Bot - %s', Kernel::getBuildNumber()));
@@ -77,7 +77,7 @@ class Automation extends \Yukari\Addon\Metadata\MetadataBase
 				if(!$event->dataPointExists('args') || $event->getDataPoint('args') === NULL)
 					return NULL;
 
-				return \Yukari\Event\Instance::newEvent('irc.output.ctcp_reply')
+				return \OpenFlame\Framework\Event\Instance::newEvent('irc.output.ctcp_reply')
 					->setDataPoint('target', $event->getDataPoint('hostmask')->getNick())
 					->setDataPoint('command', 'ping')
 					->setDataPoint('args', $event->getDataPoint('args'));
@@ -86,11 +86,11 @@ class Automation extends \Yukari\Addon\Metadata\MetadataBase
 			{
 				return NULL;
 			}
-		});
+		}, -10); // use -10 priority
 
 		// Respond to server pings
-		$dispatcher->register('irc.input.ping', function(\Yukari\Event\Instance $event) {
-			return \Yukari\Event\Instance::newEvent('irc.output.pong')
+		$dispatcher->register('irc.input.ping', function(\OpenFlame\Framework\Event\Instance $event) {
+			return \OpenFlame\Framework\Event\Instance::newEvent('irc.output.pong')
 					->setDataPoint('origin', $event->getDataPoint('target'));
 		});
 	}
