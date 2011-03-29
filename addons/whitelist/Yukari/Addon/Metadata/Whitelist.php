@@ -62,7 +62,8 @@ class Whitelist extends \Yukari\Addon\Metadata\MetadataBase
 	public function initialize()
 	{
 		$interpreter = Kernel::set('addon.acl', new \Yukari\Addon\ACL\Whitelist());
-		$interpreter->registerListeners()->loadWhitelistFile();
+		$interpreter->registerListeners()
+			->loadWhitelistFile();
 	}
 
 	/**
