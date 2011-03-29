@@ -81,7 +81,7 @@ class Channeltracker extends \Yukari\Addon\Metadata\MetadataBase
 			try
 			{
 				$addon_loader->loadAddon('commander');
-				$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.system')
+				$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.system')
 					->setDataPoint('message', sprintf('Loaded addon "%s"', 'commander')));
 			}
 			catch(\RuntimeException $e)

@@ -59,7 +59,7 @@ class ChannelTracker
 	 * @param \Yukari\Event\Instance $event - The event instance.
 	 * @return array - Array of events to dispatch in response to the input event.
 	 */
-	public function trackChannelJoin(\Yukari\Event\Instance $event)
+	public function trackChannelJoin(\OpenFlame\Framework\Event\Instance $event)
 	{
 		if($event->getDataPoint('hostmask')->getNick() == Kernel::getConfig('irc.nickname'))
 		{
@@ -72,10 +72,10 @@ class ChannelTracker
 
 	/**
 	 * Tracks us parting a channel.
-	 * @param \Yukari\Event\Instance $event - The event instance.
+	 * @param \OpenFlame\Framework\Event\Instance $event - The event instance.
 	 * @return array - Array of events to dispatch in response to the input event.
 	 */
-	public function trackChannelPart(\Yukari\Event\Instance $event)
+	public function trackChannelPart(\OpenFlame\Framework\Event\Instance $event)
 	{
 		if($event->getDataPoint('hostmask')->getNick() == Kernel::getConfig('irc.nickname'))
 		{
@@ -89,10 +89,10 @@ class ChannelTracker
 
 	/**
 	 * Tracks us being kicked from a channel (oh noes!).
-	 * @param \Yukari\Event\Instance $event - The event instance.
+	 * @param \OpenFlame\Framework\Event\Instance $event - The event instance.
 	 * @return array - Array of events to dispatch in response to the input event.
 	 */
-	public function trackChannelKick(\Yukari\Event\Instance $event)
+	public function trackChannelKick(\OpenFlame\Framework\Event\Instance $event)
 	{
 		if($event->getDataPoint('hostmask')->getNick() == Kernel::getConfig('irc.nickname'))
 		{
