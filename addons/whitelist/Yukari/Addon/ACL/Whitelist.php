@@ -88,8 +88,10 @@ class Whitelist
 	 * @param \OpenFlame\Framework\Event\Instance $event - The event to interpret.
 	 * @return integer - Returns 1 if user is authorized, returns 0 if not authorized.
 	 */
-	public function handleAccess(\Yukari\Event\Instance $event)
+	public function handleAccess(\OpenFlame\Framework\Event\Instance $event)
 	{
+		// Break the trigger cycle
+		$event->breakTrigger();
 		$result = preg_match($this->whitelist_regexp, $event->getDataPoint('hostmask'));
 		return (int) $result;
 	}
