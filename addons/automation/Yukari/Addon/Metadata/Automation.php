@@ -64,13 +64,15 @@ class Automation extends \Yukari\Addon\Metadata\MetadataBase
 		$dispatcher = Kernel::getDispatcher();
 
 		// Respond to CTCP VERSION and CTCP PING (if a valid argument for the CTCP was provided)
-		$dispatcher->register('irc.input.ctcp', function(\OpenFlame\Framework\Event\Instance $event) {
+		$ctcp_lambda = function(\OpenFlame\Framework\Event\Instance $event) {
 			if(strtolower($event->getDataPoint('command')) === 'version')
 			{
 				return \OpenFlame\Framework\Event\Instance::newEvent('irc.output.ctcp_reply')
-					->setDataPoint('target', $event->getDataPoint('hostmask')->getNick())
-					->setDataPoint('command', 'version')
-					->setDataPoint('args', sprintf('Yukari IRC Bot - %s', Kernel::getBuildNumber()));
+					->setData(array(
+						'command' 	=> 'version',
+						'target'	=> $event->getDataPoint('hostmask')->getNick(),
+						'args'		=> sprintf('Yukari IRC Bot - %s', Kernel::getBuildNumber()),
+					));
 			}
 			elseif(strtolower($event->getDataPoint('command')) === 'ping')
 			{
@@ -78,21 +80,25 @@ class Automation extends \Yukari\Addon\Metadata\MetadataBase
 					return NULL;
 
 				return \OpenFlame\Framework\Event\Instance::newEvent('irc.output.ctcp_reply')
-					->setDataPoint('target', $event->getDataPoint('hostmask')->getNick())
-					->setDataPoint('command', 'ping')
-					->setDataPoint('args', $event->getDataPoint('args'));
+					->setData(array(
+						'command' 	=> 'ping',
+						'target'	=> $event->getDataPoint('hostmask')->getNick(),
+						'args'		=> $event->getDataPoint('args'),
+					));
 			}
 			else
 			{
 				return NULL;
 			}
-		}, -10); // use -10 priority
+		};
+		$dispatcher->register('irc.input.ctcp', $ctcp_lambda, array(), -10); // use -10 priority for medium-high listener priority
 
 		// Respond to server pings
-		$dispatcher->register('irc.input.ping', function(\OpenFlame\Framework\Event\Instance $event) {
+		$ping_lambda = function(\OpenFlame\Framework\Event\Instance $event) {
 			return \OpenFlame\Framework\Event\Instance::newEvent('irc.output.pong')
 					->setDataPoint('origin', $event->getDataPoint('target'));
-		});
+		};
+		$dispatcher->register('irc.input.ping', $ping_lambda, array(), -10); // use -10 priority for medium-high listener priority
 	}
 
 	/**
