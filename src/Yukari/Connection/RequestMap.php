@@ -260,10 +260,10 @@ class RequestMap
 
 	/**
 	 * Builds the raw IRC to send based on the data stored in the output event.
-	 * @param \Yukari\Event\Instance $event - The event containing the data to send.
+	 * @param \OpenFlame\Framework\Event\Instance $event - The event containing the data to send.
 	 * @return string - The raw IRC to send.
 	 */
-	public function buildOutput(\Yukari\Event\Instance $event)
+	public function buildOutput(\OpenFlame\Framework\Event\Instance $event)
 	{
 		// get the event type we're dealing with
 		list( , , $event_type) = array_pad(explode('.', $event->getName()), -3, '');

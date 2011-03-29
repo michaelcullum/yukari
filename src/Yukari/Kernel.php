@@ -47,12 +47,12 @@ abstract class Kernel
 	protected static $environment;
 
 	/**
-	 * @var \Yukari\Autoloader - The autoloader object.
+	 * @var \OpenFlame\Framework\Autoloader - The autoloader object.
 	 */
 	protected static $autoloader;
 
 	/**
-	 * @var \Yukari\Event\Dispatcher - The event dispatcher object.
+	 * @var \OpenFlame\Framework\Event\Dispatcher - The event dispatcher object.
 	 */
 	protected static $dispatcher;
 
@@ -74,7 +74,7 @@ abstract class Kernel
 		self::setEnvironment(\Yukari\Environment::newInstance());
 
 		// Setup the autoloader.
-		self::setAutoloader(\Yukari\Autoloader::register());
+		self::setAutoloader(\OpenFlame\Framework\Autoloader::register());
 	}
 
 	/**
@@ -107,17 +107,17 @@ abstract class Kernel
 
 	/**
 	 * Set the autoloader object in the kernel.
-	 * @param \Yukari\Autoloader $autoloader - The autoloader object
+	 * @param \OpenFlame\Framework\Autoloader $autoloader - The autoloader object
 	 * @return void
 	 */
-	public static function setAutoloader(\Yukari\Autoloader $autoloader)
+	public static function setAutoloader(\OpenFlame\Framework\Autoloader $autoloader)
 	{
 		self::$autoloader = $autoloader;
 	}
 
 	/**
 	 * Get the current autoloader object stored in the kernel.
-	 * @return \Yukari\Autoloader - The autoloader object
+	 * @return \OpenFlame\Framework\Autoloader - The autoloader object
 	 */
 	public static function getAutoloader()
 	{
@@ -126,17 +126,17 @@ abstract class Kernel
 
 	/**
 	 * Stores the event dispatcher object
-	 * @param \Yukari\Event\Dispatcher $dispatcher - The event dispatcher object.
+	 * @param \OpenFlame\Framework\Event\Dispatcher $dispatcher - The event dispatcher object.
 	 * @return void
 	 */
-	public static function setDispatcher(\Yukari\Event\Dispatcher $dispatcher)
+	public static function setDispatcher(\OpenFlame\Framework\Event\Dispatcher $dispatcher)
 	{
 		self::$dispatcher = $dispatcher;
 	}
 
 	/**
 	 * Grab the event dispatcher object.
-	 * @return \Yukari\Event\Dispatcher - The event dispatcher object.
+	 * @return \OpenFlame\Framework\Event\Dispatcher - The event dispatcher object.
 	 */
 	public static function getDispatcher()
 	{

@@ -61,7 +61,6 @@ class Environment
 	public function __construct()
 	{
 		$this->config = array(
-			'language.default_locale'	=> 'en-US',
 			'ui.output_level'			=> 'normal',
 			'ui.enablecolors'			=> false,
 			'addons.loadlist'		=> array(),
@@ -162,10 +161,10 @@ class Environment
 
 	/**
 	 * Basic listener that allows an addon or something to trigger a shutdown
-	 * @param \Yukari\Event\Instance $event - The event that is triggering the shutdown
+	 * @param \OpenFlame\Framework\Event\Instance $event - The event that is triggering the shutdown
 	 * @return void
 	 */
-	public function triggerShutdown(\Yukari\Event\Instance $event)
+	public function triggerShutdown(\OpenFlame\Framework\Event\Instance $event)
 	{
 		if($event->getName() === 'system.shutdown')
 		{
@@ -210,7 +209,7 @@ class Environment
 			}
 
 			// Load up the event dispatcher for the very basic core functionality
-			Kernel::setDispatcher(new \Yukari\Event\Dispatcher());
+			Kernel::setDispatcher(new \OpenFlame\Framework\Event\Dispatcher());
 			$dispatcher = Kernel::getDispatcher();
 
 			// Instantiate the UI object
@@ -219,8 +218,8 @@ class Environment
 				->registerListeners();
 
 			// Startup message
-			$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.startup'));
-			$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.system')
+			$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.startup'));
+			$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.system')
 				->setDataPoint('message', 'Loading the Yukari core'));
 
 			// Create our timezone object and store it for now, along with storing our starting DateTime object.
@@ -241,19 +240,19 @@ class Environment
 				try
 				{
 					$addon_loader->loadAddon($addon);
-					$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.system')
+					$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.system')
 						->setDataPoint('message', sprintf('Loaded addon "%s"', $addon)));
 				}
 				catch(\Exception $e)
 				{
-					$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.warning')
+					$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.warning')
 						->setDataPoint('message', sprintf('Failed to load addon "%1$s" - failure message: "%2$s"', $addon, $e->getMessage())));
 				}
 			}
 
 			if(Kernel::getConfig('dispatcher.listeners'))
 			{
-				$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.system')
+				$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.system')
 					->setDataPoint('message', 'Registering listeners to event dispatcher'));
 
 				foreach(Kernel::getConfig('dispatcher.listeners') as $event_name => $listener)
@@ -272,7 +271,7 @@ class Environment
 
 			// Dispatch a startup event
 			// This is useful for having a listener registered, waiting for startup to complete before loading in one last thing
-			$dispatcher->trigger(\Yukari\Event\Instance::newEvent('runtime.startup'));
+			$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('runtime.startup'));
 		}
 		catch(\Exception $e)
 		{
@@ -280,10 +279,10 @@ class Environment
 		}
 
 		// All done!
-		$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.ready'));
+		$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.ready'));
 
 		// How fast were we, now?  :3
-		$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.debug')
+		$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.debug')
 			->setDataPoint('message', sprintf('Startup complete, took %1$s seconds', (microtime(true) - \Yukari\START_MICROTIME))));
 	}
 
@@ -296,14 +295,14 @@ class Environment
 		$dispatcher = Kernel::getDispatcher();
 		$socket = Kernel::get('core.socket');
 
-		// Hook up the shutdown listener real quick
-		$dispatcher->register('system.shutdown', array(Kernel::getEnvironment(), 'triggerShutdown'));
+		// Hook up the shutdown listener real quick (using priority -20 to ensure that it is high priority)
+		$dispatcher->register('system.shutdown', array(Kernel::getEnvironment(), 'triggerShutdown'), array(), -20);
 
 		// Connect to the remote server, assuming nothing blows up of course.
 		$socket->connect();
 
 		// Dispatch a connection event
-		$dispatcher->trigger(\Yukari\Event\Instance::newEvent('runtime.connect'));
+		$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('runtime.connect'));
 
 		try
 		{
@@ -313,7 +312,7 @@ class Environment
 				$queue = array();
 
 				// Fire off a tick event.
-				$queue = array_merge($queue, (array) $dispatcher->trigger(\Yukari\Event\Instance::newEvent('runtime.tick')));
+				$queue = (array) $dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('runtime.tick'));
 
 				// Grab an event from the socket
 				$event = $socket->get();
@@ -321,7 +320,8 @@ class Environment
 				// If we got one, we process the event we received
 				if($event)
 				{
-					$queue = array_merge($queue, (array) $dispatcher->trigger($event));
+					$dispatcher->trigger($event);
+					$queue = array_merge($queue, (array) $event->getReturns());
 				}
 
 				// Only if we have events to send...
@@ -330,14 +330,14 @@ class Environment
 					foreach($queue as $outbound)
 					{
 						// Do not fire off non-instances and non-output events.
-						if(!($outbound instanceof \Yukari\Event\Instance) || substr($outbound->getName(), 0, 11) !== 'irc.output.')
+						if(!($outbound instanceof \OpenFlame\Framework\Event\Instance) || substr($outbound->getName(), 0, 11) !== 'irc.output.')
 						{
 							continue;
 						}
 
 						// Fire off a predispatch event, to allow listeners to modify events before they are sent.
 						// Useful for features like self-censoring.
-						$dispatcher->trigger(\Yukari\Event\Instance::newEvent('runtime.predispatch')
+						$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('runtime.predispatch')
 							->setDataPoint('event', $outbound));
 
 						// Send off the event!
@@ -345,7 +345,7 @@ class Environment
 
 						// Fire off a postdispatch event, to allow listeners to react to events being sent.
 						// Useful for things like logging.
-						$dispatcher->trigger(\Yukari\Event\Instance::newEvent('runtime.postdispatch')
+						$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('runtime.postdispatch')
 							->setDataPoint('event', $outbound));
 					}
 				}
@@ -361,13 +361,13 @@ class Environment
 		{
 			try
 			{
-				$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.debug')
+				$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.debug')
 					->setDataPoint('message', sprintf('Exception %1$s::%2$s: %3$s', get_class($e), $e->getCode(), $e->getMessage())));
-				$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.debug')
+				$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.debug')
 					->setDataPoint('message', sprintf('Stack trace: %s', $e->getTraceAsString())));
 
 				// Dispatch an emergency abort event.
-				$dispatcher->trigger(\Yukari\Event\Instance::newEvent('runtime.abort'));
+				$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('runtime.abort'));
 			}
 			catch(\Exception $e)
 			{
@@ -380,13 +380,13 @@ class Environment
 		}
 
 		// Dispatch a pre-shutdown event.
-		$dispatcher->trigger(\Yukari\Event\Instance::newEvent('runtime.shutdown'));
+		$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('runtime.shutdown'));
 
 		// Send a quit event, handle exit gracefully.
 		$socket->send(sprintf('QUIT :Yukari IRC Bot - %s', Kernel::getBuildNumber()));
 		$socket->close();
 
 		// Dispatch a bot-termination event, now that the socket is closed and we've no connection to the server
-		$dispatcher->trigger(\Yukari\Event\Instance::newEvent('runtime.terminate'));
+		$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('runtime.terminate'));
 	}
 }

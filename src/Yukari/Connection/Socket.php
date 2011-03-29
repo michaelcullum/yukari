@@ -95,7 +95,7 @@ class Socket
 
 	/**
 	 * Listens for an event on the current connection.
-	 * @return \Yukari\Event\Instance - Event instance if an event was received, NULL otherwise
+	 * @return \OpenFlame\Framework\Event\Instance - Event instance if an event was received, NULL otherwise
 	 *
 	 * @throws \RuntimeException
 	 */
@@ -115,7 +115,7 @@ class Socket
 		}
 
 		// Raw buffer output
-		$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.raw')
+		$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.raw')
 			->setDataPoint('message', '<- ' . $buffer));
 
 		$prefix = '';
@@ -131,7 +131,10 @@ class Socket
 		// Parse the hostmask.
 		if(strpos($prefix, '@') === false)
 		{
-			$hostmask = \Yukari\Connection\Hostmask::newInstance()->setNick('server')->setUsername(Kernel::getConfig('irc.url'))->setHost($prefix);
+			$hostmask = \Yukari\Connection\Hostmask::newInstance()
+				->setNick('server')
+				->setUsername(Kernel::getConfig('irc.url'))
+				->setHost($prefix);
 		}
 		else
 		{
@@ -204,16 +207,18 @@ class Socket
 		// Create, populate, and return an event object
 		if(ctype_digit($cmd))
 		{
-			$event = \Yukari\Event\Instance::newEvent('irc.input.response')
-				->setDataPoint('code', $cmd)
-				->setDataPoint('description', $args);
+			$event = \OpenFlame\Framework\Event\Instance::newEvent('irc.input.response')->setData(array(
+				'code'			=> $cmd,
+				'description'	=> $args,
+			));
 		}
 		else
 		{
 			$request_map = Kernel::get('core.request_map');
 
-			$event = \Yukari\Event\Instance::newEvent(sprintf('irc.input.%s', $cmd))
-				->setDataPoint('type', $cmd);
+			$event = \OpenFlame\Framework\Event\Instance::newEvent(sprintf('irc.input.%s', $cmd))->setData(array(
+				'type'		=> $cmd,
+			));
 
 			// Properly map arguments into the event using some array magick...
 			$map = $request_map->getMap($cmd);
@@ -230,7 +235,7 @@ class Socket
 		}
 		$event->setDataPoint('buffer', $buffer);
 
-		$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.event')
+		$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.event')
 			->setDataPoint('message', sprintf('<- event "%1$s"', $event->getName())));
 
 		return $event;
@@ -238,16 +243,16 @@ class Socket
 
 	/**
 	 * Handles construction of command strings and their transmission to the server.
-	 * @param \Yukari\Event\Instance $event - Event to send.
+	 * @param \OpenFlame\Framework\Event\Instance $event - Event to send.
 	 * @return string - Command string that was sent
 	 *
 	 */
-	public function sendEvent(\Yukari\Event\Instance $event)
+	public function sendEvent(\OpenFlame\Framework\Event\Instance $event)
 	{
 		$dispatcher = Kernel::getDispatcher();
 		$request_map = Kernel::get('core.request_map');
 
-		$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.event')
+		$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.event')
 			->setDataPoint('message', sprintf('-> event "%1$s"', $event->getName())));
 
 		// Get the buffer to write.
@@ -293,7 +298,7 @@ class Socket
 		while(!$success);
 
 		// Raw buffer output
-		$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.raw')
+		$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.raw')
 			->setDataPoint('message', '-> ' . $data));
 
 		// Return the command string that was transmitted
@@ -312,7 +317,7 @@ class Socket
 		}
 
 		$dispatcher = Kernel::getDispatcher();
-		$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.system')
+		$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.system')
 			->setDataPoint('message', sprintf('Quitting from server "%1$s"', Kernel::getConfig('irc.url'))));
 
 		// Terminate the socket connection

@@ -31,7 +31,7 @@ namespace Yukari;
  */
 function errorHandler($errno, $msg_text, $errfile, $errline)
 {
-	/* @var \Yukari\Event\Dispatcher */
+	/* @var \OpenFlame\Framework\Event\Dispatcher */
 	$dispatcher = Kernel::getDispatcher();
 
 	// If the dispatcher isn't present yet, just seppuku.
@@ -60,21 +60,21 @@ function errorHandler($errno, $msg_text, $errfile, $errline)
 		case E_USER_NOTICE:
 		case E_USER_DEPRECATED:
 			$handled = true;
-			$dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, 'ui.message.php')
+			$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.php')
 				->setDataPoint('message', sprintf('php notice: %s', $error)));
 		break;
 
 		case E_WARNING:
 		case E_USER_WARNING:
 			$handled = true;
-			$dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, 'ui.message.php')
+			$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.php')
 				->setDataPoint('message', sprintf('php warning: %s', $error)));
 		break;
 
 		case E_ERROR:
 		case E_USER_ERROR:
 			$handled = true;
-			$dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, 'ui.message.php')
+			$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.php')
 				->setDataPoint('message', sprintf('php fatal error: %s', $error)));
 		break;
    }
@@ -96,7 +96,7 @@ function errorHandler($errno, $msg_text, $errfile, $errline)
  */
 function exceptionHandler(\Exception $e)
 {
-	/* @var \Yukari\Event\Dispatcher */
+	/* @var \OpenFlame\Framework\Event\Dispatcher */
 	$dispatcher = Kernel::getDispatcher();
 
 	// If the dispatcher isn't present yet, just seppuku.
@@ -106,7 +106,7 @@ function exceptionHandler(\Exception $e)
 		exit(1);
 	}
 
-	$dispatcher->trigger(\Yukari\Event\Instance::newEvent(null, 'ui.message.php')
+	$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.php')
 		->setDataPoint('message', sprintf('uncaught exception: %1$s::%2$s - %3$s', get_class($e), $e->getCode(), $e->getMessage())));
 
 	exit(1);

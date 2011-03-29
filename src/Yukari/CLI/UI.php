@@ -115,116 +115,116 @@ class UI
 			->register('ui.message.raw', array(Kernel::get('core.ui'), 'displayRaw'));
 
 		// Display IRC going-ons
-		$dispatcher->register('irc.input.action', function(\Yukari\Event\Instance $event) {
+		$dispatcher->register('irc.input.action', function(\OpenFlame\Framework\Event\Instance $event) {
 			$dispatcher = Kernel::getDispatcher();
-			$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
+			$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.irc')
 				->setDataPoint('message', sprintf('<- [%2$s] *** %1$s %3$s', $event->getDataPoint('hostmask')->getNick(), $event->getDataPoint('target'), $event->getDataPoint('text'))));
 		});
-		$dispatcher->register('irc.input.privmsg', function(\Yukari\Event\Instance $event) {
+		$dispatcher->register('irc.input.privmsg', function(\OpenFlame\Framework\Event\Instance $event) {
 			$dispatcher = Kernel::getDispatcher();
-			$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
+			$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.irc')
 				->setDataPoint('message', sprintf('<- [%2$s] <%1$s> %3$s', $event->getDataPoint('hostmask')->getNick(), $event->getDataPoint('target'), $event->getDataPoint('text'))));
 		});
-		$dispatcher->register('irc.input.notice', function(\Yukari\Event\Instance $event) {
+		$dispatcher->register('irc.input.notice', function(\OpenFlame\Framework\Event\Instance $event) {
 			$dispatcher = Kernel::getDispatcher();
-			$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
+			$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.irc')
 				->setDataPoint('message', sprintf('<- [%2$s] <%1$s NOTICE>  %3$s', $event->getDataPoint('hostmask')->getNick(), $event->getDataPoint('target'), $event->getDataPoint('text'))));
 		});
 
 		// Display channel happenings.
-		$dispatcher->register('irc.input.join', function(\Yukari\Event\Instance $event) {
+		$dispatcher->register('irc.input.join', function(\OpenFlame\Framework\Event\Instance $event) {
 			$dispatcher = Kernel::getDispatcher();
-			$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
+			$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.irc')
 				->setDataPoint('message', sprintf('<- %1$s (%2$s@%3$s) has joined %4$s', $event->getDataPoint('hostmask')->getNick(), $event->getDataPoint('hostmask')->getUsername(), $event->getDataPoint('hostmask')->getHost(), $event->getDataPoint('channel'))));
 		});
-		$dispatcher->register('irc.input.part', function(\Yukari\Event\Instance $event) {
+		$dispatcher->register('irc.input.part', function(\OpenFlame\Framework\Event\Instance $event) {
 			$dispatcher = Kernel::getDispatcher();
 			if($event->getDataPoint('reason') !== NULL)
 			{
-				$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
+				$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.irc')
 					->setDataPoint('message', sprintf('<- %1$s (%2$s@%3$s) has left %4$s [Reason: %5$s]', $event->getDataPoint('hostmask')->getNick(), $event->getDataPoint('hostmask')->getUsername(), $event->getDataPoint('hostmask')->getHost(), $event->getDataPoint('channel'), $event->getDataPoint('reason'))));
 			}
 			else
 			{
-				$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
+				$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.irc')
 					->setDataPoint('message', sprintf('<- %1$s (%2$s@%3$s) has left %4$s', $event->getDataPoint('hostmask')->getNick(), $event->getDataPoint('hostmask')->getUsername(), $event->getDataPoint('hostmask')->getHost(), $event->getDataPoint('channel'))));
 			}
 		});
-		$dispatcher->register('irc.input.kick', function(\Yukari\Event\Instance $event) {
+		$dispatcher->register('irc.input.kick', function(\OpenFlame\Framework\Event\Instance $event) {
 			$dispatcher = Kernel::getDispatcher();
 			if($event->getDataPoint('reason') !== NULL)
 			{
-				$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
+				$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.irc')
 					->setDataPoint('message', sprintf('<- %1$s kicked %2$s %3$s [Reason: %4$s]', $event->getDataPoint('hostmask')->getNick(), $event->getDataPoint('user'), $event->getDataPoint('channel'), $event->getDataPoint('reason'))));
 			}
 			else
 			{
-				$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
+				$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.irc')
 					->setDataPoint('message', sprintf('<- %1$s kicked %2$s from %3$s', $event->getDataPoint('hostmask')->getNick(), $event->getDataPoint('user'), $event->getDataPoint('channel'))));
 			}
 		});
-		$dispatcher->register('irc.input.quit', function(\Yukari\Event\Instance $event) {
+		$dispatcher->register('irc.input.quit', function(\OpenFlame\Framework\Event\Instance $event) {
 			$dispatcher = Kernel::getDispatcher();
 			if(!$event->dataPointExists('args') || $event->getDataPoint('args') === NULL)
 			{
-				$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
+				$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.irc')
 					->setDataPoint('message', sprintf('<- %1$s (%2$s@%3$s) has quit [Reason: %4$s]', $event->getDataPoint('hostmask')->getNick(), $event->getDataPoint('hostmask')->getUsername(), $event->getDataPoint('hostmask')->getHost(), $event->getDataPoint('reason'))));
 			}
 			else
 			{
-				$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
+				$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.irc')
 					->setDataPoint('message', sprintf('<- %1$s (%2$s@%3$s) has quit', $event->getDataPoint('hostmask')->getNick(), $event->getDataPoint('hostmask')->getUsername(), $event->getDataPoint('hostmask')->getHost())));
 			}
 		});
 
 		// Display CTCP requests and replies
-		$dispatcher->register('irc.input.ctcp', function(\Yukari\Event\Instance $event) {
+		$dispatcher->register('irc.input.ctcp', function(\OpenFlame\Framework\Event\Instance $event) {
 			$dispatcher = Kernel::getDispatcher();
 			if(!$event->dataPointExists('args') || $event->getDataPoint('args') === NULL)
 			{
-				$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
+				$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.irc')
 					->setDataPoint('message', sprintf('<- <%1$s> CTCP %2$s - %3$s', $event->getDataPoint('hostmask')->getNick(), $event->getDataPoint('command'), $event->getDataPoint('args'))));
 			}
 			else
 			{
-				$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
+				$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.irc')
 					->setDataPoint('message', sprintf('<- <%1$s> CTCP %2$s', $event->getDataPoint('hostmask')->getNick(), $event->getDataPoint('command'))));
 			}
 		});
-		$dispatcher->register('irc.input.ctcp_reply', function(\Yukari\Event\Instance $event) {
+		$dispatcher->register('irc.input.ctcp_reply', function(\OpenFlame\Framework\Event\Instance $event) {
 			$dispatcher = Kernel::getDispatcher();
 			if(!$event->dataPointExists('args') || $event->getDataPoint('args') === NULL)
 			{
-				$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
+				$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.irc')
 					->setDataPoint('message', sprintf('<- <%1$s> CTCP-REPLY %2$s - %3$s', $event->getDataPoint('hostmask')->getNick(), $event->getDataPoint('command'), $event->getDataPoint('args'))));
 			}
 			else
 			{
-				$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
+				$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.irc')
 					->setDataPoint('message', sprintf('<- <%1$s> CTCP-REPLY %2$s', $event->getDataPoint('hostmask')->getNick(), $event->getDataPoint('command'))));
 			}
 		});
 
 		// Display our responses
-		$dispatcher->register('runtime.postdispatch', function(\Yukari\Event\Instance $event) {
+		$dispatcher->register('runtime.postdispatch', function(\OpenFlame\Framework\Event\Instance $event) {
 			$dispatcher = Kernel::getDispatcher();
 			$response = $event->getDataPoint('event');
 			switch($response->getName())
 			{
 				case 'irc.output.action':
-					$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
+					$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.irc')
 						->setDataPoint('message', sprintf('-> [%1$s] *** %2$s', $response->getDataPoint('target'), $response->getDataPoint('text'))));
 				break;
 
 				case 'irc.output.ctcp':
 					if($response->dataPointExists('args') && $response->getDataPoint('args') !== NULL)
 					{
-						$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
+						$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.irc')
 							->setDataPoint('message', sprintf('-> [%1$s] CTCP %2$s - %3$s', $response->getDataPoint('target'), $response->getDataPoint('command'), $response->getDataPoint('args'))));
 					}
 					else
 					{
-						$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
+						$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.irc')
 							->setDataPoint('message', sprintf('-> [%1$s] CTCP %2$s', $response->getDataPoint('target'), $response->getDataPoint('command'))));
 					}
 				break;
@@ -232,23 +232,23 @@ class UI
 				case 'irc.output.ctcp_reply':
 					if($response->dataPointExists('args') && $response->getDataPoint('args') !== NULL)
 					{
-						$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
+						$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.irc')
 							->setDataPoint('message', sprintf('-> [%1$s] CTCP-REPLY %2$s - %3$s', $response->getDataPoint('target'), $response->getDataPoint('command'), $response->getDataPoint('args'))));
 					}
 					else
 					{
-						$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
+						$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.irc')
 							->setDataPoint('message', sprintf('-> [%1$s] CTCP-REPLY %2$s', $response->getDataPoint('target'), $response->getDataPoint('command'))));
 					}
 				break;
 
 				case 'irc.output.privmsg':
-					$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
+					$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.irc')
 						->setDataPoint('message', sprintf('-> [%1$s] %2$s', $response->getDataPoint('target'), $response->getDataPoint('text'))));
 				break;
 
 				case 'irc.output.notice':
-					$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.irc')
+					$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.irc')
 						->setDataPoint('message', sprintf('-> [%1$s NOTICE] %2$s', $response->getDataPoint('target'), $response->getDataPoint('text'))));
 				break;
 
@@ -351,10 +351,10 @@ class UI
 
 	/**
 	 * Method called on startup that dumps the startup text for Yukari to output
-	 * @param \Yukari\Event\Instance $event - The event that is triggering the output.
+	 * @param \OpenFlame\Framework\Event\Instance $event - The event that is triggering the output.
 	 * @return void
 	 */
-	public function displayStartup(\Yukari\Event\Instance $event)
+	public function displayStartup(\OpenFlame\Framework\Event\Instance $event)
 	{
 		if($event->getName() !== 'ui.startup')
 		{
@@ -383,10 +383,10 @@ class UI
 
 	/**
 	 * Method called that dumps Yukari's ready-notice text to output
-	 * @param \Yukari\Event\Instance $event - The event that is triggering the output.
+	 * @param \OpenFlame\Framework\Event\Instance $event - The event that is triggering the output.
 	 * @return void
 	 */
-	public function displayReady(\Yukari\Event\Instance $event)
+	public function displayReady(\OpenFlame\Framework\Event\Instance $event)
 	{
 		if($event->getName() !== 'ui.ready')
 		{
@@ -403,10 +403,10 @@ class UI
 
 	/**
 	 * Method called on shutdown that dumps the shutdown text for Yukari to output
-	 * @param \Yukari\Event\Instance $event - The event that is triggering the output.
+	 * @param \OpenFlame\Framework\Event\Instance $event - The event that is triggering the output.
 	 * @return void
 	 */
-	public function displayShutdown(\Yukari\Event\Instance $event)
+	public function displayShutdown(\OpenFlame\Framework\Event\Instance $event)
 	{
 		if($event->getName() !== 'ui.shutdown')
 		{
@@ -423,10 +423,10 @@ class UI
 
 	/**
 	 * Method called on message being received/sent
-	 * @param \Yukari\Event\Instance $event - The event that is triggering the output.
+	 * @param \OpenFlame\Framework\Event\Instance $event - The event that is triggering the output.
 	 * @return void
 	 */
-	public function displayIRC(\Yukari\Event\Instance $event)
+	public function displayIRC(\OpenFlame\Framework\Event\Instance $event)
 	{
 		if($event->getName() !== 'ui.message.irc')
 		{
@@ -441,10 +441,10 @@ class UI
 
 	/**
 	 * Method called when a low-level system event is triggered or occurs in Yukari
-	 * @param \Yukari\Event\Instance $event - The event that is triggering the output.
+	 * @param \OpenFlame\Framework\Event\Instance $event - The event that is triggering the output.
 	 * @return void
 	 */
-	public function displayStatus(\Yukari\Event\Instance $event)
+	public function displayStatus(\OpenFlame\Framework\Event\Instance $event)
 	{
 		if($event->getName() !== 'ui.message.status')
 		{
@@ -459,10 +459,10 @@ class UI
 
 	/**
 	 * Method called when a system event is triggered or occurs in Yukari
-	 * @param \Yukari\Event\Instance $event - The event that is triggering the output.
+	 * @param \OpenFlame\Framework\Event\Instance $event - The event that is triggering the output.
 	 * @return void
 	 */
-	public function displaySystem(\Yukari\Event\Instance $event)
+	public function displaySystem(\OpenFlame\Framework\Event\Instance $event)
 	{
 		if($event->getName() !== 'ui.message.system')
 		{
@@ -477,13 +477,13 @@ class UI
 
 	/**
 	 * Method called when a system event is triggered or occurs in Yukari
-	 * @param \Yukari\Event\Instance $event - The event that is triggering the output.
+	 * @param \OpenFlame\Framework\Event\Instance $event - The event that is triggering the output.
 	 * @param string $data - The data to display
 	 * @return void
 	 *
 	 * @note Intended for debugging use only.
 	 */
-	public function displayEvent(\Yukari\Event\Instance $event)
+	public function displayEvent(\OpenFlame\Framework\Event\Instance $event)
 	{
 		if($event->getName() !== 'ui.message.event')
 		{
@@ -498,10 +498,10 @@ class UI
 
 	/**
 	 * Method called on a notice being thrown
-	 * @param \Yukari\Event\Instance $event - The event that is triggering the output.
+	 * @param \OpenFlame\Framework\Event\Instance $event - The event that is triggering the output.
 	 * @return void
 	 */
-	public function displayNotice(\Yukari\Event\Instance $event)
+	public function displayNotice(\OpenFlame\Framework\Event\Instance $event)
 	{
 		if($event->getName() !== 'ui.message.notice')
 		{
@@ -516,10 +516,10 @@ class UI
 
 	/**
 	 * Method called on a warning being issued
-	 * @param \Yukari\Event\Instance $event - The event that is triggering the output.
+	 * @param \OpenFlame\Framework\Event\Instance $event - The event that is triggering the output.
 	 * @return void
 	 */
-	public function displayWarning(\Yukari\Event\Instance $event)
+	public function displayWarning(\OpenFlame\Framework\Event\Instance $event)
 	{
 		if($event->getName() !== 'ui.message.warning')
 		{
@@ -534,10 +534,10 @@ class UI
 
 	/**
 	 * Method called on an error being encountered
-	 * @param \Yukari\Event\Instance $event - The event that is triggering the output.
+	 * @param \OpenFlame\Framework\Event\Instance $event - The event that is triggering the output.
 	 * @return void
 	 */
-	public function displayError(\Yukari\Event\Instance $event)
+	public function displayError(\OpenFlame\Framework\Event\Instance $event)
 	{
 		if($event->getName() !== 'ui.message.error')
 		{
@@ -552,10 +552,10 @@ class UI
 
 	/**
 	 * Method that is called when a PHP issue pops up (notice, warning, etc.)
-	 * @param \Yukari\Event\Instance $event - The event that is triggering the output.
+	 * @param \OpenFlame\Framework\Event\Instance $event - The event that is triggering the output.
 	 * @return void
 	 */
-	public function displayPHP(\Yukari\Event\Instance $event)
+	public function displayPHP(\OpenFlame\Framework\Event\Instance $event)
 	{
 		if($event->getName() !== 'ui.message.php')
 		{
@@ -570,12 +570,12 @@ class UI
 
 	/**
 	 * Method called on debug information being output in Yukari
-	 * @param \Yukari\Event\Instance $event - The event that is triggering the output.
+	 * @param \OpenFlame\Framework\Event\Instance $event - The event that is triggering the output.
 	 * @return void
 	 *
 	 * @note Intended for debugging use only.
 	 */
-	public function displayDebug(\Yukari\Event\Instance $event)
+	public function displayDebug(\OpenFlame\Framework\Event\Instance $event)
 	{
 		if($event->getName() !== 'ui.message.debug')
 		{
@@ -590,12 +590,12 @@ class UI
 
 	/**
 	 * Method called on raw IRC protocol information being output in Yukari
-	 * @param \Yukari\Event\Instance $event - The event that is triggering the output.
+	 * @param \OpenFlame\Framework\Event\Instance $event - The event that is triggering the output.
 	 * @return void
 	 *
 	 * @note Intended for debugging use only.
 	 */
-	public function displayRaw(\Yukari\Event\Instance $event)
+	public function displayRaw(\OpenFlame\Framework\Event\Instance $event)
 	{
 		if($event->getName() !== 'ui.message.raw')
 		{

@@ -74,7 +74,7 @@ class Loader implements \Iterator
 		else
 		{
 			$dispatcher = Kernel::getDispatcher();
-			$dispatcher->trigger(\Yukari\Event\Instance::newEvent($this, 'ui.message.debug')
+			$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent($this, 'ui.message.debug')
 				->setDataPoint('message', sprintf('Phar archive not present for addon "%1$s", looked in "%2$s"', $addon, YUKARI . "/{$phar_path}")));
 
 			if(!file_exists(YUKARI . "/addons/{$addon}{$metadata_path}"))

@@ -21,6 +21,7 @@
 
 // Set the root path
 define('Yukari\\ROOT_PATH', (\Yukari\RUN_PHAR === true) ? 'phar://' . YUKARI_PHAR : YUKARI . '/src');
+define('OpenFlame\\ROOT_PATH', \Yukari\ROOT_PATH);
 
 /**
  * We need to start checking to see if the requirements for Yukari have been met
@@ -40,7 +41,7 @@ define('Yukari\\START_TIME', time());
 define('Yukari\\START_MICROTIME', microtime(true));
 
 // Absolute essentials first
-require \Yukari\ROOT_PATH . '/Yukari/Autoloader.php';
+require \Yukari\ROOT_PATH . '/OpenFlame/Framework/Autoloader.php';
 require \Yukari\ROOT_PATH . '/Yukari/Kernel.php';
 require \Yukari\ROOT_PATH . '/Yukari/Functions.php';
 require \Yukari\ROOT_PATH . '/Yukari/Environment.php';

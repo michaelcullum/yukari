@@ -77,7 +77,7 @@ abstract class MetadataBase
 			try
 			{
 				$addon_loader->loadAddon($name);
-				$dispatcher->trigger(\Yukari\Event\Instance::newEvent('ui.message.system')
+				$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.system')
 					->setDataPoint('message', sprintf('Loaded addon "%s"', $name)));
 				return true;
 			}
