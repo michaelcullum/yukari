@@ -8,12 +8,13 @@ Yukari is a flexible IRC bot built in PHP 5.3 Object Oriented Programming.
 
 ## Requirements
 
-* PHP 5.3.x
+* PHP 5.3.0 or newer
 * PHAR read access
 
 ## Dependencies
 
-* Symfony\Component\Yaml (packaged)
+* Symfony\Component\Yaml (packaged) <https://github.com/symfony/Yaml>
+* OpenFlame\Framework (packaged) <https://github.com/OpenFlame/OpenFlame-Framework>
 
 ## Extras
 
