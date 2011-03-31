@@ -433,7 +433,7 @@ class Basic
 	public function checkAuthentication(\Yukari\Connection\Hostmask $hostmask)
 	{
 		$dispatcher = Kernel::getDispatcher();
-		$event = $dispatcher->cleanTrigger(\OpenFlame\Framework\Event\Instance::newEvent('acl.check_allowed')
+		$event = $dispatcher->triggerUntilBreak(\OpenFlame\Framework\Event\Instance::newEvent('acl.check_allowed')
 			->setDataPoint('hostmask', $hostmask));
 
 		$auth = $event->getReturns();
