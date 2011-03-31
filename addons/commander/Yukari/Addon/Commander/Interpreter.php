@@ -101,8 +101,8 @@ class Interpreter
 			$_results = $dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent(sprintf('irc.input.command.%s', $command))->setData(array(
 				'rootevent'		=> $event,
 				'is_private'	=> false,
-				'command'		=> $text[0],
-				'text'			=> $text[1],
+				'command'		=> $command,
+				'text'			=> $text,
 				'target'		=> $event->getDataPoint('target'),
 				'hostmask'		=> $event->getDataPoint('hostmask'),
 			)));
@@ -115,8 +115,8 @@ class Interpreter
 				$_results = $dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent(sprintf('irc.input.namedcommand.%s', $command))->setData(array(
 					'rootevent'		=> $event,
 					'is_private'	=> false,
-					'command'		=> $text[0],
-					'text'			=> $text[1],
+					'command'		=> $command,
+					'text'			=> $text,
 					'target'		=> $event->getDataPoint('target'),
 					'hostmask'		=> $event->getDataPoint('hostmask'),
 				)));
