@@ -3,4 +3,4 @@
 	url = https://github.com/symfony/Yaml.git
 [submodule "src/OpenFlame/Framework"]
 	path = src/OpenFlame/Framework
-	url = https://github.com/OpenFlame/OpenFlame-Framework.git
+	url = https://github.com/damianb/OpenFlame-Framework.git
