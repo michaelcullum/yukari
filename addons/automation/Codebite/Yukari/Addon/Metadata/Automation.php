@@ -65,7 +65,6 @@ class Automation extends \Codebite\Yukari\Addon\Metadata\MetadataBase
 
 		// Respond to CTCP VERSION and CTCP PING (if a valid argument for the CTCP was provided)
 		$ctcp_lambda = function(\OpenFlame\Framework\Event\Instance $event) {
-			var_dump($event);
 			if(strtolower($event->getDataPoint('command')) === 'version')
 			{
 				return \OpenFlame\Framework\Event\Instance::newEvent('irc.output.ctcp_reply')
