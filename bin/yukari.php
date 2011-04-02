@@ -37,7 +37,7 @@ if(version_compare(YUKARI_MIN_PHP, PHP_VERSION, '>'))
 }
 
 // If we are running Yukari using the Phar archive, then
-if(Yukari\RUN_PHAR === true)
+if(\Codebite\Yukari\RUN_PHAR === true)
 {
 	require 'phar://' . YUKARI_PHAR . '/Codebite/Yukari/Bootstrap.php';
 }
