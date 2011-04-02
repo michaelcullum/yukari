@@ -20,7 +20,7 @@
  */
 
 namespace Codebite\Yukari\Addon\Commander;
-use Yukari\Kernel;
+use Codebite\Yukari\Kernel;
 
 /**
  * Yukari - Commander addon interpreter object,

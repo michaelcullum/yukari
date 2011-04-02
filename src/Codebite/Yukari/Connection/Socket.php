@@ -20,7 +20,7 @@
  */
 
 namespace Codebite\Yukari\Connection;
-use Yukari\Kernel;
+use Codebite\Yukari\Kernel;
 
 /**
  * Yukari - Socket connection handling class,

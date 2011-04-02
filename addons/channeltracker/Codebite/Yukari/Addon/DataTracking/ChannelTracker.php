@@ -20,7 +20,7 @@
  */
 
 namespace Codebite\Yukari\Addon\DataTracking;
-use Yukari\Kernel;
+use Codebite\Yukari\Kernel;
 
 /**
  * Yukari - Channel tracking object,

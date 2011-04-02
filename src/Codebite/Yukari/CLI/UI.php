@@ -20,7 +20,7 @@
  */
 
 namespace Codebite\Yukari\CLI;
-use Yukari\Kernel;
+use Codebite\Yukari\Kernel;
 
 
 /**

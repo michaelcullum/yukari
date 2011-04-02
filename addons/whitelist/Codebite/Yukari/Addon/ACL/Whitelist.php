@@ -20,7 +20,7 @@
  */
 
 namespace Codebite\Yukari\Addon\ACL;
-use Yukari\Kernel;
+use Codebite\Yukari\Kernel;
 
 /**
  * Yukari - ACL Whitelist object,

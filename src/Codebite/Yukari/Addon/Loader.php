@@ -20,7 +20,7 @@
  */
 
 namespace Codebite\Yukari\Addon;
-use Yukari\Kernel;
+use Codebite\Yukari\Kernel;
 
 /**
  * Yukari - Addon manager class,

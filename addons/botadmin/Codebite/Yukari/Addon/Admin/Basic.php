@@ -20,7 +20,7 @@
  */
 
 namespace Codebite\Yukari\Addon\Admin;
-use Yukari\Kernel;
+use Codebite\Yukari\Kernel;
 
 /**
  * Yukari - Basic bot administration object,

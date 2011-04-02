@@ -20,7 +20,7 @@
  */
 
 namespace Codebite\Yukari\Addon\Database;
-use Yukari\Kernel;
+use Codebite\Yukari\Kernel;
 
 /**
  * Yukari - SQLite Database class,

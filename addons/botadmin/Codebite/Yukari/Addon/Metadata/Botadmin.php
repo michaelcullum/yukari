@@ -20,7 +20,7 @@
  */
 
 namespace Codebite\Yukari\Addon\Metadata;
-use Yukari\Kernel;
+use Codebite\Yukari\Kernel;
 
 /**
  * Yukari - Addon metadata object,
