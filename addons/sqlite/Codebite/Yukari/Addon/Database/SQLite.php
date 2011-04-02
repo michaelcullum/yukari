@@ -33,26 +33,15 @@ use Codebite\Yukari\Kernel;
  * @license     MIT License
  * @link        https://github.com/damianb/yukari
  */
-class SQLite extends \PDO
+class SQLite extends \Codebite\SQLightning\PDO
 {
-	/**
-	 * @var array - Stores all anonymous functions that we use for queries
-	 */
-	protected $queries = array();
-
-	/**
-	 * @ignore
-	 * Just overriding the __construct() method of the parent
-	 */
-	public function __construct() {	}
-
 	/**
 	 * Initializes a connection to the specified database.
 	 * @see PDO::__construct()
 	 */
 	public function connect($dsn, $username = NULL, $password = NULL, $driver_options = NULL)
 	{
-		parent::__construct($dsn, $username, $password, $driver_options);
+		$this->loadPDO(new PDO($dsn, $username, $password, $driver_options));
 	}
 
 	/**
@@ -62,7 +51,8 @@ class SQLite extends \PDO
 	 */
 	public function runSchema($filename)
 	{
-		$this->exec(file_get_contents(Kernel::get('core.autoloader')->getFile($filename)));
+		$autoloader = Kernel::getAutoloader();
+		$this->db->exec(file_get_contents($autoloader->getFile($filename)));
 	}
 
 	/**
@@ -72,46 +62,7 @@ class SQLite extends \PDO
 	 */
 	public function tableExists($table_name)
 	{
-		return (bool) $this->query('SELECT COUNT(*) FROM sqlite_master WHERE name = ' . $this->quote($table_name))->fetchColumn();
-	}
-
-	/**
-	 * Define a query for later use.
-	 * @param string $query_name - The name to store the query as.
-	 * @param \Closure $query - An anonymous function used as the "query" to execute.
-	 * @return \Codebite\Yukari\Addon\Database\SQLite - Provides a fluent interface.
-	 */
-	public function defineQuery($query_name, \Closure $query)
-	{
-		$this->queries[$query_index] = $query;
-		return $this;
-	}
-
-	/**
-	 * Execute a stored query function and return the results
-	 * @note uses func_num_args, first arg is the query index, and the rest gets passed to the function as params 2+
-	 * @return mixed - The value returned from the query function
-	 *
-	 * @throws \InvalidArgumentException
-	 */
-	public function query()
-	{
-		$argc = func_num_args();
-		if($argc < 1)
-		{
-			throw new \InvalidArgumentException('Required query index for \\Codebite\Yukari\\Addon\\Database\\SQLite::query() not provided');
-		}
-
-		$args = func_get_args();
-		list($query_index, $args) = array_pad($args, 2, array());
-
-		if(!isset($this->queries[$query_index]))
-		{
-			throw new \InvalidArgumentException('The query associated with the query index specified does not exist');
-		}
-
-		$return = call_user_func_array($this->queries[$query_index], array_merge(array($this->db), (array) $args));
-		return $return;
+		return (bool) $this->db->query('SELECT COUNT(*) FROM sqlite_master WHERE name = ' . $this->db->quote($table_name))->fetchColumn();
 	}
 
 	/**

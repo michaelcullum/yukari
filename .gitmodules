@@ -4,3 +4,6 @@
 [submodule "src/OpenFlame/Framework"]
 	path = src/OpenFlame/Framework
 	url = https://github.com/damianb/OpenFlame-Framework.git
+[submodule "addons/sqlite/Codebite/SQLightning"]
+	path = addons/sqlite/Codebite/SQLightning
+	url = https://github.com/damianb/sqlightning.git
