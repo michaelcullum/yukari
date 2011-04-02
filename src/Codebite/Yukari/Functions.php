@@ -184,7 +184,7 @@ function timespan($time, $last_comma = false)
 		$count = floor($time / $interval[1]);
 		if($count > 0)
 		{
-			$return[] = "{$count} {$interval[0]}" . (($count == 1) ? 's' : '');
+			$return[] = "{$count} {$interval[0]}" . (($count != 1) ? 's' : '');
 			$time %= $interval[1];
 		}
 	}
