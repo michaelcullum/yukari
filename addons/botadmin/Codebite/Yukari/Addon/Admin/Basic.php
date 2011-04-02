@@ -58,6 +58,7 @@ class Basic
 			//->register('irc.input.command.addoninfo', array(Kernel::get('addon.botadmin'), 'handleAddonInfoCommand')) // @todo write this command
 			->register('irc.input.command.loadaddon', array(Kernel::get('addon.botadmin'), 'handleLoadAddonCommand'))
 			->register('irc.input.command.versioncheck', array(Kernel::get('addon.botadmin'), 'handleVersionCheckCommand'))
+			->register('irc.input.command.uptime', array(Kernel::get('addon.botadmin'), 'handleUptimeCommand'))
 			->register('irc.input.command.quit', array(Kernel::get('addon.botadmin'), 'handleQuitCommand'));
 
 		return $this;
@@ -386,6 +387,34 @@ class Basic
 					->setDataPoint('text', sprintf('%1$s %2$s.', $highlight, $status));
 				return $results;
 			}
+		}
+	}
+
+	/**
+	 * Handles the bot being asked how long its been up.
+	 * @param \OpenFlame\Framework\Event\Instance $event - The event instance.
+	 * @return array - Array of events to dispatch in response to the input event.
+	 */
+	public function handleUptimeCommand(\OpenFlame\Framework\Event\Instance $event)
+	{
+		// Check auths first
+		if(!$this->checkAuthentication($event->getDataPoint('hostmask')))
+		{
+			return $this->handleCommandRefusal($event);
+		}
+		else
+		{
+			$current_time = time();
+
+			$time_diff = $current_time - \Codebite\Yukari\START_TIME;
+			$diff_string = \Codebite\Yukari\timespan($time_diff);
+
+			$highlight = (!$event->getDataPoint('is_private')) ? $event->getDataPoint('hostmask')->getNick() . ':' : '';
+			$results[] = \OpenFlame\Framework\Event\Instance::newEvent('irc.output.privmsg')
+				->setDataPoint('target', $event->getDataPoint('target'))
+				->setDataPoint('text', sprintf('%1$s I have been running for %2$s.', $highlight, $diff_string));
+
+			return $results;
 		}
 	}
 
