@@ -20,7 +20,7 @@
  */
 
 // Set the root path
-define('Yukari\\ROOT_PATH', (\Codebite\Yukari\RUN_PHAR === true) ? 'phar://' . YUKARI_PHAR : YUKARI . '/src');
+define('Codebite\\Yukari\\ROOT_PATH', (\Codebite\Yukari\RUN_PHAR === true) ? 'phar://' . YUKARI_PHAR : YUKARI . '/src');
 define('OpenFlame\\ROOT_PATH', \Codebite\Yukari\ROOT_PATH);
 
 /**
@@ -35,20 +35,20 @@ if(strtolower(PHP_SAPI) !== 'cli')
 }
 
 // Define a few constants on startup here.
-define('Yukari\\BASE_MEMORY', memory_get_usage());
-define('Yukari\\BASE_MEMORY_PEAK', memory_get_peak_usage());
-define('Yukari\\START_TIME', time());
-define('Yukari\\START_MICROTIME', microtime(true));
+define('Codebite\\Yukari\\BASE_MEMORY', memory_get_usage());
+define('Codebite\\Yukari\\BASE_MEMORY_PEAK', memory_get_peak_usage());
+define('Codebite\\Yukari\\START_TIME', time());
+define('Codebite\\Yukari\\START_MICROTIME', microtime(true));
 
 // Absolute essentials first
 require \Codebite\Yukari\ROOT_PATH . '/OpenFlame/Framework/Autoloader.php';
-require \Codebite\Yukari\ROOT_PATH . '/Yukari/Kernel.php';
-require \Codebite\Yukari\ROOT_PATH . '/Yukari/Functions.php';
-require \Codebite\Yukari\ROOT_PATH . '/Yukari/Environment.php';
+require \Codebite\Yukari\ROOT_PATH . '/Codebite/Yukari/Kernel.php';
+require \Codebite\Yukari\ROOT_PATH . '/Codebite/Yukari/Functions.php';
+require \Codebite\Yukari\ROOT_PATH . '/Codebite/Yukari/Environment.php';
 
 // Set our error and exception handlers
-@set_error_handler('Yukari\\errorHandler');
-@set_exception_handler('Yukari\\exceptionHandler');
+@set_error_handler('Codebite\\Yukari\\errorHandler');
+@set_exception_handler('Codebite\\Yukari\\exceptionHandler');
 
 // Check to see if date.timezone is empty in the PHP.ini; if so, set the timezone with some Hax to prevent strict errors.
 if(!ini_get('date.timezone'))

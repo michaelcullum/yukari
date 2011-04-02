@@ -26,7 +26,7 @@
 define('YUKARI', dirname(dirname(__FILE__)));
 define('YUKARI_PHAR', 'lib/yukari.phar');
 define('YUKARI_MIN_PHP', '5.3.0');
-define('Yukari\\RUN_PHAR', true);
+define('Codebite\\Yukari\\RUN_PHAR', true);
 error_reporting(-1);
 
 // Check running PHP version against the minimum supported PHP version...
@@ -39,9 +39,9 @@ if(version_compare(YUKARI_MIN_PHP, PHP_VERSION, '>'))
 // If we are running Yukari using the Phar archive, then
 if(Yukari\RUN_PHAR === true)
 {
-	require 'phar://' . YUKARI_PHAR . '/Yukari/Bootstrap.php';
+	require 'phar://' . YUKARI_PHAR . '/Codebite/Yukari/Bootstrap.php';
 }
 else
 {
-	require YUKARI . '/src/Yukari/Bootstrap.php';
+	require YUKARI . '/src/Codebite/Yukari/Bootstrap.php';
 }
