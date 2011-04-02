@@ -41,7 +41,7 @@ class SQLite extends \Codebite\SQLightning\PDO
 	 */
 	public function connect($dsn, $username = NULL, $password = NULL, $driver_options = NULL)
 	{
-		$this->loadPDO(new PDO($dsn, $username, $password, $driver_options));
+		$this->loadPDO(new \PDO($dsn, $username, $password, $driver_options));
 	}
 
 	/**
