@@ -276,7 +276,7 @@ class UI
 			throw new \InvalidArgumentException(sprintf('Invalid UI output level "%1$s" specified', $output_level));
 		}
 
-		$this->output_level = constant('Yukari\\CLI\\UI::OUTPUT_' . strtoupper($output_level));
+		$this->output_level = constant('Codebite\\Yukari\\CLI\\UI::OUTPUT_' . strtoupper($output_level));
 
 		return $this;
 	}
