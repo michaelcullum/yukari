@@ -67,7 +67,7 @@ class Sqlite extends \Codebite\Yukari\Addon\Metadata\MetadataBase
 		}
 
 		$db = Kernel::set('addon.database', new \Codebite\Yukari\Addon\Database\SQLite());
-		$db->connect('sqlite:' . YUKARI . '/data/database/' . Kernel::getConfig('db.sqlite.file') . '.sqlite');
+		$db->connect('sqlite:' . YUKARI . '/data/database/' . Kernel::getConfig('db.sqlite.file') . '.sqlite.db');
 	}
 
 	/**
