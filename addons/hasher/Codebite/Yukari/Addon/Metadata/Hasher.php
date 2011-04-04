@@ -53,7 +53,7 @@ class Hasher extends \Codebite\Yukari\Addon\Metadata\MetadataBase
 	/**
 	 * @var string - The addon's description.
 	 */
-	protected $description = 'Provides a secure password hashing library.';
+	protected $description = 'Wraps around the OpenFlame fork of phpass and provides access it throughout.';
 
 	/**
 	 * Hooking method for addon metadata objects, called to initialize the addon after the dependency check has been passed.
@@ -61,7 +61,7 @@ class Hasher extends \Codebite\Yukari\Addon\Metadata\MetadataBase
 	 */
 	public function initialize()
 	{
-		$hash = Kernel::set('addon.hasher', new \Codebite\Yukari\Addon\Security\Hash());
+		$hash = Kernel::set('addon.hasher', new \OpenFlame\Framework\Security\Hasher());
 	}
 
 	/**
