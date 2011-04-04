@@ -7,3 +7,6 @@
 [submodule "addons/sqlite/Codebite/SQLightning"]
 	path = addons/sqlite/Codebite/SQLightning
 	url = https://github.com/damianb/sqlightning.git
+[submodule "addons/postgres/Codebite/SQLightning"]
+	path = addons/postgres/Codebite/SQLightning
+	url = https://github.com/damianb/sqlightning.git
