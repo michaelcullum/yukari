@@ -6,7 +6,7 @@
  *  Yukari
  *-------------------------------------------------------------------
  * @category    Yukari
- * @package     cli
+ * @package     environment
  * @author      Damian Bushong
  * @copyright   (c) 2009 - 2011 -- Damian Bushong
  * @license     MIT License
@@ -19,21 +19,21 @@
  *
  */
 
-namespace Codebite\Yukari\CLI;
+namespace Codebite\Yukari\Environment;
 
 
 /**
- * Yukari - CLI handling object,
+ * Yukari - CLI launch argument handling object,
  * 	    Used to provide access to parameters passed to Yukari via argv.
  *
  *
  * @category    Yukari
- * @package     cli
+ * @package     environment
  * @author      Damian Bushong
  * @license     MIT License
  * @link        https://github.com/damianb/yukari
  */
-class CLIArgs implements \ArrayAccess
+class ArgumentParser implements \ArrayAccess
 {
 	/**
 	 * @var array - The args loaded.
@@ -43,17 +43,19 @@ class CLIArgs implements \ArrayAccess
 	/**
 	 * Constructor
 	 * @param array $args - Array of CLI args to load and parse
-	 * @return void
 	 */
-	public function __construct(array $args)
+	public function __construct(array $args = NULL)
 	{
-		$this->loadArgs($args);
+		if($args !== NULL)
+		{
+			$this->loadArgs($args);
+		}
 	}
 
 	/**
 	 * Load up the CLI args and parse them.
 	 * @param array $args - An array of CLI args to load and parse
-	 * @return void
+	 * @return \Codebite\Yukari\Environment\ArgumentParser - Provides a fluent interface
 	 */
 	public function loadArgs(array $args)
 	{
@@ -68,6 +70,8 @@ class CLIArgs implements \ArrayAccess
 			list(, $setting, , $value) = array_pad($matches, 4, true);
 			$this->args[$setting] = $value;
 		}
+
+		return $this;
 	}
 
 	/**
