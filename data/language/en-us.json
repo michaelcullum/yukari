@@ -1,0 +1,6 @@
+{
+	"BOT_NAME":"Yukari IRC Bot",
+	"DISPLAY_READY":"Yukari is starting up, go get yourself a coffee...",
+	"DISPLAY_READY":"Yukari loaded and ready!",
+	"DISPLAY_SHUTDOWN":"Yukari shutting down..."
+}
