@@ -19,6 +19,10 @@
  *
  */
 
+namespace Codebite\Yukari;
+use \Codebite\Yukari\Kernel;
+use \OpenFlame\Framework\Autoloader;
+
 // Set the root path
 define('Codebite\\Yukari\\ROOT_PATH', (\Codebite\Yukari\RUN_PHAR === true) ? 'phar://' . YUKARI_PHAR : YUKARI . '/src');
 
@@ -50,7 +54,7 @@ set_time_limit(0);
 
 // Absolute essentials first
 require \Codebite\Yukari\ROOT_PATH . '/OpenFlame/Framework/Autoloader.php';
-\OpenFlame\Framework\Autoloader::getInstance(\Codebite\Yukari\ROOT_PATH);
+Autoloader::getInstance(\Codebite\Yukari\ROOT_PATH);
 
 // Set our error and exception handlers
 @set_error_handler('Codebite\\Yukari\\errorHandler');
@@ -59,6 +63,7 @@ require \Codebite\Yukari\ROOT_PATH . '/OpenFlame/Framework/Autoloader.php';
 // The first chunk always gets in the way, so we drop it.
 array_shift($_SERVER['argv']);
 
-\Codebite\Yukari\Kernel::load();
-\Codebite\Yukari\Kernel::initEnvironment();
-\Codebite\Yukari\Kernel::getEnvironment()->runBot();
+Kernel::load();
+// @todo scrap the "environment"
+Kernel::initEnvironment();
+Kernel::getEnvironment()->runBot();
