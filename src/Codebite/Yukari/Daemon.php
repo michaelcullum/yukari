@@ -78,7 +78,7 @@ class Daemon
 		// Startup message
 		$dispatcher->trigger(Event::newEvent('ui.startup'));
 		$dispatcher->trigger(Event::newEvent('ui.message.system')
-			->setDataPoint('message', 'Loading the Yukari core'));
+			->set('message', 'Loading the Yukari core'));
 
 		// Create our timezone object and store it for now, along with storing our starting DateTime object.
 		$timezone = Kernel::set('yukari.timezone', new \DateTimeZone((Kernel::getConfig('core.timezonestring') ?: 'UTC')));
@@ -92,19 +92,19 @@ class Daemon
 			{
 				$addon_loader->loadAddon($addon);
 				$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.system')
-					->setDataPoint('message', sprintf('Loaded addon "%s"', $addon)));
+					->set('message', sprintf('Loaded addon "%s"', $addon)));
 			}
 			catch(\Exception $e)
 			{
 				$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.warning')
-					->setDataPoint('message', sprintf('Failed to load addon "%1$s" - failure message: "%2$s"', $addon, $e->getMessage())));
+					->set('message', sprintf('Failed to load addon "%1$s" - failure message: "%2$s"', $addon, $e->getMessage())));
 			}
 		}
 
 		if(Kernel::getConfig('yukari.dispatcher.listeners'))
 		{
 			$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.system')
-				->setDataPoint('message', 'Registering listeners to event dispatcher'));
+				->set('message', 'Registering listeners to event dispatcher'));
 
 			foreach(Kernel::getConfig('yukari.dispatcher.listeners') as $event_name => $listener)
 			{
@@ -122,19 +122,62 @@ class Daemon
 
 		// Dispatch a startup event
 		// This is useful for having a listener registered, waiting for startup to complete before loading in one last thing
-		$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('runtime.startup'));
+		$dispatcher->trigger(Event::newEvent('yukari.startup'));
 
 		// All done!
-		$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.ready'));
+		$dispatcher->trigger(Event::newEvent('ui.ready'));
 
 		// How fast were we, now?  :3
-		$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.debug')
-			->setDataPoint('message', sprintf('Startup complete, took %1$s seconds', (microtime(true) - \Codebite\Yukari\START_MICROTIME))));
+		$dispatcher->trigger(Event::newEvent('ui.message.debug')
+			->set('message', sprintf('Startup complete, took %1$s seconds', (microtime(true) - \Codebite\Yukari\START_MICROTIME))));
 	}
 
 	public function exec(Event $event)
 	{
-		// asdf
+		$dispatcher = Kernel::get('dispatcher');
+
+		try
+		{
+			// Now we go around in endless circles until someone lays down a giant bear trap and catches us.
+			while(true)
+			{
+				$dispatcher->trigger(Event::newEvent('yukari.tick'));
+
+				// If we have a quit event, break out of the loop.
+				if($this->shutdown === true)
+				{
+					break;
+				}
+			}
+		}
+		catch(\Exception $e)
+		{
+			try
+			{
+				$dispatcher->trigger(Event::newEvent('ui.message.debug')
+					->set('message', sprintf('Exception %1$s::%2$s: %3$s', get_class($e), $e->getCode(), $e->getMessage())));
+				$dispatcher->trigger(Event::newEvent('ui.message.debug')
+					->set('message', sprintf('Stack trace: %s', $e->getTraceAsString())));
+
+				// Dispatch an emergency abort event.
+				$dispatcher->trigger(Event::newEvent('yukari.abort'));
+			}
+			catch(\Exception $e)
+			{
+				// Another exception?  FFFUUUUUUU--
+				// CRASH BANG BOOM.
+				printf('Fatal error [%1$s::%2$s] encountered during runtime abort procedure, terminating immediately' . PHP_EOL, get_class($e), $e->getCode());
+				printf('Stack trace: %s', $e->getTraceAsString());
+				exit(1);
+			}
+			exit(1);
+		}
+
+		// Dispatch a pre-shutdown event.
+		$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('yukari.shutdown'));
+
+		// Dispatch a daemon-termination event
+		$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('yukari.terminate'));
 	}
 
 	/**
