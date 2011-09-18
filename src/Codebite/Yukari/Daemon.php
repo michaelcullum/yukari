@@ -72,38 +72,35 @@ class Daemon
 		$dispatcher = Kernel::get('dispatcher');
 
 		$ui = Kernel::get('yukari.ui');
-		$ui->setOutputLevel(Kernel::getConfig('ui.output_level'))
-			->registerListeners();
 
 		// Startup message
 		$dispatcher->trigger(Event::newEvent('ui.startup'));
 		$dispatcher->trigger(Event::newEvent('ui.message.system')
 			->set('message', 'Loading the Yukari core'));
 
-		// Create our timezone object and store it for now, along with storing our starting DateTime object.
-		$timezone = Kernel::set('yukari.timezone', new \DateTimeZone((Kernel::getConfig('core.timezonestring') ?: 'UTC')));
-		Kernel::set('yukari.starttime', new \DateTime('@' . \Codebite\Yukari\START_TIME, $timezone));
+		// get our start time
+		Kernel::get('yukari.starttime');
 
 		// Load any addons we want.
-		$addon_loader = Kernel::set('yukari.addonloader', new \Codebite\Yukari\Addon\Loader());
+		$addon_loader = Kernel::get('yukari.addonloader');
 		foreach(Kernel::getConfig('yukari.addons') as $addon)
 		{
 			try
 			{
 				$addon_loader->loadAddon($addon);
-				$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.system')
+				$dispatcher->trigger(Event::newEvent('ui.message.system')
 					->set('message', sprintf('Loaded addon "%s"', $addon)));
 			}
 			catch(\Exception $e)
 			{
-				$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.warning')
+				$dispatcher->trigger(Event::newEvent('ui.message.warning')
 					->set('message', sprintf('Failed to load addon "%1$s" - failure message: "%2$s"', $addon, $e->getMessage())));
 			}
 		}
 
 		if(Kernel::getConfig('yukari.dispatcher.listeners'))
 		{
-			$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.system')
+			$dispatcher->trigger(Event::newEvent('ui.message.system')
 				->set('message', 'Registering listeners to event dispatcher'));
 
 			foreach(Kernel::getConfig('yukari.dispatcher.listeners') as $event_name => $listener)
@@ -119,6 +116,8 @@ class Daemon
 				}
 			}
 		}
+
+		$dispatcher->register('yukari.request_shutdown', array(Kernel::getEnvironment(), 'triggerShutdown'), array(), -20);
 
 		// Dispatch a startup event
 		// This is useful for having a listener registered, waiting for startup to complete before loading in one last thing
