@@ -63,7 +63,6 @@ require \Codebite\Yukari\ROOT_PATH . '/OpenFlame/Framework/Autoloader.php';
 array_shift($_SERVER['argv']);
 
 require \Codebite\Yukari\ROOT_PATH . '/Codebite/Yukari/Injectors.php';
-require \Codebite\Yukari\ROOT_PATH . '/Codebite/Yukari/Listeners.php';
 
 \Codebite\Yukari\Kernel::load();
 \Codebite\Yukari\Kernel::initEnvironment();
