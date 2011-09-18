@@ -7,3 +7,6 @@
 [submodule "addons/postgres/Codebite/SQLightning"]
 	path = addons/postgres/Codebite/SQLightning
 	url = https://github.com/damianb/sqlightning.git
+[submodule "src/OpenFlame/Dbal"]
+	path = src/OpenFlame/Dbal
+	url = git://github.com/OpenFlame/OpenFlame-Dbal.git
