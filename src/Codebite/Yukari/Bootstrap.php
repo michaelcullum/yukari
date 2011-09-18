@@ -64,6 +64,8 @@ array_shift($_SERVER['argv']);
 
 require \Codebite\Yukari\ROOT_PATH . '/Codebite/Yukari/Injectors.php';
 
+// this will need changed
+
 \Codebite\Yukari\Kernel::load();
 \Codebite\Yukari\Kernel::initEnvironment();
 \Codebite\Yukari\Kernel::getEnvironment()->runBot();
