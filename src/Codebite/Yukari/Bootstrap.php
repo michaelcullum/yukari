@@ -19,6 +19,9 @@
  *
  */
 
+namespace Codebite\Yukari;
+use \OpenFlame\Framework\Autoloader;
+
 // Set the root path
 define('Codebite\\Yukari\\ROOT_PATH', (\Codebite\Yukari\RUN_PHAR === true) ? 'phar://' . YUKARI_PHAR : YUKARI . '/src');
 
@@ -58,6 +61,9 @@ require \Codebite\Yukari\ROOT_PATH . '/OpenFlame/Framework/Autoloader.php';
 
 // The first chunk always gets in the way, so we drop it.
 array_shift($_SERVER['argv']);
+
+require \Codebite\Yukari\ROOT_PATH . '/Codebite/Yukari/Injectors.php';
+require \Codebite\Yukari\ROOT_PATH . '/Codebite/Yukari/Listeners.php';
 
 \Codebite\Yukari\Kernel::load();
 \Codebite\Yukari\Kernel::initEnvironment();

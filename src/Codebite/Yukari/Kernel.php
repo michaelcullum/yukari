@@ -34,7 +34,7 @@ use \OpenFlame\Framework\Dependency\Injector;
  * @license     MIT License
  * @link        https://github.com/damianb/yukari
  */
-class Kernel extends Core
+class Kernel extends \OpenFlame\Framework\Core
 {
 	/**
 	 * @var integer - This bot's build number.
