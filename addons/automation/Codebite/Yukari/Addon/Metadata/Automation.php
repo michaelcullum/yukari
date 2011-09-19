@@ -21,6 +21,7 @@
 
 namespace Codebite\Yukari\Addon\Metadata;
 use Codebite\Yukari\Kernel;
+use \OpenFlame\Framework\Event\Instance as Event;
 
 /**
  * Yukari - Addon metadata object,
@@ -61,29 +62,29 @@ class Automation extends \Codebite\Yukari\Addon\Metadata\MetadataBase
 	 */
 	public function initialize()
 	{
-		$dispatcher = Kernel::getDispatcher();
+		$dispatcher = Kernel::get('dispatcher');
 
 		// Respond to CTCP VERSION and CTCP PING (if a valid argument for the CTCP was provided)
-		$ctcp_lambda = function(\OpenFlame\Framework\Event\Instance $event) {
-			if(strtolower($event->getDataPoint('command')) === 'version')
+		$ctcp_lambda = function(Event $event) {
+			if(strtolower($event->get('command')) === 'version')
 			{
-				return \OpenFlame\Framework\Event\Instance::newEvent('irc.output.ctcp_reply')
+				return Event::newEvent('irc.output.ctcp_reply')
 					->setData(array(
 						'command' 	=> 'version',
-						'target'	=> $event->getDataPoint('hostmask')->getNick(),
+						'target'	=> $event->get('hostmask')->getNick(),
 						'args'		=> sprintf('Yukari IRC Bot - %s', Kernel::getBuildNumber()),
 					));
 			}
-			elseif(strtolower($event->getDataPoint('command')) === 'ping')
+			elseif(strtolower($event->get('command')) === 'ping')
 			{
-				if(!$event->dataPointExists('args') || $event->getDataPoint('args') === NULL)
+				if(!$event->exists('args') || $event->get('args') === NULL)
 					return NULL;
 
-				return \OpenFlame\Framework\Event\Instance::newEvent('irc.output.ctcp_reply')
+				return Event::newEvent('irc.output.ctcp_reply')
 					->setData(array(
 						'command' 	=> 'ping',
-						'target'	=> $event->getDataPoint('hostmask')->getNick(),
-						'args'		=> $event->getDataPoint('args'),
+						'target'	=> $event->get('hostmask')->getNick(),
+						'args'		=> $event->get('args'),
 					));
 			}
 			else
@@ -91,14 +92,14 @@ class Automation extends \Codebite\Yukari\Addon\Metadata\MetadataBase
 				return NULL;
 			}
 		};
-		$dispatcher->register('irc.input.ctcp', $ctcp_lambda, array(), -10); // use -10 priority for medium-high listener priority
+		$dispatcher->register('irc.input.ctcp', -10, $ctcp_lambda); // use -10 priority for medium-high listener priority
 
 		// Respond to server pings
-		$ping_lambda = function(\OpenFlame\Framework\Event\Instance $event) {
-			return \OpenFlame\Framework\Event\Instance::newEvent('irc.output.pong')
-					->setDataPoint('origin', $event->getDataPoint('target'));
+		$ping_lambda = function(Event $event) {
+			return Event::newEvent('irc.output.pong')
+					->set('origin', $event->get('target'));
 		};
-		$dispatcher->register('irc.input.ping', $ping_lambda, array(), -10); // use -10 priority for medium-high listener priority
+		$dispatcher->register('irc.input.ping', -10, $ping_lambda); // use -10 priority for medium-high listener priority
 	}
 
 	/**
