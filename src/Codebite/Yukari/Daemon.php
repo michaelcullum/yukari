@@ -128,7 +128,7 @@ class Daemon
 			}
 		}
 
-		$dispatcher->register('yukari.request_shutdown', array(Kernel::getEnvironment(), 'triggerShutdown'), array(), -20);
+		$dispatcher->register('yukari.request_shutdown', array($this, 'triggerShutdown'), array(), -20);
 
 		// Dispatch a startup event
 		// This is useful for having a listener registered, waiting for startup to complete before loading in one last thing
