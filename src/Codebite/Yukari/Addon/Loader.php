@@ -20,7 +20,9 @@
  */
 
 namespace Codebite\Yukari\Addon;
-use Codebite\Yukari\Kernel;
+use \Codebite\Yukari\Kernel;
+use \OpenFlame\Framework\Autoloader;
+use \OpenFlame\Framework\Event\Instance as Event;
 
 /**
  * Yukari - Addon manager class,
@@ -73,9 +75,9 @@ class Loader implements \Iterator
 		}
 		else
 		{
-			$dispatcher = Kernel::getDispatcher();
-			$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent($this, 'ui.message.debug')
-				->setDataPoint('message', sprintf('Phar archive not present for addon "%1$s", looked in "%2$s"', $addon, YUKARI . "/{$phar_path}")));
+			$dispatcher = Kernel::get('dispatcher');
+			$dispatcher->trigger(Event::newEvent('ui.message.debug')
+				->set('message', sprintf('Phar archive not present for addon "%1$s", looked in "%2$s"', $addon, YUKARI . "/{$phar_path}")));
 
 			if(!file_exists(YUKARI . "/addons/{$addon}{$metadata_path}"))
 			{
@@ -114,11 +116,11 @@ class Loader implements \Iterator
 		// If the addon's metadata object passes all checks and we're not using a phar file, then we add the addon's directory to the autoloader include path
 		if($using_phar)
 		{
-			Kernel::getAutoloader()->setPath("phar://{$phar_path}/");
+			Autoloader::getInstance()->setPath("phar://{$phar_path}/");
 		}
 		else
 		{
-			Kernel::getAutoloader()->setPath(YUKARI . "/addons/{$addon}/");
+			Autoloader::getInstance()->setPath(YUKARI . "/addons/{$addon}/");
 		}
 
 		// Initialize the addon

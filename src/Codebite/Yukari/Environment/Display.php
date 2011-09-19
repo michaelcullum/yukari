@@ -105,7 +105,7 @@ class Display
 			throw new \InvalidArgumentException(sprintf('Invalid UI output level "%1$s" specified', $output_level));
 		}
 
-		$this->output_level = constant('Codebite\\Yukari\\CLI\\UI::OUTPUT_' . strtoupper($output_level));
+		$this->output_level = constant(__CLASS__ . '::OUTPUT_' . strtoupper($output_level));
 
 		return $this;
 	}
@@ -202,18 +202,18 @@ class Display
 		$dispatcher = Kernel::get('dispatcher');
 
 		// Register our load of UI listeners
-		$dispatcher->register('ui.startup', array($this, 'displayStartup'));
-		$dispatcher->register('ui.ready', array($this, 'displayReady'));
-		$dispatcher->register('ui.shutdown', array($this, 'displayShutdown'));
-		$dispatcher->register('ui.message.status', array($this, 'displayStatus'));
-		$dispatcher->register('ui.message.system', array($this, 'displaySystem'));
-		$dispatcher->register('ui.message.event', array($this, 'displayEvent'));
-		$dispatcher->register('ui.message.notice', array($this, 'displayNotice'));
-		$dispatcher->register('ui.message.warning', array($this, 'displayWarning'));
-		$dispatcher->register('ui.message.error', array($this, 'displayError'));
-		$dispatcher->register('ui.message.php', array($this, 'displayPHP'));
-		$dispatcher->register('ui.message.debug', array($this, 'displayDebug'));
-		$dispatcher->register('ui.message.raw', array($this, 'displayRaw'));
+		$dispatcher->register('ui.startup', 0, array($this, 'displayStartup'));
+		$dispatcher->register('ui.ready', 0, array($this, 'displayReady'));
+		$dispatcher->register('ui.shutdown', 0, array($this, 'displayShutdown'));
+		$dispatcher->register('ui.message.status', 0, array($this, 'displayStatus'));
+		$dispatcher->register('ui.message.system', 0, array($this, 'displaySystem'));
+		$dispatcher->register('ui.message.event', 0, array($this, 'displayEvent'));
+		$dispatcher->register('ui.message.notice', 0, array($this, 'displayNotice'));
+		$dispatcher->register('ui.message.warning', 0, array($this, 'displayWarning'));
+		$dispatcher->register('ui.message.error', 0, array($this, 'displayError'));
+		$dispatcher->register('ui.message.php', 0, array($this, 'displayPHP'));
+		$dispatcher->register('ui.message.debug', 0, array($this, 'displayDebug'));
+		$dispatcher->register('ui.message.raw', 0, array($this, 'displayRaw'));
 
 		return $this;
 	}

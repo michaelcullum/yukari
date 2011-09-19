@@ -41,10 +41,22 @@ class Daemon
 
 	protected $shutdown = false;
 
+	public function __construct()
+	{
+		$dispatcher = Kernel::get('dispatcher');
+		$dispatcher->register('yukari.init', 0, array($this, 'init'));
+		$dispatcher->register('yukari.exec', 0, array($this, 'exec'));
+	}
+
+	/**
+	 * Init the yukari daemon
+	 * @param Event $event - The event that triggered this method.
+	 * @return void
+	 */
 	public function init(Event $event)
 	{
 		// Load our config file
-		$args = Kernel::get('argparser');
+		$args = Kernel::get('yukari.argparser');
 		$config = (isset($args['config'])) ? "{$args['config']}.json" : 'config.json';
 		$config_array = JSON::decode(YUKARI . "/data/config/{$config}");
 
@@ -70,7 +82,6 @@ class Daemon
 		}
 
 		$dispatcher = Kernel::get('dispatcher');
-
 		$ui = Kernel::get('yukari.ui');
 
 		// Startup message
@@ -173,10 +184,10 @@ class Daemon
 		}
 
 		// Dispatch a pre-shutdown event.
-		$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('yukari.shutdown'));
+		$dispatcher->trigger(Event::newEvent('yukari.shutdown'));
 
 		// Dispatch a daemon-termination event
-		$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('yukari.terminate'));
+		$dispatcher->trigger(Event::newEvent('yukari.terminate'));
 	}
 
 	/**

@@ -21,6 +21,8 @@
 
 namespace Codebite\Yukari;
 use \OpenFlame\Framework\Autoloader;
+use \OpenFlame\Framework\Event\Instance as Event;
+use \Codebite\Yukari\Kernel;
 
 // Set the root path
 define('Codebite\\Yukari\\ROOT_PATH', (\Codebite\Yukari\RUN_PHAR === true) ? 'phar://' . YUKARI_PHAR : YUKARI . '/src');
@@ -53,19 +55,21 @@ set_time_limit(0);
 
 // Absolute essentials first
 require \Codebite\Yukari\ROOT_PATH . '/OpenFlame/Framework/Autoloader.php';
-\OpenFlame\Framework\Autoloader::getInstance(\Codebite\Yukari\ROOT_PATH);
+Autoloader::register(\Codebite\Yukari\ROOT_PATH);
 
 // Set our error and exception handlers
 @set_error_handler('Codebite\\Yukari\\errorHandler');
 @set_exception_handler('Codebite\\Yukari\\exceptionHandler');
 
-// The first chunk always gets in the way, so we drop it.
-array_shift($_SERVER['argv']);
-
+// Get our injectors
 require \Codebite\Yukari\ROOT_PATH . '/Codebite/Yukari/Injectors.php';
 
 // this will need changed
 
-\Codebite\Yukari\Kernel::load();
-\Codebite\Yukari\Kernel::initEnvironment();
-\Codebite\Yukari\Kernel::getEnvironment()->runBot();
+$daemon = Kernel::get('yukari.daemon');
+$dispatcher = Kernel::get('dispatcher');
+$dispatcher->trigger(Event::newEvent('yukari.init'));
+$dispatcher->trigger(Event::newEvent('yukari.exec'));
+
+// \Codebite\Yukari\Kernel::initEnvironment();
+// \Codebite\Yukari\Kernel::getEnvironment()->runBot();
