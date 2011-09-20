@@ -146,17 +146,43 @@ class Daemon
 	{
 		$dispatcher = Kernel::get('dispatcher');
 
+		$dispatcher->trigger(Event::newEvent('yukari.start'));
 		try
 		{
-			// Now we go around in endless circles until someone lays down a giant bear trap and catches us.
-			while(true)
-			{
-				$dispatcher->trigger(Event::newEvent('yukari.tick'));
+			$tick_delay = 1000000 / ((float) Kernel::getConfig('yukari.tickrate'));
 
-				// If we have a quit event, break out of the loop.
-				if($this->shutdown === true)
+			// Now we go around in endless circles until someone lays down a giant bear trap and catches us.
+			if($tick_delay !== NULL)
+			{
+				while(true)
 				{
-					break;
+					$_t = microtime(true) + $tick_delay;
+					$dispatcher->trigger(Event::newEvent('yukari.tick'));
+
+					$_tick = microtime(true);
+					if($_t - $_tick > 0)
+					{
+						usleep(($_t) - $_tick);
+					}
+
+					// If we have a quit event, break out of the loop.
+					if($this->shutdown === true)
+					{
+						break;
+					}
+				}
+			}
+			else
+			{
+				while(true)
+				{
+					$dispatcher->trigger(Event::newEvent('yukari.tick'));
+
+					// If we have a quit event, break out of the loop.
+					if($this->shutdown === true)
+					{
+						break;
+					}
 				}
 			}
 		}
