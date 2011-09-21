@@ -9,3 +9,4 @@ downloads/*
 extra-addons
 extra-addons/*
 yukari.komodoproject
+.settings.xml
