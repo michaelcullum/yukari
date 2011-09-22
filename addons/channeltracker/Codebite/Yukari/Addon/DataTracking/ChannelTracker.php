@@ -47,9 +47,9 @@ class ChannelTracker
 	 */
 	public function registerListeners()
 	{
-		Kernel::registerListener('irc.input.join', array($this, 'trackChannelJoin'));
-		Kernel::registerListener('irc.input.part', array($this, 'trackChannelPart'));
-		Kernel::registerListener('irc.input.kick', array($this, 'trackChannelKick'));
+		Kernel::registerListener('irc.input.join', 0, array($this, 'trackChannelJoin'));
+		Kernel::registerListener('irc.input.part', 0, array($this, 'trackChannelPart'));
+		Kernel::registerListener('irc.input.kick', 0, array($this, 'trackChannelKick'));
 
 		return $this;
 	}

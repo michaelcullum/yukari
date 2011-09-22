@@ -63,6 +63,7 @@ Autoloader::register(\Codebite\Yukari\ROOT_PATH);
 
 // Get our injectors
 require \Codebite\Yukari\ROOT_PATH . '/Codebite/Yukari/Injectors.php';
+require \Codebite\Yukari\ROOT_PATH . '/Codebite/Yukari/Functions.php';
 
 // this will need changed
 

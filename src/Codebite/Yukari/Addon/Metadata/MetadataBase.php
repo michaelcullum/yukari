@@ -21,6 +21,7 @@
 
 namespace Codebite\Yukari\Addon\Metadata;
 use Codebite\Yukari\Kernel;
+use \OpenFlame\Framework\Event\Instance as Event;
 
 /**
  * Yukari - Addon metadata base class,
@@ -70,15 +71,14 @@ abstract class MetadataBase
 	 */
 	final public function loadDependency($slot, $name)
 	{
-		$dispatcher = Kernel::getDispatcher();
-		$addon_loader = Kernel::get('core.addonloader');
+		$addon_loader = Kernel::get('yukari.addonloader');
 		if(!Kernel::get($slot))
 		{
 			try
 			{
 				$addon_loader->loadAddon($name);
-				$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.system')
-					->setDataPoint('message', sprintf('Loaded addon "%s"', $name)));
+				$dispatcher->trigger(Event::newEvent('ui.message.system')
+					->set('message', sprintf('Loaded addon "%s"', $name)));
 				return true;
 			}
 			catch(\RuntimeException $e)

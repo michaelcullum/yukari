@@ -42,7 +42,7 @@ class Interpreter
 	 */
 	public function registerListeners()
 	{
-		Kernel::registerListener('irc.input.privmsg', array($this, 'handlePrivmsg'));
+		Kernel::registerListener('irc.input.privmsg', 0, array($this, 'handlePrivmsg'));
 
 		return $this;
 	}

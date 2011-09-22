@@ -1,8 +1,0 @@
-#
-# Yukari configuration file - ACL Whitelist Addon
-#
-
-whitelist_data:
-  - "Obsidian_!*@codebite.siteowner"
-  - "*!*solas@unaffiliated/obsidian"
-  - "*!*obsidian@unaffiliated/obsidian"
