@@ -21,6 +21,7 @@
 
 namespace Codebite\Yukari\Addon\DataTracking;
 use Codebite\Yukari\Kernel;
+use \OpenFlame\Framework\Event\Instance as Event;
 
 /**
  * Yukari - Channel tracking object,
@@ -46,10 +47,9 @@ class ChannelTracker
 	 */
 	public function registerListeners()
 	{
-		$dispatcher = Kernel::getDispatcher();
-		$dispatcher->register('irc.input.join', array(Kernel::get('addon.channeltracker'), 'trackChannelJoin'))
-			->register('irc.input.part', array(Kernel::get('addon.channeltracker'), 'trackChannelPart'))
-			->register('irc.input.kick', array(Kernel::get('addon.channeltracker'), 'trackChannelKick'));
+		Kernel::registerListener('irc.input.join', array($this, 'trackChannelJoin'));
+		Kernel::registerListener('irc.input.part', array($this, 'trackChannelPart'));
+		Kernel::registerListener('irc.input.kick', array($this, 'trackChannelKick'));
 
 		return $this;
 	}
@@ -59,13 +59,13 @@ class ChannelTracker
 	 * @param \OpenFlame\Framework\Event\Instance $event - The event instance.
 	 * @return array - Array of events to dispatch in response to the input event.
 	 */
-	public function trackChannelJoin(\OpenFlame\Framework\Event\Instance $event)
+	public function trackChannelJoin(Event $event)
 	{
-		if($event->getDataPoint('hostmask')->getNick() == Kernel::getConfig('irc.nickname'))
+		if($event->get('hostmask')->getNick() == Kernel::getConfig('irc.nickname'))
 		{
-			if(!in_array($event->getDataPoint('channel'), $this->channels))
+			if(!in_array($event->get('channel'), $this->channels))
 			{
-				array_push($this->channels, $event->getDataPoint('channel'));
+				array_push($this->channels, $event->get('channel'));
 			}
 		}
 	}
@@ -75,11 +75,11 @@ class ChannelTracker
 	 * @param \OpenFlame\Framework\Event\Instance $event - The event instance.
 	 * @return array - Array of events to dispatch in response to the input event.
 	 */
-	public function trackChannelPart(\OpenFlame\Framework\Event\Instance $event)
+	public function trackChannelPart(Event $event)
 	{
-		if($event->getDataPoint('hostmask')->getNick() == Kernel::getConfig('irc.nickname'))
+		if($event->get('hostmask')->getNick() == Kernel::getConfig('irc.nickname'))
 		{
-			$key = array_search($event->getDataPoint('channel'), $this->channels);
+			$key = array_search($event->get('channel'), $this->channels);
 			if($key !== false)
 			{
 				unset($this->channels[$key]);
@@ -92,11 +92,11 @@ class ChannelTracker
 	 * @param \OpenFlame\Framework\Event\Instance $event - The event instance.
 	 * @return array - Array of events to dispatch in response to the input event.
 	 */
-	public function trackChannelKick(\OpenFlame\Framework\Event\Instance $event)
+	public function trackChannelKick(Event $event)
 	{
-		if($event->getDataPoint('hostmask')->getNick() == Kernel::getConfig('irc.nickname'))
+		if($event->get('hostmask')->getNick() == Kernel::getConfig('irc.nickname'))
 		{
-			$key = array_search($event->getDataPoint('channel'), $this->channels);
+			$key = array_search($event->get('channel'), $this->channels);
 			if($key !== false)
 			{
 				unset($this->channels[$key]);

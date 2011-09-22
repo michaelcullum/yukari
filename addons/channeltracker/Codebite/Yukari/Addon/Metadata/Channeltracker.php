@@ -73,22 +73,7 @@ class Channeltracker extends \Codebite\Yukari\Addon\Metadata\MetadataBase
 	 */
 	public function checkDependencies()
 	{
-		$dispatcher = Kernel::getDispatcher();
-		$addon_loader = Kernel::get('core.addonloader');
-
-		if(!Kernel::get('addon.commander'))
-		{
-			try
-			{
-				$addon_loader->loadAddon('commander');
-				$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.system')
-					->setDataPoint('message', sprintf('Loaded addon "%s"', 'commander')));
-			}
-			catch(\RuntimeException $e)
-			{
-				throw new \RuntimeException(sprintf('Failed to load dependency "addon.commander", error message "%1$s"', $e->getMessage()));
-			}
-		}
+		$this->loadDependency('addon.commander', 'commander');
 
 		return true;
 	}
