@@ -37,15 +37,12 @@ use \OpenFlame\Framework\Utility\JSON;
  */
 class Daemon
 {
-	// asdf
-
 	protected $shutdown = false;
 
 	public function __construct()
 	{
-		$dispatcher = Kernel::get('dispatcher');
-		$dispatcher->register('yukari.init', 0, array($this, 'init'));
-		$dispatcher->register('yukari.exec', 0, array($this, 'exec'));
+		Kernel::registerListener('yukari.init', 0, array($this, 'init'));
+		Kernel::registerListener('yukari.exec', 0, array($this, 'exec'));
 	}
 
 	/**
@@ -81,12 +78,12 @@ class Daemon
 			}
 		}
 
-		$dispatcher = Kernel::get('dispatcher');
+		// Grab the UI here
 		$ui = Kernel::get('yukari.ui');
 
 		// Startup message
-		$dispatcher->trigger(Event::newEvent('ui.startup'));
-		$dispatcher->trigger(Event::newEvent('ui.message.system')
+		Kernel::trigger(Event::newEvent('ui.startup'));
+		Kernel::trigger(Event::newEvent('ui.message.system')
 			->set('message', 'Loading the Yukari core'));
 
 		// get our start time
@@ -99,19 +96,19 @@ class Daemon
 			try
 			{
 				$addon_loader->loadAddon($addon);
-				$dispatcher->trigger(Event::newEvent('ui.message.system')
+				Kernel::trigger(Event::newEvent('ui.message.system')
 					->set('message', sprintf('Loaded addon "%s"', $addon)));
 			}
 			catch(\Exception $e)
 			{
-				$dispatcher->trigger(Event::newEvent('ui.message.warning')
+				Kernel::trigger(Event::newEvent('ui.message.warning')
 					->set('message', sprintf('Failed to load addon "%1$s" - failure message: "%2$s"', $addon, $e->getMessage())));
 			}
 		}
 
 		if(Kernel::getConfig('yukari.dispatcher.listeners'))
 		{
-			$dispatcher->trigger(Event::newEvent('ui.message.system')
+			Kernel::trigger(Event::newEvent('ui.message.system')
 				->set('message', 'Registering listeners to event dispatcher'));
 
 			foreach(Kernel::getConfig('yukari.dispatcher.listeners') as $event_name => $listener)
@@ -119,34 +116,33 @@ class Daemon
 				$listener = explode('->', $listener);
 				if(sizeof($listener) > 1)
 				{
-					$dispatcher->register($event_name, array(Kernel::get($listener[0]), $listener[1]));
+					Kernel::registerListener($event_name, array(Kernel::get($listener[0]), $listener[1]));
 				}
 				else
 				{
-					$dispatcher->register($event_name, $listener[0]);
+					Kernel::registerListener($event_name, $listener[0]);
 				}
 			}
 		}
 
-		$dispatcher->register('yukari.request_shutdown', array($this, 'triggerShutdown'), array(), -20);
+		// Register the shutdown listener now...
+		Kernel::registerListener('yukari.request_shutdown', -20, array($this, 'triggerShutdown'));
 
 		// Dispatch a startup event
 		// This is useful for having a listener registered, waiting for startup to complete before loading in one last thing
-		$dispatcher->trigger(Event::newEvent('yukari.startup'));
+		Kernel::trigger(Event::newEvent('yukari.ready'));
 
 		// All done!
-		$dispatcher->trigger(Event::newEvent('ui.ready'));
+		Kernel::trigger(Event::newEvent('ui.ready'));
 
 		// How fast were we, now?  :3
-		$dispatcher->trigger(Event::newEvent('ui.message.debug')
+		Kernel::trigger(Event::newEvent('ui.message.debug')
 			->set('message', sprintf('Startup complete, took %1$s seconds', (microtime(true) - \Codebite\Yukari\START_MICROTIME))));
 	}
 
 	public function exec(Event $event)
 	{
-		$dispatcher = Kernel::get('dispatcher');
-
-		$dispatcher->trigger(Event::newEvent('yukari.start'));
+		Kernel::trigger(Event::newEvent('yukari.startup'));
 		try
 		{
 			$tick_delay = 1000000 / ((float) Kernel::getConfig('yukari.tickrate'));
@@ -157,7 +153,7 @@ class Daemon
 				while(true)
 				{
 					$_t = microtime(true) + $tick_delay;
-					$dispatcher->trigger(Event::newEvent('yukari.tick'));
+					Kernel::trigger(Event::newEvent('yukari.tick'));
 
 					$_tick = microtime(true);
 					if($_t - $_tick > 0)
@@ -176,7 +172,7 @@ class Daemon
 			{
 				while(true)
 				{
-					$dispatcher->trigger(Event::newEvent('yukari.tick'));
+					Kernel::trigger(Event::newEvent('yukari.tick'));
 
 					// If we have a quit event, break out of the loop.
 					if($this->shutdown === true)
@@ -190,13 +186,13 @@ class Daemon
 		{
 			try
 			{
-				$dispatcher->trigger(Event::newEvent('ui.message.debug')
+				Kernel::trigger(Event::newEvent('ui.message.debug')
 					->set('message', sprintf('Exception %1$s::%2$s: %3$s', get_class($e), $e->getCode(), $e->getMessage())));
-				$dispatcher->trigger(Event::newEvent('ui.message.debug')
+				Kernel::trigger(Event::newEvent('ui.message.debug')
 					->set('message', sprintf('Stack trace: %s', $e->getTraceAsString())));
 
 				// Dispatch an emergency abort event.
-				$dispatcher->trigger(Event::newEvent('yukari.abort'));
+				Kernel::trigger(Event::newEvent('yukari.abort'));
 			}
 			catch(\Exception $e)
 			{
@@ -210,10 +206,10 @@ class Daemon
 		}
 
 		// Dispatch a pre-shutdown event.
-		$dispatcher->trigger(Event::newEvent('yukari.shutdown'));
+		Kernel::trigger(Event::newEvent('yukari.shutdown'));
 
 		// Dispatch a daemon-termination event
-		$dispatcher->trigger(Event::newEvent('yukari.terminate'));
+		Kernel::trigger(Event::newEvent('yukari.terminate'));
 	}
 
 	/**
