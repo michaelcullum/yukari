@@ -142,14 +142,18 @@ class Daemon
 
 	public function exec(Event $event)
 	{
+		// startup event, triggered RIGHT before the loop begins.
 		Kernel::trigger(Event::newEvent('yukari.startup'));
 		try
 		{
-			$tick_delay = 1000000 / ((float) Kernel::getConfig('yukari.tickrate'));
+			$tick_delay = (Kernel::getConfig('yukari.tickrate') ? (1000000 / ((float) Kernel::getConfig('yukari.tickrate'))) : NULL);
 
 			// Now we go around in endless circles until someone lays down a giant bear trap and catches us.
 			if($tick_delay !== NULL)
 			{
+				Kernel::trigger(Event::newEvent('ui.message.debug')
+					->set('message', sprintf('Launching Yukari daemon, using set tickrate with tick interval of %f µs (%d tick/sec)', $tick_delay, Kernel::getConfig('yukari.tickrate'))));
+
 				while(true)
 				{
 					$_t = microtime(true) + $tick_delay;
@@ -170,6 +174,9 @@ class Daemon
 			}
 			else
 			{
+				Kernel::trigger(Event::newEvent('ui.message.debug')
+					->set('message', 'Launching Yukari daemon, not using set tickrate'));
+
 				while(true)
 				{
 					Kernel::trigger(Event::newEvent('yukari.tick'));
