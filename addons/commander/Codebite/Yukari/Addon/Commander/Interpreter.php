@@ -21,6 +21,7 @@
 
 namespace Codebite\Yukari\Addon\Commander;
 use Codebite\Yukari\Kernel;
+use \OpenFlame\Framework\Event\Instance as Event;
 
 /**
  * Yukari - Commander addon interpreter object,
@@ -41,8 +42,7 @@ class Interpreter
 	 */
 	public function registerListeners()
 	{
-		$dispatcher = Kernel::getDispatcher();
-		$dispatcher->register('irc.input.privmsg', array(Kernel::get('addon.commander'), 'handlePrivmsg'));
+		Kernel::registerListener('irc.input.privmsg', array($this, 'handlePrivmsg'));
 
 		return $this;
 	}
@@ -52,59 +52,58 @@ class Interpreter
 	 * @param \OpenFlame\Framework\Event\Instance $event - The event to interpret.
 	 * @return array - Returns an array of IRC output events to send.
 	 */
-	public function handlePrivmsg(\OpenFlame\Framework\Event\Instance $event)
+	public function handlePrivmsg(Event $event)
 	{
-		$dispatcher = Kernel::getDispatcher();
 		$indicator = Kernel::getConfig('commander.command_indicator');
 		$our_name = Kernel::getConfig('irc.nickname');
 
 		$results = array();
 
 		// Is this a direct, private command?
-		if($event->getDataPoint('target') == $our_name)
+		if($event->get('target') == $our_name)
 		{
 			// Just drop the indicator if this is a private command.  User friendliness and all that. ;)
-			if(substr($event->getDataPoint('text'), 0, strlen($indicator)) == $indicator)
+			if(substr($event->get('text'), 0, strlen($indicator)) == $indicator)
 			{
-				$text = array_pad(explode(' ', substr($event->getDataPoint('text'), strlen($indicator)), 2), 2, '');
+				$text = array_pad(explode(' ', substr($event->get('text'), strlen($indicator)), 2), 2, '');
 			}
 			else
 			{
-				$text = array_pad(explode(' ', $event->getDataPoint('text'), 2), 2, '');
+				$text = array_pad(explode(' ', $event->get('text'), 2), 2, '');
 			}
 
-			$_results = $dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent(sprintf('irc.input.command.%s', $text[0]))->setData(array(
+			$_results = Kernel::trigger(Event::newEvent(sprintf('irc.input.command.%s', $text[0]))->setData(array(
 				'rootevent'		=> $event,
 				'is_private'	=> true,
 				'command'		=> $text[0],
 				'text'			=> $text[1],
-				'target'		=> $event->getDataPoint('target'),
-				'hostmask'		=> $event->getDataPoint('hostmask'),
+				'target'		=> $event->get('target'),
+				'hostmask'		=> $event->get('hostmask'),
 			)));
 			$results = array_merge($results, (array) $_results->getReturns());
 
-			$_results = $dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent(sprintf('irc.input.privatecommand.%s', $text[0]))->setData(array(
+			$_results = Kernel::trigger(Event::newEvent(sprintf('irc.input.privatecommand.%s', $text[0]))->setData(array(
 				'rootevent'		=> $event,
 				'is_private'	=> true,
 				'command'		=> $text[0],
 				'text'			=> $text[1],
-				'target'		=> $event->getDataPoint('target'),
-				'hostmask'		=> $event->getDataPoint('hostmask'),
+				'target'		=> $event->get('target'),
+				'hostmask'		=> $event->get('hostmask'),
 			)));
 			$results = array_merge($results, (array) $_results->getReturns());
 		}
-		elseif(preg_match('#^(' . preg_quote($indicator, '#') . '|' . preg_quote($our_name, '#') . '\: )([a-z0-9]*)( (.*))?#iS', $event->getDataPoint('text'), $matches) == true)
+		elseif(preg_match('#^(' . preg_quote($indicator, '#') . '|' . preg_quote($our_name, '#') . '\: )([a-z0-9]*)( (.*))?#iS', $event->get('text'), $matches) == true)
 		{
 			// Make sure we have a full array here.
 			list(, $trigger, $command, , $text) = array_pad($matches, 5, '');
 
-			$_results = $dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent(sprintf('irc.input.command.%s', $command))->setData(array(
+			$_results = Kernel::trigger(Event::newEvent(sprintf('irc.input.command.%s', $command))->setData(array(
 				'rootevent'		=> $event,
 				'is_private'	=> false,
 				'command'		=> $command,
 				'text'			=> $text,
-				'target'		=> $event->getDataPoint('target'),
-				'hostmask'		=> $event->getDataPoint('hostmask'),
+				'target'		=> $event->get('target'),
+				'hostmask'		=> $event->get('hostmask'),
 			)));
 			$results = array_merge($results, (array) $_results->getReturns());
 
@@ -112,13 +111,13 @@ class Interpreter
 			if($trigger == $indicator)
 			{
 				// Okay, this was a named command - we treat this as special, and dispatch another event for it.
-				$_results = $dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent(sprintf('irc.input.namedcommand.%s', $command))->setData(array(
+				$_results = Kernel::trigger(Event::newEvent(sprintf('irc.input.namedcommand.%s', $command))->setData(array(
 					'rootevent'		=> $event,
 					'is_private'	=> false,
 					'command'		=> $command,
 					'text'			=> $text,
-					'target'		=> $event->getDataPoint('target'),
-					'hostmask'		=> $event->getDataPoint('hostmask'),
+					'target'		=> $event->get('target'),
+					'hostmask'		=> $event->get('hostmask'),
 				)));
 				$results = array_merge($results, (array) $_results->getReturns());
 			}
@@ -132,12 +131,11 @@ class Interpreter
 	 * @param \OpenFlame\Framework\Event\Instance $event - The event to interpret.
 	 * @return array - Returns an array of IRC output events to send.
 	 */
-	public function handleResponse(\OpenFlame\Framework\Event\Instance $event)
+	public function handleResponse(Event $event)
 	{
-		$dispatcher = Kernel::getDispatcher();
-		$response_map = Kernel::get('core.response_map');
+		$response_map = Kernel::get('yukari.response_map');
 
-		$event_code = (int) $event->getDataPoint('code');
+		$event_code = (int) $event->get('code');
 		$event_type = $response_map->getResponseType($event_code);
 
 		// Just in case we wtf at a non-standard response code.
@@ -146,10 +144,10 @@ class Interpreter
 			return NULL;
 		}
 
-		$results = $dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent(sprintf('irc.input.response.%s', $event_type))->setData(array(
+		$results = Kernel::trigger(Event::newEvent(sprintf('irc.input.response.%s', $event_type))->setData(array(
 			'rootevent'		=> $event,
 			'code'			=> $event_code,
-			'description'	=> $event->getDataPoint('description'),
+			'description'	=> $event->get('description'),
 		)));
 
 		return (array) $results->getReturns();
