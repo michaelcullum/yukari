@@ -62,10 +62,8 @@ class Automation extends \Codebite\Yukari\Addon\Metadata\MetadataBase
 	 */
 	public function initialize()
 	{
-		$dispatcher = Kernel::get('dispatcher');
-
 		// Respond to CTCP VERSION and CTCP PING (if a valid argument for the CTCP was provided)
-		$dispatcher->register('irc.input.ctcp', -10, function(Event $event) {
+		Kernel::registerListener('irc.input.ctcp', -10, function(Event $event) {
 			if(strtolower($event->get('command')) === 'version')
 			{
 				return Event::newEvent('irc.output.ctcp_reply')
@@ -96,7 +94,7 @@ class Automation extends \Codebite\Yukari\Addon\Metadata\MetadataBase
 		}); // use -10 priority for medium-high listener priority
 
 		// Respond to server pings
-		$dispatcher->register('irc.input.ping', -10, function(Event $event) {
+		Kernel::registerListener('irc.input.ping', -10, function(Event $event) {
 			return Event::newEvent('irc.output.pong')
 					->set('origin', $event->get('target'));
 		}); // use -10 priority for medium-high listener priority

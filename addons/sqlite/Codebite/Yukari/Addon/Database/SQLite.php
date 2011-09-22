@@ -51,8 +51,7 @@ class SQLite extends \Codebite\SQLightning\PDO
 	 */
 	public function runSchema($filename)
 	{
-		$autoloader = Kernel::getAutoloader();
-		$this->db->exec(file_get_contents($autoloader->getFile($filename)));
+		$this->db->exec(file_get_contents(\OpenFlame\Framework\Autoloader::getInstance()->getFile($filename)));
 	}
 
 	/**

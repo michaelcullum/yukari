@@ -21,6 +21,7 @@
 
 namespace Codebite\Yukari\Addon\Admin;
 use Codebite\Yukari\Kernel;
+use \OpenFlame\Framework\Event\Instance as Event;
 
 /**
  * Yukari - Basic bot administration object,
@@ -46,20 +47,19 @@ class Basic
 	 */
 	public function registerListeners()
 	{
-		$dispatcher = Kernel::getDispatcher();
-		$dispatcher->register('irc.input.command.join', array(Kernel::get('addon.botadmin'), 'handleJoinCommand'))
-			->register('irc.input.command.part', array(Kernel::get('addon.botadmin'), 'handlePartCommand'))
-			//->register('irc.input.command.kick', array(Kernel::get('addon.botadmin'), 'handleKickCommand'))
-			->register('irc.input.command.op', array(Kernel::get('addon.botadmin'), 'handleSetUserChannelMode'), array('+o'))
-			->register('irc.input.command.deop', array(Kernel::get('addon.botadmin'), 'handleSetUserChannelMode'), array('-o'))
-			->register('irc.input.command.voice', array(Kernel::get('addon.botadmin'), 'handleSetUserChannelMode'), array('+v'))
-			->register('irc.input.command.devoice', array(Kernel::get('addon.botadmin'), 'handleSetUserChannelMode'), array('-v'))
-			->register('irc.input.command.listaddons', array(Kernel::get('addon.botadmin'), 'handleListAddonsCommand'))
-			//->register('irc.input.command.addoninfo', array(Kernel::get('addon.botadmin'), 'handleAddonInfoCommand')) // @todo write this command
-			->register('irc.input.command.loadaddon', array(Kernel::get('addon.botadmin'), 'handleLoadAddonCommand'))
-			->register('irc.input.command.versioncheck', array(Kernel::get('addon.botadmin'), 'handleVersionCheckCommand'))
-			->register('irc.input.command.uptime', array(Kernel::get('addon.botadmin'), 'handleUptimeCommand'))
-			->register('irc.input.command.quit', array(Kernel::get('addon.botadmin'), 'handleQuitCommand'));
+		Kernel::registerListener('irc.input.command.join', 0, array($this, 'handleJoinCommand'));
+		Kernel::registerListener('irc.input.command.part', 0, array($this, 'handlePartCommand'));
+		//Kernel::registerListener('irc.input.command.kick', 0, array($this, 'handleKickCommand'));
+		Kernel::registerListener('irc.input.command.op', 0, array($this, 'handleSetUserChannelMode'), array('+o'));
+		Kernel::registerListener('irc.input.command.deop', 0, array($this, 'handleSetUserChannelMode'), array('-o'));
+		Kernel::registerListener('irc.input.command.voice', 0, array($this, 'handleSetUserChannelMode'), array('+v'));
+		Kernel::registerListener('irc.input.command.devoice', 0, array($this, 'handleSetUserChannelMode'), array('-v'));
+		Kernel::registerListener('irc.input.command.listaddons', 0, array($this, 'handleListAddonsCommand'));
+		//Kernel::registerListener('irc.input.command.addoninfo', 0, array($this, 'handleAddonInfoCommand')) // @todo write this command
+		Kernel::registerListener('irc.input.command.loadaddon', 0, array($this, 'handleLoadAddonCommand'));
+		Kernel::registerListener('irc.input.command.versioncheck', 0, array($this, 'handleVersionCheckCommand'));
+		Kernel::registerListener('irc.input.command.uptime', 0, array($this, 'handleUptimeCommand'));
+		Kernel::registerListener('irc.input.command.quit', 0, array($this, 'handleQuitCommand'));
 
 		return $this;
 	}
@@ -69,33 +69,33 @@ class Basic
 	 * @param \OpenFlame\Framework\Event\Instance $event - The event instance.
 	 * @return array - Array of events to dispatch in response to the input event.
 	 */
-	public function handleJoinCommand(\OpenFlame\Framework\Event\Instance $event)
+	public function handleJoinCommand(Event $event) // rewrite stopped here
 	{
 		// Check auths first
-		if(!$this->checkAuthentication($event->getDataPoint('hostmask')))
+		if(!$this->checkAuthentication($event->get('hostmask')))
 		{
 			return $this->handleCommandRefusal($event);
 		}
 		else
 		{
-			$highlight = (!$event->getDataPoint('is_private')) ? $event->getDataPoint('hostmask')->getNick() . ':' : '';
-			if(substr($event->getDataPoint('text'), 0, 1) !== '#')
+			$highlight = (!$event->get('is_private')) ? $event->get('hostmask')->getNick() . ':' : '';
+			if(substr($event->get('text'), 0, 1) !== '#')
 			{
-				$results[] = \OpenFlame\Framework\Event\Instance::newEvent('irc.output.privmsg')
-					->setDataPoint('target', $event->getDataPoint('target'))
-					->setDataPoint('text', sprintf('%1$s Invalid channel specified.', $highlight));
+				$results[] = Event::newEvent('irc.output.privmsg')
+					->set('target', $event->get('target'))
+					->set('text', sprintf('%1$s Invalid channel specified.', $highlight));
 
 				return $results;
 			}
 			else
 			{
-				$join_params = explode(' ', $event->getDataPoint('text'), 2);
-				$join = \OpenFlame\Framework\Event\Instance::newEvent('irc.output.join')
-					->setDataPoint('channel', $join_params[0]);
+				$join_params = explode(' ', $event->get('text'), 2);
+				$join = Event::newEvent('irc.output.join')
+					->set('channel', $join_params[0]);
 
 				if(isset($join_params[1]))
 				{
-					$join->setDataPoint('key', $join_params[1]);
+					$join->set('key', $join_params[1]);
 				}
 
 				return array($join);
@@ -108,33 +108,33 @@ class Basic
 	 * @param \OpenFlame\Framework\Event\Instance $event - The event instance.
 	 * @return array - Array of events to dispatch in response to the input event.
 	 */
-	public function handlePartCommand(\OpenFlame\Framework\Event\Instance $event)
+	public function handlePartCommand(Event $event)
 	{
 		// Check auths first
-		if(!$this->checkAuthentication($event->getDataPoint('hostmask')))
+		if(!$this->checkAuthentication($event->get('hostmask')))
 		{
 			return $this->handleCommandRefusal($event);
 		}
 		else
 		{
-			$highlight = (!$event->getDataPoint('is_private')) ? $event->getDataPoint('hostmask')->getNick() . ':' : '';
-			if(substr($event->getDataPoint('text'), 0, 1) !== '#')
+			$highlight = (!$event->get('is_private')) ? $event->get('hostmask')->getNick() . ':' : '';
+			if(substr($event->get('text'), 0, 1) !== '#')
 			{
-				$results[] = \OpenFlame\Framework\Event\Instance::newEvent('irc.output.privmsg')
-					->setDataPoint('target', $event->getDataPoint('target'))
-					->setDataPoint('text', sprintf('%1$s Invalid channel specified.', $highlight));
+				$results[] = Event::newEvent('irc.output.privmsg')
+					->set('target', $event->get('target'))
+					->set('text', sprintf('%1$s Invalid channel specified.', $highlight));
 
 				return $results;
 			}
 			else
 			{
-				$part_params = explode(' ', $event->getDataPoint('text'), 2);
-				$part = \OpenFlame\Framework\Event\Instance::newEvent('irc.output.part')
-					->setDataPoint('channel', $part_params[0]);
+				$part_params = explode(' ', $event->get('text'), 2);
+				$part = Event::newEvent('irc.output.part')
+					->set('channel', $part_params[0]);
 
 				if(isset($part_params[1]))
 				{
-					$part->setDataPoint('reason', $part_params[1]);
+					$part->set('reason', $part_params[1]);
 				}
 
 				return array($part);
@@ -142,10 +142,12 @@ class Basic
 		}
 	}
 
-	public function handleKickCommand(\OpenFlame\Framework\Event\Instance $event)
+	/*
+	public function handleKickCommand(Event $event)
 	{
 		// asdf
 	}
+	*/
 
 	/**
 	 * Handles the bot being told set a channel-specific user mode.
@@ -156,27 +158,27 @@ class Basic
 	public function handleSetUserChannelMode(\OpenFlame\Framework\Event\Instance $event, $mode)
 	{
 		// Check auths first
-		if(!$this->checkAuthentication($event->getDataPoint('hostmask')))
+		if(!$this->checkAuthentication($event->get('hostmask')))
 		{
 			return $this->handleCommandRefusal($event);
 		}
 		else
 		{
-			$highlight = (!$event->getDataPoint('is_private')) ? $event->getDataPoint('hostmask')->getNick() . ':' : '';
+			$highlight = (!$event->get('is_private')) ? $event->get('hostmask')->getNick() . ':' : '';
 
 			// Make sure an invalid username isn't being provided.
-			if(preg_match('#[\!\#\@]#i', $event->getDataPoint('text')))
+			if(preg_match('#[\!\#\@]#i', $event->get('text')))
 			{
-				$results[] = \OpenFlame\Framework\Event\Instance::newEvent('irc.output.privmsg')
-					->setDataPoint('target', $event->getDataPoint('target'))
-					->setDataPoint('text', sprintf('%1$s Invalid nickname specified.', $highlight));
+				$results[] = Event::newEvent('irc.output.privmsg')
+					->set('target', $event->get('target'))
+					->set('text', sprintf('%1$s Invalid nickname specified.', $highlight));
 
 				return $results;
 			}
 			else
 			{
 				// send the mode command
-				$params = explode(' ', $event->getDataPoint('text'), 2);
+				$params = explode(' ', $event->get('text'), 2);
 
 				// if the user wants to specify a channel, let them do so...and then fall back to the current channel if no channel is specified
 				if($params[0][0] === '#')
@@ -190,22 +192,22 @@ class Basic
 				else
 				{
 					// if this was a private command, we must derp at the sender.
-					if($event->getDataPoint('is_private'))
+					if($event->get('is_private'))
 					{
-						$results[] = \OpenFlame\Framework\Event\Instance::newEvent('irc.output.privmsg')
-							->setDataPoint('target', $event->getDataPoint('target'))
-							->setDataPoint('text', sprintf('%1$s No target channel specified.', $highlight));
+						$results[] = Event::newEvent('irc.output.privmsg')
+							->set('target', $event->get('target'))
+							->set('text', sprintf('%1$s No target channel specified.', $highlight));
 
 						return $results;
 					}
 
-					$channel = $event->getDataPoint('target');
+					$channel = $event->get('target');
 					$user = $params[0];
 				}
-				$results[] = \OpenFlame\Framework\Event\Instance::newEvent('irc.output.mode')
-					->setDataPoint('target', $channel)
-					->setDataPoint('flags', $mode)
-					->setDataPoint('args', $user);
+				$results[] = Event::newEvent('irc.output.mode')
+					->set('target', $channel)
+					->set('flags', $mode)
+					->set('args', $user);
 
 				return $results;
 			}
@@ -217,16 +219,16 @@ class Basic
 	 * @param \OpenFlame\Framework\Event\Instance $event - The event instance.
 	 * @return array - Array of events to dispatch in response to the input event.
 	 */
-	public function handleListAddonsCommand(\OpenFlame\Framework\Event\Instance $event)
+	public function handleListAddonsCommand(Event $event)
 	{
 		// Check auths first
-		if(!$this->checkAuthentication($event->getDataPoint('hostmask')))
+		if(!$this->checkAuthentication($event->get('hostmask')))
 		{
 			return $this->handleCommandRefusal($event);
 		}
 		else
 		{
-			$addon_loader = Kernel::get('core.addonloader');
+			$addon_loader = Kernel::get('yukari.addonloader');
 
 			foreach($addon_loader as $metadata)
 			{
@@ -247,13 +249,13 @@ class Basic
 			}
 
 			$results = array();
-			$highlight = (!$event->getDataPoint('is_private')) ? $event->getDataPoint('hostmask')->getNick() . ':' : '';
+			$highlight = (!$event->get('is_private')) ? $event->get('hostmask')->getNick() . ':' : '';
 			foreach($response as $line)
 			{
 				$line = implode(', ', $line);
-				$results[] = \OpenFlame\Framework\Event\Instance::newEvent('irc.output.privmsg')
-					->setDataPoint('target', $event->getDataPoint('target'))
-					->setDataPoint('text', sprintf('%1$s %2$s.', $highlight, $line));
+				$results[] = Event::newEvent('irc.output.privmsg')
+					->set('target', $event->get('target'))
+					->set('text', sprintf('%1$s %2$s.', $highlight, $line));
 			}
 
 			return $results;
@@ -264,11 +266,11 @@ class Basic
 	 * Handles the bot being told to provide information about a loaded addon.
 	 * @param \OpenFlame\Framework\Event\Instance $event - The event instance.
 	 * @return array - Array of events to dispatch in response to the input event.
-	 */
-	public function handleAddonInfoCommand(\OpenFlame\Framework\Event\Instance $event)
+	 *
+	public function handleAddonInfoCommand(Event $event)
 	{
 		// Check auths first
-		if(!$this->checkAuthentication($event->getDataPoint('hostmask')))
+		if(!$this->checkAuthentication($event->get('hostmask')))
 		{
 			return $this->handleCommandRefusal($event);
 		}
@@ -277,54 +279,53 @@ class Basic
 			// asdf
 		}
 	}
+	 */
 
 	/**
 	 * Handles the bot being told to load a specific addon.
 	 * @param \OpenFlame\Framework\Event\Instance $event - The event instance.
 	 * @return array - Array of events to dispatch in response to the input event.
 	 */
-	public function handleLoadAddonCommand(\OpenFlame\Framework\Event\Instance $event)
+	public function handleLoadAddonCommand(Event $event)
 	{
-		$dispatcher = Kernel::getDispatcher();
-
 		// Check auths first
-		if(!$this->checkAuthentication($event->getDataPoint('hostmask')))
+		if(!$this->checkAuthentication($event->get('hostmask')))
 		{
 			return $this->handleCommandRefusal($event);
 		}
 		else
 		{
-			$highlight = (!$event->getDataPoint('is_private')) ? $event->getDataPoint('hostmask')->getNick() . ':' : '';
+			$highlight = (!$event->get('is_private')) ? $event->get('hostmask')->getNick() . ':' : '';
 
 			try
 			{
-				$addon = $event->getDataPoint('text');
+				$addon = $event->get('text');
 				// Alphanumeric addon names only, we don't want any sneaky stuff going on.
-				if(!preg_match('#^([0-9a-z]+)$#i', $event->getDataPoint('text')))
+				if(!preg_match('#^([0-9a-z]+)$#i', $event->get('text')))
 				{
 					throw new \RuntimeException('Unacceptable addon name provided');
 				}
 
-				$addon_loader = Kernel::get('core.addonloader');
+				$addon_loader = Kernel::get('yukari.addonloader');
 				$addon_loader->loadAddon($addon);
 
 				// Display a message in the UI.
-				$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.system')
-					->setDataPoint('message', sprintf('Loaded addon "%s"', $addon)));
+				Kernel::trigger(Event::newEvent('ui.message.system')
+					->set('message', sprintf('Loaded addon "%s"', $addon)));
 
-				$results[] = \OpenFlame\Framework\Event\Instance::newEvent('irc.output.privmsg')
-					->setDataPoint('target', $event->getDataPoint('target'))
-					->setDataPoint('text', sprintf('%1$s Loaded addon "%2$s" successfully.', $highlight, $addon));
+				$results[] = Event::newEvent('irc.output.privmsg')
+					->set('target', $event->get('target'))
+					->set('text', sprintf('%1$s Loaded addon "%2$s" successfully.', $highlight, $addon));
 			}
 			catch(\Exception $e)
 			{
 				// Display a message in the UI saying stuff asploded
-				$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.warning')
-					->setDataPoint('message', sprintf('Failed to load addon "%1$s" - failure message: "%2$s"', $addon, $e->getMessage())));
+				Kernel::trigger(Event::newEvent('ui.message.warning')
+					->set('message', sprintf('Failed to load addon "%1$s" - failure message: "%2$s"', $addon, $e->getMessage())));
 
-				$results[] = \OpenFlame\Framework\Event\Instance::newEvent('irc.output.privmsg')
-					->setDataPoint('target', $event->getDataPoint('target'))
-					->setDataPoint('text', sprintf('%1$s Failed to load addon "%2$s".', $highlight, $addon));
+				$results[] = Event::newEvent('irc.output.privmsg')
+					->set('target', $event->get('target'))
+					->set('text', sprintf('%1$s Failed to load addon "%2$s".', $highlight, $addon));
 			}
 
 			return $results;
@@ -336,24 +337,24 @@ class Basic
 	 * @param \OpenFlame\Framework\Event\Instance $event - The event instance.
 	 * @return array - Array of events to dispatch in response to the input event.
 	 */
-	public function handleVersionCheckCommand(\OpenFlame\Framework\Event\Instance $event)
+	public function handleVersionCheckCommand(Event $event)
 	{
 		// Check auths first
-		if(!$this->checkAuthentication($event->getDataPoint('hostmask')))
+		if(!$this->checkAuthentication($event->get('hostmask')))
 		{
 			return $this->handleCommandRefusal($event);
 		}
 		else
 		{
-			$highlight = (!$event->getDataPoint('is_private')) ? $event->getDataPoint('hostmask')->getNick() . ':' : '';
+			$highlight = (!$event->get('is_private')) ? $event->get('hostmask')->getNick() . ':' : '';
 			$installed_build = (int) substr(Kernel::getBuildNumber(), 6);
 
 			// if the build number is "DEV", it's a dev build, so we can't treat it as a normal build.  As such, version check must fail here.
 			if($installed_build == 'DEV')
 			{
-				$results[] = \OpenFlame\Framework\Event\Instance::newEvent('irc.output.privmsg')
-					->setDataPoint('target', $event->getDataPoint('target'))
-					->setDataPoint('text', sprintf('%1$s Cannot check for new build; a DEV build is currently installed.', $highlight));
+				$results[] = Event::newEvent('irc.output.privmsg')
+					->set('target', $event->get('target'))
+					->set('text', sprintf('%1$s Cannot check for new build; a DEV build is currently installed.', $highlight));
 				return $results;
 			}
 
@@ -363,9 +364,9 @@ class Basic
 			// If the return value was false, an empty string, or a non integer...something went wrong.
 			if($latest_build_number === false || $latest_build_number == '' || !ctype_digit($latest_build_number))
 			{
-				$results[] = \OpenFlame\Framework\Event\Instance::newEvent('irc.output.privmsg')
-					->setDataPoint('target', $event->getDataPoint('target'))
-					->setDataPoint('text', sprintf('%1$s Failed to get the latest build number.', $highlight));
+				$results[] = Event::newEvent('irc.output.privmsg')
+					->set('target', $event->get('target'))
+					->set('text', sprintf('%1$s Failed to get the latest build number.', $highlight));
 				return $results;
 			}
 			else
@@ -382,9 +383,9 @@ class Basic
 					$status = sprintf('Yukari build %1$d is available; currently running build %2$d', $latest_build_number, $installed_build);
 				}
 
-				$results[] = \OpenFlame\Framework\Event\Instance::newEvent('irc.output.privmsg')
-					->setDataPoint('target', $event->getDataPoint('target'))
-					->setDataPoint('text', sprintf('%1$s %2$s.', $highlight, $status));
+				$results[] = Event::newEvent('irc.output.privmsg')
+					->set('target', $event->get('target'))
+					->set('text', sprintf('%1$s %2$s.', $highlight, $status));
 				return $results;
 			}
 		}
@@ -395,10 +396,10 @@ class Basic
 	 * @param \OpenFlame\Framework\Event\Instance $event - The event instance.
 	 * @return array - Array of events to dispatch in response to the input event.
 	 */
-	public function handleUptimeCommand(\OpenFlame\Framework\Event\Instance $event)
+	public function handleUptimeCommand(Event $event)
 	{
 		// Check auths first
-		if(!$this->checkAuthentication($event->getDataPoint('hostmask')))
+		if(!$this->checkAuthentication($event->get('hostmask')))
 		{
 			return $this->handleCommandRefusal($event);
 		}
@@ -409,10 +410,10 @@ class Basic
 			$time_diff = $current_time - \Codebite\Yukari\START_TIME;
 			$diff_string = \Codebite\Yukari\timespan($time_diff);
 
-			$highlight = (!$event->getDataPoint('is_private')) ? $event->getDataPoint('hostmask')->getNick() . ':' : '';
-			$results[] = \OpenFlame\Framework\Event\Instance::newEvent('irc.output.privmsg')
-				->setDataPoint('target', $event->getDataPoint('target'))
-				->setDataPoint('text', sprintf('%1$s I have been running for %2$s.', $highlight, $diff_string));
+			$highlight = (!$event->get('is_private')) ? $event->get('hostmask')->getNick() . ':' : '';
+			$results[] = Event::newEvent('irc.output.privmsg')
+				->set('target', $event->get('target'))
+				->set('text', sprintf('%1$s I have been running for %2$s.', $highlight, $diff_string));
 
 			return $results;
 		}
@@ -423,17 +424,16 @@ class Basic
 	 * @param \OpenFlame\Framework\Event\Instance $event - The event instance.
 	 * @return array - Array of events to dispatch in response to the input event.
 	 */
-	public function handleQuitCommand(\OpenFlame\Framework\Event\Instance $event)
+	public function handleQuitCommand(Event $event)
 	{
 		// Check auths first
-		if(!$this->checkAuthentication($event->getDataPoint('hostmask')))
+		if(!$this->checkAuthentication($event->get('hostmask')))
 		{
 			return $this->handleCommandRefusal($event);
 		}
 		else
 		{
-			$dispatcher = Kernel::getDispatcher();
-			$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('system.shutdown'));
+			Kernel::trigger(Event::newEvent('system.shutdown'));
 
 			return NULL;
 		}
@@ -444,12 +444,12 @@ class Basic
 	 * @param \OpenFlame\Framework\Event\Instance $event - The event instance.
 	 * @return array - Array of events to dispatch in response to the input event.
 	 */
-	public function handleCommandRefusal(\OpenFlame\Framework\Event\Instance $event)
+	public function handleCommandRefusal(Event $event)
 	{
-		$highlight = (!$event->getDataPoint('is_private')) ? $event->getDataPoint('hostmask')->getNick() . ':' : '';
-		$results[] = \OpenFlame\Framework\Event\Instance::newEvent('irc.output.privmsg')
-			->setDataPoint('target', $event->getDataPoint('target'))
-			->setDataPoint('text', sprintf('%1$s You are not authorized to use this command.', $highlight));
+		$highlight = (!$event->get('is_private')) ? $event->get('hostmask')->getNick() . ':' : '';
+		$results[] = Event::newEvent('irc.output.privmsg')
+			->set('target', $event->get('target'))
+			->set('text', sprintf('%1$s You are not authorized to use this command.', $highlight));
 
 		return $results;
 	}
@@ -461,9 +461,8 @@ class Basic
 	 */
 	public function checkAuthentication(\Codebite\Yukari\Connection\Hostmask $hostmask)
 	{
-		$dispatcher = Kernel::getDispatcher();
-		$event = $dispatcher->triggerUntilBreak(\OpenFlame\Framework\Event\Instance::newEvent('acl.check_allowed')
-			->setDataPoint('hostmask', $hostmask));
+		$event = Kernel::trigger(Event::newEvent('acl.check_allowed')
+			->set('hostmask', $hostmask), \OpenFlame\Framework\Event\Dispatcher::TRIGGER_MANUALBREAK);
 
 		$auth = $event->getReturns();
 		if(is_array($auth))
