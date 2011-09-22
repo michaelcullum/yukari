@@ -21,6 +21,8 @@
 
 namespace Codebite\Yukari\Addon\ACL;
 use Codebite\Yukari\Kernel;
+use \OpenFlame\Framework\Event\Instance as Event;
+use \OpenFlame\Framework\Utility\JSON;
 
 /**
  * Yukari - ACL Whitelist object,
@@ -54,7 +56,7 @@ class Whitelist
 		// Set a default value for this config if it's not present.
 		if(!Kernel::getConfig('acl.whitelist.file'))
 		{
-			Kernel::setConfig('acl.whitelist.file', 'acl_whitelist.yml');
+			Kernel::setConfig('acl.whitelist.file', 'acl_whitelist.json');
 		}
 	}
 
@@ -64,7 +66,7 @@ class Whitelist
 	 */
 	public function loadWhitelistFile()
 	{
-		$this->whitelist = \Symfony\Component\Yaml\Yaml::load(YUKARI . '/data/config/addons/' . Kernel::getConfig('acl.whitelist.file'));
+		$this->whitelist = JSON::decode(YUKARI . '/data/config/addons/' . Kernel::getConfig('acl.whitelist.file'));
 		$this->whitelist_regexp = \Codebite\Yukari\hostmasksToRegex((array) $this->whitelist['whitelist_data']);
 
 		return $this;
@@ -76,9 +78,8 @@ class Whitelist
 	 */
 	public function registerListeners()
 	{
-		$dispatcher = Kernel::getDispatcher();
-		$dispatcher->register('acl.check_allowed', array(Kernel::get('addon.acl'), 'handleAccess'))
-			->register('irc.input.command.reloadwhitelist', array(Kernel::get('addon.acl'), 'handleReloadWhitelist'));
+		Kernel::registerListener('acl.check_allowed', 0, array(Kernel::get('addon.acl'), 'handleAccess'));
+		Kernel::registerListener('irc.input.command.reloadwhitelist', 0, array(Kernel::get('addon.acl'), 'handleReloadWhitelist'));
 
 		return $this;
 	}
@@ -88,11 +89,11 @@ class Whitelist
 	 * @param \OpenFlame\Framework\Event\Instance $event - The event to interpret.
 	 * @return integer - Returns 1 if user is authorized, returns 0 if not authorized.
 	 */
-	public function handleAccess(\OpenFlame\Framework\Event\Instance $event)
+	public function handleAccess(Event $event)
 	{
 		// Break the trigger cycle
 		$event->breakTrigger();
-		$result = preg_match($this->whitelist_regexp, $event->getDataPoint('hostmask'));
+		$result = preg_match($this->whitelist_regexp, $event->get('hostmask'));
 		return (int) $result;
 	}
 
@@ -101,22 +102,22 @@ class Whitelist
 	 * @param \OpenFlame\Framework\Event\Instance $event - The event to interpret.
 	 * @return array - Array of events to dispatch in response to the input event.
 	 */
-	public function handleReloadWhitelist(\OpenFlame\Framework\Event\Instance $event)
+	public function handleReloadWhitelist(Event $event)
 	{
-		$highlight = (!$event->getDataPoint('is_private')) ? $event->getDataPoint('hostmask')->getNick() . ':' : '';
+		$highlight = (!$event->get('is_private')) ? $event->get('hostmask')->getNick() . ':' : '';
 		if($this->handleAccess($event) === 1)
 		{
 			$this->loadWhitelistFile();
 
-			$results = \OpenFlame\Framework\Event\Instance::newEvent('irc.output.privmsg')
-				->setDataPoint('target', $event->getDataPoint('target'))
-				->setDataPoint('text', sprintf('%1$s Whitelist file reloaded.', $highlight));
+			$results = Event::newEvent('irc.output.privmsg')
+				->set('target', $event->get('target'))
+				->set('text', sprintf('%1$s Whitelist file reloaded.', $highlight));
 		}
 		else
 		{
-			$results = \OpenFlame\Framework\Event\Instance::newEvent('irc.output.privmsg')
-				->setDataPoint('target', $event->getDataPoint('target'))
-				->setDataPoint('text', sprintf('%1$s You are not authorized to use this command.', $highlight));
+			$results = Event::newEvent('irc.output.privmsg')
+				->set('target', $event->get('target'))
+				->set('text', sprintf('%1$s You are not authorized to use this command.', $highlight));
 		}
 
 		return $results;
