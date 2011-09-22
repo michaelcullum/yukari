@@ -85,4 +85,14 @@ class Kernel extends \OpenFlame\Framework\Core
 	{
 		return self::setObject($slot, $object);
 	}
+
+	public static function trigger($name, $type = \OpenFlame\Framework\Event\Dispatcher::TRIGGER_NOBREAK)
+	{
+		return self::get('dispatcher')->trigger($name, $type);
+	}
+
+	public static function registerListener($name, $priority, $listener)
+	{
+		return self::get('dispatcher')->register($name, $priority, $listener);
+	}
 }
