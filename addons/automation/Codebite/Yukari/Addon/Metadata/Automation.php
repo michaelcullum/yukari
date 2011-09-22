@@ -65,7 +65,7 @@ class Automation extends \Codebite\Yukari\Addon\Metadata\MetadataBase
 		$dispatcher = Kernel::get('dispatcher');
 
 		// Respond to CTCP VERSION and CTCP PING (if a valid argument for the CTCP was provided)
-		$ctcp_lambda = function(Event $event) {
+		$dispatcher->register('irc.input.ctcp', -10, function(Event $event) {
 			if(strtolower($event->get('command')) === 'version')
 			{
 				return Event::newEvent('irc.output.ctcp_reply')
@@ -78,7 +78,9 @@ class Automation extends \Codebite\Yukari\Addon\Metadata\MetadataBase
 			elseif(strtolower($event->get('command')) === 'ping')
 			{
 				if(!$event->exists('args') || $event->get('args') === NULL)
-					return NULL;
+				{
+					return;
+				}
 
 				return Event::newEvent('irc.output.ctcp_reply')
 					->setData(array(
@@ -89,17 +91,15 @@ class Automation extends \Codebite\Yukari\Addon\Metadata\MetadataBase
 			}
 			else
 			{
-				return NULL;
+				return;
 			}
-		};
-		$dispatcher->register('irc.input.ctcp', -10, $ctcp_lambda); // use -10 priority for medium-high listener priority
+		}); // use -10 priority for medium-high listener priority
 
 		// Respond to server pings
-		$ping_lambda = function(Event $event) {
+		$dispatcher->register('irc.input.ping', -10, function(Event $event) {
 			return Event::newEvent('irc.output.pong')
 					->set('origin', $event->get('target'));
-		};
-		$dispatcher->register('irc.input.ping', -10, $ping_lambda); // use -10 priority for medium-high listener priority
+		}); // use -10 priority for medium-high listener priority
 	}
 
 	/**
