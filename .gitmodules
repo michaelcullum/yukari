@@ -10,3 +10,6 @@
 [submodule "src/OpenFlame/Dbal"]
 	path = src/OpenFlame/Dbal
 	url = git://github.com/OpenFlame/OpenFlame-Dbal.git
+[submodule "src/emberlabs/materia"]
+	path = src/emberlabs/materia
+	url = git://github.com/emberlabs/materia.git
