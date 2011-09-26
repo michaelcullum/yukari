@@ -41,7 +41,7 @@ $injector->setInjector('yukari.ui', function() {
 });
 
 $injector->setInjector('yukari.addonloader', function() {
-	return new \Codebite\Yukari\Addon\Loader();
+	return new \emberlabs\materia\Loader(YUKARI, '/addons/', 'lib/addons/');
 });
 
 $injector->setInjector('yukari.timezone', function() {

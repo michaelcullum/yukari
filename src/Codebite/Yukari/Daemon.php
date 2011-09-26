@@ -95,7 +95,7 @@ class Daemon
 		{
 			try
 			{
-				$addon_loader->loadAddon($addon);
+				$addon_loader->load($addon);
 				Kernel::trigger(Event::newEvent('ui.message.system')
 					->set('message', sprintf('Loaded addon "%s"', $addon)));
 			}
