@@ -19,8 +19,9 @@
  *
  */
 
-namespace Codebite\Yukari\Addon\Metadata;
+namespace emberlabs\materia\Metadata;
 use Codebite\Yukari\Kernel;
+use \OpenFlame\Framework\Event\Instance as Event;
 
 /**
  * Yukari - Addon metadata object,
@@ -33,7 +34,7 @@ use Codebite\Yukari\Kernel;
  * @license     MIT License
  * @link        https://github.com/damianb/yukari
  */
-class Botadmin extends \Codebite\Yukari\Addon\Metadata\MetadataBase
+class Irc extends \emberlabs\materia\Metadata\MetadataBase
 {
 	/**
 	 * @var string - The addon's version.
@@ -48,12 +49,12 @@ class Botadmin extends \Codebite\Yukari\Addon\Metadata\MetadataBase
 	/**
 	 * @var string - The addon's name.
 	 */
-	protected $name = 'Botadmin';
+	protected $name = 'IRC';
 
 	/**
 	 * @var string - The addon's description.
 	 */
-	protected $description = 'Provides basic administration of the bot to whitelisted users.';
+	protected $description = 'Provides basic support for the IRC protocol.';
 
 	/**
 	 * Hooking method for addon metadata objects, called to initialize the addon after the dependency check has been passed.
@@ -61,8 +62,19 @@ class Botadmin extends \Codebite\Yukari\Addon\Metadata\MetadataBase
 	 */
 	public function initialize()
 	{
-		$interpreter = Kernel::set('addon.botadmin', new \Codebite\Yukari\Addon\Admin\Basic());
-		$interpreter->registerListeners();
+		$dispatcher = Kernel::get('dispatcher');
+
+		// asdf
+	}
+
+	protected function setListeners()
+	{
+		// asdf
+	}
+
+	protected function setInjectors()
+	{
+		// asdf
 	}
 
 	/**
@@ -71,9 +83,7 @@ class Botadmin extends \Codebite\Yukari\Addon\Metadata\MetadataBase
 	 */
 	public function checkDependencies()
 	{
-		$this->loadDependency('addon.commander', 'commander');
-		$this->loadDependency('addon.acl', 'whitelist');
-
+		// This addon has no dependencies.
 		return true;
 	}
 }
