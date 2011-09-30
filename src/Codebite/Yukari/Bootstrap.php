@@ -71,6 +71,3 @@ $daemon = Kernel::get('yukari.daemon');
 $dispatcher = Kernel::get('dispatcher');
 $dispatcher->trigger(Event::newEvent('yukari.init'));
 $dispatcher->trigger(Event::newEvent('yukari.exec'));
-
-// \Codebite\Yukari\Kernel::initEnvironment();
-// \Codebite\Yukari\Kernel::getEnvironment()->runBot();
