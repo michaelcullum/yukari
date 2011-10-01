@@ -21,6 +21,7 @@
 
 namespace Codebite\Yukari;
 use \Codebite\Yukari\Kernel;
+use \OpenFlame\Framework\Autoloader;
 use \OpenFlame\Framework\Dependency\Injector;
 use \OpenFlame\Framework\Utility\JSON;
 
@@ -41,7 +42,12 @@ $injector->setInjector('yukari.ui', function() {
 });
 
 $injector->setInjector('yukari.addonloader', function() {
-	return new \emberlabs\materia\Loader(YUKARI, '/addons/', 'lib/addons/');
+	$loader = new \emberlabs\materia\Loader(YUKARI);
+	$loader->setAddonDirs('/addons/', 'lib/addons/')
+		->setCallback(function($set_path) {
+			Autoloader::getInstance()->setPath($set_path);
+		});
+	return $loader;
 });
 
 $injector->setInjector('yukari.timezone', function() {
