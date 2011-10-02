@@ -58,4 +58,14 @@ class Manager
 	{
 		return Kernel::setConfig(sprintf('irc_%s.%s', $this->name, $option), $value);
 	}
+
+	public function connect()
+	{
+		// asdf
+	}
+
+	public function tickHook()
+	{
+		// asdf
+	}
 }

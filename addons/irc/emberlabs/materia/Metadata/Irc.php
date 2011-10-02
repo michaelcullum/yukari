@@ -72,22 +72,36 @@ class Irc extends \emberlabs\materia\Metadata\MetadataBase
 	{
 		$dispatcher = Kernel::get('dispatcher');
 
-		// asdf
-	}
-
-	protected function setListeners()
-	{
-		// asdf
+		$this->manager = new \Codebite\Yukari\Addon\IRC\Manager($this->getAlias());
 	}
 
 	protected function setInjectors()
 	{
 		$injector = Injector::getInstance();
+		$manager = $this->manager;
+
+		$injector->setInjector('irc.ui', function() {
+			return \Codebite\Yukari\Addon\IRC\Environment\Display();
+		});
+
 		$injector->setInjector('irc.socket', function() use($manager) {
 			return function($manager) {
 				return \Codebite\Yukari\Addon\IRC\Connection\Socket($manager);
 			};
 		});
+
+		$injector->setInjector('irc.request_map', function() {
+			return new \Codebite\Yukari\Connection\RequestMap();
+		});
+
+		$injector->setInjector('irc.response_map', function() {
+			return new \Codebite\Yukari\Connection\ResponseMap();
+		});
+	}
+
+	protected function setListeners()
+	{
+		Kernel::get('irc.ui')->registerListeners();
 	}
 
 	/**
