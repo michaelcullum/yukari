@@ -21,6 +21,7 @@
 
 namespace emberlabs\materia\Metadata;
 use Codebite\Yukari\Kernel;
+use \OpenFlame\Framework\Dependency\Injector;
 use \OpenFlame\Framework\Event\Instance as Event;
 
 /**
@@ -61,6 +62,8 @@ class Irc extends \emberlabs\materia\Metadata\MetadataBase
 	 */
 	protected static $initialized = false;
 
+	protected $manager;
+
 	/**
 	 * Hooking method for addon metadata objects, called to initialize the addon after the dependency check has been passed.
 	 * @return void
@@ -79,7 +82,12 @@ class Irc extends \emberlabs\materia\Metadata\MetadataBase
 
 	protected function setInjectors()
 	{
-		// asdf
+		$injector = Injector::getInstance();
+		$injector->setInjector('irc.socket', function() use($manager) {
+			return function($manager) {
+				return \Codebite\Yukari\Addon\IRC\Connection\Socket($manager);
+			};
+		});
 	}
 
 	/**

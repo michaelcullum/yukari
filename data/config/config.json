@@ -1,10 +1,4 @@
 {
-	"socket.use_ssl":false,
-	"irc.url":"irc.freenode.net",
-	"irc.port":6667,
-	"irc.nickname":"Yukari-chan",
-	"irc.username":"yukari",
-	"irc.realname":"Obsidian",
 	"db.file":"yukari.sqlite.db",
 	"ui.enable_colors":true,
 	"ui.output_level":"debug",
@@ -19,5 +13,17 @@
 		#"commander",
 		#"channeltracker",
 		#"botadmin"
-	]
+	],
+	"irc.networks":
+	{
+		"freenode":
+		{
+			"ssl":false,
+			"url":"irc.freenode.net",
+			"port":6667,
+			"nickname":"Yukari-chan",
+			"username":"yukari",
+			"realname":"Obsidian"
+		}
+	}
 }

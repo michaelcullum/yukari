@@ -20,7 +20,9 @@
  */
 
 namespace Codebite\Yukari\Addon\IRC\Connection;
-use Codebite\Yukari\Kernel;
+use \Codebite\Yukari\Kernel;
+use \OpenFlame\Framework\Event\Instance as Event;
+use \Codebite\Yukari\Addon\IRC\Connection\Hostmask;
 
 /**
  * Yukari - Socket connection handling class,
@@ -46,6 +48,17 @@ class Socket
 	protected $socket = NULL;
 
 	/**
+	 * @var \Codebite\Yukari\Addon\IRC\Manager - The manager instance controlling this connection instance.
+	 */
+	protected $manager;
+
+	public function __construct(\Codebite\Yukari\Addon\IRC\Manager $manager)
+	{
+		$this->manager = $manager;
+		$this->manager->socket = $this;
+	}
+
+	/**
 	 * Initiates a connection with the server.
 	 * @return void
 	 *
@@ -54,14 +67,14 @@ class Socket
 	public function connect()
 	{
 		// Check to see if the transport method we are using is allowed
-		$transport = (Kernel::getConfig('socket.use_ssl') == true) ? 'ssl' : 'tcp';
+		$transport = ($this->manager->get('ssl') == true) ? 'ssl' : 'tcp';
 		if(!in_array($transport, stream_get_transports()))
 		{
 			throw new \RuntimeException(sprintf('Unsupported transport "%s" specified', $transport));
 		}
 
 		// Establish and configure the socket connection
-		$remote = sprintf('%1$s://%2$s:%3$s', $transport, Kernel::getConfig('irc.url'), Kernel::getConfig('irc.port'));
+		$remote = sprintf('%1$s://%2$s:%3$s', $transport, $this->manager->get('url'), $this->manager->get('port'));
 
 		// Try a few times to connect to the server, and if we can't, we dai.
 		$attempts = 0;
@@ -81,16 +94,17 @@ class Socket
 		while(!$this->socket);
 
 		stream_set_timeout($this->socket, (int) $this->timeout, (($this->timeout - (int) $this->timeout) * 1000000));
+		stream_set_blocking($this->socket, 1);
 
 		// Send the server password if one is specified
-		if(Kernel::getConfig('irc.password'))
+		if($this->manager->get('password'))
 		{
-			$this->send(sprintf('PASS %s', Kernel::getConfig('irc.password')));
+			$this->send(sprintf('PASS %s', $this->manager->get('password')));
 		}
 
 		// Send user information
-		$this->send(sprintf('USER %1$s %2$s %3$s :%4$s', Kernel::getConfig('irc.username'), Kernel::getConfig('irc.url'), Kernel::getConfig('irc.url'), Kernel::getConfig('irc.realname')));
-		$this->send(sprintf('NICK %s', Kernel::getConfig('irc.nickname')));
+		$this->send(sprintf('USER %1$s %2$s %3$s :%4$s', $this->manager->get('username'), $this->manager->get('url'), $this->manager->get('url'), $this->manager->get('realname')));
+		$this->send(sprintf('NICK %s', $this->manager->get('nickname')));
 	}
 
 	/**
@@ -101,7 +115,7 @@ class Socket
 	 */
 	public function get()
 	{
-		$dispatcher = Kernel::getDispatcher();
+		$dispatcher = Kernel::get('dispatcher');
 
 		$buffer = fgets($this->socket, 512);
 
@@ -115,8 +129,8 @@ class Socket
 		}
 
 		// Raw buffer output
-		$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.raw')
-			->setDataPoint('message', '<- ' . $buffer));
+		$dispatcher->trigger(Event::newEvent('ui.message.raw')
+			->set('message', '<- ' . $buffer));
 
 		$prefix = '';
 		if(substr($buffer, 0, 1) == ':')
@@ -131,15 +145,15 @@ class Socket
 		// Parse the hostmask.
 		if(strpos($prefix, '@') === false)
 		{
-			$hostmask = \Codebite\Yukari\Connection\Hostmask::newInstance()
+			$hostmask = Hostmask::newInstance()
 				->setNick('server')
-				->setUsername(Kernel::getConfig('irc.url'))
+				->setUsername($this->manager->get('url'))
 				->setHost($prefix);
 		}
 		else
 		{
 			// Parse the command and arguments
-			$hostmask = \Codebite\Yukari\Connection\Hostmask::load($prefix);
+			$hostmask = Hostmask::load($prefix);
 		}
 
 		// Parse the event arguments depending on the event type
@@ -207,16 +221,16 @@ class Socket
 		// Create, populate, and return an event object
 		if(ctype_digit($cmd))
 		{
-			$event = \OpenFlame\Framework\Event\Instance::newEvent('irc.input.response')->setData(array(
+			$event = Event::newEvent('irc.input.response')->setData(array(
 				'code'			=> $cmd,
 				'description'	=> $args,
 			));
 		}
 		else
 		{
-			$request_map = Kernel::get('core.request_map');
+			$request_map = Kernel::get('irc.request_map');
 
-			$event = \OpenFlame\Framework\Event\Instance::newEvent(sprintf('irc.input.%s', $cmd))->setData(array(
+			$event = Event::newEvent(sprintf('irc.input.%s', $cmd))->setData(array(
 				'type'		=> $cmd,
 			));
 
@@ -225,18 +239,18 @@ class Socket
 			$args = array_pad((array) $args, sizeof($map), NULL);
 			foreach($map as $key => $map_arg)
 			{
-				$event->setDataPoint($map_arg, $args[$key]);
+				$event->set($map_arg, $args[$key]);
 			}
 
 			if(isset($hostmask))
 			{
-				$event->setDataPoint('hostmask', $hostmask);
+				$event->set('hostmask', $hostmask);
 			}
 		}
-		$event->setDataPoint('buffer', $buffer);
+		$event->set('buffer', $buffer);
 
-		$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.event')
-			->setDataPoint('message', sprintf('<- event "%1$s"', $event->getName())));
+		$dispatcher->trigger(Event::newEvent('ui.message.event')
+			->set('message', sprintf('<- event "%1$s"', $event->getName())));
 
 		return $event;
 	}
@@ -247,13 +261,13 @@ class Socket
 	 * @return string - Command string that was sent
 	 *
 	 */
-	public function sendEvent(\OpenFlame\Framework\Event\Instance $event)
+	public function sendEvent(Event $event)
 	{
-		$dispatcher = Kernel::getDispatcher();
-		$request_map = Kernel::get('core.request_map');
+		$dispatcher = Kernel::get('dispatcher');
+		$request_map = Kernel::get('irc.request_map');
 
-		$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.event')
-			->setDataPoint('message', sprintf('-> event "%1$s"', $event->getName())));
+		$dispatcher->trigger(Event::newEvent('ui.message.event')
+			->set('message', sprintf('-> event "%1$s"', $event->getName())));
 
 		// Get the buffer to write.
 		$buffer = $request_map->buildOutput($event);
@@ -270,7 +284,7 @@ class Socket
 	 */
 	public function send($data)
 	{
-		$dispatcher = Kernel::getDispatcher();
+		$dispatcher = Kernel::get('dispatcher');
 
 		// Require an open socket connection to continue
 		if(empty($this->socket))
@@ -298,8 +312,8 @@ class Socket
 		while(!$success);
 
 		// Raw buffer output
-		$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.raw')
-			->setDataPoint('message', '-> ' . $data));
+		$dispatcher->trigger(Event::newEvent('ui.message.raw')
+			->set('message', '-> ' . $data));
 
 		// Return the command string that was transmitted
 		return $data;
@@ -311,14 +325,15 @@ class Socket
 	 */
 	public function close()
 	{
+		$dispatcher = Kernel::get('dispatcher');
+
 		if($this->socket === NULL)
 		{
 			return;
 		}
 
-		$dispatcher = Kernel::getDispatcher();
-		$dispatcher->trigger(\OpenFlame\Framework\Event\Instance::newEvent('ui.message.system')
-			->setDataPoint('message', sprintf('Quitting from server "%1$s"', Kernel::getConfig('irc.url'))));
+		$dispatcher->trigger(Event::newEvent('ui.message.system')
+			->set('message', sprintf('Quitting from server "%1$s"', $this->manager->get('url'))));
 
 		// Terminate the socket connection
 		fclose($this->socket);
