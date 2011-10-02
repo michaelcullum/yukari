@@ -1,28 +1,32 @@
 # Yukari
 
-Yukari is a flexible IRC bot built in PHP 5.3 Object Oriented Programming.
+Yukari is a PHP-based daemon built for use as a multi-network IRC bot using PHP 5.3 Object Oriented Programming.
 
-**Copyright**: *(c) 2009 - 2011 -- Damian Bushong*
+## copyright
 
-**License**: *MIT License* - please see the provided file located in /LICENSE for the full license text
+*(c) 2009 - 2011 Damian Bushong*
 
-## Requirements
+## license
+
+ *MIT License* - please see the provided file located in /LICENSE for the full license text
+
+## requirements
 
 * PHP 5.3.0 or newer
 * PHAR read access
 
-## Dependencies
+## dependencies
 
 * OpenFlame\Framework (packaged) <https://github.com/OpenFlame/OpenFlame-Framework>
 * OpenFlame\Dbal (packaged) <https://github.com/OpenFlame/OpenFlame-Dbal>
 
-## Extras
+## extras
 
 More addons are available in the yukari-extras repository; for more details, look here: <https://github.com/damianb/yukari-extras>
 
-## Instructions
+## instructions
 
-### Installation
+### installation
 
 Via git:
     $ git clone https://github.com/damianb/yukari.git
@@ -41,7 +45,7 @@ Via zip package of build (replacing {buildnumber} with the actual build number):
 
 Optionally, you may verify the phar(s) if you have the phar-util package installed via pear.
 
-### Compiling an updated phar
+### compiling an updated phar
 
 Install the phar-util package <https://github.com/koto/phar-util> via pear, if you have not done so already
     $ sudo pear channel-discover pear.kotowicz.net
@@ -60,14 +64,14 @@ Make your changes to the files in the **src/Yukari/** directory, then make chang
 
 Please note that this script will, by default, attempt to sign any phars it builds.  You will need to modify the script itself to prevent this if you don't want the phars signed.
 
-### Building addons
+### building addons
 
 Make changes to individual addons in the **addons/** directory (one directory per addon), then build the addon phar
     $ ./build/addon_build.sh
 
 Note that this requires having already created OpenSSL certificates using phar-generate-cert (part of the phar-util pear package) and placing them in the directory **build/cert/**.
 
-### Running the script
+### running the script
 
 #### Windows
 
@@ -81,5 +85,3 @@ Navigate to the root directory of Yukari, then use this command:
 Yukari will immediately start up afterwards.
 
 Protip: You can specify an alternative configuration file to use within the **data/config/** directory by using the commandline parameter "*--config=confignamehere*"
-
-**@note**: A shell script providing easy manipulation of the bot through screen is planned.
