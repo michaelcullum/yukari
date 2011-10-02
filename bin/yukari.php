@@ -8,7 +8,7 @@
  * @category    Yukari
  * @package     Yukari
  * @author      Damian Bushong
- * @copyright   (c) 2009 - 2011 -- Damian Bushong
+ * @copyright   (c) 2009 - 2011 Damian Bushong
  * @license     MIT License
  * @link        http://github.com/damianb/yukari
  *

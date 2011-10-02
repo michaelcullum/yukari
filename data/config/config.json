@@ -12,12 +12,12 @@
 	"yukari.locale":"en-us",
 	"yukari.addons":
 	[
-		"irc",
-		"automation",
+		#"irc",
+		"automation"
 		#"sqlite",
-		"whitelist",
-		"commander",
-		"channeltracker",
-		"botadmin"
+		#"whitelist",
+		#"commander",
+		#"channeltracker",
+		#"botadmin"
 	]
 }
