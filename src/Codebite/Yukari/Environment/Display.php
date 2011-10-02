@@ -237,6 +237,17 @@ class Display
 		$this->output(self::OUTPUT_NORMAL, 'STATUS', '');
 		$this->output(self::OUTPUT_NORMAL, 'STATUS', '===================================================================');
 		$this->output(self::OUTPUT_NORMAL, 'STATUS', '');
+		$this->output(self::OUTPUT_NORMAL, 'STATUS', '  OpenFlame\\Framework');
+		$this->output(self::OUTPUT_NORMAL, 'STATUS', '@version:      %s', array(Kernel::getVersion()));
+		$this->output(self::OUTPUT_NORMAL, 'STATUS', '-------------------------------------------------------------------');
+		$this->output(self::OUTPUT_NORMAL, 'STATUS', '  OpenFlame\\Dbal');
+		$this->output(self::OUTPUT_NORMAL, 'STATUS', '@version:      %s', array('1.0.0-dev'));
+		$this->output(self::OUTPUT_NORMAL, 'STATUS', '-------------------------------------------------------------------');
+		$this->output(self::OUTPUT_NORMAL, 'STATUS', '  emberlabs\\materia');
+		$this->output(self::OUTPUT_NORMAL, 'STATUS', '@version:      %s', array(\emberlabs\materia\Loader::VERSION));
+		$this->output(self::OUTPUT_NORMAL, 'STATUS', '');
+		$this->output(self::OUTPUT_NORMAL, 'STATUS', '===================================================================');
+		$this->output(self::OUTPUT_NORMAL, 'STATUS', '');
 		$this->output(self::OUTPUT_NORMAL, 'STATUS', 'This program is subject to the MIT license that is bundled');
 		$this->output(self::OUTPUT_NORMAL, 'STATUS', 'with this package in the file LICENSE.');
 		$this->output(self::OUTPUT_NORMAL, 'STATUS', '');
