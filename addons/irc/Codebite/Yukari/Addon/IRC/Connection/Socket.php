@@ -19,7 +19,7 @@
  *
  */
 
-namespace Codebite\Yukari\Connection;
+namespace Codebite\Yukari\Addon\IRC\Connection;
 use Codebite\Yukari\Kernel;
 
 /**

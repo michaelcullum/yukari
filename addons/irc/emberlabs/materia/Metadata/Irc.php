@@ -57,6 +57,11 @@ class Irc extends \emberlabs\materia\Metadata\MetadataBase
 	protected $description = 'Provides basic support for the IRC protocol.';
 
 	/**
+	 * @var boolean - Has this addon been initialized? (it MAY be loaded multiple times)
+	 */
+	protected static $initialized = false;
+
+	/**
 	 * Hooking method for addon metadata objects, called to initialize the addon after the dependency check has been passed.
 	 * @return void
 	 */
