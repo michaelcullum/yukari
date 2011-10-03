@@ -19,7 +19,7 @@
  *
  */
 
-namespace Codebite\Yukari\Addon\Metadata;
+namespace emberlabs\materia\Metadata;
 use Codebite\Yukari\Kernel;
 
 /**
@@ -33,7 +33,7 @@ use Codebite\Yukari\Kernel;
  * @license     MIT License
  * @link        https://github.com/damianb/yukari
  */
-class Channeltracker extends \Codebite\Yukari\Addon\Metadata\MetadataBase
+class Channeltracker extends \emberlabs\materia\Metadata\MetadataBase
 {
 	/**
 	 * @var string - The addon's version.
@@ -61,7 +61,7 @@ class Channeltracker extends \Codebite\Yukari\Addon\Metadata\MetadataBase
 	 */
 	public function initialize()
 	{
-		$channeltracker = Kernel::set('addon.channeltracker', new \Codebite\Yukari\Addon\DataTracking\ChannelTracker());
+		$channeltracker = Kernel::set('irc.addon.channeltracker', new \Codebite\Yukari\Addon\DataTracking\ChannelTracker());
 		$channeltracker->registerListeners();
 	}
 
@@ -73,7 +73,8 @@ class Channeltracker extends \Codebite\Yukari\Addon\Metadata\MetadataBase
 	 */
 	public function checkDependencies()
 	{
-		$this->loadDependency('addon.commander', 'commander');
+		$this->loadDependency('irc.stack', 'irc');
+		$this->loadDependency('irc.addon.commander', 'commander');
 
 		return true;
 	}

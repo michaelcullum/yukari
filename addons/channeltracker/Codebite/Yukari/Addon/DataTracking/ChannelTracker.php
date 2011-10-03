@@ -61,7 +61,7 @@ class ChannelTracker
 	 */
 	public function trackChannelJoin(Event $event)
 	{
-		if($event->get('hostmask')->getNick() == Kernel::getConfig('irc.nickname'))
+		if($event->get('hostmask')->getNick() == Kernel::get('irc.stack')->getNetworkOption($event->get('network'), 'nickname'))
 		{
 			if(!in_array($event->get('channel'), $this->channels))
 			{
@@ -77,7 +77,7 @@ class ChannelTracker
 	 */
 	public function trackChannelPart(Event $event)
 	{
-		if($event->get('hostmask')->getNick() == Kernel::getConfig('irc.nickname'))
+		if($event->get('hostmask')->getNick() == Kernel::get('irc.stack')->getNetworkOption($event->get('network'), 'nickname'))
 		{
 			$key = array_search($event->get('channel'), $this->channels);
 			if($key !== false)
@@ -94,7 +94,7 @@ class ChannelTracker
 	 */
 	public function trackChannelKick(Event $event)
 	{
-		if($event->get('hostmask')->getNick() == Kernel::getConfig('irc.nickname'))
+		if($event->get('hostmask')->getNick() == Kernel::get('irc.stack')->getNetworkOption($event->get('network'), 'nickname'))
 		{
 			$key = array_search($event->get('channel'), $this->channels);
 			if($key !== false)
