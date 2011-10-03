@@ -61,7 +61,7 @@ class Botadmin extends \emberlabs\materia\Metadata\MetadataBase
 	 */
 	public function initialize()
 	{
-		$interpreter = Kernel::set('addon.botadmin', new \Codebite\Yukari\Addon\Admin\Basic());
+		$interpreter = Kernel::set('irc.addon.botadmin', new \Codebite\Yukari\Addon\Admin\Basic());
 		$interpreter->registerListeners();
 	}
 
@@ -71,8 +71,9 @@ class Botadmin extends \emberlabs\materia\Metadata\MetadataBase
 	 */
 	public function checkDependencies()
 	{
-		$this->loadDependency('addon.commander', 'commander');
-		$this->loadDependency('addon.acl', 'whitelist');
+		$this->loadDependency('irc.stack', 'irc');
+		$this->loadDependency('irc.addon.commander', 'commander');
+		$this->loadDependency('irc.addon.acl', 'whitelist');
 
 		return true;
 	}

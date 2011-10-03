@@ -50,10 +50,10 @@ class Basic
 		Kernel::registerListener('irc.input.command.join', 0, array($this, 'handleJoinCommand'));
 		Kernel::registerListener('irc.input.command.part', 0, array($this, 'handlePartCommand'));
 		//Kernel::registerListener('irc.input.command.kick', 0, array($this, 'handleKickCommand'));
-		Kernel::registerListener('irc.input.command.op', 0, array($this, 'handleSetUserChannelMode'), array('+o'));
-		Kernel::registerListener('irc.input.command.deop', 0, array($this, 'handleSetUserChannelMode'), array('-o'));
-		Kernel::registerListener('irc.input.command.voice', 0, array($this, 'handleSetUserChannelMode'), array('+v'));
-		Kernel::registerListener('irc.input.command.devoice', 0, array($this, 'handleSetUserChannelMode'), array('-v'));
+		Kernel::registerListener('irc.input.command.op', 0, array($this, 'handleSetUserChannelOp'));
+		Kernel::registerListener('irc.input.command.deop', 0, array($this, 'handleSetUserChannelDeop'));
+		Kernel::registerListener('irc.input.command.voice', 0, array($this, 'handleSetUserChannelVoice'));
+		Kernel::registerListener('irc.input.command.devoice', 0, array($this, 'handleSetUserChannelDevoice'));
 		Kernel::registerListener('irc.input.command.listaddons', 0, array($this, 'handleListAddonsCommand'));
 		//Kernel::registerListener('irc.input.command.addoninfo', 0, array($this, 'handleAddonInfoCommand')) // @todo write this command
 		Kernel::registerListener('irc.input.command.loadaddon', 0, array($this, 'handleLoadAddonCommand'));
@@ -149,13 +149,33 @@ class Basic
 	}
 	*/
 
+	public function handleSetUserChannelOp($event)
+	{
+		$this->handleSetUserChannelMode($event, '+o');
+	}
+
+	public function handleSetUserChannelDeop($event)
+	{
+		$this->handleSetUserChannelMode($event, '-o');
+	}
+
+	public function handleSetUserChannelVoice($event)
+	{
+		$this->handleSetUserChannelMode($event, '+v');
+	}
+
+	public function handleSetUserChannelDevoice($event)
+	{
+		$this->handleSetUserChannelMode($event, '-v');
+	}
+
 	/**
 	 * Handles the bot being told set a channel-specific user mode.
 	 * @param \OpenFlame\Framework\Event\Instance $event - The event instance.
 	 * @param string $mode - The mode flag to set.
 	 * @return array - Array of events to dispatch in response to the input event.
 	 */
-	public function handleSetUserChannelMode(\OpenFlame\Framework\Event\Instance $event, $mode)
+	public function handleSetUserChannelMode(Event $event, $mode)
 	{
 		// Check auths first
 		if(!$this->checkAuthentication($event->get('hostmask')))
@@ -465,10 +485,7 @@ class Basic
 			->set('hostmask', $hostmask), \OpenFlame\Framework\Event\Dispatcher::TRIGGER_MANUALBREAK);
 
 		$auth = $event->getReturns();
-		if(is_array($auth))
-		{
-			$auth = array_shift($auth);
-		}
+		$auth = array_shift($auth);
 
 		if($auth !== NULL)
 		{
