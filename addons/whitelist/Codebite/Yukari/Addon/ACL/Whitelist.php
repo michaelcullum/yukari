@@ -78,8 +78,8 @@ class Whitelist
 	 */
 	public function registerListeners()
 	{
-		Kernel::registerListener('acl.check_allowed', 0, array(Kernel::get('addon.acl'), 'handleAccess'));
-		Kernel::registerListener('irc.input.command.reloadwhitelist', 0, array(Kernel::get('addon.acl'), 'handleReloadWhitelist'));
+		Kernel::registerListener('acl.check_allowed', 0, array($this, 'handleAccess'));
+		Kernel::registerListener('irc.input.command.reloadwhitelist', 0, array($this, 'handleReloadWhitelist'));
 
 		return $this;
 	}
