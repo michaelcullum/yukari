@@ -19,7 +19,8 @@
  *
  */
 
-namespace Codebite\Yukari\Connection;
+namespace Codebite\Yukari\Addon\IRC\Connection;
+use \OpenFlame\Framework\Event\Instance as Event;
 
 /**
  * Yukari - IRC Request Argument-mapping class,
@@ -263,7 +264,7 @@ class RequestMap
 	 * @param \OpenFlame\Framework\Event\Instance $event - The event containing the data to send.
 	 * @return string - The raw IRC to send.
 	 */
-	public function buildOutput(\OpenFlame\Framework\Event\Instance $event)
+	public function buildOutput(Event $event)
 	{
 		// get the event type we're dealing with
 		list( , , $event_type) = array_pad(explode('.', $event->getName()), -3, '');
@@ -272,7 +273,7 @@ class RequestMap
 		$params = array();
 		foreach($this->getMap($event_type) as $arg)
 		{
-			$params[] = ($event->dataPointExists($arg)) ? $event->getDataPoint($arg) : NULL;
+			$params[] = ($event->exists($arg)) ? $event->get($arg) : NULL;
 		}
 
 		// execute and return the raw IRC string to send.

@@ -19,7 +19,7 @@
  *
  */
 
-namespace Codebite\Yukari\Connection;
+namespace Codebite\Yukari\Addon\IRC\Connection;
 
 /**
  * Yukari - IRC Response Code Map object,
