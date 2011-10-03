@@ -53,6 +53,11 @@ class ManagerStack
 		}
 	}
 
+	public function registerListeners()
+	{
+		Kernel::registerListener('yukari.tick', 0, array($this, 'tick'));
+	}
+
 	public function tick(Event $tick)
 	{
 		foreach($this->managers as $k => $manager)

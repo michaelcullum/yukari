@@ -66,7 +66,7 @@ class Socket
 
 	/**
 	 * Initiates a connection with the server.
-	 * @return void
+	 * @return \Codebite\Yukari\Addon\IRC\Connection\Socket - Provides a fluent interface
 	 *
 	 * @throws \RuntimeException
 	 */
@@ -111,6 +111,8 @@ class Socket
 		// Send user information
 		$this->send(sprintf('USER %1$s %2$s %3$s :%4$s', $this->manager->get('username'), $this->manager->get('url'), $this->manager->get('url'), $this->manager->get('realname')));
 		$this->send(sprintf('NICK %s', $this->manager->get('nickname')));
+
+		return $this;
 	}
 
 	/**

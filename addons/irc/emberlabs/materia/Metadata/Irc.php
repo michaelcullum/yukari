@@ -65,11 +65,12 @@ class Irc extends \emberlabs\materia\Metadata\MetadataBase
 	{
 		$injector = Injector::getInstance();
 
-		$this->setInjectors()
-			->setListeners();
+		$this->setInjectors();
 
 		$networks = Kernel::getConfig('irc.networks');
 		Kernel::set('irc.stack', new \Codebite\Yukari\Addon\IRC\ManagerStack($networks));
+
+		$this->setListeners();
 	}
 
 	protected function setInjectors()
@@ -87,11 +88,11 @@ class Irc extends \emberlabs\materia\Metadata\MetadataBase
 		});
 
 		$injector->setInjector('irc.request_map', function() {
-			return new \Codebite\Yukari\Connection\RequestMap();
+			return new \Codebite\Yukari\Addon\IRC\Connection\RequestMap();
 		});
 
 		$injector->setInjector('irc.response_map', function() {
-			return new \Codebite\Yukari\Connection\ResponseMap();
+			return new \Codebite\Yukari\Addon\IRC\Connection\ResponseMap();
 		});
 
 		return $this;
@@ -100,6 +101,7 @@ class Irc extends \emberlabs\materia\Metadata\MetadataBase
 	protected function setListeners()
 	{
 		Kernel::get('irc.ui')->registerListeners();
+		Kernel::get('irc.stack')->registerListeners();
 
 		return $this;
 	}
