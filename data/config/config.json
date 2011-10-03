@@ -1,0 +1,29 @@
+{
+	"db.file":"yukari.sqlite.db",
+	"ui.enable_colors":true,
+	"ui.output_level":"debug",
+	"yukari.tickrate":100,
+	"yukari.locale":"en-us",
+	"yukari.addons":
+	[
+		"irc",
+		"automation"
+		#"sqlite",
+		#"whitelist",
+		#"commander",
+		#"channeltracker",
+		#"botadmin"
+	],
+	"irc.networks":
+	{
+		"freenode":
+		{
+			"ssl":false,
+			"url":"irc.freenode.net",
+			"port":6667,
+			"nickname":"Yukari-chan",
+			"username":"yukari",
+			"realname":"Obsidian"
+		}
+	}
+}

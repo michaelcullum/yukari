@@ -8,7 +8,7 @@
  * @category    Yukari
  * @package     environment
  * @author      Damian Bushong
- * @copyright   (c) 2009 - 2011 -- Damian Bushong
+ * @copyright   (c) 2009 - 2011 Damian Bushong
  * @license     MIT License
  * @link        https://github.com/damianb/yukari
  *
@@ -89,170 +89,11 @@ class Display
 		}
 	}
 
-	/**
-	 * Register our listeners in the event dispatcher.
-	 * @return \Codebite\Yukari\CLI\UI - Provides a fluent interface.
-	 */
-	public function registerListeners()
-	{
-		$dispatcher = Kernel::get('dispatcher');
-
-		// Register our load of UI listeners
-		$dispatcher->register('ui.startup', array($this, 'displayStartup'))
-		$dispatcher->register('ui.ready', array($this, 'displayReady'))
-		$dispatcher->register('ui.shutdown', array($this, 'displayShutdown'))
-		$dispatcher->register('ui.message.irc', array($this, 'displayIRC'))
-		$dispatcher->register('ui.message.status', array($this, 'displayStatus'))
-		$dispatcher->register('ui.message.system', array($this, 'displaySystem'))
-		$dispatcher->register('ui.message.event', array($this, 'displayEvent'))
-		$dispatcher->register('ui.message.notice', array($this, 'displayNotice'))
-		$dispatcher->register('ui.message.warning', array($this, 'displayWarning'))
-		$dispatcher->register('ui.message.error', array($this, 'displayError'))
-		$dispatcher->register('ui.message.php', array($this, 'displayPHP'))
-		$dispatcher->register('ui.message.debug', array($this, 'displayDebug'))
-		$dispatcher->register('ui.message.raw', array($this, 'displayRaw'));
-
-		// Display IRC going-ons
-		$dispatcher->register('irc.input.action', function(Event $event) use($dispatcher) {
-			$dispatcher->trigger(Event::newEvent('ui.message.irc')
-				->set('message', sprintf('<- [%2$s] *** %1$s %3$s', $event->get('hostmask')->getNick(), $event->get('target'), $event->get('text'))));
-		});
-		$dispatcher->register('irc.input.privmsg', function(Event $event) use($dispatcher) {
-			$dispatcher->trigger(Event::newEvent('ui.message.irc')
-				->set('message', sprintf('<- [%2$s] <%1$s> %3$s', $event->get('hostmask')->getNick(), $event->get('target'), $event->get('text'))));
-		});
-		$dispatcher->register('irc.input.notice', function(Event $event) use($dispatcher) {
-			$dispatcher->trigger(Event::newEvent('ui.message.irc')
-				->set('message', sprintf('<- [%2$s] <%1$s NOTICE>  %3$s', $event->get('hostmask')->getNick(), $event->get('target'), $event->get('text'))));
-		});
-
-		// Display channel happenings.
-		$dispatcher->register('irc.input.join', function(Event $event) use($dispatcher) {
-			$dispatcher->trigger(Event::newEvent('ui.message.irc')
-				->set('message', sprintf('<- %1$s (%2$s@%3$s) has joined %4$s', $event->get('hostmask')->getNick(), $event->get('hostmask')->getUsername(), $event->get('hostmask')->getHost(), $event->get('channel'))));
-		});
-		$dispatcher->register('irc.input.part', function(Event $event) use($dispatcher) {
-			if($event->get('reason') !== NULL)
-			{
-				$dispatcher->trigger(Event::newEvent('ui.message.irc')
-					->set('message', sprintf('<- %1$s (%2$s@%3$s) has left %4$s [Reason: %5$s]', $event->get('hostmask')->getNick(), $event->get('hostmask')->getUsername(), $event->get('hostmask')->getHost(), $event->get('channel'), $event->get('reason'))));
-			}
-			else
-			{
-				$dispatcher->trigger(Event::newEvent('ui.message.irc')
-					->set('message', sprintf('<- %1$s (%2$s@%3$s) has left %4$s', $event->get('hostmask')->getNick(), $event->get('hostmask')->getUsername(), $event->get('hostmask')->getHost(), $event->get('channel'))));
-			}
-		});
-		$dispatcher->register('irc.input.kick', function(Event $event) use($dispatcher) {
-			if($event->get('reason') !== NULL)
-			{
-				$dispatcher->trigger(Event::newEvent('ui.message.irc')
-					->set('message', sprintf('<- %1$s kicked %2$s %3$s [Reason: %4$s]', $event->get('hostmask')->getNick(), $event->get('user'), $event->get('channel'), $event->get('reason'))));
-			}
-			else
-			{
-				$dispatcher->trigger(Event::newEvent('ui.message.irc')
-					->set('message', sprintf('<- %1$s kicked %2$s from %3$s', $event->get('hostmask')->getNick(), $event->get('user'), $event->get('channel'))));
-			}
-		});
-		$dispatcher->register('irc.input.quit', function(Event $event) use($dispatcher) {
-			if(!$event->exists('args') || $event->get('args') === NULL)
-			{
-				$dispatcher->trigger(Event::newEvent('ui.message.irc')
-					->set('message', sprintf('<- %1$s (%2$s@%3$s) has quit [Reason: %4$s]', $event->get('hostmask')->getNick(), $event->get('hostmask')->getUsername(), $event->get('hostmask')->getHost(), $event->get('reason'))));
-			}
-			else
-			{
-				$dispatcher->trigger(Event::newEvent('ui.message.irc')
-					->set('message', sprintf('<- %1$s (%2$s@%3$s) has quit', $event->get('hostmask')->getNick(), $event->get('hostmask')->getUsername(), $event->get('hostmask')->getHost())));
-			}
-		});
-
-		// Display CTCP requests and replies
-		$dispatcher->register('irc.input.ctcp', function(Event $event) use($dispatcher) {
-			if(!$event->exists('args') || $event->get('args') === NULL)
-			{
-				$dispatcher->trigger(Event::newEvent('ui.message.irc')
-					->set('message', sprintf('<- <%1$s> CTCP %2$s - %3$s', $event->get('hostmask')->getNick(), $event->get('command'), $event->get('args'))));
-			}
-			else
-			{
-				$dispatcher->trigger(Event::newEvent('ui.message.irc')
-					->set('message', sprintf('<- <%1$s> CTCP %2$s', $event->get('hostmask')->getNick(), $event->get('command'))));
-			}
-		});
-		$dispatcher->register('irc.input.ctcp_reply', function(Event $event) use($dispatcher) {
-			if(!$event->exists('args') || $event->get('args') === NULL)
-			{
-				$dispatcher->trigger(Event::newEvent('ui.message.irc')
-					->set('message', sprintf('<- <%1$s> CTCP-REPLY %2$s - %3$s', $event->get('hostmask')->getNick(), $event->get('command'), $event->get('args'))));
-			}
-			else
-			{
-				$dispatcher->trigger(Event::newEvent('ui.message.irc')
-					->set('message', sprintf('<- <%1$s> CTCP-REPLY %2$s', $event->get('hostmask')->getNick(), $event->get('command'))));
-			}
-		});
-
-		// Display our responses
-		$dispatcher->register('runtime.postdispatch', function(Event $event) use($dispatcher) {
-			$response = $event->get('event');
-			switch($response->getName())
-			{
-				case 'irc.output.action':
-					$dispatcher->trigger(Event::newEvent('ui.message.irc')
-						->set('message', sprintf('-> [%1$s] *** %2$s', $response->get('target'), $response->get('text'))));
-				break;
-
-				case 'irc.output.ctcp':
-					if($response->exists('args') && $response->get('args') !== NULL)
-					{
-						$dispatcher->trigger(Event::newEvent('ui.message.irc')
-							->set('message', sprintf('-> [%1$s] CTCP %2$s - %3$s', $response->get('target'), $response->get('command'), $response->get('args'))));
-					}
-					else
-					{
-						$dispatcher->trigger(Event::newEvent('ui.message.irc')
-							->set('message', sprintf('-> [%1$s] CTCP %2$s', $response->get('target'), $response->get('command'))));
-					}
-				break;
-
-				case 'irc.output.ctcp_reply':
-					if($response->exists('args') && $response->get('args') !== NULL)
-					{
-						$dispatcher->trigger(Event::newEvent('ui.message.irc')
-							->set('message', sprintf('-> [%1$s] CTCP-REPLY %2$s - %3$s', $response->get('target'), $response->get('command'), $response->get('args'))));
-					}
-					else
-					{
-						$dispatcher->trigger(Event::newEvent('ui.message.irc')
-							->set('message', sprintf('-> [%1$s] CTCP-REPLY %2$s', $response->get('target'), $response->get('command'))));
-					}
-				break;
-
-				case 'irc.output.privmsg':
-					$dispatcher->trigger(Event::newEvent('ui.message.irc')
-						->set('message', sprintf('-> [%1$s] %2$s', $response->get('target'), $response->get('text'))));
-				break;
-
-				case 'irc.output.notice':
-					$dispatcher->trigger(Event::newEvent('ui.message.irc')
-						->set('message', sprintf('-> [%1$s NOTICE] %2$s', $response->get('target'), $response->get('text'))));
-				break;
-
-				default:
-					return NULL;
-				break;
-			}
-		});
-
-		return $this;
-	}
 
 	/**
 	 * Set the output level
 	 * @param string $output_level - The output level.
-	 * @return \Codebite\Yukari\CLI\UI - Provides a fluent interface.
+	 * @return \Codebite\Yukari\Environment\Display - Provides a fluent interface.
 	 *
 	 * @throws \InvalidArgumentException
 	 */
@@ -264,7 +105,7 @@ class Display
 			throw new \InvalidArgumentException(sprintf('Invalid UI output level "%1$s" specified', $output_level));
 		}
 
-		$this->output_level = constant('Codebite\\Yukari\\CLI\\UI::OUTPUT_' . strtoupper($output_level));
+		$this->output_level = constant(__CLASS__ . '::OUTPUT_' . strtoupper($output_level));
 
 		return $this;
 	}
@@ -353,6 +194,31 @@ class Display
 	}
 
 	/**
+	 * Register our listeners in the event dispatcher.
+	 * @return \Codebite\Yukari\Environment\Display - Provides a fluent interface.
+	 */
+	public function registerListeners()
+	{
+		$dispatcher = Kernel::get('dispatcher');
+
+		// Register our load of UI listeners
+		$dispatcher->register('ui.startup', 0, array($this, 'displayStartup'));
+		$dispatcher->register('ui.ready', 0, array($this, 'displayReady'));
+		$dispatcher->register('ui.shutdown', 0, array($this, 'displayShutdown'));
+		$dispatcher->register('ui.message.status', 0, array($this, 'displayStatus'));
+		$dispatcher->register('ui.message.system', 0, array($this, 'displaySystem'));
+		$dispatcher->register('ui.message.event', 0, array($this, 'displayEvent'));
+		$dispatcher->register('ui.message.notice', 0, array($this, 'displayNotice'));
+		$dispatcher->register('ui.message.warning', 0, array($this, 'displayWarning'));
+		$dispatcher->register('ui.message.error', 0, array($this, 'displayError'));
+		$dispatcher->register('ui.message.php', 0, array($this, 'displayPHP'));
+		$dispatcher->register('ui.message.debug', 0, array($this, 'displayDebug'));
+		$dispatcher->register('ui.message.raw', 0, array($this, 'displayRaw'));
+
+		return $this;
+	}
+
+	/**
 	 * Method called on startup that dumps the startup text for Yukari to output
 	 * @param \OpenFlame\Framework\Event\Instance $event - The event that is triggering the output.
 	 * @return void
@@ -363,11 +229,22 @@ class Display
 
 		$this->output(self::OUTPUT_NORMAL, 'STATUS', '===================================================================');
 		$this->output(self::OUTPUT_NORMAL, 'STATUS', '');
-		$this->output(self::OUTPUT_NORMAL, 'STATUS', '  Yukari IRC Bot');
+		$this->output(self::OUTPUT_NORMAL, 'STATUS', '  Yukari');
 		$this->output(self::OUTPUT_NORMAL, 'STATUS', '-------------------------------------------------------------------');
 		$this->output(self::OUTPUT_NORMAL, 'STATUS', '@version:      %s', array(Kernel::getBuildNumber()));
-		$this->output(self::OUTPUT_NORMAL, 'STATUS', '@copyright:    (c) 2009 - 2011 -- Damian Bushong');
+		$this->output(self::OUTPUT_NORMAL, 'STATUS', '@copyright:    (c) 2009 - 2011 Damian Bushong');
 		$this->output(self::OUTPUT_NORMAL, 'STATUS', '@license:      MIT License');
+		$this->output(self::OUTPUT_NORMAL, 'STATUS', '');
+		$this->output(self::OUTPUT_NORMAL, 'STATUS', '===================================================================');
+		$this->output(self::OUTPUT_NORMAL, 'STATUS', '');
+		$this->output(self::OUTPUT_NORMAL, 'STATUS', '  OpenFlame\\Framework');
+		$this->output(self::OUTPUT_NORMAL, 'STATUS', '@version:      %s', array(Kernel::getVersion()));
+		$this->output(self::OUTPUT_NORMAL, 'STATUS', '-------------------------------------------------------------------');
+		$this->output(self::OUTPUT_NORMAL, 'STATUS', '  OpenFlame\\Dbal');
+		$this->output(self::OUTPUT_NORMAL, 'STATUS', '@version:      %s', array('1.0.0-dev'));
+		$this->output(self::OUTPUT_NORMAL, 'STATUS', '-------------------------------------------------------------------');
+		$this->output(self::OUTPUT_NORMAL, 'STATUS', '  emberlabs\\materia');
+		$this->output(self::OUTPUT_NORMAL, 'STATUS', '@version:      %s', array(\emberlabs\materia\Loader::VERSION));
 		$this->output(self::OUTPUT_NORMAL, 'STATUS', '');
 		$this->output(self::OUTPUT_NORMAL, 'STATUS', '===================================================================');
 		$this->output(self::OUTPUT_NORMAL, 'STATUS', '');
@@ -402,16 +279,6 @@ class Display
 		$this->output(self::OUTPUT_NORMAL, 'STATUS', '-------------------------------------------------------------------');
 		$this->output(self::OUTPUT_NORMAL, 'STATUS', '%s', $language->getEntry('DISPLAY_SHUTDOWN'));
 		$this->output(self::OUTPUT_NORMAL, 'STATUS', '-------------------------------------------------------------------');
-	}
-
-	/**
-	 * Method called on message being received/sent
-	 * @param \OpenFlame\Framework\Event\Instance $event - The event that is triggering the output.
-	 * @return void
-	 */
-	public function displayIRC(Event $event)
-	{
-		$this->output(self::OUTPUT_NORMAL, '', '[irc] %s', $event->get('message'));
 	}
 
 	/**

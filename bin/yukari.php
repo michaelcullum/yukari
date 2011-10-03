@@ -8,7 +8,7 @@
  * @category    Yukari
  * @package     Yukari
  * @author      Damian Bushong
- * @copyright   (c) 2009 - 2011 -- Damian Bushong
+ * @copyright   (c) 2009 - 2011 Damian Bushong
  * @license     MIT License
  * @link        http://github.com/damianb/yukari
  *
@@ -26,7 +26,7 @@
 define('YUKARI', dirname(dirname(__FILE__)));
 define('YUKARI_PHAR', 'lib/yukari.phar');
 define('YUKARI_MIN_PHP', '5.3.0');
-define('Codebite\\Yukari\\RUN_PHAR', true);
+define('Codebite\\Yukari\\RUN_PHAR', false);
 error_reporting(-1);
 
 // Check running PHP version against the minimum supported PHP version...

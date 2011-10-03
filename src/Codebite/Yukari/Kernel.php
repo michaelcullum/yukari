@@ -8,7 +8,7 @@
  * @category    Yukari
  * @package     Yukari
  * @author      Damian Bushong
- * @copyright   (c) 2009 - 2011 -- Damian Bushong
+ * @copyright   (c) 2009 - 2011 Damian Bushong
  * @license     MIT License
  * @link        https://github.com/damianb/yukari
  *
@@ -34,7 +34,7 @@ use \OpenFlame\Framework\Dependency\Injector;
  * @license     MIT License
  * @link        https://github.com/damianb/yukari
  */
-class Kernel extends Core
+class Kernel extends \OpenFlame\Framework\Core
 {
 	/**
 	 * @var integer - This bot's build number.
@@ -84,5 +84,28 @@ class Kernel extends Core
 	public static function set($slot, $object)
 	{
 		return self::setObject($slot, $object);
+	}
+
+	/**
+	 * Shortcut method for dispatching an event.
+	 * @param \OpenFlame\Framework\Event\Instance $event - The event to dispatch.
+	 * @param integer $type - The dispatch type to use
+	 * @return \OpenFlame\Framework\Event\Instance - The event dispatched.
+	 */
+	public static function trigger(\OpenFlame\Framework\Event\Instance $event, $type = \OpenFlame\Framework\Event\Dispatcher::TRIGGER_NOBREAK)
+	{
+		return self::get('dispatcher')->trigger($event, $type);
+	}
+
+	/**
+	 * Shortcut method to register a new event listener
+	 * @param string $name - The event name to register to.
+	 * @param integer $priority - The priority to set the listener as.
+	 * @param callable $listener - The listener to trigger.
+	 * @return \OpenFlame\Framework\Event\Dispatcher - The event dispatcher.
+	 */
+	public static function registerListener($name, $priority, $listener)
+	{
+		return self::get('dispatcher')->register($name, $priority, $listener);
 	}
 }

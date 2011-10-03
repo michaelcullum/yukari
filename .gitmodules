@@ -1,9 +1,9 @@
 [submodule "src/OpenFlame/Framework"]
 	path = src/OpenFlame/Framework
 	url = https://github.com/damianb/OpenFlame-Framework.git
-[submodule "addons/sqlite/Codebite/SQLightning"]
-	path = addons/sqlite/Codebite/SQLightning
-	url = https://github.com/damianb/sqlightning.git
-[submodule "addons/postgres/Codebite/SQLightning"]
-	path = addons/postgres/Codebite/SQLightning
-	url = https://github.com/damianb/sqlightning.git
+[submodule "src/OpenFlame/Dbal"]
+	path = src/OpenFlame/Dbal
+	url = git://github.com/OpenFlame/OpenFlame-Dbal.git
+[submodule "src/emberlabs/materia"]
+	path = src/emberlabs/materia
+	url = git://github.com/emberlabs/materia.git
