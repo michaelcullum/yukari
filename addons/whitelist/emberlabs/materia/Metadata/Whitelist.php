@@ -72,7 +72,7 @@ class Whitelist extends \emberlabs\materia\Metadata\MetadataBase
 	 */
 	public function checkDependencies()
 	{
-		$this->loadDependency('irc.stack', 'irc');
+		$this->loadAddonDependency('irc.stack', 'irc');
 
 		return true;
 	}

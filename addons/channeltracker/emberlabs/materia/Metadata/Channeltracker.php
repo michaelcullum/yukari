@@ -73,8 +73,8 @@ class Channeltracker extends \emberlabs\materia\Metadata\MetadataBase
 	 */
 	public function checkDependencies()
 	{
-		$this->loadDependency('irc.stack', 'irc');
-		$this->loadDependency('irc.addon.commander', 'commander');
+		$this->loadAddonDependency('irc.stack', 'irc');
+		$this->loadAddonDependency('irc.addon.commander', 'commander');
 
 		return true;
 	}

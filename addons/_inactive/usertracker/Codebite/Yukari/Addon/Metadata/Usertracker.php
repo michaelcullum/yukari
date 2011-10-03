@@ -71,8 +71,8 @@ class Usertracker extends \Codebite\Yukari\Addon\Metadata\MetadataBase
 	 */
 	public function checkDependencies()
 	{
-		$this->loadDependency('addon.commander', 'commander');
-		$this->loadDependency('addon.channeltracker', 'channeltracker');
+		$this->loadAddonDependency('addon.commander', 'commander');
+		$this->loadAddonDependency('addon.channeltracker', 'channeltracker');
 		return true;
 	}
 }
