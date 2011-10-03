@@ -20,7 +20,8 @@
  */
 
 namespace Codebite\Yukari\Addon\IRC;
-use Codebite\Yukari\Kernel;
+use \Codebite\Yukari\Kernel;
+use \OpenFlame\Framework\Event\Instance as Event;
 
 /**
  * Yukari - Connection manager class,
@@ -46,10 +47,7 @@ class Manager
 		$seeder = Kernel::get('seeder');
 
 		$this->network = (string) $network;
-		$this->name = $seeder->getRandomString(12, (string) $network);
-
-		$this->socket = Kernel::get('irc.socket')
-			->setManager($this);
+		$this->name = $seeder->buildRandomString(12, (string) $network);
 	}
 
 	public function get($option)
@@ -64,11 +62,52 @@ class Manager
 
 	public function connect()
 	{
-		// asdf
+		$this->socket = Kernel::get('irc.socket')
+			->setManager($this)
+			->connect();
 	}
 
-	public function tickHook()
+	public function tickHook(Event $tick)
 	{
-		// asdf
+		$queue = array();
+
+		if(!$this->socket)
+		{
+			$this->connect();
+		}
+
+		$_t = Kernel::trigger(Event::newEvent('irc.tick')
+			->set('network', $this->network)
+			->set('mname', $this->name));
+		$queue = $_t->getReturns();
+
+		$event = $this->socket->get();
+
+		if($event)
+		{
+			Kernel::trigger($event->set('network', $this->network)
+				->set('mname', $this->name));
+
+			$queue = array_merge($queue, $event->getReturns());
+		}
+
+		if(!empty($queue))
+		{
+			foreach($queue as $send_event)
+			{
+				if(!($send_event instanceof Event) || substr($outbound->getName(), 0, 11) !== 'irc.output.')
+				{
+					continue;
+				}
+
+				Kernel::trigger(Event::newEvent('irc.predispatch')
+					->set('event', $send_event));
+
+				$this->socket->sendEvent($send_event);
+
+				Kernel::trigger(Event::newEvent('irc.postdispatch')
+					->set('event', $send_event));
+			}
+		}
 	}
 }
