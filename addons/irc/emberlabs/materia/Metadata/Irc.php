@@ -57,8 +57,6 @@ class Irc extends \emberlabs\materia\Metadata\MetadataBase
 	 */
 	protected $description = 'Provides basic support for the IRC protocol.';
 
-	protected $manager;
-
 	/**
 	 * Hooking method for addon metadata objects, called to initialize the addon after the dependency check has been passed.
 	 * @return void
@@ -71,17 +69,7 @@ class Irc extends \emberlabs\materia\Metadata\MetadataBase
 			->setListeners();
 
 		$networks = Kernel::getConfig('irc.networks');
-		foreach($networks as $network => $properties)
-		{
-			$manager = new \Codebite\Yukari\Addon\IRC\Manager($network);
-
-			foreach($properties as $property => $value)
-			{
-				$manager->set($property, $value);
-			}
-
-			$this->manager[$network] = $manager;
-		}
+		Kernel::set('irc.stack', new \Codebite\Yukari\Addon\IRC\ManagerStack($networks));
 	}
 
 	protected function setInjectors()
@@ -89,12 +77,12 @@ class Irc extends \emberlabs\materia\Metadata\MetadataBase
 		$injector = Injector::getInstance();
 
 		$injector->setInjector('irc.ui', function() {
-			return \Codebite\Yukari\Addon\IRC\Environment\Display();
+			return new \Codebite\Yukari\Addon\IRC\Environment\Display();
 		});
 
 		$injector->setInjector('irc.socket', function() {
 			return function() {
-				return \Codebite\Yukari\Addon\IRC\Connection\Socket();
+				return new \Codebite\Yukari\Addon\IRC\Connection\Socket();
 			};
 		});
 
