@@ -55,6 +55,13 @@ class Socket
 	public function setManager(\Codebite\Yukari\Addon\IRC\Manager $manager)
 	{
 		$this->manager = $manager;
+
+		return $this;
+	}
+
+	public function active()
+	{
+		return ($this->socket === NULL);
 	}
 
 	/**
@@ -93,7 +100,7 @@ class Socket
 		while(!$this->socket);
 
 		stream_set_timeout($this->socket, (int) $this->timeout, (($this->timeout - (int) $this->timeout) * 1000000));
-		stream_set_blocking($this->socket, 1);
+		stream_set_blocking($this->socket, 0);
 
 		// Send the server password if one is specified
 		if($this->manager->get('password'))
@@ -114,8 +121,6 @@ class Socket
 	 */
 	public function get()
 	{
-		$dispatcher = Kernel::get('dispatcher');
-
 		$buffer = fgets($this->socket, 512);
 
 		// Strip the trailing newline from the buffer
@@ -128,7 +133,7 @@ class Socket
 		}
 
 		// Raw buffer output
-		$dispatcher->trigger(Event::newEvent('ui.message.raw')
+		Kernel::trigger(Event::newEvent('ui.message.raw')
 			->set('message', '<- ' . $buffer));
 
 		$prefix = '';
@@ -248,7 +253,7 @@ class Socket
 		}
 		$event->set('buffer', $buffer);
 
-		$dispatcher->trigger(Event::newEvent('ui.message.event')
+		Kernel::trigger(Event::newEvent('ui.message.event')
 			->set('message', sprintf('<- event "%1$s"', $event->getName())));
 
 		return $event;
@@ -262,10 +267,9 @@ class Socket
 	 */
 	public function sendEvent(Event $event)
 	{
-		$dispatcher = Kernel::get('dispatcher');
 		$request_map = Kernel::get('irc.request_map');
 
-		$dispatcher->trigger(Event::newEvent('ui.message.event')
+		Kernel::trigger(Event::newEvent('ui.message.event')
 			->set('message', sprintf('-> event "%1$s"', $event->getName())));
 
 		// Get the buffer to write.
@@ -283,8 +287,6 @@ class Socket
 	 */
 	public function send($data)
 	{
-		$dispatcher = Kernel::get('dispatcher');
-
 		// Require an open socket connection to continue
 		if(empty($this->socket))
 		{
@@ -311,7 +313,7 @@ class Socket
 		while(!$success);
 
 		// Raw buffer output
-		$dispatcher->trigger(Event::newEvent('ui.message.raw')
+		Kernel::trigger(Event::newEvent('ui.message.raw')
 			->set('message', '-> ' . $data));
 
 		// Return the command string that was transmitted
@@ -324,14 +326,12 @@ class Socket
 	 */
 	public function close()
 	{
-		$dispatcher = Kernel::get('dispatcher');
-
 		if($this->socket === NULL)
 		{
 			return;
 		}
 
-		$dispatcher->trigger(Event::newEvent('ui.message.system')
+		Kernel::trigger(Event::newEvent('ui.message.system')
 			->set('message', sprintf('Quitting from server "%1$s"', $this->manager->get('url'))));
 
 		// Terminate the socket connection
