@@ -453,9 +453,9 @@ class Basic
 		}
 		else
 		{
-			Kernel::trigger(Event::newEvent('system.shutdown'));
+			Kernel::trigger(Event::newEvent('yukari.request_shutdown'));
 
-			return NULL;
+			return;
 		}
 	}
 
