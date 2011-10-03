@@ -52,10 +52,9 @@ class Socket
 	 */
 	protected $manager;
 
-	public function __construct(\Codebite\Yukari\Addon\IRC\Manager $manager)
+	public function setManager(\Codebite\Yukari\Addon\IRC\Manager $manager)
 	{
 		$this->manager = $manager;
-		$this->manager->socket = $this;
 	}
 
 	/**

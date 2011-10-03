@@ -47,6 +47,9 @@ class Manager
 
 		$this->network = (string) $network;
 		$this->name = $seeder->getRandomString(12, (string) $network);
+
+		$this->socket = Kernel::get('irc.socket')
+			->setManager($this);
 	}
 
 	public function get($option)

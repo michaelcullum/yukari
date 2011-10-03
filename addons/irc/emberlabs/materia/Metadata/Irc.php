@@ -70,7 +70,7 @@ class Irc extends \emberlabs\materia\Metadata\MetadataBase
 	 */
 	public function initialize()
 	{
-		$dispatcher = Kernel::get('dispatcher');
+		$injector = Injector::getInstance();
 
 		$this->manager = new \Codebite\Yukari\Addon\IRC\Manager($this->getAlias());
 	}
@@ -78,15 +78,14 @@ class Irc extends \emberlabs\materia\Metadata\MetadataBase
 	protected function setInjectors()
 	{
 		$injector = Injector::getInstance();
-		$manager = $this->manager;
 
 		$injector->setInjector('irc.ui', function() {
 			return \Codebite\Yukari\Addon\IRC\Environment\Display();
 		});
 
-		$injector->setInjector('irc.socket', function() use($manager) {
-			return function($manager) {
-				return \Codebite\Yukari\Addon\IRC\Connection\Socket($manager);
+		$injector->setInjector('irc.socket', function() {
+			return function() {
+				return \Codebite\Yukari\Addon\IRC\Connection\Socket();
 			};
 		});
 
