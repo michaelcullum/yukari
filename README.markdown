@@ -19,6 +19,7 @@ Yukari is a PHP-based daemon built for use as a multi-network IRC bot using PHP 
 
 * OpenFlame\Framework (packaged) <https://github.com/OpenFlame/OpenFlame-Framework>
 * OpenFlame\Dbal (packaged) <https://github.com/OpenFlame/OpenFlame-Dbal>
+* emberlabs\materia (packaged) <https://github.com/emberlabs/materia>
 
 ## extras
 
