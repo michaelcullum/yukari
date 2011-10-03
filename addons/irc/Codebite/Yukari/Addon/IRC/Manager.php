@@ -50,6 +50,11 @@ class Manager
 		$this->name = $seeder->buildRandomString(12, (string) $network);
 	}
 
+	public function getNetwork()
+	{
+		return $this->network;
+	}
+
 	public function get($option)
 	{
 		return Kernel::getConfig(sprintf('irc_%s.%s', $this->name, $option));
@@ -65,6 +70,11 @@ class Manager
 		$this->socket = Kernel::get('irc.socket')
 			->setManager($this)
 			->connect();
+	}
+
+	public function disconnect()
+	{
+		$this->socket->close();
 	}
 
 	public function tickHook(Event $tick)

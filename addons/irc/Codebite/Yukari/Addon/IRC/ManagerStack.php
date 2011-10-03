@@ -20,7 +20,9 @@
  */
 
 namespace Codebite\Yukari\Addon\IRC;
-use Codebite\Yukari\Kernel;
+use \Codebite\Yukari\Addon\IRC\Internal\DeadConnectionException;
+use \Codebite\Yukari\Addon\IRC\Internal\LostConnectionException;
+use \Codebite\Yukari\Kernel;
 use \OpenFlame\Framework\Event\Instance as Event;
 
 /**
@@ -38,19 +40,37 @@ class ManagerStack
 {
 	protected $managers = array();
 
+	protected $properties = array();
+
+	protected $connections = array();
+
 	public function __construct($networks)
 	{
-		foreach($networks as $network => $properties)
+		$this->properties = $networks;
+		foreach($this->properties as $network => $properties)
 		{
-			$manager = new \Codebite\Yukari\Addon\IRC\Manager($network);
-
-			foreach($properties as $property => $value)
-			{
-				$manager->set($property, $value);
-			}
-
-			$this->managers[$network] = $manager;
+			$this->connectNetwork($network, $properties);
 		}
+	}
+
+	public function registerListeners()
+	{
+		Kernel::registerListener('yukari.tick', 0, array($this, 'tick'));
+	}
+
+	public function connectNetwork($network)
+	{
+		$manager = new \Codebite\Yukari\Addon\IRC\Manager($network);
+
+		foreach($this->properties[$network] as $property => $value)
+		{
+			$manager->set($property, $value);
+		}
+
+		$this->managers[$network] = $manager;
+		$this->connections[$network] = 1;
+
+		return $manager;
 	}
 
 	public function getNetworkOption($network, $option)
@@ -63,9 +83,23 @@ class ManagerStack
 		return $this->managers[$network]->set($option, $value);
 	}
 
-	public function registerListeners()
+	public function upConnectionCount($network)
 	{
-		Kernel::registerListener('yukari.tick', 0, array($this, 'tick'));
+		if(isset($this->connections[$network]))
+		{
+			$this->connections[$network]++;
+		}
+		else
+		{
+			$this->connections[$network] = 1;
+		}
+	}
+
+	public function resetConnectionCount($network)
+	{
+		$this->connections[$network] = 0;
+
+		return $this;
 	}
 
 	public function tick(Event $tick)
@@ -78,7 +112,23 @@ class ManagerStack
 			}
 			catch(DeadConnectionException $e)
 			{
+				$manager->disconnect();
 				unset($this->managers[$k]);
+			}
+			catch(LostConnectionException $e)
+			{
+				// handle dropped connections, and attempt to reconnect
+				$network = $manager->getNetwork();
+
+				$this->upConnectionCount($network);
+				$manager->disconnect();
+				unset($this->managers[$k]);
+
+				if($this->connections[$network] <= 3)
+				{
+					$manager = $this->connectNetwork($network);
+					$manager->tickHook($tick);
+				}
 			}
 		}
 	}
