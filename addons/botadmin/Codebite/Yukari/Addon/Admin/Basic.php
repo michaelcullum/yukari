@@ -476,10 +476,10 @@ class Basic
 
 	/**
 	 * Checks to see if the originator of the event is authorized to use the command.
-	 * @param \Codebite\Yukari\Connection\Hostmask $event - The hostmask object of the event originator.
+	 * @param \Codebite\Yukari\Addon\IRC\Connection\Hostmask $event - The hostmask object of the event originator.
 	 * @return boolean - Is the sender authorized to use the command?
 	 */
-	public function checkAuthentication(\Codebite\Yukari\Connection\Hostmask $hostmask)
+	public function checkAuthentication(\Codebite\Yukari\Addon\IRC\Connection\Hostmask $hostmask)
 	{
 		$event = Kernel::trigger(Event::newEvent('acl.check_allowed')
 			->set('hostmask', $hostmask), \OpenFlame\Framework\Event\Dispatcher::TRIGGER_MANUALBREAK);
