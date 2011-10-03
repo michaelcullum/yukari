@@ -55,7 +55,7 @@ class Interpreter
 	public function handlePrivmsg(Event $event)
 	{
 		$indicator = Kernel::getConfig('commander.command_indicator');
-		$our_name = Kernel::getConfig('irc.nickname');
+		$our_name = Kernel::get('irc.stack')->getNetworkOption($event->get('network'), 'nickname');
 
 		$results = array();
 
@@ -80,7 +80,7 @@ class Interpreter
 				'target'		=> $event->get('target'),
 				'hostmask'		=> $event->get('hostmask'),
 			)));
-			$results = array_merge($results, (array) $_results->getReturns());
+			$results = array_merge($results, $_results->getReturns());
 
 			$_results = Kernel::trigger(Event::newEvent(sprintf('irc.input.privatecommand.%s', $text[0]))->setData(array(
 				'rootevent'		=> $event,
@@ -90,7 +90,7 @@ class Interpreter
 				'target'		=> $event->get('target'),
 				'hostmask'		=> $event->get('hostmask'),
 			)));
-			$results = array_merge($results, (array) $_results->getReturns());
+			$results = array_merge($results, $_results->getReturns());
 		}
 		elseif(preg_match('#^(' . preg_quote($indicator, '#') . '|' . preg_quote($our_name, '#') . '\: )([a-z0-9]*)( (.*))?#iS', $event->get('text'), $matches) == true)
 		{
@@ -105,7 +105,7 @@ class Interpreter
 				'target'		=> $event->get('target'),
 				'hostmask'		=> $event->get('hostmask'),
 			)));
-			$results = array_merge($results, (array) $_results->getReturns());
+			$results = array_merge($results, $_results->getReturns());
 
 			// Check to see if this was the command indicator, or if we were addressed by name ("!command" versus "Yukari: command")
 			if($trigger == $indicator)
@@ -119,7 +119,7 @@ class Interpreter
 					'target'		=> $event->get('target'),
 					'hostmask'		=> $event->get('hostmask'),
 				)));
-				$results = array_merge($results, (array) $_results->getReturns());
+				$results = array_merge($results, $_results->getReturns());
 			}
 		}
 
@@ -133,7 +133,7 @@ class Interpreter
 	 */
 	public function handleResponse(Event $event)
 	{
-		$response_map = Kernel::get('yukari.response_map');
+		$response_map = Kernel::get('irc.response_map');
 
 		$event_code = (int) $event->get('code');
 		$event_type = $response_map->getResponseType($event_code);
@@ -150,6 +150,6 @@ class Interpreter
 			'description'	=> $event->get('description'),
 		)));
 
-		return (array) $results->getReturns();
+		return $results->getReturns();
 	}
 }

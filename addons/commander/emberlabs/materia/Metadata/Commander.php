@@ -19,7 +19,7 @@
  *
  */
 
-namespace Codebite\Yukari\Addon\Metadata;
+namespace emberlabs\materia\Metadata;
 use Codebite\Yukari\Kernel;
 
 /**
@@ -33,7 +33,7 @@ use Codebite\Yukari\Kernel;
  * @license     MIT License
  * @link        https://github.com/damianb/yukari
  */
-class Commander extends \Codebite\Yukari\Addon\Metadata\MetadataBase
+class Commander extends \emberlabs\materia\Metadata\MetadataBase
 {
 	/**
 	 * @var string - The addon's version.
@@ -67,7 +67,7 @@ class Commander extends \Codebite\Yukari\Addon\Metadata\MetadataBase
 			Kernel::setConfig('commander.command_indicator', '!');
 		}
 
-		$interpreter = Kernel::set('addon.commander', new \Codebite\Yukari\Addon\Commander\Interpreter());
+		$interpreter = Kernel::set('irc.addon.commander', new \Codebite\Yukari\Addon\Commander\Interpreter());
 		$interpreter->registerListeners();
 	}
 
@@ -77,7 +77,8 @@ class Commander extends \Codebite\Yukari\Addon\Metadata\MetadataBase
 	 */
 	public function checkDependencies()
 	{
-		// This addon has no dependencies.
+		$this->loadDependency('irc.stack', 'irc');
+
 		return true;
 	}
 }
