@@ -57,11 +57,6 @@ class Irc extends \emberlabs\materia\Metadata\MetadataBase
 	 */
 	protected $description = 'Provides basic support for the IRC protocol.';
 
-	/**
-	 * @var boolean - Has this addon been initialized? (it MAY be loaded multiple times)
-	 */
-	protected static $initialized = false;
-
 	protected $manager;
 
 	/**
@@ -71,6 +66,9 @@ class Irc extends \emberlabs\materia\Metadata\MetadataBase
 	public function initialize()
 	{
 		$injector = Injector::getInstance();
+
+		$this->setInjectors()
+			->setListeners();
 
 		$networks = Kernel::getConfig('irc.networks');
 		foreach($networks as $network => $properties)
@@ -107,11 +105,15 @@ class Irc extends \emberlabs\materia\Metadata\MetadataBase
 		$injector->setInjector('irc.response_map', function() {
 			return new \Codebite\Yukari\Connection\ResponseMap();
 		});
+
+		return $this;
 	}
 
 	protected function setListeners()
 	{
 		Kernel::get('irc.ui')->registerListeners();
+
+		return $this;
 	}
 
 	/**
