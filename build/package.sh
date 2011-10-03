@@ -20,7 +20,7 @@
 # files and directories to include in the package creation
 ZIPINCLUDES="bin\/* data\/config\/* data\/config\/addons\/* data\/database\/.keep data\/language\/* docs\/* lib\/* lib\/addons\/* LICENSE README.markdown"
 # addons to build phars out of
-ADDONS=("automation" "botadmin" "channeltracker" "commander" "hasher" "sqlite" "whitelist")
+ADDONS=("automation" "botadmin" "channeltracker" "commander" "database" "irc" "whitelist")
 # name to use for the archive
 ZIPNAME=yukari
 
