@@ -64,10 +64,6 @@ class Daemon
 
 		// check for missing required configs
 		$required_configs = array(
-			//'irc.url',
-			//'irc.username',
-			//'irc.realname',
-			//'irc.nickname',
 			'yukari.addons',
 		);
 		foreach($required_configs as $required_config_name)
