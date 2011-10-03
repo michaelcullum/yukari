@@ -20,7 +20,8 @@
  */
 
 namespace Codebite\Yukari\Addon\Admin;
-use Codebite\Yukari\Kernel;
+use \Codebite\Yukari\Kernel;
+use \Codebite\Yukari\Addon\IRC\Internal\DeadConnectionException;
 use \OpenFlame\Framework\Event\Instance as Event;
 
 /**
@@ -60,6 +61,7 @@ class Basic
 		Kernel::registerListener('irc.input.command.versioncheck', 0, array($this, 'handleVersionCheckCommand'));
 		Kernel::registerListener('irc.input.command.uptime', 0, array($this, 'handleUptimeCommand'));
 		Kernel::registerListener('irc.input.command.quit', 0, array($this, 'handleQuitCommand'));
+		Kernel::registerListener('irc.input.command.shutdown', 0, array($this, 'handleShutdownCommand'));
 
 		return $this;
 	}
@@ -445,6 +447,26 @@ class Basic
 	 * @return array - Array of events to dispatch in response to the input event.
 	 */
 	public function handleQuitCommand(Event $event)
+	{
+		// Check auths first
+		if(!$this->checkAuthentication($event->get('hostmask')))
+		{
+			return $this->handleCommandRefusal($event);
+		}
+		else
+		{
+			throw new DeadConnectionException();
+
+			return;
+		}
+	}
+
+	/**
+	 * Handles the bot being told to shutdown.
+	 * @param \OpenFlame\Framework\Event\Instance $event - The event instance.
+	 * @return array - Array of events to dispatch in response to the input event.
+	 */
+	public function handleShutdownCommand(Event $event)
 	{
 		// Check auths first
 		if(!$this->checkAuthentication($event->get('hostmask')))
