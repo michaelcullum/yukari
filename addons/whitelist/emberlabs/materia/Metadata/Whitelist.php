@@ -19,7 +19,7 @@
  *
  */
 
-namespace Codebite\Yukari\Addon\Metadata;
+namespace emberlabs\materia\Metadata;
 use Codebite\Yukari\Kernel;
 
 /**
@@ -33,7 +33,7 @@ use Codebite\Yukari\Kernel;
  * @license     MIT License
  * @link        https://github.com/damianb/yukari
  */
-class Whitelist extends \Codebite\Yukari\Addon\Metadata\MetadataBase
+class Whitelist extends \emberlabs\materia\Metadata\MetadataBase
 {
 	/**
 	 * @var string - The addon's version.
@@ -61,7 +61,7 @@ class Whitelist extends \Codebite\Yukari\Addon\Metadata\MetadataBase
 	 */
 	public function initialize()
 	{
-		$interpreter = Kernel::set('addon.acl', new \Codebite\Yukari\Addon\ACL\Whitelist());
+		$interpreter = Kernel::set('irc.addon.acl', new \Codebite\Yukari\Addon\ACL\Whitelist());
 		$interpreter->registerListeners()
 			->loadWhitelistFile();
 	}
@@ -72,7 +72,8 @@ class Whitelist extends \Codebite\Yukari\Addon\Metadata\MetadataBase
 	 */
 	public function checkDependencies()
 	{
-		// This addon has no dependencies.
+		$this->loadDependency('irc.stack', 'irc');
+
 		return true;
 	}
 }
