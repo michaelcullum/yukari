@@ -6,7 +6,7 @@
 	"yukari.locale":"en-us",
 	"yukari.addons":
 	[
-		#"irc",
+		"irc",
 		"automation"
 		#"sqlite",
 		#"whitelist",

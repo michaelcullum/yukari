@@ -72,7 +72,18 @@ class Irc extends \emberlabs\materia\Metadata\MetadataBase
 	{
 		$injector = Injector::getInstance();
 
-		$this->manager = new \Codebite\Yukari\Addon\IRC\Manager($this->getAlias());
+		$networks = Kernel::getConfig('irc.networks');
+		foreach($networks as $network => $properties)
+		{
+			$manager = new \Codebite\Yukari\Addon\IRC\Manager($network);
+
+			foreach($properties as $property => $value)
+			{
+				$manager->set($property, $value);
+			}
+
+			$this->manager[$network] = $manager;
+		}
 	}
 
 	protected function setInjectors()
