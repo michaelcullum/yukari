@@ -106,7 +106,8 @@ class Automation extends \emberlabs\materia\Metadata\MetadataBase
 	 */
 	public function checkDependencies()
 	{
-		// This addon has no dependencies.
+		$this->loadDependency('irc.stack', 'irc');
+
 		return true;
 	}
 }
