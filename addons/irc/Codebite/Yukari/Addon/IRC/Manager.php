@@ -95,7 +95,7 @@ class Manager
 		{
 			foreach($queue as $send_event)
 			{
-				if(!($send_event instanceof Event) || substr($outbound->getName(), 0, 11) !== 'irc.output.')
+				if(!($send_event instanceof Event) || substr($send_event->getName(), 0, 11) !== 'irc.output.')
 				{
 					continue;
 				}

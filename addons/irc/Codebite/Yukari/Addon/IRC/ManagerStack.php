@@ -53,6 +53,16 @@ class ManagerStack
 		}
 	}
 
+	public function getNetworkOption($network, $option)
+	{
+		return $this->managers[$network]->get($option);
+	}
+
+	public function setNetworkOption($network, $option, $value)
+	{
+		return $this->managers[$network]->set($option, $value);
+	}
+
 	public function registerListeners()
 	{
 		Kernel::registerListener('yukari.tick', 0, array($this, 'tick'));
