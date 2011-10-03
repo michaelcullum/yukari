@@ -80,8 +80,7 @@ class Interpreter
 				'target'		=> $event->get('target'),
 				'hostmask'		=> $event->get('hostmask'),
 			)));
-			$_results = $_results->getReturns();
-			$results = array_merge($results, $_results[0]);
+			$results = array_merge($results, $this->compactArray($_results->getReturns()));
 
 			$_results = Kernel::trigger(Event::newEvent(sprintf('irc.input.privatecommand.%s', $text[0]))->setData(array(
 				'rootevent'		=> $event,
@@ -91,8 +90,7 @@ class Interpreter
 				'target'		=> $event->get('target'),
 				'hostmask'		=> $event->get('hostmask'),
 			)));
-			$_results = $_results->getReturns();
-			$results = array_merge($results, $_results[0]);
+			$results = array_merge($results, $this->compactArray($_results->getReturns()));
 		}
 		elseif(preg_match('#^(' . preg_quote($indicator, '#') . '|' . preg_quote($our_name, '#') . '\: )([a-z0-9]*)( (.*))?#iS', $event->get('text'), $matches) == true)
 		{
@@ -107,8 +105,7 @@ class Interpreter
 				'target'		=> $event->get('target'),
 				'hostmask'		=> $event->get('hostmask'),
 			)));
-			$_results = $_results->getReturns();
-			$results = array_merge($results, $_results[0]);
+			$results = array_merge($results, $this->compactArray($_results->getReturns()));
 
 			// Check to see if this was the command indicator, or if we were addressed by name ("!command" versus "Yukari: command")
 			if($trigger == $indicator)
@@ -122,12 +119,33 @@ class Interpreter
 					'target'		=> $event->get('target'),
 					'hostmask'		=> $event->get('hostmask'),
 				)));
-				$_results = $_results->getReturns();
-				$results = array_merge($results, $_results[0]);
+				$results = array_merge($results, $this->compactArray($_results->getReturns()));
 			}
 		}
 
 		return $results;
+	}
+
+	public function compactArray($array, $recurse = true)
+	{
+		$return = array();
+
+		if($array !== NULL)
+		{
+			foreach($array as $sub)
+			{
+				if(is_array($sub))
+				{
+					$return = array_merge($return, ($recurse && is_array($sub)) ? $this->compactArray($sub, false) : $sub);
+				}
+				else
+				{
+					$return = array_merge($return, array($sub));
+				}
+			}
+		}
+
+		return $return;
 	}
 
 	/**

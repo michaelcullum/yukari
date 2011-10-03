@@ -88,7 +88,20 @@ class Manager
 			Kernel::trigger($event->set('network', $this->network)
 				->set('mname', $this->name));
 
-			$queue = array_merge($queue, $event->getReturns());
+			if($event->getReturns())
+			{
+				foreach($event->getReturns() as $send_stack)
+				{
+					if(is_array($send_stack))
+					{
+						$queue = array_merge($queue, $send_stack);
+					}
+					else
+					{
+						$queue = array_merge($queue, array($send_stack));
+					}
+				}
+			}
 		}
 
 		if(!empty($queue))
