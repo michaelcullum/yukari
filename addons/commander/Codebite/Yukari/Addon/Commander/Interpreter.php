@@ -179,6 +179,8 @@ class Interpreter
 			'event'			=> $event,
 			'code'			=> $event_code,
 			'description'	=> $event->get('description'),
+			'network'		=> $event->get('network'),
+			'mname'			=> $event->get('mname'),
 		)));
 
 		$return = $this->compactArray($results->getReturns());

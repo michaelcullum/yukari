@@ -95,8 +95,11 @@ class Manager
 
 		if($event)
 		{
-			Kernel::trigger($event->set('network', $this->network)
-				->set('mname', $this->name));
+			// Set the network and "connection name" for this event
+			$event->set('network', $this->network)
+				->set('mname', $this->name);
+
+			Kernel::trigger($event);
 
 			if($event->getReturns())
 			{

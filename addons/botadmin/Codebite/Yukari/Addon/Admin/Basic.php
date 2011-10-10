@@ -71,7 +71,7 @@ class Basic
 	 * @param \OpenFlame\Framework\Event\Instance $event - The event instance.
 	 * @return array - Array of events to dispatch in response to the input event.
 	 */
-	public function handleJoinCommand(Event $event) // rewrite stopped here
+	public function handleJoinCommand(Event $event)
 	{
 		// Check auths first
 		if(!$this->checkAuthentication($event->get('hostmask')))

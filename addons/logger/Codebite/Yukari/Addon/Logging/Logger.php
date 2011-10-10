@@ -94,14 +94,10 @@ class Logger
 	{
 		foreach($inserts as $insert)
 		{
-			try {
 			$q = QueryBuilder::newInstance();
 			$q->insert('logs')
 				->set($insert)
 				->exec();
-			} catch (\Exception $e) {
-				echo (string) $e;
-			}
 		}
 	}
 
