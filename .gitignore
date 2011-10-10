@@ -4,7 +4,11 @@ build/tmp/*
 build/verified/*
 nbproject/*
 .komodotools/*
+data/config/*
+!data/config/*.example
+!data/config/addons/*.example
 data/database/*.sqlite
+data/database/*.sqlite.db
 downloads/*
 extra-addons
 extra-addons/*
