@@ -42,7 +42,8 @@ class Interpreter
 	 */
 	public function registerListeners()
 	{
-		Kernel::registerListener('irc.input.privmsg', 0, array($this, 'handlePrivmsg'));
+		Kernel::registerListener('irc.input.privmsg', -3, array($this, 'handlePrivmsg'));
+		Kernel::registerListener('irc.input.response', -3, array($this, 'handleResponse'));
 
 		return $this;
 	}
@@ -175,11 +176,13 @@ class Interpreter
 		}
 
 		$results = Kernel::trigger(Event::newEvent(sprintf('irc.input.response.%s', $event_type))->setData(array(
-			'rootevent'		=> $event,
+			'event'			=> $event,
 			'code'			=> $event_code,
 			'description'	=> $event->get('description'),
 		)));
 
-		return $results->getReturns();
+		$return = $this->compactArray($results->getReturns());
+
+		return $return;
 	}
 }
