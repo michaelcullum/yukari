@@ -100,7 +100,11 @@ class Socket
 		while(!$this->socket);
 
 		stream_set_timeout($this->socket, (int) $this->timeout, (($this->timeout - (int) $this->timeout) * 1000000));
-		stream_set_blocking($this->socket, 0);
+		// Only set this as non-blocking if we're using a tickrate.
+		if(Kernel::getConfig('yukari.tickrate'))
+		{
+			stream_set_blocking($this->socket, 0);
+		}
 
 		// Send the server password if one is specified
 		if($this->manager->get('password'))
