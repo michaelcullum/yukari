@@ -62,7 +62,10 @@ class Logger extends \emberlabs\materia\Metadata\MetadataBase
 	 */
 	public function initialize()
 	{
-		// asdf
+		$logger = new \Codebite\Yukari\Addon\Logging\Logger();
+		$logger->initTables();
+
+		Kernel::set('db.logger', $logger);
 	}
 
 	/**
@@ -72,6 +75,7 @@ class Logger extends \emberlabs\materia\Metadata\MetadataBase
 	public function checkDependencies()
 	{
 		$this->loadAddonDependency('irc.stack', 'irc');
+		$this->loadAddonDependency('db.connection', 'database');
 
 		return true;
 	}
