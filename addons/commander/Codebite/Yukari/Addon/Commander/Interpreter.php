@@ -60,7 +60,7 @@ class Interpreter
 		$results = array();
 
 		// Is this a direct, private command?
-		if($event->get('target') == $our_name)
+		if(mb_strtolower($event->get('target')) == mb_strtolower($our_name))
 		{
 			// Just drop the indicator if this is a private command.  User friendliness and all that. ;)
 			if(substr($event->get('text'), 0, strlen($indicator)) == $indicator)
@@ -79,6 +79,8 @@ class Interpreter
 				'text'			=> $text[1],
 				'target'		=> $event->get('target'),
 				'hostmask'		=> $event->get('hostmask'),
+				'network'		=> $event->get('network'),
+				'mname'			=> $event->get('mname'),
 			)));
 			$results = array_merge($results, $this->compactArray($_results->getReturns()));
 
@@ -89,6 +91,8 @@ class Interpreter
 				'text'			=> $text[1],
 				'target'		=> $event->get('target'),
 				'hostmask'		=> $event->get('hostmask'),
+				'network'		=> $event->get('network'),
+				'mname'			=> $event->get('mname'),
 			)));
 			$results = array_merge($results, $this->compactArray($_results->getReturns()));
 		}
@@ -104,6 +108,8 @@ class Interpreter
 				'text'			=> $text,
 				'target'		=> $event->get('target'),
 				'hostmask'		=> $event->get('hostmask'),
+				'network'		=> $event->get('network'),
+				'mname'			=> $event->get('mname'),
 			)));
 			$results = array_merge($results, $this->compactArray($_results->getReturns()));
 
@@ -118,6 +124,8 @@ class Interpreter
 					'text'			=> $text,
 					'target'		=> $event->get('target'),
 					'hostmask'		=> $event->get('hostmask'),
+					'network'		=> $event->get('network'),
+					'mname'			=> $event->get('mname'),
 				)));
 				$results = array_merge($results, $this->compactArray($_results->getReturns()));
 			}
