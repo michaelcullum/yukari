@@ -329,7 +329,7 @@ class Basic
 				}
 
 				$addon_loader = Kernel::get('yukari.addonloader');
-				$addon_loader->loadAddon($addon);
+				$addon_loader->load($addon);
 
 				// Display a message in the UI.
 				Kernel::trigger(Event::newEvent('ui.message.system')
