@@ -123,6 +123,9 @@ class Manager
 					continue;
 				}
 
+				$send_event->set('network', $this->network)
+					->set('mname', $this->name);
+
 				Kernel::trigger(Event::newEvent('irc.predispatch')
 					->set('event', $send_event));
 
