@@ -60,11 +60,11 @@ class Logger
 		(
 			log_id INTEGER NOT NULL,
 			ident TEXT NOT NULL DEFAULT "",
-			time INTEGER NOT NULL,
-			event_type TEXT NOT NULL,
-			source TEXT NOT NULL,
-			destination TEXT NOT NULL,
-			data TEXT NOT NULL,
+			time INTEGER NOT NULL DEFAULT 0,
+			event_type TEXT NOT NULL DEFAULT "",
+			source TEXT NOT NULL DEFAULT "",
+			destination TEXT NOT NULL DEFAULT "",
+			data TEXT NOT NULL DEFAULT "",
 
 			PRIMARY KEY (log_id)
 		)')->exec();
@@ -73,11 +73,11 @@ class Logger
 	public function newLogEntry($event_type, $source, $destination, $data, $ident = '')
 	{
 		$this->log_cache[] = array(
-			'event_type'		=> $event_type,
-			'source'			=> $source,
-			'destination'		=> $destination,
-			'data'				=> JSON::encode($data),
-			'ident'				=> $ident,
+			'event_type'		=> $event_type ?: "NONE",
+			'source'			=> $source ?: "NONE",
+			'destination'		=> $destination ?: "NONE",
+			'data'				=> JSON::encode($data) ?: "NONE",
+			'ident'				=> $ident ?: "NONE",
 			'time'				=> time(),
 		);
 
@@ -94,10 +94,14 @@ class Logger
 	{
 		foreach($inserts as $insert)
 		{
+			try {
 			$q = QueryBuilder::newInstance();
 			$q->insert('logs')
 				->set($insert)
 				->exec();
+			} catch (\Exception $e) {
+				echo (string) $e;
+			}
 		}
 	}
 

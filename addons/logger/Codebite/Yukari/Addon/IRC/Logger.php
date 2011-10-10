@@ -132,11 +132,12 @@ class Logger
 		$logger->newLogEntry($event->getName(), $source, $destination, $data);
 	}
 
-	public function handleIRCOutEvent(Event $event)
+	public function handleIRCOutEvent(Event $p_event)
 	{
 		$logger = Kernel::get('db.logger');
 
-		$logger = new \Codebite\Yukari\Addon\Logging\Logger();
+		// Unwrap the event like a present
+		$event = $p_event->get('event');
 
 		$_explode = explode('.', $event->getName());
 		$type = array_pop($_explode);
