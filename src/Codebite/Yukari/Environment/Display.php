@@ -48,7 +48,7 @@ class Display
 	/**
 	 * @var integer - Our current output level
 	 */
-	protected $output_level = 0;
+	protected static $output_level = 0;
 
 	/**
 	 * @var array - Various color codes for use with terminals that support it.
@@ -105,7 +105,7 @@ class Display
 			throw new \InvalidArgumentException(sprintf('Invalid UI output level "%1$s" specified', $output_level));
 		}
 
-		$this->output_level = constant(__CLASS__ . '::OUTPUT_' . strtoupper($output_level));
+		self::$output_level = constant(__CLASS__ . '::OUTPUT_' . strtoupper($output_level));
 
 		return $this;
 	}
@@ -168,12 +168,16 @@ class Display
 		}
 		if($color === NULL)
 		{
-			echo str_pad($data, 80) . PHP_EOL;
+			$message = str_pad($data, 80) . PHP_EOL;
 		}
 		else
 		{
-			echo $this->addColor(str_pad($data, 80), $color) . PHP_EOL;
+			$message = $this->addColor(str_pad($data, 80), $color) . PHP_EOL;
 		}
+
+		echo $message;
+
+		return $message;
 	}
 
 	/**
@@ -183,13 +187,14 @@ class Display
 	 */
 	public function level($level)
 	{
-		if($level === self::OUTPUT_RAW)
+		$level = (int) $level;
+		if($level == self::OUTPUT_RAW)
 		{
-			return ($this->output_level === self::OUTPUT_RAW);
+			return (self::$output_level == self::OUTPUT_RAW);
 		}
 		else
 		{
-			return ($this->output_level >= $level && $this->output_level !== self::OUTPUT_RAW);
+			return ((self::$output_level >= $level) && (self::$output_level !== self::OUTPUT_RAW));
 		}
 	}
 
