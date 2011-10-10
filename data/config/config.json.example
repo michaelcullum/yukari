@@ -1,18 +1,20 @@
 {
-	"db.file":"yukari.sqlite.db",
+	"db.type":"sqlite",
+	"db.file":"data/database/yukari.sqlite.db",
 	"ui.enable_colors":true,
-	"ui.output_level":"debug",
+	"ui.output_level":"raw",
 	"yukari.tickrate":100,
 	"yukari.locale":"en-us",
 	"yukari.addons":
 	[
 		"irc",
-		"automation"
-		#"sqlite",
-		#"whitelist",
-		#"commander",
-		#"channeltracker",
-		#"botadmin"
+		"automation",
+		"whitelist",
+		"commander",
+		"channeltracker",
+		"botadmin",
+		"database",
+		"logger"
 	],
 	"irc.networks":
 	{
@@ -25,5 +27,5 @@
 			"username":"yukari",
 			"realname":"Obsidian"
 		}
-	}
+	},
 }
