@@ -6,7 +6,7 @@
  *  Yukari
  *-------------------------------------------------------------------
  * @category    Yukari
- * @package     connection
+ * @package     addon
  * @author      Damian Bushong
  * @copyright   (c) 2009 - 2011 Damian Bushong
  * @license     MIT License
@@ -30,7 +30,7 @@ use \Codebite\Yukari\Addon\IRC\Connection\Hostmask;
  *
  *
  * @category    Yukari
- * @package     connection
+ * @package     addon
  * @author      Damian Bushong
  * @license     MIT License
  * @link        https://github.com/damianb/yukari
@@ -203,6 +203,7 @@ class Socket
 							$args = array_merge(array($source, $ctcp_cmd), (array) $args);
 						break;
 						case 'action':
+							$cmd = 'action';
 							$args = array($source, $args);
 						break;
 					}
