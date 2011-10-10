@@ -34,7 +34,7 @@ use \OpenFlame\Dbal\Connection as DbalConnection;
  * @license     MIT License
  * @link        https://github.com/damianb/yukari
  */
-class Whitelist extends \emberlabs\materia\Metadata\MetadataBase
+class Database extends \emberlabs\materia\Metadata\MetadataBase
 {
 	/**
 	 * @var string - The addon's version.
@@ -64,14 +64,11 @@ class Whitelist extends \emberlabs\materia\Metadata\MetadataBase
 	{
 		$options = Kernel::getConfigNamespace('db');
 
-		if($type === NULL)
+		if(!isset($options['type']))
 		{
-			if(!isset($options['type']))
-			{
-				throw new \RuntimeException('No database type specified for connection');
-			}
-			$type = $options['type'];
+			throw new \RuntimeException('No database type specified for connection');
 		}
+		$type = $options['type'];
 
 		$dsn = $username = $password = $db_options = NULL;
 		switch($type)
@@ -116,8 +113,10 @@ class Whitelist extends \emberlabs\materia\Metadata\MetadataBase
 			break;
 		}
 
-		DbalConnection::getInstance()
-			->connect($dsn, $username, $password, $db_options);
+		$db = DbalConnection::getInstance();
+		$db->connect($dsn, $username, $password, $db_options);
+
+		Kernel::set('db.connection', $db);
 	}
 
 	/**

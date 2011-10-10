@@ -26,7 +26,7 @@
 define('YUKARI', dirname(dirname(__FILE__)));
 define('YUKARI_PHAR', 'lib/yukari.phar');
 define('YUKARI_MIN_PHP', '5.3.0');
-define('Codebite\\Yukari\\RUN_PHAR', false);
+define('Codebite\\Yukari\\RUN_PHAR', true);
 error_reporting(-1);
 
 // Check running PHP version against the minimum supported PHP version...

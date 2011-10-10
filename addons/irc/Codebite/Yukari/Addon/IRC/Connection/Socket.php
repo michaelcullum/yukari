@@ -6,7 +6,7 @@
  *  Yukari
  *-------------------------------------------------------------------
  * @category    Yukari
- * @package     connection
+ * @package     addon
  * @author      Damian Bushong
  * @copyright   (c) 2009 - 2011 Damian Bushong
  * @license     MIT License
@@ -30,7 +30,7 @@ use \Codebite\Yukari\Addon\IRC\Connection\Hostmask;
  *
  *
  * @category    Yukari
- * @package     connection
+ * @package     addon
  * @author      Damian Bushong
  * @license     MIT License
  * @link        https://github.com/damianb/yukari
@@ -100,7 +100,11 @@ class Socket
 		while(!$this->socket);
 
 		stream_set_timeout($this->socket, (int) $this->timeout, (($this->timeout - (int) $this->timeout) * 1000000));
-		stream_set_blocking($this->socket, 0);
+		// Only set this as non-blocking if we're using a tickrate.
+		if(Kernel::getConfig('yukari.tickrate'))
+		{
+			stream_set_blocking($this->socket, 0);
+		}
 
 		// Send the server password if one is specified
 		if($this->manager->get('password'))
@@ -199,6 +203,7 @@ class Socket
 							$args = array_merge(array($source, $ctcp_cmd), (array) $args);
 						break;
 						case 'action':
+							$cmd = 'action';
 							$args = array($source, $args);
 						break;
 					}
