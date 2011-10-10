@@ -47,25 +47,25 @@ class Display extends \Codebite\Yukari\Environment\Display
 		Kernel::registerListener('ui.message.irc', 0, array($this, 'displayIRC'));
 
 		// Display IRC going-ons
-		Kernel::registerListener('irc.input.action', 0, function(Event $event) {
+		Kernel::registerListener('irc.input.action', -10, function(Event $event) {
 			Kernel::trigger(Event::newEvent('ui.message.irc')
 				->set('message', sprintf('<- [%2$s] *** %1$s %3$s', $event->get('hostmask')->getNick(), $event->get('target'), $event->get('text'))));
 		});
-		Kernel::registerListener('irc.input.privmsg', 0, function(Event $event) {
+		Kernel::registerListener('irc.input.privmsg', -10, function(Event $event) {
 			Kernel::trigger(Event::newEvent('ui.message.irc')
 				->set('message', sprintf('<- [%2$s] <%1$s> %3$s', $event->get('hostmask')->getNick(), $event->get('target'), $event->get('text'))));
 		});
-		Kernel::registerListener('irc.input.notice', 0, function(Event $event) {
+		Kernel::registerListener('irc.input.notice', -10, function(Event $event) {
 			Kernel::trigger(Event::newEvent('ui.message.irc')
 				->set('message', sprintf('<- [%2$s] <%1$s NOTICE>  %3$s', $event->get('hostmask')->getNick(), $event->get('target'), $event->get('text'))));
 		});
 
 		// Display channel happenings.
-		Kernel::registerListener('irc.input.join', 0, function(Event $event) {
+		Kernel::registerListener('irc.input.join', -10, function(Event $event) {
 			Kernel::trigger(Event::newEvent('ui.message.irc')
 				->set('message', sprintf('<- %1$s (%2$s@%3$s) has joined %4$s', $event->get('hostmask')->getNick(), $event->get('hostmask')->getUsername(), $event->get('hostmask')->getHost(), $event->get('channel'))));
 		});
-		Kernel::registerListener('irc.input.part', 0, function(Event $event) {
+		Kernel::registerListener('irc.input.part', -10, function(Event $event) {
 			if($event->get('reason') !== NULL)
 			{
 				Kernel::trigger(Event::newEvent('ui.message.irc')
@@ -77,7 +77,7 @@ class Display extends \Codebite\Yukari\Environment\Display
 					->set('message', sprintf('<- %1$s (%2$s@%3$s) has left %4$s', $event->get('hostmask')->getNick(), $event->get('hostmask')->getUsername(), $event->get('hostmask')->getHost(), $event->get('channel'))));
 			}
 		});
-		Kernel::registerListener('irc.input.kick', 0, function(Event $event) {
+		Kernel::registerListener('irc.input.kick', -10, function(Event $event) {
 			if($event->get('reason') !== NULL)
 			{
 				Kernel::trigger(Event::newEvent('ui.message.irc')
@@ -89,7 +89,7 @@ class Display extends \Codebite\Yukari\Environment\Display
 					->set('message', sprintf('<- %1$s kicked %2$s from %3$s', $event->get('hostmask')->getNick(), $event->get('user'), $event->get('channel'))));
 			}
 		});
-		Kernel::registerListener('irc.input.quit', 0, function(Event $event) {
+		Kernel::registerListener('irc.input.quit', -10, function(Event $event) {
 			if(!$event->exists('args') || $event->get('args') === NULL)
 			{
 				Kernel::trigger(Event::newEvent('ui.message.irc')
@@ -103,7 +103,7 @@ class Display extends \Codebite\Yukari\Environment\Display
 		});
 
 		// Display CTCP requests and replies
-		Kernel::registerListener('irc.input.ctcp', 0, function(Event $event) {
+		Kernel::registerListener('irc.input.ctcp', -10, function(Event $event) {
 			if(!$event->exists('args') || $event->get('args') === NULL)
 			{
 				Kernel::trigger(Event::newEvent('ui.message.irc')
@@ -115,7 +115,7 @@ class Display extends \Codebite\Yukari\Environment\Display
 					->set('message', sprintf('<- <%1$s> CTCP %2$s', $event->get('hostmask')->getNick(), $event->get('command'))));
 			}
 		});
-		Kernel::registerListener('irc.input.ctcp_reply', 0, function(Event $event) {
+		Kernel::registerListener('irc.input.ctcp_reply', -10, function(Event $event) {
 			if(!$event->exists('args') || $event->get('args') === NULL)
 			{
 				Kernel::trigger(Event::newEvent('ui.message.irc')
@@ -129,7 +129,7 @@ class Display extends \Codebite\Yukari\Environment\Display
 		});
 
 		// Display our responses
-		Kernel::registerListener('runtime.postdispatch', 0, function(Event $event) {
+		Kernel::registerListener('irc.postdispatch', -10, function(Event $event) {
 			$response = $event->get('event');
 			switch($response->getName())
 			{
