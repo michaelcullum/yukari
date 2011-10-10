@@ -136,8 +136,6 @@ class Logger
 	{
 		$logger = Kernel::get('db.logger');
 
-		$logger = new \Codebite\Yukari\Addon\Logging\Logger();
-
 		// Unwrap the event like a present
 		$event = $p_event->get('event');
 
