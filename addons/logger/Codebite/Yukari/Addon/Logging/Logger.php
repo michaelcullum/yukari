@@ -60,6 +60,7 @@ class Logger
 		(
 			log_id INTEGER NOT NULL,
 			ident TEXT NOT NULL DEFAULT "",
+			time INTEGER NOT NULL,
 			event_type TEXT NOT NULL,
 			source TEXT NOT NULL,
 			destination TEXT NOT NULL,
@@ -77,6 +78,7 @@ class Logger
 			'destination'		=> $destination,
 			'data'				=> JSON::encode($data),
 			'ident'				=> $ident,
+			'time'				=> time(),
 		);
 
 		if(sizeof($this->log_cache) > $this->log_cache_size)
@@ -90,15 +92,23 @@ class Logger
 
 	protected function insertEntry(array $inserts)
 	{
-		$q = QueryBuilder::newInstance();
-		$q = new QueryBuilder();
-		$q->multiInsert('logs');
-
 		foreach($inserts as $insert)
 		{
-			$q->set($insert);
+			$q = QueryBuilder::newInstance();
+			$q->insert('logs')
+				->set($insert)
+				->exec();
 		}
+	}
 
-		$q->exec();
+	public function __destruct()
+	{
+		foreach($this->log_cache as $insert)
+		{
+			$q = QueryBuilder::newInstance();
+			$q->insert('logs')
+				->set($insert)
+				->exec();
+		}
 	}
 }

@@ -65,7 +65,11 @@ class Logger extends \emberlabs\materia\Metadata\MetadataBase
 		$logger = new \Codebite\Yukari\Addon\Logging\Logger();
 		$logger->initTables();
 
+		$irc_logger = new \Codebite\Yukari\Addon\IRC\Logger();
+		$irc_logger->registerListeners();
+
 		Kernel::set('db.logger', $logger);
+		Kernel::set('irc.logger', $irc_logger);
 	}
 
 	/**
