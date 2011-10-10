@@ -66,12 +66,18 @@ class Nickserv extends \emberlabs\materia\Metadata\MetadataBase
 			$network = $event->get('network');
 			$nickserv = Kernel::get('irc.stack')->getNetworkOption($network, 'nickserv');
 
-			if(!$nickserv)
+			if(!$nickserv || empty($nickserv['nick']) || empty($nickserv['ident']))
 			{
 				return;
 			}
+			
+			$pattern = $nickserv['ident_format'] ?: "IDENTIFY %s";
 
-			// do stuff here
+			$return = Event::newEvent('irc.output.privmsg')
+				->set('target', $nickserv['nick'])
+				->set('text', sprintf($pattern, $nickserv['ident']));
+
+			return $return;
 		});
 	}
 
