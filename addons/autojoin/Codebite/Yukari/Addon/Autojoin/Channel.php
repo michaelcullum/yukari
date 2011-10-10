@@ -72,7 +72,6 @@ class Channel
 
 	public function handleEndOfMOTD(Event $event)
 	{
-		var_dump($event);
 		$network = $event->get('network');
 		$channels = Kernel::get('irc.stack')->getNetworkOption($network, 'autojoin');
 
