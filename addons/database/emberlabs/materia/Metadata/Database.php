@@ -117,6 +117,9 @@ class Database extends \emberlabs\materia\Metadata\MetadataBase
 		$db->connect($dsn, $username, $password, $db_options);
 
 		Kernel::set('db.connection', $db);
+
+		$config = Kernel::set('db.config', new \Codebite\Yukari\Addon\Database\Config());
+		$config->initTables();
 	}
 
 	/**
