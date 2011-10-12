@@ -61,7 +61,7 @@ class Logger
 
 		$_explode = explode('.', $event->getName());
 		$type = array_pop($_explode);
-		$source = $event->get('network') . ' ' . (string) $event->get('hostmask');
+		$source = (string) $event->get('hostmask');
 		$destination = '';
 		$data = array();
 		switch($type)
@@ -129,7 +129,7 @@ class Logger
 			break;
 		}
 
-		$logger->newLogEntry($event->getName(), $source, $destination, $data);
+		$logger->newLogEntry($event->getName(), $event->get('network'), $source, $destination, $data);
 	}
 
 	public function handleIRCOutEvent(Event $p_event)
@@ -141,7 +141,7 @@ class Logger
 
 		$_explode = explode('.', $event->getName());
 		$type = array_pop($_explode);
-		$source = $event->get('network') . ' ' . Kernel::get('irc.stack')->getNetworkOption($event->get('network'), 'nickname');
+		$source = Kernel::get('irc.stack')->getNetworkOption($event->get('network'), 'nickname');
 		$destination = '';
 		$data = array();
 		switch($type)
@@ -209,6 +209,6 @@ class Logger
 			break;
 		}
 
-		$logger->newLogEntry($event->getName(), $source, $destination, $data);
+		$logger->newLogEntry($event->getName(), $event->get('network'), $source, $destination, $data);
 	}
 }

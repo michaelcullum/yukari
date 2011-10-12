@@ -62,7 +62,7 @@ class Logger extends \emberlabs\materia\Metadata\MetadataBase
 	 */
 	public function initialize()
 	{
-		$logger = new \Codebite\Yukari\Addon\Logging\Logger();
+		$logger = new \Codebite\Yukari\Addon\Database\Logger();
 		$logger->initTables();
 
 		$irc_logger = new \Codebite\Yukari\Addon\IRC\Logger();
