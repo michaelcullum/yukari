@@ -58,17 +58,13 @@ Install the phar-util package <https://github.com/koto/phar-util> via pear, if y
 
 Make changes to the files in the **src/** directory, then build the phar (without signing it)
 
-    $ ./build/unsigned-build.sh
-
-Additionally, you can build your phars on-commit using the provided compile-on-commit script (without signing it)
-
-    $ cp build/hooks/autobuild-unsigned .git/hooks/pre-commit
+    $ make core
 
 ### Packaging a build
 
 Make your changes to the files in the **src/Yukari/** directory, then make changes to addons in the **addons/** directory.  When ready, use the provided packaging script to compile the next build.
 
-    $ ./build/package.sh
+    $ make package
 
 Please note that this script will, by default, attempt to sign any phars it builds.  You will need to modify the script itself to prevent this if you don't want the phars signed.
 
@@ -76,7 +72,7 @@ Please note that this script will, by default, attempt to sign any phars it buil
 
 Make changes to individual addons in the **addons/** directory (one directory per addon), then build the addon phar
 
-    $ ./build/addon_build.sh
+    $ make alladdons
 
 Note that this requires having already created OpenSSL certificates using phar-generate-cert (part of the phar-util pear package) and placing them in the directory **build/cert/**.
 
@@ -89,6 +85,7 @@ Note that this requires having already created OpenSSL certificates using phar-g
 #### Linux
 
 Navigate to the root directory of Yukari, then use this command:
+
 	$ ./bin/yukari
 
 Yukari will immediately start up afterwards.
