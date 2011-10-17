@@ -75,6 +75,11 @@ class Config
 
 		$row = $q->fetchRow();
 
+		if(empty($row))
+		{
+			return NULL;
+		}
+
 		return (!empty($row['config_value'])) ? $row['config_value'] : (int) $row['num_value'];
 	}
 

@@ -243,16 +243,6 @@ function unique_string($length = 32)
  */
 function hostmasksToRegex($list)
 {
-	static $hmask_find, $hmask_repl;
-	if(empty($hmask_find))
-	{
-		$hmask_find = array('\\', '^', '$', '.', '[', ']', '|', '(', ')', '?', '+', '{', '}');
-	}
-	if(empty($hmask_repl))
-	{
-		$hmask_repl = array('\\\\', '\\^', '\\$', '\\.', '\\[', '\\]', '\\|', '\\(', '\\)', '\\?', '\\+', '\\{', '\\}');
-	}
-
 	$patterns = array();
 
 	foreach($list as $hostmask)
@@ -269,7 +259,7 @@ function hostmasksToRegex($list)
 		}
 
 		// Escape regex meta characters
-		$hostmask = str_replace($hmask_find, $hmask_repl, $hostmask);
+		$hostmask = str_replace('\\!', '!', preg_quote($hostmask, '#'));
 
 		// Replace * so that they match correctly in a regex
 		$patterns[] = str_replace('*', ($excluded === '' ? '.*' : '[^' . $excluded . ']*'), $hostmask);
