@@ -243,6 +243,16 @@ function unique_string($length = 32)
  */
 function hostmasksToRegex($list)
 {
+	static $hmask_find, $hmask_repl;
+	if(empty($hmask_find))
+	{
+		$hmask_find = array('\\', '^', '$', '.', '[', ']', '|', '(', ')', '?', '+', '{', '}');
+	}
+	if(empty($hmask_repl))
+	{
+		$hmask_repl = array('\\\\', '\\^', '\\$', '\\.', '\\[', '\\]', '\\|', '\\(', '\\)', '\\?', '\\+', '\\{', '\\}');
+	}
+
 	$patterns = array();
 
 	foreach($list as $hostmask)
