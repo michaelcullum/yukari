@@ -34,7 +34,7 @@ use \OpenFlame\Framework\Event\Instance as Event;
  * @license     MIT License
  * @link        https://github.com/damianb/yukari
  */
-class Interpreter
+class Pulse
 {
 	protected $last = array();
 

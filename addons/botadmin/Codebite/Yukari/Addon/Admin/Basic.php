@@ -254,6 +254,11 @@ class Basic
 
 			foreach($addon_loader as $metadata)
 			{
+				if(!is_object($metadata))
+				{
+					continue;
+				}
+
 				$addon_list[] = sprintf('%1$s [%2$s]', $metadata->getName(), $metadata->getVersion());
 			}
 

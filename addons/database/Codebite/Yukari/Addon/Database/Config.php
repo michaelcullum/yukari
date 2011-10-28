@@ -46,7 +46,7 @@ class Config
 			config_id INTEGER NOT NULL,
 			config_name TEXT NOT NULL DEFAULT "",
 			config_value TEXT DEFAULT "",
-			num_value INTEGER DEFAULT 0
+			num_value INTEGER DEFAULT 0,
 
 			PRIMARY KEY (config_id)
 		)')->exec();
