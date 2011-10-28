@@ -84,7 +84,7 @@ class Channel
 		foreach($channels as $channel)
 		{
 			$joins[] = Event::newEvent('irc.output.join')
-				->set('channel', $channel);
+				->set('channel', (($channel[0] != '#') ? '#' : '') . $channel);
 		}
 
 		return $joins;
