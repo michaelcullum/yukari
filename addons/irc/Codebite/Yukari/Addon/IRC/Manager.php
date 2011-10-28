@@ -84,6 +84,10 @@ class Manager
 		if(!$this->socket)
 		{
 			$this->connect();
+
+			Kernel::trigger(Event::newEvent('irc.connect')
+				->set('network', $this->network)
+				->set('mname', $this->name));
 		}
 
 		$_t = Kernel::trigger(Event::newEvent('irc.tick')
