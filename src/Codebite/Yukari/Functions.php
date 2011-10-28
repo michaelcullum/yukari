@@ -269,7 +269,7 @@ function hostmasksToRegex($list)
 		}
 
 		// Escape regex meta characters
-		$hostmask = str_replace('\\!', '!', preg_quote($hostmask, '#'));
+		$hostmask = str_replace($hmask_find, $hmask_repl, $hostmask);
 
 		// Replace * so that they match correctly in a regex
 		$patterns[] = str_replace('*', ($excluded === '' ? '.*' : '[^' . $excluded . ']*'), $hostmask);
