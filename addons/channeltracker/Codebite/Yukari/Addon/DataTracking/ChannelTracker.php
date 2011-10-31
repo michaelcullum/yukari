@@ -65,6 +65,12 @@ class ChannelTracker
 		{
 			if(!in_array($event->get('channel'), $this->channels))
 			{
+
+				Kernel::trigger(Event::newEvent('irc.notify.channeljoin')
+					->set('channel', $event->get('channel'))
+					->set('network', $event->get('network'))
+					->set('mname', $event->get('mname')));
+
 				array_push($this->channels, $event->get('channel'));
 			}
 		}
@@ -82,6 +88,11 @@ class ChannelTracker
 			$key = array_search($event->get('channel'), $this->channels);
 			if($key !== false)
 			{
+				Kernel::trigger(Event::newEvent('irc.notify.channelleave')
+					->set('channel', $event->get('channel'))
+					->set('network', $event->get('network'))
+					->set('mname', $event->get('mname')));
+
 				unset($this->channels[$key]);
 			}
 		}
@@ -99,6 +110,11 @@ class ChannelTracker
 			$key = array_search($event->get('channel'), $this->channels);
 			if($key !== false)
 			{
+				Kernel::trigger(Event::newEvent('irc.notify.channelleave')
+					->set('channel', $event->get('channel'))
+					->set('network', $event->get('network'))
+					->set('mname', $event->get('mname')));
+
 				unset($this->channels[$key]);
 			}
 		}
