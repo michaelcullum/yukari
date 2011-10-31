@@ -7,3 +7,6 @@
 [submodule "src/emberlabs/materia"]
 	path = src/emberlabs/materia
 	url = git://github.com/emberlabs/materia.git
+[submodule "src/Codebite/Yukari"]
+	path = src/Codebite/Yukari
+	url = git://github.com/yukari/core.git
