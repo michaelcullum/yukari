@@ -13,3 +13,6 @@
 [submodule "addons/irc"]
 	path = addons/irc
 	url = git://github.com/yukari/addon-irc.git
+[submodule "addons/database"]
+	path = addons/database
+	url = git://github.com/yukari/addon-database.git
