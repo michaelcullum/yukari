@@ -1,6 +1,16 @@
 {
-	"BOT_NAME":"Yukari IRC Bot",
+	"BOT_NAME":"Yukari",
 	"DISPLAY_STARTUP":"Yukari is starting up, go get yourself a coffee...",
 	"DISPLAY_READY":"Yukari loaded and ready!",
-	"DISPLAY_SHUTDOWN":"Yukari shutting down..."
+	"DISPLAY_SHUTDOWN":"Yukari shutting down...",
+	"DISPLAY_LOAD_CORE":"Loading the Yukari core",
+	"DISPLAY_LOAD_ADDONS":"Loading Yukari addons",
+	"DISPLAY_LOAD_ADDON":"Loaded addon '%s'",
+	"DISPLAY_STARTUP_DONE":"Startup complete, took %1$s seconds",
+
+	"YUKARI_LAUNCH_TICKED":"Launching Yukari daemon, using set tickrate with tick interval of %f µs (%d tick/sec)",
+	"YUKARI_LAUNCH_TICKLESS":"Launching Yukari daemon, not using set tickrate",
+
+	"ERROR_REQUIRED_CONFIG_MISSING":"Required config entry '%s' not defined",
+	"ERROR_ADDON_LOAD_FAILED":"Failed to load addon '%1$s' - failure message: '%2$s'"
 }
