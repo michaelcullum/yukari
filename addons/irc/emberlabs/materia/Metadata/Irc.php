@@ -63,12 +63,19 @@ class Irc extends \emberlabs\materia\Metadata\MetadataBase
 	 */
 	public function initialize()
 	{
+		// Set the default config we need
+		if(!Kernel::getConfig('commander.command_indicator'))
+		{
+			Kernel::setConfig('commander.command_indicator', '!');
+		}
+
 		$injector = Injector::getInstance();
 
 		$this->setInjectors();
 
 		$networks = Kernel::getConfig('irc.networks');
 		Kernel::set('irc.stack', new \Codebite\Yukari\Addon\IRC\ManagerStack($networks));
+		Kernel::set('irc.addon.commander', new \Codebite\Yukari\Addon\Commander\Interpreter());
 
 		$this->setListeners();
 	}
@@ -100,8 +107,46 @@ class Irc extends \emberlabs\materia\Metadata\MetadataBase
 
 	protected function setListeners()
 	{
+		Kernel::get('irc.addon.commander')->registerListeners();
 		Kernel::get('irc.ui')->registerListeners();
 		Kernel::get('irc.stack')->registerListeners();
+
+		// Respond to CTCP VERSION and CTCP PING (if a valid argument for the CTCP was provided)
+		Kernel::registerListener('irc.input.ctcp', -10, function(Event $event) {
+			if(strtolower($event->get('command')) === 'version')
+			{
+				return Event::newEvent('irc.output.ctcp_reply')
+					->setData(array(
+						'command' 	=> 'version',
+						'target'	=> $event->get('hostmask')->getNick(),
+						'args'		=> sprintf('Yukari IRC Bot - %s', Kernel::getBuildNumber()),
+					));
+			}
+			elseif(strtolower($event->get('command')) === 'ping')
+			{
+				if(!$event->exists('args') || $event->get('args') === NULL)
+				{
+					return;
+				}
+
+				return Event::newEvent('irc.output.ctcp_reply')
+					->setData(array(
+						'command' 	=> 'ping',
+						'target'	=> $event->get('hostmask')->getNick(),
+						'args'		=> $event->get('args'),
+					));
+			}
+			else
+			{
+				return;
+			}
+		});
+
+		// Respond to server pings
+		Kernel::registerListener('irc.input.ping', -10, function(Event $event) {
+			return Event::newEvent('irc.output.pong')
+					->set('origin', $event->get('target'));
+		});
 
 		return $this;
 	}
