@@ -10,3 +10,6 @@
 [submodule "src/Codebite/Yukari"]
 	path = src/Codebite/Yukari
 	url = git://github.com/yukari/core.git
+[submodule "addons/irc"]
+	path = addons/irc
+	url = git://github.com/yukari/addon-irc.git
