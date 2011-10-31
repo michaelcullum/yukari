@@ -21,10 +21,6 @@ Yukari is a PHP-based daemon built for use as a multi-network IRC bot using PHP 
 * OpenFlame\Dbal (packaged) <https://github.com/OpenFlame/OpenFlame-Dbal>
 * emberlabs\materia (packaged) <https://github.com/emberlabs/materia>
 
-## extras
-
-More addons are available in the yukari-extras repository; for more details, look here: <https://github.com/damianb/yukari-extras>
-
 ## instructions
 
 ### installation
@@ -62,17 +58,17 @@ Make changes to the files in the **src/** directory, then build the phar (withou
 
 ### Packaging a build
 
-Make your changes to the files in the **src/Yukari/** directory, then make changes to addons in the **addons/** directory.  When ready, use the provided packaging script to compile the next build.
+Make your changes to the files in the **src/Codebite/Yukari/** directory, then make changes to addons in the **addons/** directory.  When ready, use the provided packaging script to compile the next build.
 
     $ make package
 
-Please note that this script will, by default, attempt to sign any phars it builds.  You will need to modify the script itself to prevent this if you don't want the phars signed.
+Please note that the makefile will, by default, attempt to sign any phars it builds.  You will need to modify the makefile itself to prevent this if you don't want the phars signed.
 
 ### building addons
 
 Make changes to individual addons in the **addons/** directory (one directory per addon), then build the addon phar
 
-    $ make alladdons
+    $ make addon:myaddon
 
 Note that this requires having already created OpenSSL certificates using phar-generate-cert (part of the phar-util pear package) and placing them in the directory **build/cert/**.
 
@@ -90,4 +86,4 @@ Navigate to the root directory of Yukari, then use this command:
 
 Yukari will immediately start up afterwards.
 
-Protip: You can specify an alternative configuration file to use within the **data/config/** directory by using the commandline parameter "*--config=confignamehere*"
+Protip: You can specify an alternative JSON configuration file to use within the **data/config/** directory by using the commandline parameter "*--config=confignamehere*"
