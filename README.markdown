@@ -27,7 +27,7 @@ Yukari is a PHP-based daemon built for use as a multi-network IRC bot using PHP 
 
 Via git:
 
-    $ git clone https://github.com/damianb/yukari.git
+    $ git clone https://github.com/yukari/yukari.git
     $ cd ./yukari
     $ git submodule init
     $ git submodule update
