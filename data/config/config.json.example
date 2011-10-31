@@ -8,9 +8,7 @@
 	"yukari.addons":
 	[
 		"irc",
-		"automation",
 		"whitelist",
-		"commander",
 		"channeltracker",
 		"botadmin",
 		"database",
