@@ -29,8 +29,7 @@ Via git:
 
     $ git clone https://github.com/yukari/yukari.git
     $ cd ./yukari
-    $ git submodule init
-    $ git submodule update
+    $ git submodule update --init --recursive
 
 Via gzip tarball package of source:
 
