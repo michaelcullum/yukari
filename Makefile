@@ -37,7 +37,7 @@ core:
 alladdons:
 	echo "<?php __HALT_COMPILER();" > stub.php; \
 	for f in `ls ./addons | grep -v '^_'`; do \
-		phar-build --phar $$f.phar -s ./addons/$$f/ -x "$(EXCLUDE)" -X "$(EXCLUDEDIR)" -S stub.php -p $(PRIVKEY) -P $(PUBKEY); \
+		phar-build --phar $$f.phar -s ./addons/$$f/ -x "$(EXCLUDE)" -X "$(EXCLUDEDIR)" -S stub.php -p $(PRIVKEY) -P $(PUBKEY) --strip-files "$(STRIP)"; \
 		mv $$f.phar* lib/addons/; \
 		echo "built addon phar: " $$f".phar"; \
 	done; \
@@ -55,7 +55,7 @@ version:
 addon\:%:
 	echo "<?php __HALT_COMPILER();" > stub.php; \
 	ADDON=$(subst addon:,,$@); \
-	phar-build --phar $$ADDON.phar -s ./addons/$$ADDON/ -x "$(EXCLUDE)" -X "$(EXCLUDEDIR)" -S stub.php -p $(PRIVKEY) -P $(PUBKEY); \
+	phar-build --phar $$ADDON.phar -s ./addons/$$ADDON/ -x "$(EXCLUDE)" -X "$(EXCLUDEDIR)" -S stub.php -p $(PRIVKEY) -P $(PUBKEY) --strip-files "$(STRIP)"; \
 	mv $$ADDON.phar* lib/addons/; \
 	echo "built addon phar: " $$ADDON".phar"; \
 	rm stub.php
