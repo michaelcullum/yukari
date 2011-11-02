@@ -74,7 +74,6 @@ class Autojoin extends \emberlabs\materia\Metadata\MetadataBase
 	public function checkDependencies()
 	{
 		$this->loadAddonDependency('irc.stack', 'irc');
-		$this->loadAddonDependency('irc.addon.commander', 'commander');
 
 		return true;
 	}

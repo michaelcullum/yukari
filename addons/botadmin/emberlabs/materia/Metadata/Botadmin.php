@@ -72,7 +72,6 @@ class Botadmin extends \emberlabs\materia\Metadata\MetadataBase
 	public function checkDependencies()
 	{
 		$this->loadAddonDependency('irc.stack', 'irc');
-		$this->loadAddonDependency('irc.addon.commander', 'commander');
 		$this->loadAddonDependency('irc.addon.acl', 'whitelist');
 
 		return true;
