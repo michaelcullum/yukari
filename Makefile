@@ -10,6 +10,7 @@ PRIVKEY = ./build/cert/priv.pem
 PUBKEY = ./build/cert/pub.pem
 BINNUMBER=`cat ./build/bin_number.txt`
 ZIPINCLUDES=bin\/* data\/config\/* data\/config\/addons\/* data\/database\/.keep data\/language\/* docs\/* lib\/* lib\/addons\/* LICENSE README.markdown
+STRIP=.php$
 
 # target: all - default target, does nothing
 all :
@@ -28,7 +29,7 @@ package: version core alladdons
 
 # target: core - builds main phar
 core:
-	@phar-build --phar $(PROJECT).phar -s ./src/ -x "$(EXCLUDE)" -X "$(EXCLUDEDIR)" -S ./src/stub.php -p $(PRIVKEY) -P $(PUBKEY); \
+	phar-build --phar $(PROJECT).phar -s ./src/ -x "$(EXCLUDE)" -X "$(EXCLUDEDIR)" -S ./src/stub.php -p $(PRIVKEY) -P $(PUBKEY) --strip-files "$(STRIP)"; \
 	mv $(PROJECT).phar* lib/; \
 	echo "built core phar"
 
