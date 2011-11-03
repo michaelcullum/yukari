@@ -109,7 +109,7 @@ class Pulse
 				return;
 			}
 
-			Kernel::trigger(Event::newEvent('cron.pulse.' . $type));
+			Kernel::trigger(Event::newEvent('cron.ircpulse.' . $type));
 
 			$this->irc_last[$network][$type] = $now + $this->interval[$type];
 		}
