@@ -4,12 +4,12 @@
 PROJECT = yukari
 RELEASE_DIR = .
 STORE_DIR = ./downloads
-EXCLUDE = ~$ .*\.txt$ .*\.xml$ .*\.markdown$ .*\.md$ stub\.php .*\.json$
+EXCLUDE = ~$ \.txt$ \.xml$ \.markdown$ \.md$ stub\.php \.json$
 EXCLUDEDIR = /\.git/ /\.svn/
 PRIVKEY = ./build/cert/priv.pem
 PUBKEY = ./build/cert/pub.pem
 BINNUMBER=`cat ./build/bin_number.txt`
-ZIPINCLUDES=bin\/* data\/config\/* data\/config\/addons\/* data\/database\/.keep data\/language\/* docs\/* lib\/* lib\/addons\/* LICENSE README.markdown
+ZIPINCLUDES=bin\/* data\/config\/config.json.example data\/config\/addons\/*.example data\/database\/.keep data\/language\/* docs\/* lib\/* lib\/addons\/* LICENSE README.markdown
 STRIP=.php$
 
 # target: all - default target, does nothing
