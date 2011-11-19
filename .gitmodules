@@ -16,3 +16,6 @@
 [submodule "addons/database"]
 	path = addons/database
 	url = git://github.com/yukari/addon-database.git
+[submodule "addons/stopforumspam"]
+	path = addons/stopforumspam
+	url = git://github.com/yukari/addon-stopforumspam.git
