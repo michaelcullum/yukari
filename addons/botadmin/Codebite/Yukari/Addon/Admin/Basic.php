@@ -40,7 +40,7 @@ class Basic
 	/**
 	 * @const - URL providing the latest available build number for Yukari.
 	 */
-	const BUILD_NUMBER_URL = 'https://github.com/damianb/yukari/raw/master/build/bin_number.txt';
+	const BUILD_NUMBER_URL = 'https://github.com/yukari/yukari/raw/master/build/bin_number.txt';
 
 	/**
 	 * Register the listeners we need for this addon to work properly.
@@ -62,6 +62,7 @@ class Basic
 		Kernel::registerListener('irc.input.command.uptime', 0, array($this, 'handleUptimeCommand'));
 		Kernel::registerListener('irc.input.command.quit', 0, array($this, 'handleQuitCommand'));
 		Kernel::registerListener('irc.input.command.shutdown', 0, array($this, 'handleShutdownCommand'));
+		Kernel::registerListener('irc.input.command.source', 0, array($this, 'handleSourceRequest'));
 
 		return $this;
 	}
@@ -485,6 +486,22 @@ class Basic
 			return;
 		}
 	}
+
+	/**
+         * Handles a request for the source code.
+         * @param \OpenFlame\Framework\Event\Instance $event - The event instance.
+         * @return array - Array of events to dispatch in response to the input event.
+         */
+        public function handleSourceRequest(Event $event)
+        {
+		$highlight = (!$event->get('is_private')) ? $event->get('hostmask')->getNick() . ':' : '';
+                $results[] = Event::newEvent('irc.output.privmsg')
+                        ->set('target', $event->get('target'))
+                        ->set('text', sprintf('%1$s I have been running for %2$s.', $highlight, $diff_string));
+
+		return $results;
+
+        }
 
 	/**
 	 * Handles the bot refusing to obey a command due to authentication failure.
