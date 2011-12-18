@@ -497,7 +497,7 @@ class Basic
 		$highlight = (!$event->get('is_private')) ? $event->get('hostmask')->getNick() . ':' : '';
                 $results[] = Event::newEvent('irc.output.privmsg')
                         ->set('target', $event->get('target'))
-                        ->set('text', sprintf('%1$s I have been running for %2$s.', $highlight, $diff_string));
+                        ->set('text', sprintf('%1$s My source code is available at https://github.com/yukari/yukari/', $highlight));
 
 		return $results;
 
