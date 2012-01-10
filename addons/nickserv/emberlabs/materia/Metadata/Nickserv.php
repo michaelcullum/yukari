@@ -70,7 +70,7 @@ class Nickserv extends \emberlabs\materia\Metadata\MetadataBase
 			{
 				return;
 			}
-			
+
 			$pattern = $nickserv['ident_format'] ?: "IDENTIFY %s";
 
 			$return = Event::newEvent('irc.output.privmsg')
@@ -88,7 +88,6 @@ class Nickserv extends \emberlabs\materia\Metadata\MetadataBase
 	public function checkDependencies()
 	{
 		$this->loadAddonDependency('irc.stack', 'irc');
-		$this->loadAddonDependency('irc.addon.commander', 'commander');
 
 		return true;
 	}
